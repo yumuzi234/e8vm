@@ -1,0 +1,6 @@
+func t(){t(a)
+t(a)
+t(a)
+t(a)
+t(a)
+t(a)}

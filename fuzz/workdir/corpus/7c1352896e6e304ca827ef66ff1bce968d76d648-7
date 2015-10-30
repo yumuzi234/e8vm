@@ -1,0 +1,2 @@
+func c(x,x,i,r float){x()}
+func n(){c()}

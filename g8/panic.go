@@ -1,0 +1,13 @@
+package g8
+
+import (
+	"e8vm.io/e8vm/g8/types"
+)
+
+func callPanic(b *builder, msg string) {
+	if b.panicFunc == nil {
+		panic("panic function missing")
+	}
+	// TODO: print message
+	b.b.Call(nil, b.panicFunc, types.VoidFunc.Sig)
+}

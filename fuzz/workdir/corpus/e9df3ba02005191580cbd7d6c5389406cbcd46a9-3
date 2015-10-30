@@ -1,0 +1,2 @@
+func n(){printInt(a)
+printInt(a);printInt(a)}

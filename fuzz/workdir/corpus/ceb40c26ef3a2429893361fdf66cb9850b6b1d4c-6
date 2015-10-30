@@ -1,0 +1,2 @@
+func o()int{if((0)+((4)))return
+return(1)+((4))}

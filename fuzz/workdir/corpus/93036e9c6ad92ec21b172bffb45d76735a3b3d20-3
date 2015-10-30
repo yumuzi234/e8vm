@@ -1,0 +1,2 @@
+struct A{a,b int;func p(){}};var a*A
+func main(){a.a=0;a.a=0;a.b=3;a.b=3;a.p()}

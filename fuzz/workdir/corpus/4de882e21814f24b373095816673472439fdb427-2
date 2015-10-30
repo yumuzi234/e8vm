@@ -1,0 +1,2 @@
+struct a{}
+func main(){var x,y,i a}

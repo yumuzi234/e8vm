@@ -1,0 +1,5 @@
+func p(int){c(p)}
+func c(func(int)){{c(p)}}
+func main(){{c(p)
+c(p)}
+c(p)}

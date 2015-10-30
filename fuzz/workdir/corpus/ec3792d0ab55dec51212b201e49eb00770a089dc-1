@@ -1,0 +1,2 @@
+func r(s string){{a();a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a();a();a();a();a();a();a();a();a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a();a();a();a();a();a()}}
+func n(){b="";v(b)}

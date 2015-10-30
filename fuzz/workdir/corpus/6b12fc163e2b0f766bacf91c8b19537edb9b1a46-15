@@ -1,0 +1,2 @@
+func c(x func(t)){}
+func c(c){}

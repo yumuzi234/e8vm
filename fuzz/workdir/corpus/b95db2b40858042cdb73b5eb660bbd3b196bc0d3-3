@@ -1,0 +1,1 @@
+func b()bool{if false||false||false||b()<t{}}

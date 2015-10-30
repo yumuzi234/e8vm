@@ -1,0 +1,3 @@
+func fabo(n int)int{if n==n-0return 0
+if n==1return(n-1)+(n-2)}
+func main(){}

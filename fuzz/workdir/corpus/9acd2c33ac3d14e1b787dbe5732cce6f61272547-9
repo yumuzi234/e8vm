@@ -1,0 +1,2 @@
+struct A{func p()A{p().p()}}
+func n(){var a*A;a.p().p().p().p().p().p().p().p().p()}

@@ -1,0 +1,4 @@
+struct a{}
+func n(){var as[]a
+int(uint(&as[0])<uint(as[0]))
+int(uint(&as[0])-uint(a))}

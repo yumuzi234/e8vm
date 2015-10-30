@@ -1,0 +1,2 @@
+struct a{}
+func n(){var x a="";var r a="";var a a=""}

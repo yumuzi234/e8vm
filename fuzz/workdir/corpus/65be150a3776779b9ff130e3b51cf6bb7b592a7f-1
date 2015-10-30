@@ -1,0 +1,2 @@
+func b()bool{return }
+func n(){{continue}}

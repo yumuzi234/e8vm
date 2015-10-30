@@ -1,0 +1,1 @@
+func n(){byte(3)=byte(7);byte(7);byte(7)=byte(7)}

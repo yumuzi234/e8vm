@@ -1,0 +1,2 @@
+func p(int)(x func()){x<<=(3)}
+func n(func())func(){}

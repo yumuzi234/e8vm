@@ -1,0 +1,5 @@
+struct A{
+a int;
+func s(int){this.a=a}
+func p(){}}
+func main(){}

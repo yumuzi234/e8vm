@@ -1,0 +1,1 @@
+var a int; func main() { a := 33; printInt(a) }

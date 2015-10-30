@@ -1,0 +1,12 @@
+sudo: false
+language: go
+
+go:
+    - 1.5
+    - tip
+
+install:
+    - go get e8vm.io/e8vm
+
+script:
+    - go test e8vm.io/e8vm/...

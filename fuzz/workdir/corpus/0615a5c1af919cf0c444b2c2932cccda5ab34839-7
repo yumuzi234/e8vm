@@ -1,0 +1,3 @@
+func c(x(int)){x()}
+func nc(x(int)){x()}
+func n(){0()}

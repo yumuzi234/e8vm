@@ -1,0 +1,2 @@
+var(v[]int)
+func b(){b=b!=v;b=b!=v;b=b!=v;b=b!=v;b=b!=v;b=b!=v}

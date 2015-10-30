@@ -1,0 +1,2 @@
+func p(){p(2)}
+func c(func()){c()}

@@ -1,0 +1,2 @@
+struct a{}
+func s(){a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s;a=s}

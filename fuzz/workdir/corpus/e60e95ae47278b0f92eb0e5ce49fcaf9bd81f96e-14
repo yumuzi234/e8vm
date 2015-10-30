@@ -1,0 +1,3 @@
+func p(t)(f){}
+func n(f)(f){}
+func n(f){}

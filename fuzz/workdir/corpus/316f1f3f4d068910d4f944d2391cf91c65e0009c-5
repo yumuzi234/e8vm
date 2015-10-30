@@ -1,0 +1,2 @@
+func o(n int)int{if n&&n==0return
+return(n<1)+(n)}

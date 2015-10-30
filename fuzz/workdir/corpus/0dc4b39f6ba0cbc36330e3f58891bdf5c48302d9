@@ -1,0 +1,2 @@
+func p(i int){}
+func main(){f:=p}

@@ -1,0 +1,1 @@
+func f(a[]int){printInt(a[-1]);f(a[-1])}

@@ -1,0 +1,3 @@
+func p(*int){c(p)}
+func c(func(int)){{c(p)}
+c(p)}

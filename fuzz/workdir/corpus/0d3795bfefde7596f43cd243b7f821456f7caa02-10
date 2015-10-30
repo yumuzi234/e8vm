@@ -1,0 +1,1 @@
+func o(n int)int{if n%2%0==0return(1)}

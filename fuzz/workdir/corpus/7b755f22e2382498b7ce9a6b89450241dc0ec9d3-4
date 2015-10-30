@@ -1,0 +1,175 @@
+0¿ë
+//
+func PC{
+//
+i p p-8
+w r2 p
+w r3 p 4
+
+i r2 r0 0x//
+.t
+u r3 r2 1
+e r3 r0.t//
+
+v r3 r1
+i r3 r3 0x100
+w r3 r2
+
+//
+w r2 p
+w r3 p 4
+
+i p p 8
+v c t
+}
+
+//
+//
+func PU32{
+//
+w t p-4
+i p p-8
+w r1 p
+w r2 p 4
+w r3 p 8
+
+e r1 r0.o
+.o
+i r1 r0 0x30//
+l PC
+j.d
+
+.o
+i r2 p 12
+i r4 r0 10
+
+.p
+u r3 r1 r4
+b r3 r2 0
+u r1 r1 r4
+q r1 r0.t
+i r2 r2 1
+j.p
+
+.t
+i r3 p 12//
+
+.p
+u r1 r2 0//
+i r1 r1 0x30
+l PC
+q r3 r2.d
+i r2 r2-1
+j.p
+
+.d
+i r1 r0 0xa
+l PC//
+
+w r2 p 4
+w r3 p 8
+i p p 28
+w c p-4
+}
+
+//
+//
+func PI32{
+//
+w t p-4
+i p p-6
+w r1 p
+w r2 p 4
+w r3 p 8
+
+t r2 r1 r0//
+q r2 r0.n
+
+i r1 r0 0x2d//
+l PC
+
+w r1 p
+b r1 r0 r1//
+.n
+l PU32
+
+w r2 p 4
+w r3 p 8
+i p p 16
+w c p-4
+}
+
+//
+func P{
+c
+}
+
+//
+func H{
+t
+}
+
+//
+//
+//
+//
+func MC{
+q r3 r0.t
+q r1 r2.t
+
+t r4 r1 r2
+q r4 r0.v
+
+.p
+u r4 r2
+b r4 r1
+i r1 r1 1
+i r2 r2 1
+i r3 r3-1
+e r3 r0.p
+j.t
+
+.v
+d r1 r1 r3
+d r2 r2 r3
+
+.p
+i r1 r1-1
+i r2 r2-1
+u r4 r2
+b r4 r1
+i r3 r3-1
+e r3 r0.p
+
+.t
+v c t
+}
+
+//
+//
+//
+//
+func MS{
+q r3 r0.t
+.p
+b r2 r1
+i r1 r1 1
+i r3 r3-1
+e r3 r0.p
+.t
+v c t
+}
+
+//
+//
+//
+func MC{
+q r2 r0.t
+.p
+b r0 r1
+i r1 r1 1
+i r2 r2-1
+e r2 r0.p
+.t
+v c t
+}

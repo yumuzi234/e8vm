@@ -1,0 +1,3 @@
+struct a{a byte}
+func n(){var x,y a;x.a=3;y.a=4
+printInt(x.a);printInt(y.a)}

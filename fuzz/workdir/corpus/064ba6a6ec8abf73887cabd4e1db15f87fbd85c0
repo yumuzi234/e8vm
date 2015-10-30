@@ -1,0 +1,4 @@
+struct a{a[4]byte}
+func main(){
+var as[4]a
+int(uint(&as[1])-uint(&as[0]))}

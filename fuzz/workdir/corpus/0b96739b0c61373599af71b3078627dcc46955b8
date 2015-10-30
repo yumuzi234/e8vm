@@ -1,0 +1,2 @@
+func r()(t,t){return 3,4}
+func n(){a,b:=r()(a);t(b)}

@@ -1,0 +1,2 @@
+func p(int){}
+func c(x,p,n int){}

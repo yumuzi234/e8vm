@@ -1,0 +1,2 @@
+struct A{func p(){p(p)}
+func q(){q(q)}}

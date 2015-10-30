@@ -1,0 +1,3 @@
+struct A{func p(){p(p())}
+func q(int){}}
+func main(){}

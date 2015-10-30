@@ -1,0 +1,109 @@
+func e(){i{f
+c r
+2p
+p 4
+00x
+.t
+2 1
+3r
+3r
+3x
+3r
+2p
+p 4
+p 8
+c t
+t p
+p p
+1p
+p 4
+p 8
+1r
+.o
+00x
+l r
+.o
+p 2
+0 0
+.p
+1r
+2 0
+1r
+1r
+2 1
+.t
+p 2
+.p
+2 0
+1x
+l r
+3r
+2r
+.d
+0a
+l r
+p 4
+p 8
+p 8
+c p
+t p
+.t// wait for invalid
+3r
+3x
+3r// restore r2 and r3
+2p
+p 4
+p 8
+c t// Print a 32-bit unsigned integer when array is implemented, this will be rewritten in glang saving used registers
+p p
+1p
+p 4
+p 8
+1r
+.o
+00x// '0'
+l r
+.o
+p 2
+0 0
+.p
+1r
+2 0
+1r
+1r
+2 1
+.t
+p 2// base
+.p
+2 0// load
+1x
+l r
+3r
+2r
+.d
+0a
+l r// print a end line
+p 4
+p 8
+p 8
+c p// Print a 32-bit signed integer when array is implemented, this will be rewritten in glang saving used registers
+p p
+1p
+p 4
+p 8
+1r// r2 = r1 < 0
+2r
+0d// '-'
+l r
+1p
+0r// revert
+.n
+l 2
+p 4
+p 8
+p 6
+c p// Panic halts the system immediately with panic exception Halt halts the system with halt exception MemCopy copies a range of memory    r1 - destination address    r2 - source address    r3 - number of bytes MemSet sets a range of memory to the same byte    r1 - destination address    r2 - the byte    r3 - number of bytes
+.1
+3r
+.t
+c t}// MemClear sets a range of memory to zero   r1 - destination address   r2 - number of bytes

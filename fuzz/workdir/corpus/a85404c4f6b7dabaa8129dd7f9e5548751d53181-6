@@ -1,0 +1,2 @@
+var(a,b[]int;v[]int)
+func n(){a=a!=a;b=b!=v;b=a!=b!=v;if a!=b{}}

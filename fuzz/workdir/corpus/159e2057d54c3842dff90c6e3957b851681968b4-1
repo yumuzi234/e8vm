@@ -1,0 +1,1 @@
+struct A{};func n(){var a A;0:=a}

@@ -1,0 +1,2 @@
+struct A{b int}
+func n(){var a A;byte(7)=byte(7)}

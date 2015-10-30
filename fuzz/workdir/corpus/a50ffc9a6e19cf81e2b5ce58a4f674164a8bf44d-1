@@ -1,0 +1,4 @@
+func p(){p(2)}
+func c(func()){x(3)}
+func main(){c(1)(2)}
+func main(){t(o(0))}

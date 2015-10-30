@@ -1,0 +1,2 @@
+func c(x,i,p,n(uint)){x()}
+func n(){c()}

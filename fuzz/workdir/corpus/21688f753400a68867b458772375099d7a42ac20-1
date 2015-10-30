@@ -1,0 +1,2 @@
+struct A{func s(){this.a=a}
+func p(){this.t()}}

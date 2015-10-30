@@ -1,0 +1,40 @@
+struct;c r-t
+v d s
+t p-4
+p p-8
+w r p
+r p 4
+r p 8
+e r 0
+r r 0
+r p 2
+r r 0
+r r 4
+r r 0
+r r 4
+q r 0
+r r 1
+r p 2
+r r 0
+r r 0
+q r 2
+r r-d
+r r a
+r p 4
+r p 8
+p p 8
+c t t
+t p-4
+p p-6
+w r p
+r p 4
+r p 8
+r r 0
+q r 0
+r r d
+w r p
+r r 1
+r p 4
+r p 8
+p p 6
+w c s

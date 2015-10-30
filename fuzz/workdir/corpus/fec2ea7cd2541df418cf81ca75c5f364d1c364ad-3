@@ -1,0 +1,1 @@
+func r(s string){i,n:=(s);for f,i:=0;i;i{}}

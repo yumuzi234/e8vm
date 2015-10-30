@@ -1,0 +1,2 @@
+func r(s string){n:=len(s);for{continue}}
+func main(){}

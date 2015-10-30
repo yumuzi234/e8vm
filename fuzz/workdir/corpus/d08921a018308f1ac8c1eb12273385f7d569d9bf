@@ -1,0 +1,3 @@
+func p(i int){p(i+2)}
+func c(x func(i int)){x(3)}
+func main(){c(p)}

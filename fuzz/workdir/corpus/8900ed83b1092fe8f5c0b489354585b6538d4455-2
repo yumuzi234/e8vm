@@ -1,0 +1,2 @@
+func r(){len()}
+func n(){len()}

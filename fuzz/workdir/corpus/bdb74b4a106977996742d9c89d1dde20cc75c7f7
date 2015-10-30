@@ -1,0 +1,2 @@
+struct A{func p(){printInt(3)}};var a A
+func main(){a.p()}

@@ -1,0 +1,2 @@
+struct y{}
+func n(){y.x=3;y.a=x;y.x=3;y.a=3;y.a=4}

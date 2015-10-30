@@ -1,0 +1,2 @@
+func c(x func(i,i,p,n int)){x()}
+func n(){c()}

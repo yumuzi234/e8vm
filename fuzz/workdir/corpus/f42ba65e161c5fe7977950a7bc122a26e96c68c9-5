@@ -1,0 +1,1 @@
+func o()int{return(nil)==nil}

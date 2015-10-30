@@ -1,0 +1,4 @@
+func p(){}
+func c(func()){}
+func n(){}
+func c(func()){}

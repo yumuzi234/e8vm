@@ -1,0 +1,2 @@
+struct A{a int
+func p(){a();a();a();a();a=a;a=a;a()}}

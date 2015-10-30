@@ -1,0 +1,6 @@
+func p(){c(p)}
+func c(n(int)){{c(p)
+c(p)}}
+func n(){{c(p)
+c(p)}
+c(p)}

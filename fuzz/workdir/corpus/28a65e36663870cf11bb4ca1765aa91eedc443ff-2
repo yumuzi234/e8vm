@@ -1,0 +1,2 @@
+func r(){for i:=0;i;i{}}
+func n(){b:=8;a:=0}

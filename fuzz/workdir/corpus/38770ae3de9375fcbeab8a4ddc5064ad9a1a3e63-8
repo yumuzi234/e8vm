@@ -1,0 +1,2 @@
+struct a{a*byte}
+func n(){var x,y a;x.a=4;x.a=3;y.a=4;x.a=4;y.a=4;x.a=4;x.a=3;y.a=4;x.a=3}

@@ -1,0 +1,4 @@
+func p(int){p(2)}
+func c(x func(int)){x(3)}
+func n(func())func(){{p(2)}
+}

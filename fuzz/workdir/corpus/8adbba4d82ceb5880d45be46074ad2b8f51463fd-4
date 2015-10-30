@@ -1,0 +1,3 @@
+func t(n int)int{return+n
+return n
+return n}

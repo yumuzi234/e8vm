@@ -1,0 +1,2 @@
+struct a{b byte}
+func n(){var x,a,i,p,n a}

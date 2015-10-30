@@ -1,0 +1,4 @@
+struct A{n,i,g,a int
+func p(){}
+func q(int){}}
+func main(){}

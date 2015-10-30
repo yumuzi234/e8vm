@@ -1,0 +1,3 @@
+func fabo(n int)int{if n==0return 0
+if n==1return(2)}
+func main(){}

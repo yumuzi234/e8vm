@@ -1,0 +1,1 @@
+func c(x func(i int))(x func(i int),s(int)){}

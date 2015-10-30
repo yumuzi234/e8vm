@@ -1,0 +1,4 @@
+struct A{a int
+func p(){p()}
+func q(int){}}
+func main(){var a A;a.p();a.p();a.q(8)}

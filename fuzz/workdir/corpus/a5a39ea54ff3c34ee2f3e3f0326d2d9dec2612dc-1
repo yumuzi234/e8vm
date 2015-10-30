@@ -1,0 +1,2 @@
+func p(i t){}
+func c(func(i t)){}

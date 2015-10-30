@@ -1,0 +1,2 @@
+struct a{}
+func n(){var x,y**a;x.a=3;y.a=4;x.a=3}

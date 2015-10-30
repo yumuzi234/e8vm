@@ -1,0 +1,1 @@
+func t()int{return-8,-8,-8}

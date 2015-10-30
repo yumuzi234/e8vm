@@ -1,0 +1,4 @@
+struct a{a int;c byte}
+func n(){var as[4]a
+int((&as[1])-(as[0]))
+int((as[0])-(as[1]&as[0]))}

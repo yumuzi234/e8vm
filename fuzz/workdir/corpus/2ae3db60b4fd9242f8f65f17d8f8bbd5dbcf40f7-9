@@ -1,0 +1,2 @@
+struct a{}
+func n(){a.p();a.p();a.p();a.p();a.p();a.p();a.p();a.p();a.p()}

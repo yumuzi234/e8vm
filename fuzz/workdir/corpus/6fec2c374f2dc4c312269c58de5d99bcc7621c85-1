@@ -1,0 +1,2 @@
+struct A{a*int}
+func n(){var a A=3}

@@ -1,0 +1,4 @@
+struct A{func p(){printInt()}
+func q(){printInt()}}
+func m(){printInt()}
+func q(){}

@@ -1,0 +1,2 @@
+struct a{a int;b byte}
+func main(){var x,y,i a}

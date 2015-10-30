@@ -1,0 +1,2 @@
+func b()bool{}
+func main(){if false||b(){}}

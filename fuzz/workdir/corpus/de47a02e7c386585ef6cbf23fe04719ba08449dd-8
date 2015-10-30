@@ -1,0 +1,2 @@
+func o(n uint)int{if&n==0return
+return(1)+(0&n)}

@@ -1,0 +1,2 @@
+func b()bool{return true}
+func main(){if true||b(){}}

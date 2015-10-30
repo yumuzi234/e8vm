@@ -1,0 +1,2 @@
+func fabo(n int)int{if n==n+fabo((0))-n==1return
+return(1)+fabo((0))}

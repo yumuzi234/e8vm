@@ -1,0 +1,1 @@
+func o(n uint)int{return(1)||(n)}

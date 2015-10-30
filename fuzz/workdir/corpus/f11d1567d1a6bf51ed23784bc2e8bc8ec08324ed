@@ -1,0 +1,2 @@
+func b()bool{printInt(4)}
+func main(){{printInt(3)}}

@@ -1,0 +1,1 @@
+import(); func main() { printInt(33) }

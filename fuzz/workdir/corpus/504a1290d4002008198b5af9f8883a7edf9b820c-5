@@ -1,0 +1,1 @@
+func o(n int){if n&&0continue n}

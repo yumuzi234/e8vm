@@ -1,0 +1,3 @@
+struct a{a byte}
+func n(){var as[]a
+int((&as[1])<(&as))}

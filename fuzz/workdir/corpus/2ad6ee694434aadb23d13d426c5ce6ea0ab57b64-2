@@ -1,0 +1,5 @@
+struct A{func p(){}
+func q(){}}
+func m(){}
+func n(){}
+func q(){}

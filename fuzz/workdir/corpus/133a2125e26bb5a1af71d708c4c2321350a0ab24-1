@@ -1,0 +1,2 @@
+func p(uint){}
+func c(func(int)){c(p)}

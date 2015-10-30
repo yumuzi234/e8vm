@@ -1,0 +1,1 @@
+func c(x func()){x-=(3)}

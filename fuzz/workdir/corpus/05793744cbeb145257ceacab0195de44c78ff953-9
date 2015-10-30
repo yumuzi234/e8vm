@@ -1,0 +1,3 @@
+func p(){p(2)}
+func c(n(int)){c()}
+func n(){c()}

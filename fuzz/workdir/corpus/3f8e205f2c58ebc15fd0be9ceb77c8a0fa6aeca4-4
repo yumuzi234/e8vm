@@ -1,0 +1,1 @@
+func fabo(int)int{return fabo,fabo}

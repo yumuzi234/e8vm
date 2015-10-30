@@ -1,0 +1,2 @@
+func printStr(s string){}
+func main(){b:="";var a[]int8=(b)}

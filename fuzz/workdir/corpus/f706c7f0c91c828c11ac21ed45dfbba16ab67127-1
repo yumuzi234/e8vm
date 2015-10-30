@@ -1,0 +1,4 @@
+struct a{a byte}
+func main(){var as[]a
+int(uint(&as[1])-uint(&as[0]))
+int(uint(&as[0].a)-uint(&as[0].a))}

@@ -1,0 +1,1 @@
+func c(func(a t))(x func(i t),n f){}

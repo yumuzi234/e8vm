@@ -1,0 +1,2 @@
+func fabo(n int)int{return fabo(1)+fabo(2)}
+func main(){printInt(fabo(0))}

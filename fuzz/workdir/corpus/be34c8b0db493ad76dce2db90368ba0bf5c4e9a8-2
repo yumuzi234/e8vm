@@ -1,0 +1,2 @@
+var(a[]int;s[]int)
+func main(){a=s[main()]}
