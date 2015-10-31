@@ -53,17 +53,16 @@ If you are just interested with the public interface, but does not
 care about the internal implementation, GoWalker can provide the docs:
 [here](https://gowalker.org/e8vm.io/e8vm/).
 
-## For Contributers
+## About the Makefile
 
-To use the `makefile`, you also need to install some tools:
+The `makefile` have several shortcuts for building tasks. To use the
+`makefile`, you also need to install some tools:
 
 ```
 go get e8vm.io/tools
 go get github.com/golang/lint/golint
 go get github.com/jstemmer/gotags
 ```
-
-You are always welcom to contribute.
 
 ## TODOs
 
