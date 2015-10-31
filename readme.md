@@ -1,4 +1,4 @@
-[![BuildStatus](https://travis-ci.org/h8liu/e8vm.png?branch=master)](https://travis-ci.org/h8liu/e8vm)
+[![BuildStatus](https://travis-ci.org/e8vm/e8vm.png?branch=master)](https://travis-ci.org/h8liu/e8vm)
 
 ```
 go get e8vm.io/e8vm/...
