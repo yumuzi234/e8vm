@@ -4,6 +4,8 @@
 go get -u e8vm.io/e8vm/...
 ```
 
+# E8VM
+
 E8VM stands for Emul8ed Virtual Machine. It is a self-contained system
 that has its own instruction set -- `arch8`, its assembly language and
 assembler -- `asm8`, its own system language -- `g8`, and its own
@@ -20,7 +22,7 @@ For Go language documentation on the package APIs, I recommend
 [GoWalker](https://gowalker.org/e8vm.io/e8vm). I find it slightly
 better than [godoc.org](https://godoc.org/e8vm.io/e8vm).
 
-## Use Make
+## To Use `make`
 
 The project comes with a `makefile`, which formats the code files,
 check lints, check circular dependencies and build tags. Running the
