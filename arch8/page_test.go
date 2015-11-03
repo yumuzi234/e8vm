@@ -13,7 +13,6 @@ func TestPage(t *testing.T) {
 
 	e(PageSize < 4, "page size too small")
 	p := newPage()
-	e(len(p.Bytes) != PageSize, "page size incorrect")
 	e(((PageSize-1)&PageSize) != 0, "page size not exponential of 2")
 
 	for i := uint32(0); i < PageSize; i++ {
