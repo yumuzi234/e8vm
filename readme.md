@@ -16,8 +16,9 @@ dependencies, and as a result, the project architecture can be
 automatically [visualized](http://8k.lonnie.io) from static code
 analysis.
 
-For Go documentation on the interface, I recommend
-[GoWalker](https://gowalker.org/e8vm.io/e8vm).
+For Go language documentation on the package APIs, I recommend
+[GoWalker](https://gowalker.org/e8vm.io/e8vm). I find it much better
+than [godoc.org](https://godoc.org/e8vm.io/e8vm).
 
 ## Use Make
 
