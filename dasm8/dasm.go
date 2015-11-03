@@ -3,7 +3,7 @@ package dasm8
 import (
 	"fmt"
 
-	"encoding/binary"
+	"e8vm.io/e8vm/arch8"
 )
 
 // Dasm disassembles a byte block.
@@ -13,7 +13,7 @@ func Dasm(bs []byte, addr uint32) []*Line {
 	base := addr
 
 	add := func(b []byte) {
-		inst := binary.LittleEndian.Uint32(b)
+		inst := arch8.Endian.Uint32(b)
 		ret = append(ret, NewLine(addr, inst))
 		addr += 4
 	}
