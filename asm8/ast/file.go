@@ -1,3 +1,5 @@
+// Package ast declares the types for the abstract syntax tree in E8VM's
+// assembly language.
 package ast
 
 import (

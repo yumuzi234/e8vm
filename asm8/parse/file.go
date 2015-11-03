@@ -1,3 +1,4 @@
+// Package parse parses an assembly program into an AST.
 package parse
 
 import (

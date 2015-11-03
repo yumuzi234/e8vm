@@ -1,3 +1,4 @@
+// Package asm8 prvoides an assembly language compiler for E8VM.
 package asm8
 
 import (
