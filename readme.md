@@ -17,8 +17,8 @@ automatically [visualized](http://8k.lonnie.io) from static code
 analysis.
 
 For Go language documentation on the package APIs, I recommend
-[GoWalker](https://gowalker.org/e8vm.io/e8vm). I find it much better
-than [godoc.org](https://godoc.org/e8vm.io/e8vm).
+[GoWalker](https://gowalker.org/e8vm.io/e8vm). I find it slightly
+better than [godoc.org](https://godoc.org/e8vm.io/e8vm).
 
 ## Use Make
 
