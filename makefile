@@ -28,7 +28,7 @@ lc:
 	wc -l `find . -name "*.go"`
 
 doc:
-	godoc -http=:8000
+	godoc -http=localhost:8000
 
 lint:
 	golint ./...
