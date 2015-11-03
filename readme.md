@@ -36,5 +36,5 @@ go get -u github.com/jstemmer/gotags
 
 ## Copyright and License
 
-The project developers have the copyright; my empolyer (Google) does
+The project developers own the copyright; my empolyer (Google) does
 not own the copyright. Apache is the License.

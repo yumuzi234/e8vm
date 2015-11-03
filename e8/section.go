@@ -62,16 +62,16 @@ func Open(path string) ([]*Section, error) {
 
 // Write writes the sections into a writer.
 func Write(w io.Writer, sections []*Section) error {
-	offset := sectionLen * (len(sections) + 1)
+	offset := int64(sectionLen * (len(sections) + 1))
 	if offset > math.MaxUint32 {
 		return errors.New("too many headers")
 	}
 
 	for _, s := range sections {
-		if len(s.Bytes) > math.MaxUint32 {
+		if int64(len(s.Bytes)) > math.MaxUint32 {
 			return errors.New("too many bytes in a section")
 		}
-		if offset > math.MaxUint32-len(s.Bytes) {
+		if offset > math.MaxUint32-int64(len(s.Bytes)) {
 			return errors.New("too many bytes in total")
 		}
 
@@ -88,7 +88,7 @@ func Write(w io.Writer, sections []*Section) error {
 			return err
 		}
 
-		offset += len(s.Bytes)
+		offset += int64(len(s.Bytes))
 	}
 
 	// write an empty header for terminating the headers.
