@@ -1,3 +1,4 @@
+// Package arch8 emulates the E8VM's instruction set.
 package arch8
 
 import (
