@@ -128,20 +128,20 @@ func (in *interrupt) Poll() (bool, byte) {
 
 	// search bits based on priorities.
 	// smaller is higher
-	for i := uint32(0); i < Ninterrupt/8; i++ {
-		pending := in.readByte(intPending + i)
-		mask := in.readByte(intMask + i)
+	for i := uint32(0); i < Ninterrupt/32; i++ {
+		pending := in.readWord(intPending + i*4)
+		mask := in.readWord(intMask + i*4)
 		pending &= mask
 		if pending == 0 {
 			continue
 		}
 
-		for b := byte(0); b < 8; b++ {
+		for b := byte(0); b < 32; b++ {
 			if pending&(0x1<<b) == 0 {
 				continue
 			}
 
-			return true, byte(i*8) + b
+			return true, byte(i*32) + b
 		}
 	}
 
