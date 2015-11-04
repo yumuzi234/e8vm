@@ -1,19 +1,25 @@
-## About constants
+## Read-only disk
 
-Currently the consts are only const integers.
-true and false should be consts, but are not.
-string is not const, which is okay in our current settings.
+```
+struct {
+	cmd uint8 // 1 for read, 0 for idle
+	err uint8 // 0 for no error, 1 for file not found, 2 for offset overflow
+	namelen uint8 // name length, max 100 bytes
+	_ uint8
+	
+	offset uint32 // read offset
+	addr uint32 // read into physical addr
+	size uint32 // read number of bytes
+	nread uint32 // number of bytes read
 
-we need a const evaulation system
-consts now have:
-- untyped numbers
-- booleans
-- typed numbers
-- possibly floats in the future
+	filename [100]uint8
 
-current all consts are just untyped numbers, and whenever a compare occurs,
-they are changed into bool vars.
-this is not right.
+	_ uint32
+	_ uint32
+}
+```
 
-here is the question, where should the value be saved in consts?
-as a const ref? or as a type?
+## Constants
+
+- true and false should be consts.
+- there should be also typed consts.
