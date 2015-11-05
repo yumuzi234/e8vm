@@ -2,8 +2,7 @@ package arch8
 
 // Interrupt defines the interrupt page
 type interrupt struct {
-	p    *page  // the dma page for interrupt handler
-	base uint32 // dma offset
+	*pageOffset // the dma page for interrupt handler
 }
 
 // Number of interrupts
@@ -23,42 +22,18 @@ const (
 // NewInterrupt creates a interrupt on the given DMA page.
 func newInterrupt(p *page, core byte) *interrupt {
 	ret := new(interrupt)
-	ret.p = p
-	ret.base = uint32(core) * intCtrlSize
-	if ret.base+intCtrlSize > PageSize {
+	base := uint32(core) * intCtrlSize
+	if base+intCtrlSize > PageSize {
 		panic("bug")
 	}
+	ret.pageOffset = &pageOffset{p, base}
 
 	return ret
 }
 
-func (in *interrupt) readWord(off uint32) uint32 {
-	return in.p.ReadWord(in.base + off)
-}
-
-func (in *interrupt) readByte(off uint32) byte {
-	return in.p.ReadByte(in.base + off)
-}
-
-func (in *interrupt) writeWord(off uint32, v uint32) {
-	in.p.WriteWord(in.base+off, v)
-}
-
-func (in *interrupt) writeByte(off uint32, v byte) {
-	in.p.WriteByte(in.base+off, v)
-}
-
-func (in *interrupt) kernelSP() uint32 {
-	return in.readWord(intKernelSP)
-}
-
-func (in *interrupt) handlerPC() uint32 {
-	return in.readWord(intHandlerPC)
-}
-
-func (in *interrupt) syscallPC() uint32 {
-	return in.readWord(intSyscallPC)
-}
+func (in *interrupt) kernelSP() uint32  { return in.readWord(intKernelSP) }
+func (in *interrupt) handlerPC() uint32 { return in.readWord(intHandlerPC) }
+func (in *interrupt) syscallPC() uint32 { return in.readWord(intSyscallPC) }
 
 // Issue issues an interrupt. If the interrupt is already issued,
 // this has no effect.

@@ -12,7 +12,7 @@ import (
 // one pipe for input, one pipe for output.
 type serial struct {
 	intBus intBus
-	p      *page
+	p      *pageOffset
 
 	Core   byte
 	IntIn  byte
@@ -24,19 +24,18 @@ type serial struct {
 var _ device = new(serial) // Serial is a device
 
 const (
-	serialBase     = 128
-	serialInHead   = serialBase + 0  // updated by hardware
-	serialInTail   = serialBase + 4  // updated by cpu
-	serialInWait   = serialBase + 8  // cycles to wait to raise an interrupt
-	serialInThresh = serialBase + 12 // threashold to raise an input interrupt
+	serialInHead   = iota * 4 // updated by hardware
+	serialInTail              // updated by cpu
+	serialInWait              // cycles to wait to raise an interrupt
+	serialInThresh            // threashold to raise an input interrupt
 
-	serialOutHead   = serialBase + 16 // updated by cpu
-	serialOutTail   = serialBase + 20 // updated by hardware
-	serialOutWait   = serialBase + 24 // cycles to wait to raise an interrupt
-	serialOutThresh = serialBase + 28 // threashold for an output interrupt
+	serialOutHead   // updated by cpu
+	serialOutTail   // updated by hardware
+	serialOutWait   // cycles to wait to raise an interrupt
+	serialOutThresh // threashold for an output interrupt
 
-	serialInBuf  = serialBase + 64
-	serialOutBuf = serialBase + 96
+	serialInBuf  = 64
+	serialOutBuf = 96
 
 	serialCap = 30 // 30 bytes maximum in each pipe
 )
@@ -45,7 +44,8 @@ const (
 func newSerial(p *page, i intBus) *serial {
 	ret := new(serial)
 	ret.intBus = i
-	ret.p = p
+	const serialBase = 128
+	ret.p = &pageOffset{p, serialBase}
 
 	// default interrupts
 	ret.Core = 0 // to core 0 only
@@ -63,8 +63,8 @@ func (s *serial) interrupt(code byte) {
 
 // WriteByte appends a byte into the input ring buffer.
 func (s *serial) WriteByte(b byte) bool {
-	head := s.p.ReadWord(serialInHead)
-	tail := s.p.ReadWord(serialInTail)
+	head := s.p.readWord(serialInHead)
+	tail := s.p.readWord(serialInTail)
 	n := head - tail
 	if n >= serialCap {
 		return false
@@ -86,8 +86,8 @@ func (s *serial) WriteByte(b byte) bool {
 
 // OutLen returns the current buffer length of the output ring buffer.
 func (s *serial) OutLen() uint32 {
-	head := s.p.ReadWord(serialOutHead)
-	tail := s.p.ReadWord(serialOutTail)
+	head := s.p.readWord(serialOutHead)
+	tail := s.p.readWord(serialOutTail)
 	ret := head - tail
 	if ret > serialCap {
 		log.Printf("error output buffer length")
@@ -100,8 +100,8 @@ func (s *serial) OutLen() uint32 {
 
 // InLen returns the current buffer length of the input ring buffer.
 func (s *serial) InLen() uint32 {
-	head := s.p.ReadWord(serialInHead)
-	tail := s.p.ReadWord(serialInTail)
+	head := s.p.readWord(serialInHead)
+	tail := s.p.readWord(serialInTail)
 	ret := head - tail
 	if ret > serialCap {
 		log.Printf("error input buffer length")
@@ -114,19 +114,19 @@ func (s *serial) InLen() uint32 {
 
 // ReadByte reads a byte out of serial output ring buffer.
 func (s *serial) ReadByte() (byte, bool) {
-	head := s.p.ReadWord(serialOutHead)
-	tail := s.p.ReadWord(serialOutTail)
+	head := s.p.readWord(serialOutHead)
+	tail := s.p.readWord(serialOutTail)
 	n := head - tail
 	if n == 0 || n > serialCap {
 		return 0, false
 	}
 
-	b := s.p.ReadByte(serialOutBuf + tail%32)
+	b := s.p.readByte(serialOutBuf + tail%32)
 	tail++
-	s.p.WriteWord(serialOutTail, tail)
+	s.p.writeWord(serialOutTail, tail)
 
 	n--
-	thresh := s.p.ReadWord(serialOutThresh)
+	thresh := s.p.readWord(serialOutThresh)
 	if n <= thresh {
 		s.interrupt(s.IntOut)
 	}
@@ -135,8 +135,8 @@ func (s *serial) ReadByte() (byte, bool) {
 }
 
 func (s *serial) countDown() {
-	inWait := s.p.ReadWord(serialInWait)
-	outWait := s.p.ReadWord(serialOutWait)
+	inWait := s.p.readWord(serialInWait)
+	outWait := s.p.readWord(serialOutWait)
 
 	if inWait > 0 {
 		inWait--
@@ -157,8 +157,8 @@ func (s *serial) countDown() {
 		}
 	}
 
-	s.p.WriteWord(serialInWait, inWait)
-	s.p.WriteWord(serialOutWait, outWait)
+	s.p.writeWord(serialInWait, inWait)
+	s.p.writeWord(serialOutWait, outWait)
 }
 
 func (s *serial) flush() {
