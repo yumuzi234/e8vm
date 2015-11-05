@@ -21,11 +21,14 @@ func TestPhyMemory(t *testing.T) {
 	m := newPhyMemory(size)
 	eo(m.Size() != size, "size mismatch")
 
-	w, e := m.ReadWord(4)
+	_, e := m.ReadWord(0)
+	eo(e == nil, "read on nullptr should return memory out of range")
+
+	w, e := m.ReadWord(PageSize + 4)
 	eo(e != nil, "get an error for word reading")
 	eo(w != 0, "page is not zeroed out")
 
-	_, e = m.ReadWord(13)
+	_, e = m.ReadWord(PageSize + 13)
 	eo(e != errMisalign, "should have misalign error")
 	_, e = m.ReadWord(size - 1)
 	eo(e != errMisalign, "should have misalign error")
