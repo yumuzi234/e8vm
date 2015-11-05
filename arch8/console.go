@@ -10,7 +10,7 @@ import (
 // byte at a time
 type console struct {
 	intBus intBus
-	p      *page
+	p      *pageOffset
 
 	Core   byte
 	IntIn  byte
@@ -23,7 +23,8 @@ type console struct {
 func newConsole(p *page, i intBus) *console {
 	ret := new(console)
 	ret.intBus = i
-	ret.p = p
+	const consoleBase = 0
+	ret.p = &pageOffset{p, consoleBase}
 
 	ret.Core = 0
 	ret.IntIn = 8
@@ -33,16 +34,12 @@ func newConsole(p *page, i intBus) *console {
 	return ret
 }
 
-var _ device = new(console)
-
 const (
-	consoleBase = 0
+	consoleOut      = 0
+	consoleOutValid = 1
 
-	consoleOut      = consoleBase + 0
-	consoleOutValid = consoleBase + 1
-
-	consoleIn      = consoleBase + 4
-	consoleInValid = consoleBase + 5
+	consoleIn      = 4
+	consoleInValid = 5
 )
 
 func (c *console) interrupt(code byte) {
@@ -51,14 +48,14 @@ func (c *console) interrupt(code byte) {
 
 // Tick flushes the buffered byte to the console.
 func (c *console) Tick() {
-	outValid := c.p.ReadByte(consoleOutValid)
+	outValid := c.p.readByte(consoleOutValid)
 	if outValid != 0 {
-		out := c.p.ReadByte(consoleOut)
+		out := c.p.readByte(consoleOut)
 		_, e := c.Output.Write([]byte{out})
 		if e != nil {
 			log.Print(e)
 		}
-		c.p.WriteByte(consoleOutValid, 0)
+		c.p.writeByte(consoleOutValid, 0)
 		c.interrupt(c.IntOut) // out available
 	}
 
