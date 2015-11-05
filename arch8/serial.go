@@ -21,8 +21,6 @@ type serial struct {
 	Output io.Writer
 }
 
-var _ device = new(serial) // Serial is a device
-
 const (
 	serialInHead   = iota * 4 // updated by hardware
 	serialInTail              // updated by cpu
