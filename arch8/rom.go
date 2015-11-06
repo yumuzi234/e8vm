@@ -28,20 +28,23 @@ const (
 )
 
 type rom struct {
-	intBus    intBus
-	p         *pageOffset
-	mem       *phyMemory
+	intBus intBus
+	p      *pageOffset
+	mem    *phyMemory
+	root   string
+
 	state     byte
 	countDown int
 
 	Core byte
 }
 
-func newRom(p *page, mem *phyMemory, i intBus) *rom {
+func newRom(p *page, mem *phyMemory, i intBus, root string) *rom {
 	return &rom{
 		intBus: i,
 		p:      &pageOffset{p, 0x100},
 		mem:    mem,
+		root:   root,
 	}
 }
 

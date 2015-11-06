@@ -14,6 +14,7 @@ type Machine struct {
 	cores   *multiCore
 	serial  *serial
 	console *console
+	rom     *rom
 
 	devices []device
 }
@@ -49,6 +50,13 @@ func NewMachine(memSize uint32, ncore int) *Machine {
 	ret.SetSP(DefaultSPBase, DefaultSPStride)
 
 	return ret
+}
+
+// MountROM mounts the root of the read-only disk.
+func (m *Machine) MountROM(root string) {
+	p := m.phyMem.Page(pageBasicIO)
+	m.rom = newRom(p, m.phyMem, m.cores, root)
+	m.addDevice(m.rom)
 }
 
 // WriteByte writes the byte at a particular physical address.
