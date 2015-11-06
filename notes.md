@@ -2,7 +2,7 @@
 
 ```
 struct {
-	cmd uint8 // 1 for read, 0 for idle
+	cmd uint8 // 0 is idle, 1 is waiting for read, 2 is read complete
 	err uint8 // 0 for no error, 1 for file not found, 2 for offset overflow
 	namelen uint8 // name length, max 100 bytes
 	_ uint8
