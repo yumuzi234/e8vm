@@ -33,8 +33,11 @@ type rom struct {
 	mem    *phyMemory
 	root   string
 
-	state     byte
+	state byte
+
 	countDown int
+	bs        []byte // bytes read
+	err       byte   // read error code
 
 	Core byte
 }
