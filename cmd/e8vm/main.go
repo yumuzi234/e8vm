@@ -21,6 +21,7 @@ var (
 	memSize     = flag.Int("m", 0, "memory size; 0 for full 4GB")
 	printStatus = flag.Bool("s", false, "print status after execution")
 	bootArg     = flag.Uint("arg", 0, "boot argument, a uint32 number")
+	romRoot     = flag.String("rom", "", "rom root path")
 )
 
 func run(bs []byte) (int, error) {
@@ -35,6 +36,10 @@ func run(bs []byte) (int, error) {
 	}
 	if err := m.WriteWord(arch8.AddrBootArg, uint32(*bootArg)); err != nil {
 		return 0, err
+	}
+
+	if *romRoot != "" {
+		m.MountROM(*romRoot)
 	}
 
 	ret, exp := m.Run(*ncycle)
