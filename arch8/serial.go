@@ -47,8 +47,8 @@ func newSerial(p *page, i intBus) *serial {
 
 	// default interrupts
 	ret.Core = 0 // to core 0 only
-	ret.IntIn = 8
-	ret.IntOut = 9
+	ret.IntIn = IntSerial
+	ret.IntOut = IntSerial
 
 	ret.Output = os.Stdout
 

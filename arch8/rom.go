@@ -36,7 +36,7 @@ const (
 	romErrNotFound
 	romErrOpen
 	romErrRead
-	romErrMem
+	romErrMemory
 )
 
 type rom struct {
@@ -52,7 +52,8 @@ type rom struct {
 	bs        []byte // bytes read
 	err       byte
 
-	Core byte
+	Core    byte
+	IntDone byte
 }
 
 func newRom(p *page, mem *phyMemory, i intBus, root string) *rom {
@@ -61,6 +62,8 @@ func newRom(p *page, mem *phyMemory, i intBus, root string) *rom {
 		p:      &pageOffset{p, 0x100},
 		mem:    mem,
 		root:   root,
+
+		IntDone: IntRom,
 	}
 }
 
@@ -135,7 +138,7 @@ func (r *rom) Tick() {
 				for i, b := range r.bs {
 					err := r.mem.WriteByte(r.addr+uint32(i), b)
 					if err != nil {
-						r.err = romErrMem
+						r.err = romErrMemory
 						break
 					}
 				}
@@ -143,6 +146,7 @@ func (r *rom) Tick() {
 
 			r.p.writeByte(romErr, r.err)
 			r.state = romStateIdle
+			r.intBus.Interrupt(r.Core, r.IntDone)
 		}
 	}
 

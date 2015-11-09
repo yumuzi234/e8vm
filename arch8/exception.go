@@ -33,6 +33,10 @@ const (
 	ErrPageFault    = 6
 	ErrPageReadonly = 7
 	ErrPanic        = 8
+
+	IntSerial = 16
+	IntRom    = 17
+	IntSwap   = 18
 )
 
 var (
