@@ -3,6 +3,7 @@ package arch8
 import (
 	"bytes"
 	"io"
+	"math/rand"
 
 	"e8vm.io/e8vm/e8"
 )
@@ -14,6 +15,7 @@ type Machine struct {
 	cores   *multiCore
 	serial  *serial
 	console *console
+	ticker  *ticker
 	rom     *rom
 
 	devices []device
@@ -38,8 +40,9 @@ func NewMachine(memSize uint32, ncore int) *Machine {
 
 	ret.serial = newSerial(p, ret.cores)
 	ret.console = newConsole(p, ret.cores)
+	ret.ticker = newTicker(ret.cores)
 
-	ret.addDevice(newTicker(ret.cores))
+	ret.addDevice(ret.ticker)
 	ret.addDevice(ret.serial)
 	ret.addDevice(ret.console)
 
@@ -142,6 +145,11 @@ func (m *Machine) WriteBytes(r io.Reader, offset uint32) error {
 	}
 
 	return nil
+}
+
+// RandSeed sets the random seed of the ticker.
+func (m *Machine) RandSeed(s int64) {
+	m.ticker.Rand = rand.New(rand.NewSource(s))
 }
 
 func (m *Machine) loadSections(secs []*e8.Section) error {

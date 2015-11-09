@@ -22,6 +22,7 @@ var (
 	printStatus = flag.Bool("s", false, "print status after execution")
 	bootArg     = flag.Uint("arg", 0, "boot argument, a uint32 number")
 	romRoot     = flag.String("rom", "", "rom root path")
+	randSeed    = flag.Int64("seed", 0, "random seed, 0 for using the time")
 )
 
 func run(bs []byte) (int, error) {
@@ -40,6 +41,9 @@ func run(bs []byte) (int, error) {
 
 	if *romRoot != "" {
 		m.MountROM(*romRoot)
+	}
+	if *randSeed != 0 {
+		m.RandSeed(*randSeed)
 	}
 
 	ret, exp := m.Run(*ncycle)
