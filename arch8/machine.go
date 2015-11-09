@@ -55,7 +55,7 @@ func NewMachine(memSize uint32, ncore int) *Machine {
 // MountROM mounts the root of the read-only disk.
 func (m *Machine) MountROM(root string) {
 	p := m.phyMem.Page(pageBasicIO)
-	m.rom = newRom(p, m.phyMem, m.cores, root)
+	m.rom = newROM(p, m.phyMem, m.cores, root)
 	m.addDevice(m.rom)
 }
 

@@ -35,7 +35,7 @@ const (
 	ErrPanic        = 8
 
 	IntSerial = 16
-	IntRom    = 17
+	IntROM    = 17
 	IntSwap   = 18
 )
 

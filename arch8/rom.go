@@ -56,14 +56,14 @@ type rom struct {
 	IntDone byte
 }
 
-func newRom(p *page, mem *phyMemory, i intBus, root string) *rom {
+func newROM(p *page, mem *phyMemory, i intBus, root string) *rom {
 	return &rom{
 		intBus: i,
 		p:      &pageOffset{p, 0x100},
 		mem:    mem,
 		root:   root,
 
-		IntDone: IntRom,
+		IntDone: IntROM,
 	}
 }
 
