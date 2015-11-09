@@ -120,13 +120,16 @@ func (r *rom) Tick() {
 		cmd := r.p.readByte(romCmd)
 		if cmd != 0 {
 			r.state = romStateBusy
-			r.countDown = 100
+
+			// TODO: count down base on read size
+			r.countDown = 2000
 
 			errCode, err := r.readFile()
 			if err != nil {
 				log.Println(err)
 			}
 			r.err = errCode
+			r.p.writeByte(romCmd, romCmdIdle)
 		}
 	case romStateBusy:
 		if r.countDown > 0 {
@@ -146,7 +149,7 @@ func (r *rom) Tick() {
 
 			r.p.writeByte(romErr, r.err)
 			r.state = romStateIdle
-			r.intBus.Interrupt(r.Core, r.IntDone)
+			r.interrupt(r.IntDone)
 		}
 	}
 
