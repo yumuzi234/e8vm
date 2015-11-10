@@ -40,6 +40,9 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 		return ref
 	}
 
+	// TODO: should export these as generic function pointer symbols, and
+	// convert them into G functions in g files, rahter than inside here in
+	// the compiler.
 	o("PrintInt32", "printInt", types.NewVoidFunc(types.Int))
 	o("PrintUint32", "printUint", types.NewVoidFunc(types.Uint))
 	o("PrintChar", "printChar", types.NewVoidFunc(types.Int8))
@@ -47,7 +50,12 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 	b.panicFunc = o("Panic", "panic", types.VoidFunc)
 	o("Halt", "halt", types.VoidFunc)
 
-	// TODO: this is just a hack for context switch
+	o("Syscall", "syscall", types.NewFuncUnamed(
+		[]types.T{types.Uint, types.Uint, types.Uint},
+		[]types.T{types.Uint, types.Uint, types.Uint},
+	))
+
+	// TODO: these are just hacks for context switch
 	oe := func(name string, as string, t *types.Func) {
 		sym, index := builtin.SymbolByName(name)
 		if sym == nil {
@@ -63,6 +71,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 		}
 	}
 	oe("Ienter", "_ienter", types.NewVoidFunc())
+	oe("SysEnter", "_sysenter", types.NewVoidFunc())
 
 	ov := func(name string, as string, t types.T) {
 		sym, index := builtin.SymbolByName(name)
@@ -78,6 +87,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 		}
 	}
 	ov("Ientry", "_ientry", types.Uint)
+	ov("SysEntry", "_sysentry", types.Uint)
 
 	bi := func(name string) {
 		obj := &objFunc{name, newRef(types.NewBuiltInFunc(name), nil),
