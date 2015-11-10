@@ -9,7 +9,8 @@ go get -u e8vm.io/e8vm/...
 Emul8ed Virtual Machine (E8VM) is a self-contained system that has its
 own instruction set -- `arch8`, its own assembly language and
 assembler -- `asm8`, its own system language -- `g8`, and its own
-project building system -- `build8`.
+project building system -- `build8`. Using `g8` and `build8`, we can
+build a small operating system [`os8`](https://github.com/e8vm/os8).
 
 The project is written entirely in Go language. Plus, each file in the
 project has no more than 300 lines, with each line no more than 80
