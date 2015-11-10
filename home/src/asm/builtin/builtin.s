@@ -177,3 +177,8 @@ func Vtable {
     vtable r1
     mov pc ret
 }
+
+func Syscall {
+    syscall
+    mov pc ret
+}
