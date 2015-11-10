@@ -148,9 +148,18 @@ func (c *cpu) Ienter(code byte, arg uint32) *Excep {
 
 // Syscall jumps to the system call handler and switches to ring 0.
 func (c *cpu) Syscall() *Excep {
+	userSP := c.regs[SP]
+	syscallSP := c.interrupt.syscallSP()
+
+	if e := c.virtMem.WriteWord(syscallSP-4, 0, userSP); e != nil {
+		return e
+	}
+
 	c.regs[RET] = c.regs[PC]
 	c.regs[PC] = c.interrupt.syscallPC()
+	c.regs[SP] = syscallSP
 	c.ring = 0
+
 	return nil
 }
 

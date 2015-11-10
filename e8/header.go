@@ -7,8 +7,9 @@ import (
 
 // Header is a section header in the executable file.
 type Header struct {
-	Type uint16
-	Flag uint16
+	Type uint8
+	Flag uint8
+	_    [2]uint8
 	Addr uint32
 	Size uint32
 
@@ -31,8 +32,8 @@ func ReadHeader(r io.Reader) (*Header, error) {
 func (h *Header) WriteTo(w io.Writer) (int64, error) {
 	buf := make([]byte, sectionLen)
 	enc := binary.LittleEndian
-	enc.PutUint16(buf[:2], h.Type)
-	enc.PutUint16(buf[2:4], h.Flag)
+	buf[0] = h.Type
+	buf[1] = h.Flag
 	enc.PutUint32(buf[4:8], h.Addr)
 	enc.PutUint32(buf[8:12], h.Size)
 	enc.PutUint32(buf[12:16], h.offset)
@@ -50,8 +51,8 @@ func (h *Header) ReadFrom(r io.Reader) (int64, error) {
 	}
 
 	enc := binary.LittleEndian
-	h.Type = enc.Uint16(buf[:2])
-	h.Flag = enc.Uint16(buf[2:4])
+	h.Type = buf[0]
+	h.Flag = buf[1]
 	h.Addr = enc.Uint32(buf[4:8])
 	h.Size = enc.Uint32(buf[8:12])
 	h.offset = enc.Uint32(buf[12:16])

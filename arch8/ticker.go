@@ -21,7 +21,7 @@ func newTicker(bus intBus) *ticker {
 	ret := new(ticker)
 	ret.intBus = bus
 
-	ret.Interval = 100
+	ret.Interval = 2000
 	ret.Noise = 10
 	ret.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
 	ret.Code = ErrTimer // time interrupt code

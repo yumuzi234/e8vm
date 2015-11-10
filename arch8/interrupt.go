@@ -12,7 +12,8 @@ const (
 	intFlags     = 0  // flags, bit 0 is master enabling switch
 	intKernelSP  = 4  // position of the handler stack base pointer
 	intHandlerPC = 8  // position of the handler start PC
-	intSyscallPC = 12 // position of the syscall start PC
+	intSyscallSP = 12 // position of the syscall stack base pointer
+	intSyscallPC = 16 // position of the syscall start PC
 	intMask      = 32 // interrupt enable mask bits offset (32 bytes)
 	intPending   = 64 // interrupt pending bits offset (32 bytes)
 
@@ -33,6 +34,7 @@ func newInterrupt(p *page, core byte) *interrupt {
 
 func (in *interrupt) kernelSP() uint32  { return in.readWord(intKernelSP) }
 func (in *interrupt) handlerPC() uint32 { return in.readWord(intHandlerPC) }
+func (in *interrupt) syscallSP() uint32 { return in.readWord(intSyscallSP) }
 func (in *interrupt) syscallPC() uint32 { return in.readWord(intSyscallPC) }
 
 // Issue issues an interrupt. If the interrupt is already issued,
