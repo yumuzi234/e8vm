@@ -2,7 +2,6 @@
 package main
 
 import (
-	"bufio"
 	"bytes"
 	"flag"
 	"fmt"
@@ -10,6 +9,9 @@ import (
 	"log"
 	"os"
 	"strings"
+
+	"e8vm.io/e8vm/g8/ast"
+	"e8vm.io/e8vm/g8/parse"
 )
 
 const tabExpand = 4
@@ -49,9 +51,14 @@ func fmtLine(line string) string {
 var tempDir = os.TempDir()
 
 func fmtFile(fname string) (bool, error) {
-	f, e := os.Open(fname)
+	input, e := ioutil.ReadFile(fname)
 	if e != nil {
 		return false, e
+	}
+
+	f, es := parse.File(fname, bytes.NewBuffer(input), false)
+	if es != nil {
+		return false, fmt.Errorf("%d errors found at parsing", len(es))
 	}
 
 	temp, e := ioutil.TempFile(tempDir, "e8fmt")
@@ -59,28 +66,20 @@ func fmtFile(fname string) (bool, error) {
 		return false, e
 	}
 
-	needMove := false
-	s := bufio.NewScanner(f)
-	for s.Scan() {
-		line := s.Text()
-		formatted := fmtLine(line)
-		fmt.Fprintln(temp, formatted)
-		if line != formatted {
-			needMove = true
-		}
-	}
+	ast.FprintFile(temp, f)
 
-	if e := s.Err(); e != nil {
+	temp.Seek(0, os.SEEK_SET)
+	output, e := ioutil.ReadAll(temp)
+	if e != nil {
 		return false, e
 	}
-	if e := f.Close(); e != nil {
-		return false, e
-	}
+	changed := bytes.Compare(input, output) != 0
+
 	if e := temp.Close(); e != nil {
 		return false, e
 	}
 
-	if !needMove {
+	if !changed {
 		return false, nil
 	}
 	return true, os.Rename(temp.Name(), fname)
