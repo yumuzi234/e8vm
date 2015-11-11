@@ -15,3 +15,7 @@ type callOp struct {
 	sig  *FuncSig
 	args []Ref
 }
+
+type comment struct {
+	s string
+}

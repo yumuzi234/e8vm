@@ -39,6 +39,16 @@ func (b *Block) String() string { return fmt.Sprintf("B%d", b.id) }
 
 func (b *Block) addOp(op op) { b.ops = append(b.ops, op) }
 
+// Comment adds an IR comment.
+func (b *Block) Comment(s string) {
+	b.addOp(&comment{s})
+}
+
+// Commentf adds an IR comment with a particular printing format.
+func (b *Block) Commentf(s string, args ...interface{}) {
+	b.Comment(fmt.Sprintf(s, args...))
+}
+
 // Arith append an arithmetic operation to the basic block
 func (b *Block) Arith(dest Ref, x Ref, op string, y Ref) {
 	b.addOp(&arithOp{dest, x, op, y})
@@ -56,7 +66,9 @@ func (b *Block) Zero(dest Ref) {
 
 // Call appends a function call operation to the basic block
 func (b *Block) Call(dests []Ref, f Ref, sig *FuncSig, args ...Ref) {
-	b.addOp(&callOp{dests, f, sig, args})
+	argsCopy := make([]Ref, len(args))
+	copy(argsCopy, args)
+	b.addOp(&callOp{dests, f, sig, argsCopy})
 }
 
 // Jump sets the block always jump to the dest block at its end

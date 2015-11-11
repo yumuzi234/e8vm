@@ -18,7 +18,8 @@ func NewMultiHome(homes ...Home) *MultiHome {
 	}
 
 	ret := new(MultiHome)
-	ret.homes = homes
+	ret.homes = make([]Home, len(homes))
+	copy(ret.homes, homes)
 	return ret
 }
 

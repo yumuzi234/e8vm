@@ -9,6 +9,8 @@ import (
 
 func printOp(p io.Writer, op op) {
 	switch op := op.(type) {
+	case *comment:
+		fmt.Fprintf(p, "// %s\n", op.s)
 	case *arithOp:
 		if op.a == nil {
 			if op.op == "" {

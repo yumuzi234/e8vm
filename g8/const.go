@@ -15,6 +15,7 @@ func constNumIr(v int64, t types.T) ir.Ref {
 		case types.Uint:
 			return ir.Num(uint32(v))
 		case types.Int8, types.Uint8:
+			println(v)
 			return ir.Byt(uint8(v))
 		}
 	}

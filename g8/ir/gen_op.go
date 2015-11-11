@@ -134,6 +134,8 @@ func genOp(g *gener, b *Block, op op) {
 		genArithOp(g, b, op)
 	case *callOp:
 		genCallOp(g, b, op)
+	case *comment:
+		// do nothing
 	default:
 		panic("unknown op type")
 	}

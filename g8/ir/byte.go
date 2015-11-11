@@ -1,13 +1,12 @@
 package ir
 
+import (
+	"fmt"
+)
+
 type byt struct{ v uint8 } // true or false
 
-func (b *byt) String() string {
-	if b.v == 0 {
-		return "false"
-	}
-	return "true"
-}
+func (b *byt) String() string { return fmt.Sprintf("%d", b.v) }
 
 func (b *byt) Size() int32 { return 1 }
 
