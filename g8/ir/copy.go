@@ -6,16 +6,6 @@ import (
 	"e8vm.io/e8vm/link8"
 )
 
-func isFuncPointer(r Ref) bool {
-	if _, ok := r.(*Func); ok {
-		return true
-	}
-	if _, ok := r.(*FuncSym); ok {
-		return true
-	}
-	return false
-}
-
 func copyRef(g *gener, b *Block, dest, src Ref, isArg bool) {
 	loadDestAddr := func(r uint32) {
 		if !isArg {
@@ -42,16 +32,8 @@ func copyRef(g *gener, b *Block, dest, src Ref, isArg bool) {
 		} else {
 			saveArg(b, _4, dest.(*varRef))
 		}
-	case isFuncPointer(src):
-		loadRef(b, _4, src)
-		loadDestAddr(_1)
-		b.inst(asm.sw(_4, _1, 0))
 	default:
-		if !isArg {
-			loadAddr(b, _1, dest)
-		} else {
-			loadArgAddr(b, _1, dest.(*varRef))
-		}
+		loadDestAddr(_1)
 		loadAddr(b, _2, src)
 		loadUint32(b, _3, uint32(size))
 
