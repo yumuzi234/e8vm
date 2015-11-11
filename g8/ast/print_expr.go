@@ -56,6 +56,6 @@ func printExpr(p *fmt8.Printer, expr Expr) {
 	case *MemberExpr:
 		printExprs(p, expr.Expr, ".", expr.Sub.Lit)
 	default:
-		fmt.Fprintf(p, "(!!%T)", expr)
+		panic(fmt.Errorf("invalid expression type: %T", expr))
 	}
 }

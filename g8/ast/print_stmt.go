@@ -81,7 +81,7 @@ func printStmt(p *fmt8.Printer, stmt Stmt) {
 	case *ConstDecls:
 		printConstDecls(p, stmt)
 	default:
-		fmt.Fprintf(p, "<!!%T>", stmt)
+		panic(fmt.Errorf("invalid statement type: %T", stmt))
 	}
 }
 

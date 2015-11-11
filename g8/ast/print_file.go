@@ -18,7 +18,7 @@ func printTopDecl(p *fmt8.Printer, d Decl) {
 	case *ConstDecls:
 		printConstDecls(p, d)
 	default:
-		fmt.Fprintf(p, "<!!%T>", d)
+		panic(fmt.Errorf("invalid top-level declaration type: %T", d))
 	}
 }
 
