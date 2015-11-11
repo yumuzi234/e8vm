@@ -46,7 +46,6 @@ func copyRef(g *gener, b *Block, dest, src Ref, isArg bool) {
 		loadRef(b, _4, src)
 		loadDestAddr(_1)
 		b.inst(asm.sw(_4, _1, 0))
-		b.inst(asm.sw(_0, _1, regSize))
 	default:
 		if !isArg {
 			loadAddr(b, _1, dest)

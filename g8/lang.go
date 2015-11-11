@@ -144,11 +144,6 @@ func (l *lang) Compile(pinfo *build8.PkgInfo) (
 		return nil, es
 	}
 
-	// logging
-	if err := logIr(pinfo, b); err != nil {
-		return nil, lex8.SingleErr(err)
-	}
-
 	// circular dep check
 	g := b.deps.graph()
 	if err := logDeps(pinfo, g); err != nil {
@@ -165,6 +160,11 @@ func (l *lang) Compile(pinfo *build8.PkgInfo) (
 
 	// codegen
 	lib := ir.BuildPkg(b.p)
+
+	// IR logging
+	if err := logIr(pinfo, b); err != nil {
+		return nil, lex8.SingleErr(err)
+	}
 
 	return &builtPkg{p: p, lib: lib}, nil
 }

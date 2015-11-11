@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 
+	"e8vm.io/e8vm/dasm8"
 	"e8vm.io/e8vm/fmt8"
 )
 
@@ -14,6 +15,18 @@ func printBlock(p *fmt8.Printer, b *Block) {
 		printOp(p, op)
 	}
 	printJump(p, b.jump)
+	p.ShiftTab()
+}
+
+func printBlockInsts(p *fmt8.Printer, b *Block) {
+	fmt.Fprintf(p, "%s:\n", b)
+	p.Tab()
+	for _, inst := range b.insts {
+		fmt.Fprintln(p, dasm8.LineStr(inst.inst))
+	}
+	if b.jumpInst != nil {
+		fmt.Fprintln(p, dasm8.LineStr(b.jumpInst.inst))
+	}
 	p.ShiftTab()
 }
 
@@ -47,6 +60,12 @@ func printFunc(p *fmt8.Printer, f *Func) {
 
 	for b := f.prologue.next; b != f.epilogue; b = b.next {
 		printBlock(p, b)
+	}
+
+	fmt.Fprintln(p, "----")
+
+	for b := f.prologue.next; b != f.epilogue; b = b.next {
+		printBlockInsts(p, b)
 	}
 
 	p.ShiftTab()

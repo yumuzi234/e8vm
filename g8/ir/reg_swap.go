@@ -192,9 +192,9 @@ func canViaReg(r Ref) bool {
 	case *byt:
 		return true
 	case *Func:
-		return false
+		return true
 	case *FuncSym:
-		return false
+		return true
 	case *addrRef:
 		return r.size <= 1 || (r.size == regSize && r.regSizeAlign)
 	case *HeapSym:
