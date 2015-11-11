@@ -11,9 +11,9 @@ type Operand struct {
 
 // MemberExpr is an expression of form A.B
 type MemberExpr struct {
-	Expr Expr
-	Dot  *lex8.Token
-	Sub  *lex8.Token
+	Expr
+	Dot *lex8.Token
+	Sub *lex8.Token
 }
 
 // OpExpr is a binary or unary operation that uses an operator

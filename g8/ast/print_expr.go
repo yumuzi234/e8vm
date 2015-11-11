@@ -1,7 +1,6 @@
 package ast
 
 import (
-	"bytes"
 	"fmt"
 
 	"e8vm.io/e8vm/fmt8"
@@ -59,12 +58,4 @@ func printExpr(p *fmt8.Printer, expr Expr) {
 	default:
 		fmt.Fprintf(p, "(!!%T)", expr)
 	}
-}
-
-// PrintExpr prints an expression
-func PrintExpr(expr Expr) string {
-	buf := new(bytes.Buffer)
-	p := fmt8.NewPrinter(buf)
-	printExpr(p, expr)
-	return buf.String()
 }
