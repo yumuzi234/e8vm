@@ -32,7 +32,7 @@ func printExpr(p *fmt8.Printer, expr Expr) {
 		printExprs(p, "[")
 		for i, e := range expr.Exprs {
 			if i != 0 {
-				printExprs(p, ",")
+				printExprs(p, ", ")
 			}
 			printExprs(p, e)
 		}
