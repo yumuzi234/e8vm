@@ -24,6 +24,9 @@ test:
 testv:
 	go test -v ./...
 
+testc:
+	go test -cover -coverprofile=cover.out ./...
+
 lc:
 	wc -l `find . -name "*.go"`
 
