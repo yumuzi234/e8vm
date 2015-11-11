@@ -117,7 +117,7 @@ func (p *pkg) declareFuncs(b *builder) {
 		sname := f.Recv.StructName
 		info := p.structMap[sname.Lit]
 		if info == nil {
-			b.Errorf(sname.Pos, "struct %s not defined", sname)
+			b.Errorf(sname.Pos, "struct %s not defined", sname.Lit)
 			continue
 		}
 
