@@ -9,6 +9,7 @@ import (
 
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/dasm8"
+	"e8vm.io/e8vm/e8"
 )
 
 var (
@@ -62,17 +63,27 @@ func main() {
 	}
 
 	fname := args[0]
-	bs, e := ioutil.ReadFile(fname)
-	if e != nil {
-		log.Fatal(e)
-	}
 
 	if *doDasm {
-		lines := dasm8.Dasm(bs, arch8.InitPC)
-		for _, line := range lines {
-			fmt.Println(line)
+		secs, err := e8.Open(fname)
+		if err != nil {
+			log.Fatal(err)
+		}
+		for _, sec := range secs {
+			switch sec.Type {
+			case e8.Code:
+				fmt.Println("[code section]")
+				lines := dasm8.Dasm(sec.Bytes, sec.Addr)
+				for _, line := range lines {
+					fmt.Println(line)
+				}
+			}
 		}
 	} else {
+		bs, err := ioutil.ReadFile(fname)
+		if err != nil {
+			log.Fatal(err)
+		}
 		n, e := run(bs)
 		fmt.Printf("(%d cycles)\n", n)
 		if e != nil {

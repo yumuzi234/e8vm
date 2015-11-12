@@ -42,7 +42,7 @@ func TestCPU(t *testing.T) {
 	cpu.Reset()
 	cpu.interrupt.Enable()
 	cpu.interrupt.EnableInt(errTimeInt.Code)
-	cpu.interrupt.writeWord(intHandlerSP, 0x10000)  // page 16
+	cpu.interrupt.writeWord(intHandlerSP, 0x10000) // page 16
 	cpu.interrupt.writeWord(intHandlerPC, 0x10000) // page 16
 	cpu.ring = 1
 
