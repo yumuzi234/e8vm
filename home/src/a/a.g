@@ -6,3 +6,8 @@ const (
 func P(b byte) {
 	printUint(uint(b))
 }
+
+func Pi(sp, pc uint) {
+	printUint(sp)
+	printUint(pc)
+}

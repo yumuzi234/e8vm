@@ -1,5 +1,7 @@
 package arch8
 
+import "fmt"
+
 // Inst is an interface for executing one single instruction
 type inst interface {
 	I(cpu *cpu, in uint32) *Excep
@@ -112,8 +114,8 @@ func (c *cpu) writeByte(addr uint32, v uint8) *Excep {
 
 // Ienter enters a interrupt routine.
 func (c *cpu) Ienter(code byte, arg uint32) *Excep {
-	ksp := c.interrupt.kernelSP()
-	base := ksp - intFrameSize
+	hsp := c.interrupt.handlerSP()
+	base := hsp - intFrameSize
 
 	writeWord := func(off uint32, v uint32) *Excep {
 		return c.virtMem.WriteWord(base+off, 0, v)
@@ -122,6 +124,8 @@ func (c *cpu) Ienter(code byte, arg uint32) *Excep {
 		return c.virtMem.WriteByte(base+off, 0, b)
 	}
 	if e := writeWord(intFrameSP, c.regs[SP]); e != nil {
+		fmt.Printf("%x", hsp)
+		println("sp", e)
 		return e
 	}
 	if e := writeWord(intFrameRET, c.regs[RET]); e != nil {
@@ -138,7 +142,7 @@ func (c *cpu) Ienter(code byte, arg uint32) *Excep {
 	}
 
 	c.interrupt.Disable()
-	c.regs[SP] = ksp
+	c.regs[SP] = hsp
 	c.regs[RET] = c.regs[PC]
 	c.regs[PC] = c.interrupt.handlerPC()
 	c.ring = 0

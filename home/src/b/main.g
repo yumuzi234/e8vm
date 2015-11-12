@@ -3,8 +3,6 @@ import (
 )
 
 func main() {
-	a.P(0)
-	a.P(a.A)
-	a.P(a.B)
+	var v uint = 3333
+	a.Pi(v, 4)
 }
-

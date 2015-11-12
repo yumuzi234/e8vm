@@ -10,7 +10,7 @@ const Ninterrupt = 256
 
 const (
 	intFlags     = 0  // flags, bit 0 is master enabling switch
-	intKernelSP  = 4  // position of the handler stack base pointer
+	intHandlerSP = 4  // position of the handler stack base pointer
 	intHandlerPC = 8  // position of the handler start PC
 	intSyscallSP = 12 // position of the syscall stack base pointer
 	intSyscallPC = 16 // position of the syscall start PC
@@ -32,7 +32,7 @@ func newInterrupt(p *page, core byte) *interrupt {
 	return ret
 }
 
-func (in *interrupt) kernelSP() uint32  { return in.readWord(intKernelSP) }
+func (in *interrupt) handlerSP() uint32 { return in.readWord(intHandlerSP) }
 func (in *interrupt) handlerPC() uint32 { return in.readWord(intHandlerPC) }
 func (in *interrupt) syscallSP() uint32 { return in.readWord(intSyscallSP) }
 func (in *interrupt) syscallPC() uint32 { return in.readWord(intSyscallPC) }
