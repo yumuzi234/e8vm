@@ -2,6 +2,7 @@ package arch8
 
 import (
 	"errors"
+	"fmt"
 )
 
 // Excep defines an exception error with a code
@@ -20,6 +21,9 @@ func newExcep(c byte, s string) *Excep {
 }
 
 func (e *Excep) Error() string {
+	if e.Arg != 0 {
+		return fmt.Sprintf("%s: arg=%08x", e.Err.Error(), e.Arg)
+	}
 	return e.Err.Error()
 }
 
@@ -44,9 +48,8 @@ var (
 	errTimeInt     = newExcep(ErrTimer, "time interrupt")
 	errInvalidInst = newExcep(ErrInvalidInst, "invalid instruction")
 
-	errOutOfRange = newExcep(ErrOutOfRange, "out of range")
-	errMisalign   = newExcep(ErrMisalign, "address misalign")
-	errPanic      = newExcep(ErrPanic, "panic")
+	errMisalign = newExcep(ErrMisalign, "address misalign")
+	errPanic    = newExcep(ErrPanic, "panic")
 )
 
 func newPageFault(va uint32) *Excep {
@@ -58,5 +61,11 @@ func newPageFault(va uint32) *Excep {
 func newPageReadonly(va uint32) *Excep {
 	ret := newExcep(ErrPageReadonly, "page read-only")
 	ret.Arg = va
+	return ret
+}
+
+func newOutOfRange(pa uint32) *Excep {
+	ret := newExcep(ErrOutOfRange, "out of range")
+	ret.Arg = pa
 	return ret
 }

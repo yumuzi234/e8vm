@@ -130,7 +130,7 @@ func (m *Machine) WriteBytes(r io.Reader, offset uint32) error {
 	for {
 		p := m.phyMem.Page(pn)
 		if p == nil {
-			return errOutOfRange
+			return newOutOfRange(offset)
 		}
 
 		buf := pageBuf[:PageSize-start]

@@ -60,7 +60,7 @@ func (pm *phyMemory) Page(pn uint32) *page {
 func (pm *phyMemory) pageForByte(addr uint32) (*page, *Excep) {
 	p := pm.Page(addr / PageSize)
 	if p == nil {
-		return nil, errOutOfRange
+		return nil, newOutOfRange(addr)
 	}
 	return p, nil
 }
