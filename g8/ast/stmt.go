@@ -55,7 +55,7 @@ type IfStmt struct {
 type ElseStmt struct {
 	Else *lex8.Token
 	If   *lex8.Token // optional
-	Expr Expr        // optional for else if
+	Expr             // optional for else if
 	Body *Block
 	Next *ElseStmt // next else statment
 }

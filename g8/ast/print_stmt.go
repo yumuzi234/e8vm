@@ -10,7 +10,7 @@ import (
 func printStmt(p *fmt8.Printer, stmt Stmt) {
 	switch stmt := stmt.(type) {
 	case *EmptyStmt:
-		fmt.Fprint(p, "; // emtpy")
+		fmt.Fprint(p, "; // empty")
 	case *Block:
 		if len(stmt.Stmts) > 0 {
 			fmt.Fprintln(p, "{")
@@ -46,7 +46,17 @@ func printStmt(p *fmt8.Printer, stmt Stmt) {
 			}
 		}
 	case *ForStmt:
-		printExprs(p, "for ", stmt.Cond, " ")
+		fmt.Fprint(p, "for ")
+		if stmt.Cond != nil {
+			if stmt.Init == nil && stmt.Iter == nil {
+				printExprs(p, stmt.Cond, " ")
+			} else {
+				printStmt(p, stmt.Init)
+				printExprs(p, "; ", stmt.Cond, "; ")
+				printStmt(p, stmt.Iter)
+				fmt.Fprint(p, " ")
+			}
+		}
 		printStmt(p, stmt.Body)
 	case *AssignStmt:
 		printExprs(p, stmt.Left, " = ", stmt.Right)
