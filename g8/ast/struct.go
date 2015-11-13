@@ -11,7 +11,7 @@ type Field struct {
 	Semi   *lex8.Token
 }
 
-// Struct declarse a structure type
+// Struct declares a structure type
 type Struct struct {
 	Kw      *lex8.Token
 	Name    *lex8.Token
@@ -26,6 +26,8 @@ type Struct struct {
 }
 
 // Interface is an interface type
+// TODO:
+/*
 type Interface struct {
 	Kw     *lex8.Token
 	Name   *lex8.Token
@@ -33,3 +35,4 @@ type Interface struct {
 	Funcs  []*FuncSig
 	Rbrace *lex8.Token
 }
+*/
