@@ -20,23 +20,21 @@ func printExpr(p *fmt8.Printer, expr Expr) {
 		fmt.Fprintf(p, expr.Token.Lit)
 	case *OpExpr:
 		if expr.A == nil {
-			printExprs(p, "(", expr.Op.Lit, expr.B, ")")
+			printExprs(p, expr.Op.Lit, expr.B)
 		} else {
-			printExprs(p, "(", expr.A, expr.Op.Lit, expr.B, ")")
+			printExprs(p, expr.A, " ", expr.Op.Lit, " ", expr.B)
 		}
 	case *StarExpr:
 		printExprs(p, "*", expr.Expr)
 	case *ParenExpr:
 		printExprs(p, "(", expr.Expr, ")")
 	case *ExprList:
-		printExprs(p, "[")
 		for i, e := range expr.Exprs {
 			if i != 0 {
 				printExprs(p, ", ")
 			}
 			printExprs(p, e)
 		}
-		printExprs(p, "]")
 	case *CallExpr:
 		if expr.Args != nil {
 			printExprs(p, expr.Func, "(", expr.Args, ")")
