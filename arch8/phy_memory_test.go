@@ -34,7 +34,8 @@ func TestPhyMemory(t *testing.T) {
 	eo(e != errMisalign, "should have misalign error")
 
 	_, e = m.ReadWord(size)
-	eo(e != errOutOfRange, "should have out of range error")
+	eo(e.Code != ErrOutOfRange, "should have out of range error")
+	eo(e.Arg != size, "expect arg to be set")
 
 	off := uint32(56 + PageSize*2)
 	as(m.WriteByte(off+0, 0x37) == nil)
