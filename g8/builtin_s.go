@@ -119,7 +119,7 @@ func MemCopy {
 	beq r3 r0 .ret
 	beq r1 r2 .ret
 
-	slt r4 r1 r2
+	sltu r4 r1 r2
 	beq r4 r0 .rev
 
 .loop

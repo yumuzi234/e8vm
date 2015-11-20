@@ -8,11 +8,13 @@ func genCallOp(g *gener, b *Block, op *callOp) {
 	sig := op.sig
 
 	// load the args
+	// first copy the ones that send in on the stack
 	for i, arg := range sig.args {
 		if arg.viaReg == 0 {
 			copyRef(g, b, arg, op.args[i], true)
 		}
 	}
+	// then set the ones loaded by register
 	for i, arg := range sig.args {
 		if arg.viaReg > 0 {
 			loadRef(b, arg.viaReg, op.args[i])
@@ -34,6 +36,13 @@ func genCallOp(g *gener, b *Block, op *callOp) {
 	}
 
 	// save the returns
+	// first save the ones returned via register
+	for i, ret := range sig.rets {
+		if ret.viaReg > 0 {
+			saveRef(b, ret.viaReg, op.dest[i], _4)
+		}
+	}
+	// then copy the ones stored on the stack
 	for i, ret := range sig.rets {
 		if ret.viaReg == 0 {
 			loadAddr(b, _1, op.dest[i])
@@ -42,11 +51,6 @@ func genCallOp(g *gener, b *Block, op *callOp) {
 			jal := b.inst(asm.jal(0))
 			f := g.memCopy
 			jal.sym = &linkSym{link8.FillLink, f.pkg, f.sym}
-		}
-	}
-	for i, ret := range sig.rets {
-		if ret.viaReg > 0 {
-			saveRef(b, ret.viaReg, op.dest[i], _4)
 		}
 	}
 }

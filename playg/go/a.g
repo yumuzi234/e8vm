@@ -1,18 +1,28 @@
 package main
 
 type PageTable struct {
-	entries [8]uint
+	entries []uint
 }
 
-func (pt *PageTable) SubTable(i uint) *PageTable {
-	return (*PageTable)(pt.Page(i))
+type a struct {
+	_ int
 }
 
-func (pt *PageTable) Page(i uint) uint {
-	return 9
+func (pt *PageTable) p() {
+	var aa a
+	aa.p(pt.entries)
+}
+
+func (*a) p(a []uint) {
+	printUint(uint(&a[0]))
 }
 
 func main() {
-	var t PageTable
-	printUint(t.Page(0))
+	var t [10]uint
+	var pt PageTable
+	var aa a
+	pt.entries = t[:]
+	printUint(uint(&pt.entries[0]))
+	aa.p(pt.entries)
+	pt.p()
 }
