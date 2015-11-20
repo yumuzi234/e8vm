@@ -61,28 +61,23 @@ func fmtFile(fname string) (bool, error) {
 		return false, fmt.Errorf("%d errors found at parsing", len(es))
 	}
 
-	temp, e := ioutil.TempFile(tempDir, "e8fmt")
-	if e != nil {
-		return false, e
-	}
-
-	ast.FprintFile(temp, f)
-
-	temp.Seek(0, os.SEEK_SET)
-	output, e := ioutil.ReadAll(temp)
-	if e != nil {
-		return false, e
-	}
-	changed := bytes.Compare(input, output) != 0
-
-	if e := temp.Close(); e != nil {
-		return false, e
-	}
-
-	if !changed {
+	var output bytes.Buffer
+	ast.FprintFile(&output, f)
+	if bytes.Compare(input, output.Bytes()) == 0 {
 		return false, nil
 	}
-	return true, os.Rename(temp.Name(), fname)
+
+	tempfile, e := ioutil.TempFile(tempDir, "e8fmt")
+	if e != nil {
+		return false, e
+	}
+	if _, e := tempfile.Write(output.Bytes()); e != nil {
+		return false, e
+	}
+	if e := tempfile.Close(); e != nil {
+		return false, e
+	}
+	return true, os.Rename(tempfile.Name(), fname)
 }
 
 func main() {
