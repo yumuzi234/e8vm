@@ -1,8 +1,7 @@
 package arch8
 
-// VirtMemory defines an address space which page mapping
-// is defined by a page table.
-// If no page table is defined, direct mapping is used
+// VirtMemory defines an address space which page mapping is defined by a
+// page table.  If no page table is defined, direct mapping is used.
 type virtMemory struct {
 	phyMem *phyMemory
 	ptable *pageTable

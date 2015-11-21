@@ -26,8 +26,6 @@ func newTicker(bus intBus) *ticker {
 	ret.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
 	ret.Code = ErrTimer // time interrupt code
 
-	ret.reset()
-
 	return ret
 }
 
