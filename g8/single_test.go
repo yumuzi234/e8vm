@@ -221,6 +221,9 @@ func TestSingleFile_good(t *testing.T) {
 	o("func n(b****bool) { ****b=****b }; func main() {}", "")
 	o(` struct A { func n() (a int) { return 33 } };
 		func main() { var a A; printInt(a.n()) }`, "33")
+	o(` func main() { a, b := f(); printInt(a); printInt(len(b)) }
+		var dat [5]int
+		func f() (int, []int) { return 33, dat[:] }`, "33\n5")
 	o(`	func main() {printInt(33)}
 		func _(){}
 		func _(){}
