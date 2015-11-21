@@ -12,3 +12,6 @@ dasm:
 
 old:
 	g8 a.g
+
+fmt:
+	gfmt a.g
