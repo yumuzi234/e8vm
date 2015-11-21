@@ -26,7 +26,7 @@ type OpExpr struct {
 // StarExpr is an expression after a '*'
 type StarExpr struct {
 	Star *lex8.Token
-	Expr
+	Expr Expr
 }
 
 // ParenExpr is an expression in a pair of parenthesis

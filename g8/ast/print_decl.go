@@ -28,14 +28,14 @@ func printVarDecl(p *fmt8.Printer, d *VarDecl) {
 }
 
 func printVarDecls(p *fmt8.Printer, d *VarDecls) {
+	fmt.Fprintf(p, "var ")
 	if d.Lparen == nil {
 		// single declare
-		fmt.Fprintf(p, "var ")
 		for _, decl := range d.Decls {
 			printVarDecl(p, decl)
 		}
 	} else {
-		fmt.Fprintf(p, "var (\n")
+		fmt.Fprintf(p, "(\n")
 		p.Tab()
 		for _, decl := range d.Decls {
 			printVarDecl(p, decl)
@@ -46,6 +46,34 @@ func printVarDecls(p *fmt8.Printer, d *VarDecls) {
 	}
 }
 
+func printConstDecl(p *fmt8.Printer, d *ConstDecl) {
+	printIdents(p, d.Idents)
+	if d.Type != nil {
+		fmt.Fprint(p, " ")
+		printExpr(p, d.Type)
+	}
+
+	if d.Eq != nil {
+		fmt.Fprint(p, " = ")
+		printExpr(p, d.Exprs)
+	}
+}
+
 func printConstDecls(p *fmt8.Printer, d *ConstDecls) {
-	fmt.Fprintf(p, "<todo: const decls>")
+	fmt.Fprintf(p, "const ")
+	if d.Lparen == nil {
+		// single declare
+		for _, decl := range d.Decls {
+			printConstDecl(p, decl)
+		}
+	} else {
+		fmt.Fprintf(p, "(\n")
+		p.Tab()
+		for _, decl := range d.Decls {
+			printConstDecl(p, decl)
+			fmt.Println(p)
+		}
+		p.ShiftTab()
+		fmt.Fprintf(p, ")")
+	}
 }

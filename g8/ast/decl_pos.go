@@ -17,7 +17,7 @@ func DeclPos(d Decl) *lex8.Pos {
 		return d.Kw.Pos
 	case *Struct:
 		return d.Kw.Pos
+	default:
+		panic(fmt.Errorf("invalid top-level declaration type: %T", d))
 	}
-
-	panic(fmt.Errorf("invalid top-level decl: %T", d))
 }

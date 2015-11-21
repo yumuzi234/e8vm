@@ -17,6 +17,11 @@ func printStruct(p *fmt8.Printer, d *Struct) {
 		fmt.Fprintln(p)
 	}
 
+	fmt.Fprintln(p)
+	for _, method := range d.Methods {
+		printFunc(p, method)
+	}
+
 	p.ShiftTab()
 	fmt.Fprintln(p, "}")
 }

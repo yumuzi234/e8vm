@@ -18,14 +18,16 @@ func printTopDecl(p *fmt8.Printer, d Decl) {
 	case *ConstDecls:
 		printConstDecls(p, d)
 	default:
-		fmt.Fprintf(p, "<!!%T>", d)
+		panic(fmt.Errorf("invalid top-level declaration type: %T", d))
 	}
 }
 
 func printFile(p *fmt8.Printer, f *File) {
-	for _, decl := range f.Decls {
+	for i, decl := range f.Decls {
 		printTopDecl(p, decl)
-		fmt.Fprintln(p)
+		if i < len(f.Decls)-1 {
+			fmt.Fprintln(p)
+		}
 	}
 }
 
