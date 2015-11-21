@@ -92,22 +92,24 @@ func checkInRange(b *builder, index, n ir.Ref, op string) {
 }
 
 func buildSlicing(b *builder, expr *ast.IndexExpr, array *ref) *ref {
-	addr, n, et := loadArray(b, array)
+	baseAddr, n, et := loadArray(b, array)
 	if et == nil {
 		b.Errorf(expr.Lbrack.Pos, "slicing on neither array nor slice")
 		return nil
 	}
 
-	var indexStart, offset ir.Ref
+	var addr, indexStart, offset ir.Ref
 	if expr.Index == nil {
 		indexStart = ir.Num(0)
+		addr = baseAddr
 	} else {
 		indexStart = buildArrayIndex(b, expr.Index, expr.Lbrack.Pos)
 		checkInRange(b, indexStart, n, "u<=")
 
 		offset = b.newPtr()
 		b.b.Arith(offset, indexStart, "*", ir.Num(uint32(etSize(et))))
-		b.b.Arith(addr, addr, "+", offset)
+		addr = b.newPtr()
+		b.b.Arith(addr, baseAddr, "+", offset)
 	}
 
 	var indexEnd ir.Ref
