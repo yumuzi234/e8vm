@@ -47,15 +47,19 @@ func printStmt(p *fmt8.Printer, stmt Stmt) {
 		}
 	case *ForStmt:
 		fmt.Fprint(p, "for ")
-		if stmt.Cond != nil {
-			if stmt.Init == nil && stmt.Iter == nil {
-				printExprs(p, stmt.Cond, " ")
-			} else {
+		if stmt.ThreeFold {
+			if stmt.Init != nil {
 				printStmt(p, stmt.Init)
-				printExprs(p, "; ", stmt.Cond, "; ")
-				printStmt(p, stmt.Iter)
-				fmt.Fprint(p, " ")
 			}
+			fmt.Fprint(p, "; ")
+			if stmt.Cond != nil {
+				printExprs(p, stmt.Cond)
+			}
+			fmt.Fprint(p, "; ")
+			printStmt(p, stmt.Iter)
+			fmt.Fprint(p, " ")
+		} else if stmt.Cond != nil {
+			printExprs(p, stmt.Cond, " ")
 		}
 		printStmt(p, stmt.Body)
 	case *AssignStmt:

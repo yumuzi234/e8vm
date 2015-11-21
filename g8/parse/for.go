@@ -14,7 +14,7 @@ func parseForStmt(p *parser) *ast.ForStmt {
 	ret.Kw = p.Shift()
 	if !p.SeeOp("{") {
 		stmt, expr := parseSimpleStmtOrExpr(p, true)
-		if stmt != nil {
+		if stmt != nil { // seeing a semicolon ending
 			ret.ThreeFold = true
 
 			ret.Init = stmt

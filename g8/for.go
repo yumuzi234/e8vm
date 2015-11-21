@@ -12,7 +12,7 @@ func buildForStmt(b *builder, stmt *ast.ForStmt) {
 		b.buildStmt(stmt.Init)
 	}
 
-	if stmt.Cond == nil {
+	if stmt.Cond == nil { // infinite for
 		body := b.f.NewBlock(b.b)
 		after := b.f.NewBlock(body)
 		body.Jump(body)
