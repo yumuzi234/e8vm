@@ -15,8 +15,13 @@ func parseForStmt(p *parser) *ast.ForStmt {
 	if !p.SeeOp("{") {
 		stmt, expr := parseSimpleStmtOrExpr(p, true)
 		if stmt != nil {
+			ret.ThreeFold = true
+
 			ret.Init = stmt
-			ret.Cond = parseExpr(p)
+			if !p.SeeSemi() {
+				ret.Cond = parseExpr(p)
+			}
+
 			p.ExpectSemi()
 			if !p.InError() {
 				ret.Iter = parseSimpleStmtNoSemi(p)

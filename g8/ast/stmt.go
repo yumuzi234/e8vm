@@ -62,12 +62,13 @@ type ElseStmt struct {
 
 // ForStmt is a loop statement
 type ForStmt struct {
-	Kw   *lex8.Token
-	Init Stmt
-	Cond Expr
-	Iter Stmt
-	Body *Block
-	Semi *lex8.Token
+	Kw        *lex8.Token
+	ThreeFold bool
+	Init      Stmt
+	Cond      Expr
+	Iter      Stmt
+	Body      *Block
+	Semi      *lex8.Token
 }
 
 // ReturnStmt is a statement of return.
