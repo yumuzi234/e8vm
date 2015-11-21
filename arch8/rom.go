@@ -122,7 +122,7 @@ func (r *rom) Tick() {
 			r.state = romStateBusy
 
 			errCode, err := r.readFile()
-			if err != nil {
+			if err != nil && err != io.EOF {
 				log.Println(err)
 			}
 
