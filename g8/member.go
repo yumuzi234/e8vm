@@ -3,20 +3,32 @@ package g8
 import (
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/types"
+	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/sym8"
 )
 
-func buildPackageSym(b *builder, m *ast.MemberExpr, pkg *types.Pkg) *ref {
-	sym := pkg.Syms.Query(m.Sub.Lit)
+func findPackageSym(
+	b *builder, sub *lex8.Token, pkg *types.Pkg,
+) *sym8.Symbol {
+	sym := pkg.Syms.Query(sub.Lit)
 	if sym == nil {
-		b.Errorf(m.Sub.Pos, "%s has no symbol named %s",
-			pkg, m.Sub.Lit,
+		b.Errorf(sub.Pos, "%s has no symbol named %s",
+			pkg, sub.Lit,
 		)
 		return nil
 	}
 	name := sym.Name()
 	if !sym8.IsPublic(name) && sym.Pkg() != b.symPkg {
-		b.Errorf(m.Sub.Pos, "symbol %s is not public", name)
+		b.Errorf(sub.Pos, "symbol %s is not public", name)
+		return nil
+	}
+
+	return sym
+}
+
+func buildPackageSym(b *builder, m *ast.MemberExpr, pkg *types.Pkg) *ref {
+	sym := findPackageSym(b, m.Sub, pkg)
+	if sym == nil {
 		return nil
 	}
 
@@ -38,7 +50,32 @@ func buildPackageSym(b *builder, m *ast.MemberExpr, pkg *types.Pkg) *ref {
 }
 
 func buildConstMember(b *builder, m *ast.MemberExpr) *ref {
-	b.Errorf(m.Dot.Pos, "const member not implemented")
+	obj := b.buildConstExpr(m.Expr)
+	if obj == nil {
+		return nil
+	}
+	if !obj.IsSingle() {
+		b.Errorf(m.Dot.Pos, "expression list does not have any member")
+		return nil
+	}
+
+	if pkg, ok := obj.Type().(*types.Pkg); ok {
+		s := findPackageSym(b, m.Sub, pkg)
+		if s == nil {
+			return nil
+		}
+		switch s.Type {
+		case symConst:
+			return s.Item.(*objConst).ref
+		case symStruct:
+			return s.Item.(*objType).ref
+		}
+
+		b.Errorf(m.Sub.Pos, "%s.%s is not a const", pkg, m.Sub.Lit)
+		return nil
+	}
+
+	b.Errorf(m.Dot.Pos, "expect const expression")
 	return nil
 }
 
