@@ -152,7 +152,6 @@ func (c *cpu) Ienter(code byte, arg uint32) *Excep {
 
 // Syscall jumps to the system call handler and switches to ring 0.
 func (c *cpu) Syscall() *Excep {
-	println("syscall")
 	userSP := c.regs[SP]
 	syscallSP := c.interrupt.syscallSP()
 
