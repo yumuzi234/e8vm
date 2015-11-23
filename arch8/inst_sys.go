@@ -18,8 +18,10 @@ func (i *instSys) I(cpu *cpu, in uint32) *Excep {
 			return errInvalidInst
 		}
 		return cpu.Syscall()
-	case USERMOD:
+	case JRUSER:
 		cpu.ring = 1
+		cpu.regs[PC] = s
+		return nil
 	case VTABLE:
 		if cpu.UserMode() {
 			return errInvalidInst

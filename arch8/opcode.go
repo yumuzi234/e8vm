@@ -56,7 +56,7 @@ const (
 const (
 	HALT    = 64
 	SYSCALL = 65
-	USERMOD = 66
+	JRUSER  = 66
 	VTABLE  = 67
 	IRET    = 68
 	CPUID   = 69

@@ -10,13 +10,13 @@ var (
 	opSysMap = map[string]uint32{
 		"halt":    arch8.HALT,
 		"syscall": arch8.SYSCALL,
-		"usermod": arch8.USERMOD,
 		"iret":    arch8.IRET,
 		"panic":   arch8.PANIC,
 	}
 
 	// op reg
 	opSys1Map = map[string]uint32{
+		"jruser": arch8.JRUSER,
 		"vtable": arch8.VTABLE,
 		"cpuid":  arch8.CPUID,
 	}

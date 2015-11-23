@@ -10,12 +10,12 @@ var (
 	opSysMap = map[uint32]string{
 		arch8.HALT:    "halt",
 		arch8.SYSCALL: "syscall",
-		arch8.USERMOD: "usermod",
 		arch8.IRET:    "iret",
 		arch8.PANIC:   "panic",
 	}
 
 	opSys1Map = map[uint32]string{
+		arch8.JRUSER: "jruser",
 		arch8.VTABLE: "vtable",
 		arch8.CPUID:  "cpuid",
 	}
