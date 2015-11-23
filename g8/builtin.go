@@ -72,6 +72,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 	}
 	oe("Ienter", "_ienter", types.NewVoidFunc())
 	oe("SysEnter", "_sysenter", types.NewVoidFunc())
+	oe("Ustart", "ustart", types.NewVoidFunc(types.Uint, types.Uint))
 
 	ov := func(name string, as string, t types.T) {
 		sym, index := builtin.SymbolByName(name)
