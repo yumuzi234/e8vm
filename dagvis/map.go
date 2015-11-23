@@ -1,6 +1,8 @@
 package dagvis
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
 	"sort"
 )
@@ -108,6 +110,11 @@ func IsDAG(g *Graph) (bool, error) {
 func (m *Map) makeLayers() ([][]*MapNode, error) {
 	var ret [][]*MapNode
 	var cur []*MapNode
+	left := make(map[*MapNode]struct{})
+
+	for _, node := range m.Nodes {
+		left[node] = struct{}{}
+	}
 
 	for _, node := range m.Nodes {
 		if len(node.Ins) == 0 {
@@ -121,6 +128,7 @@ func (m *Map) makeLayers() ([][]*MapNode, error) {
 	for len(cur) > 0 {
 		for _, node := range cur {
 			node.layer = len(ret)
+			delete(left, node)
 		}
 
 		ret = append(ret, cur)
@@ -139,8 +147,21 @@ func (m *Map) makeLayers() ([][]*MapNode, error) {
 		cur = next
 	}
 
-	if n != len(m.Nodes) {
-		return nil, fmt.Errorf("the graph is not a dag")
+	if len(left) != 0 {
+		circle := shortestCircle(m.Nodes)
+		if len(circle) == 0 {
+			panic("should find a circle")
+		}
+
+		msg := new(bytes.Buffer)
+		fmt.Fprintf(msg, "graph has circle: ")
+		for i, node := range circle {
+			if i != 0 {
+				fmt.Fprintf(msg, "->")
+			}
+			fmt.Fprintf(msg, node.Name)
+		}
+		return nil, errors.New(msg.String())
 	}
 
 	return ret, nil
