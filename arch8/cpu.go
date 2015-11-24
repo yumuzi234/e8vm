@@ -210,7 +210,7 @@ func (c *cpu) Iret() *Excep {
 // Tick executes one instruction, and increases the program counter
 // by 4 by default. If an exception is met, it will handle it.
 func (c *cpu) Tick() *Excep {
-	poll, code := c.interrupt.Poll(c.ring > 0)
+	poll, code := c.interrupt.Poll()
 	if poll {
 		return c.Ienter(code, 0)
 	}
@@ -222,8 +222,8 @@ func (c *cpu) Tick() *Excep {
 	}
 
 	// proceed attempt failed, this is a fault.
-	c.interrupt.Issue(e.Code)                 // put the fault on to interrupt
-	poll, code = c.interrupt.Poll(c.ring > 0) // see if it is handlable
+	c.interrupt.Issue(e.Code)       // put the fault on to interrupt
+	poll, code = c.interrupt.Poll() // see if it is handlable
 	if poll {
 		if code != e.Code {
 			panic("interrupt code is different")
