@@ -2,6 +2,7 @@ package g8
 
 import (
 	"encoding/json"
+	"fmt"
 	"path/filepath"
 	"strings"
 
@@ -146,6 +147,16 @@ func (l *lang) Compile(pinfo *build8.PkgInfo) (
 
 	// circular dep check
 	g := b.deps.graph()
+	g, err := g.Rename(func(name string) (string, error) {
+		if strings.HasSuffix(name, ".g") {
+			return strings.TrimSuffix(name, ".g"), nil
+		}
+		return name, fmt.Errorf("filename suffix missing: %q", name)
+	})
+	if err != nil {
+		return nil, lex8.SingleErr(err)
+	}
+
 	if err := logDeps(pinfo, g); err != nil {
 		return nil, lex8.SingleErr(err)
 	}
