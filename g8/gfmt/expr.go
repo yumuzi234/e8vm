@@ -1,9 +1,10 @@
-package ast
+package gfmt
 
 import (
 	"fmt"
 
 	"e8vm.io/e8vm/fmt8"
+	"e8vm.io/e8vm/g8/ast"
 )
 
 func printExprs(p *fmt8.Printer, args ...interface{}) {
@@ -12,46 +13,46 @@ func printExprs(p *fmt8.Printer, args ...interface{}) {
 	}
 }
 
-func printExpr(p *fmt8.Printer, expr Expr) {
+func printExpr(p *fmt8.Printer, expr ast.Expr) {
 	switch expr := expr.(type) {
 	case string:
 		fmt.Fprintf(p, expr)
-	case *Operand:
+	case *ast.Operand:
 		fmt.Fprintf(p, expr.Token.Lit)
-	case *OpExpr:
+	case *ast.OpExpr:
 		if expr.A == nil {
 			printExprs(p, expr.Op.Lit, expr.B)
 		} else {
 			printExprs(p, expr.A, " ", expr.Op.Lit, " ", expr.B)
 		}
-	case *StarExpr:
+	case *ast.StarExpr:
 		printExprs(p, "*", expr.Expr)
-	case *ParenExpr:
+	case *ast.ParenExpr:
 		printExprs(p, "(", expr.Expr, ")")
-	case *ExprList:
+	case *ast.ExprList:
 		for i, e := range expr.Exprs {
 			if i != 0 {
 				printExprs(p, ", ")
 			}
 			printExprs(p, e)
 		}
-	case *CallExpr:
+	case *ast.CallExpr:
 		if expr.Args != nil {
 			printExprs(p, expr.Func, "(", expr.Args, ")")
 		} else {
 			printExprs(p, expr.Func, "()")
 		}
-	case *IndexExpr:
+	case *ast.IndexExpr:
 		printExprs(p, expr.Array, "[", expr.Index, "]")
-	case *ArrayTypeExpr:
+	case *ast.ArrayTypeExpr:
 		if expr.Len == nil {
 			printExprs(p, "[]", expr.Type)
 		} else {
 			printExprs(p, "[", expr.Len, "]", expr.Type)
 		}
-	case *FuncTypeExpr:
+	case *ast.FuncTypeExpr:
 		printExprs(p, "func")
-	case *MemberExpr:
+	case *ast.MemberExpr:
 		printExprs(p, expr.Expr, ".", expr.Sub.Lit)
 	default:
 		panic(fmt.Errorf("invalid expression type: %T", expr))

@@ -1,12 +1,13 @@
-package ast
+package gfmt
 
 import (
 	"fmt"
 
 	"e8vm.io/e8vm/fmt8"
+	"e8vm.io/e8vm/g8/ast"
 )
 
-func printParaList(p *fmt8.Printer, lst *ParaList) {
+func printParaList(p *fmt8.Printer, lst *ast.ParaList) {
 	fmt.Fprint(p, "(")
 	for i, para := range lst.Paras {
 		if i > 0 {
@@ -26,7 +27,7 @@ func printParaList(p *fmt8.Printer, lst *ParaList) {
 	fmt.Fprint(p, ")")
 }
 
-func printFunc(p *fmt8.Printer, f *Func) {
+func printFunc(p *fmt8.Printer, f *ast.Func) {
 	fmt.Fprintf(p, "func %s", f.Name.Lit)
 	printParaList(p, f.Args)
 	if f.RetType != nil {

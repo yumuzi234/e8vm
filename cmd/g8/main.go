@@ -11,7 +11,7 @@ import (
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/dasm8"
 	"e8vm.io/e8vm/g8"
-	"e8vm.io/e8vm/g8/ast"
+	"e8vm.io/e8vm/g8/gfmt"
 	"e8vm.io/e8vm/g8/parse"
 	"e8vm.io/e8vm/lex8"
 )
@@ -59,7 +59,7 @@ func main() {
 		if *parseAST {
 			stmts, es := parse.Stmts(fname, bytes.NewBuffer(input))
 			printErrs(es)
-			ast.FprintStmts(os.Stdout, stmts)
+			gfmt.FprintStmts(os.Stdout, stmts)
 		} else {
 			bs, es, irLog := g8.CompileBareFunc(fname, string(input))
 			printErrs(es)
@@ -70,7 +70,7 @@ func main() {
 		if *parseAST {
 			f, es := parse.File(fname, bytes.NewBuffer(input), true)
 			printErrs(es)
-			ast.FprintFile(os.Stdout, f)
+			gfmt.FprintFile(os.Stdout, f)
 		} else {
 			bs, es, irLog := g8.CompileSingle(fname, string(input), *golike)
 			printErrs(es)

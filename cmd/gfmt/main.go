@@ -10,7 +10,7 @@ import (
 	"os"
 	"strings"
 
-	"e8vm.io/e8vm/g8/ast"
+	"e8vm.io/e8vm/g8/gfmt"
 	"e8vm.io/e8vm/g8/parse"
 )
 
@@ -62,7 +62,7 @@ func fmtFile(fname string) (bool, error) {
 	}
 
 	var output bytes.Buffer
-	ast.FprintFile(&output, f)
+	gfmt.FprintFile(&output, f)
 	if bytes.Compare(input, output.Bytes()) == 0 {
 		return false, nil
 	}
