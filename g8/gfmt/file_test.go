@@ -36,4 +36,6 @@ func TestFormatFile(t *testing.T) {
 	o("\n\nfunc main  () {  }", "func main() {}\n") // remove lines
 	o("func main(){}", "func main() {}\n")          // add spaces
 	o("func main() {\n}", "func main() {}\n")       // merge oneliner
+
+	// o("// some comment", "// some comment\n") // comment
 }
