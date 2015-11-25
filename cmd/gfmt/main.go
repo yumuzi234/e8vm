@@ -1,4 +1,4 @@
-// e8fmt is the code formatter of G language.
+// gfmt is the code formatter of G language.
 package main
 
 import (
