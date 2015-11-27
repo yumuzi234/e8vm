@@ -10,5 +10,5 @@ const (
 	InitPC = 0x8000
 )
 
-// The machine's endian (byte order).
+// Endian is the machine's endian (byte order).
 var Endian = binary.LittleEndian

@@ -89,7 +89,7 @@ func NewFuncUnamed(args []T, rets []T) *Func {
 // NewVoidFunc creates a new function that does not return anything.
 func NewVoidFunc(args ...T) *Func { return NewFuncUnamed(args, nil) }
 
-// VoidFuncSig is the signature for "func main()"
+// VoidFunc is the signature for "func main()"
 var VoidFunc = NewVoidFunc()
 
 // String returns the function signature (without the argument names).

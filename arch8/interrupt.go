@@ -1,11 +1,11 @@
 package arch8
 
-// Interrupt defines the interrupt page
+// interrupt defines the interrupt page
 type interrupt struct {
 	*pageOffset // the dma page for interrupt handler
 }
 
-// Number of interrupts
+// Ninterrupt is the number of interrupts.
 const Ninterrupt = 256
 
 const (
@@ -20,7 +20,7 @@ const (
 	intCtrlSize = 128
 )
 
-// NewInterrupt creates a interrupt on the given DMA page.
+// newInterrupt creates a interrupt on the given DMA page.
 func newInterrupt(p *page, core byte) *interrupt {
 	ret := new(interrupt)
 	base := uint32(core) * intCtrlSize

@@ -1,12 +1,12 @@
 package arch8
 
-// Nreg is the number of registers
+// Nreg is the number of registers.
 const Nreg = 8
 
-// Size of a register in bytes
+// RegSize is the size of a register in bytes.
 const RegSize = 4
 
-// Register names
+// Register names.
 const (
 	R0 = 0
 	R1 = 1
