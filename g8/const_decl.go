@@ -74,7 +74,7 @@ func buildConstDecl(b *builder, d *ast.ConstDecl) {
 	for i, ident := range idents {
 		t := right.typ[i]
 		if !types.IsConst(t) {
-			b.Errorf(ast.ExprPos(d.Exprs.Exprs[i]), "BUG: not a const")
+			b.Errorf(ast.ExprPos(d.Exprs.Exprs[i]), "not a const")
 			return
 		}
 
