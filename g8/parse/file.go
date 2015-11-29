@@ -1,10 +1,13 @@
 package parse
 
 import (
+	"bytes"
 	"io"
+	"io/ioutil"
 
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/textbox"
 )
 
 func parseTopDecl(p *parser) ast.Decl {
@@ -64,10 +67,27 @@ func parseFile(p *parser) *ast.File {
 	return ret
 }
 
+const (
+	// MaxLine is the max number of lines of a G language file.
+	MaxLine = 300
+
+	// MaxCol is the max number of columns of a G language file.
+	MaxCol = 80
+)
+
 // File parses a file.
 func File(f string, r io.Reader, golike bool) (*ast.File, []*lex8.Error) {
-	p := makeParser(f, r, golike)
+	bs, err := ioutil.ReadAll(r)
+	if err != nil {
+		return nil, lex8.SingleErr(err)
+	}
 
+	es := textbox.CheckRect(f, bytes.NewReader(bs), MaxLine, MaxCol)
+	if es != nil {
+		return nil, es
+	}
+
+	p := makeParser(f, bytes.NewReader(bs), golike)
 	ret := parseFile(p)
 	if es := p.Errs(); es != nil {
 		return nil, es

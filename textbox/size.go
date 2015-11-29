@@ -3,7 +3,6 @@ package textbox
 import (
 	"bufio"
 	"io"
-	"strings"
 
 	"e8vm.io/e8vm/lex8"
 )
@@ -59,15 +58,17 @@ func Rect(r io.Reader) (nline, maxWidth int, e error) {
 }
 
 // CheckRect checks if a program is within a rectangular area.
-func CheckRect(log lex8.Logger, file string, r io.Reader, h, w int) {
+func CheckRect(file string, r io.Reader, h, w int) []*lex8.Error {
 	br := bufio.NewReader(r)
 	row := 0
 	col := 0
 
+	errs := lex8.NewErrorList()
+
 	pos := func() *lex8.Pos { return &lex8.Pos{file, row + 1, col + 1} }
 	newLine := func() {
 		if col > w {
-			log.Errorf(pos(), "line too wide")
+			errs.Errorf(pos(), "line too wide")
 		}
 		row++
 		col = 0
@@ -80,7 +81,7 @@ func CheckRect(log lex8.Logger, file string, r io.Reader, h, w int) {
 				newLine()
 			}
 			break
-		} else if lex8.LogError(log, e) {
+		} else if lex8.LogError(errs, e) {
 			break
 		}
 
@@ -91,7 +92,9 @@ func CheckRect(log lex8.Logger, file string, r io.Reader, h, w int) {
 		}
 	}
 
-	if row > h && !strings.HasSuffix(file, "_bytes.go") {
-		log.Errorf(pos(), "too many lines")
+	if row > h {
+		errs.Errorf(pos(), "too many lines")
 	}
+
+	return errs.Errs()
 }
