@@ -68,92 +68,121 @@ func (b *Builder) link(p *link8.Pkg, out io.Writer, main string) error {
 	return job.Link(out)
 }
 
-// TODO(h8liu): this function is way too long; please refactor.
+func (b *Builder) buildImports(p *pkg, forTest bool) []*lex8.Error {
+	for _, imp := range p.imports {
+		built, es := b.build(imp.Path, forTest)
+		if es != nil {
+			return es
+		}
+		imp.Compiled = built.compiled
+	}
+	return nil
+}
+
+func (b *Builder) buildMain(p *pkg) []*lex8.Error {
+	lib := p.compiled.Lib()
+	main := p.compiled.Main()
+	if main != "" && lib.HasFunc(main) {
+		log := lex8.NewErrorList()
+
+		fout := b.home.CreateBin(p.path)
+		lex8.LogError(log, b.link(lib, fout, main))
+		lex8.LogError(log, fout.Close())
+
+		if es := log.Errs(); es != nil {
+			return es
+		}
+	}
+
+	return nil
+}
+
+func (b *Builder) runTests(p *pkg) []*lex8.Error {
+	lib := p.compiled.Lib()
+	tests, testMain := p.compiled.Tests()
+	if testMain != "" && lib.HasFunc(testMain) {
+		log := lex8.NewErrorList()
+		if len(tests) > 0 {
+			bs := new(bytes.Buffer)
+			lex8.LogError(log, b.link(lib, bs, testMain))
+			fout := b.home.CreateTestBin(p.path)
+
+			img := bs.Bytes()
+			_, err := fout.Write(img)
+			lex8.LogError(log, err)
+			lex8.LogError(log, fout.Close())
+			if es := log.Errs(); es != nil {
+				return es
+			}
+
+			runTests(log, tests, img, b.Verbose)
+			if es := log.Errs(); es != nil {
+				return es
+			}
+		}
+	}
+
+	return nil
+}
+
+func (b *Builder) makePkgInfo(p *pkg) *PkgInfo {
+	return &PkgInfo{
+		Path:   p.path,
+		Src:    p.srcMap(),
+		Import: p.imports,
+		CreateLog: func(name string) io.WriteCloser {
+			return b.home.CreateLog(p.path, name)
+		},
+	}
+}
+
 func (b *Builder) build(p string, forTest bool) (*pkg, []*lex8.Error) {
 	ret := b.pkgs[p]
 	if ret == nil {
-		panic("build without prepare")
+		panic("build without preparing")
 	}
 
-	// already compiled
+	// if already compiled, just return
 	if ret.compiled != nil {
 		return ret, nil
 	}
 
+	// circ dep check
 	if ret.buildStarted {
 		e := fmt.Errorf("package %q circular depends itself", p)
 		return ret, lex8.SingleErr(e)
 	}
-
 	ret.buildStarted = true
-	lang := ret.lang
 
-	for _, imp := range ret.imports {
-		built, es := b.build(imp.Path, forTest)
-		if es != nil {
-			return nil, es
-		}
-		imp.Compiled = built.compiled
+	// build imports
+	es := b.buildImports(ret, forTest)
+	if es != nil {
+		return nil, es
 	}
 
-	// ready to build this one
+	// report progress
 	if b.Verbose {
 		fmt.Println(p)
 	}
 
-	// compile now
-	pinfo := &PkgInfo{
-		Path:   p,
-		Src:    ret.srcMap(),
-		Import: ret.imports,
-		CreateLog: func(name string) io.WriteCloser {
-			return b.home.CreateLog(p, name)
-		},
-	}
-	compiled, es := lang.Compile(pinfo)
+	// compile
+	compiled, es := ret.lang.Compile(b.makePkgInfo(ret))
 	if es != nil {
 		return nil, es
 	}
 	ret.compiled = compiled
 
-	lib := ret.compiled.Lib() // the linkable lib
-	// a package with main entrance, build the bin
-
-	main := ret.compiled.Main()
-	if main != "" && lib.HasFunc(main) {
-		log := lex8.NewErrorList()
-
-		fout := b.home.CreateBin(p)
-		lex8.LogError(log, b.link(lib, fout, main))
-		lex8.LogError(log, fout.Close())
-
-		if es := log.Errs(); es != nil {
-			return nil, es
-		}
+	// build main
+	es = b.buildMain(ret)
+	if es != nil {
+		return nil, es
 	}
 
+	// run tests
 	if forTest {
-		tests, testMain := ret.compiled.Tests()
-		if testMain != "" && lib.HasFunc(testMain) {
-			log := lex8.NewErrorList()
-			if len(tests) > 0 {
-				bs := new(bytes.Buffer)
-				lex8.LogError(log, b.link(lib, bs, testMain))
-				fout := b.home.CreateTestBin(p)
-
-				img := bs.Bytes()
-				_, err := fout.Write(img)
-				lex8.LogError(log, err)
-				lex8.LogError(log, fout.Close())
-				if es := log.Errs(); es != nil {
-					return nil, es
-				}
-
-				runTests(log, tests, img, b.Verbose)
-				if es := log.Errs(); es != nil {
-					return nil, es
-				}
-			}
+		es := b.runTests(ret)
+		if es != nil {
+			return nil, es
 		}
 	}
 
