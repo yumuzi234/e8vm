@@ -28,9 +28,6 @@ type Linkable interface {
 	// be placed at the entry address of the image.
 	Main() string
 
-	// Init is the init function of the module.
-	Init() string
-
 	// Tests are function symbols that should be preserved,
 	// and sent into the image as an argument for running
 	// testing.

@@ -15,7 +15,6 @@ type lib struct {
 }
 
 func (p *lib) Main() string { return "main" }
-func (p *lib) Init() string { return "init" }
 
 func (p *lib) Tests() (map[string]uint32, string) {
 	// Assembly now does not have tests.

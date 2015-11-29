@@ -13,7 +13,6 @@ type builtPkg struct {
 
 func (p *builtPkg) Lib() *link8.Pkg { return p.lib }
 func (p *builtPkg) Main() string    { return startName }
-func (p *builtPkg) Init() string    { return "init" }
 
 func (p *builtPkg) Tests() (map[string]uint32, string) {
 	if p.isBare {
