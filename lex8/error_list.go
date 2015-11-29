@@ -39,6 +39,13 @@ func (lst *ErrorList) Add(e *Error) {
 	lst.errs = append(lst.errs, e)
 }
 
+// AddAll adds a list of errors into the list.
+func (lst *ErrorList) AddAll(es []*Error) {
+	for _, e := range es {
+		lst.Add(e)
+	}
+}
+
 // Jail puts it in jail without generating a new error message
 func (lst *ErrorList) Jail() { lst.inJail = true }
 
