@@ -8,44 +8,57 @@ import (
 
 // ref is a reference to one or a list of typed objects.
 type ref struct {
-	typ         []types.T
-	ir          []ir.Ref // this is essentially anything
-	addressable []bool
+	lst []*ref
 
-	recv     *ref        // receiver, if any
-	recvFunc *types.Func // the actual func type
+	typ         types.T
+	ir          ir.Ref
+	addressable bool
+	recv        *ref        // receiver, if any
+	recvFunc    *types.Func // the actual func type
 }
 
-func newSingleRef(t types.T, r ir.Ref, addressable bool) *ref {
-	return &ref{
-		typ:         []types.T{t},
-		ir:          []ir.Ref{r},
-		addressable: []bool{addressable},
-	}
-}
+func newRef(t types.T, r ir.Ref) *ref { return &ref{typ: t, ir: r} }
 
-// newRef creates a simple single ref
-func newRef(t types.T, r ir.Ref) *ref {
-	return newSingleRef(t, r, false)
-}
-
-func newTypeRef(t types.T) *ref {
-	return newRef(&types.Type{t}, nil)
-}
+func newTypeRef(t types.T) *ref { return &ref{typ: &types.Type{t}} }
 
 func newAddressableRef(t types.T, r ir.Ref) *ref {
-	return newSingleRef(t, r, true)
+	return &ref{typ: t, ir: r, addressable: true}
 }
 
 func newRecvRef(t *types.Func, recv *ref, r ir.Ref) *ref {
-	ret := newRef(t.MethodFunc, r)
-	ret.recv = recv
-	ret.recvFunc = t
-	return ret
+	return &ref{typ: t.MethodFunc, ir: r, recv: recv, recvFunc: t}
 }
 
-func (r *ref) Len() int       { return len(r.typ) }
-func (r *ref) IsSingle() bool { return len(r.typ) == 1 }
+func appendRef(r1, r2 *ref) *ref {
+	if !r2.IsSingle() {
+		panic("must merge single")
+	}
+
+	switch r1.Len() {
+	case 0:
+		return r2
+	case 1:
+		ref := new(ref)
+		ref.lst = append(ref.lst, r1, r2)
+		return ref
+	default:
+		r1.lst = append(r1.lst, r2)
+		return r1
+	}
+}
+
+func (r *ref) Len() int {
+	if len(r.lst) == 0 {
+		if r.typ == nil {
+			return 0
+		}
+		return 1
+	}
+
+	return len(r.lst)
+}
+
+func (r *ref) IsSingle() bool { return r.typ != nil && len(r.lst) == 0 }
 func (r *ref) IsConst() bool {
 	return r.IsSingle() && types.IsConst(r.Type())
 }
@@ -54,7 +67,7 @@ func (r *ref) Type() types.T {
 	if !r.IsSingle() {
 		panic("not single")
 	}
-	return r.typ[0]
+	return r.typ
 }
 
 func (r *ref) IsType() bool {
@@ -88,14 +101,14 @@ func (r *ref) IR() ir.Ref {
 	if !r.IsSingle() {
 		panic("not single")
 	}
-	return r.ir[0]
+	return r.ir
 }
 
 func (r *ref) Addressable() bool {
 	if !r.IsSingle() {
 		panic("not single")
 	}
-	return r.addressable[0]
+	return r.addressable
 }
 
 func (r *ref) String() string {
@@ -103,11 +116,14 @@ func (r *ref) String() string {
 		return "void"
 	}
 
-	if len(r.typ) == 0 {
-		return "<nil>"
+	if len(r.lst) == 0 {
+		if r.typ == nil {
+			return "<nil>"
+		}
+		return r.typ.String()
 	}
 
-	return fmt8.Join(r.typ, ",")
+	return fmt8.Join(r.TypeList(), ",")
 }
 
 func (r *ref) IsBool() bool {
@@ -115,4 +131,46 @@ func (r *ref) IsBool() bool {
 		return false
 	}
 	return types.IsBasic(r.Type(), types.Bool)
+}
+
+func (r *ref) At(i int) *ref {
+	if r.IsSingle() {
+		if i != 0 {
+			panic("invalid index")
+		}
+		return r
+	}
+
+	return r.lst[i]
+}
+
+func (r *ref) IRList() []ir.Ref {
+	if len(r.lst) == 0 {
+		if r.typ == nil {
+			return nil
+		}
+		return []ir.Ref{r.ir}
+	}
+
+	var ret []ir.Ref
+	for _, ref := range r.lst {
+		ret = append(ret, ref.IR())
+	}
+
+	return ret
+}
+
+func (r *ref) TypeList() []types.T {
+	if len(r.lst) == 0 {
+		if r.typ == nil {
+			return nil
+		}
+		return []types.T{r.typ}
+	}
+
+	var ret []types.T
+	for _, ref := range r.lst {
+		ret = append(ret, ref.Type())
+	}
+	return ret
 }

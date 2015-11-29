@@ -16,35 +16,36 @@ func assign(b *builder, dest, src *ref, op *lex8.Token) bool {
 		return false
 	}
 
-	for i, destType := range dest.typ {
-		if !dest.addressable[i] {
+	for i := 0; i < ndest; i++ {
+		destRef := dest.At(i)
+		destType := destRef.Type()
+		if !destRef.Addressable() {
 			b.Errorf(op.Pos, "assigning to non-addressable")
 			return false
 		}
 
-		srcType := src.typ[i]
+		srcType := src.At(i).Type()
 		if !types.CanAssign(destType, srcType) {
 			b.Errorf(op.Pos, "cannot assign %s to %s", src, dest)
 			return false
 		}
 	}
 
-	if len(dest.ir) == 1 {
-		srcTyp := src.typ[0]
-		destTyp := dest.typ[0]
-		destIr := dest.ir[0]
-		if types.IsNil(srcTyp) {
-			b.b.Zero(destIr)
-		} else if v, ok := types.NumConst(srcTyp); ok {
-			b.b.Assign(destIr, constNumIr(v, destTyp))
+	if ndest == 1 {
+		if types.IsNil(src.typ) {
+			b.b.Zero(dest.ir)
+		} else if v, ok := types.NumConst(src.typ); ok {
+			b.b.Assign(dest.ir, constNumIr(v, dest.typ))
 		} else {
-			b.b.Assign(destIr, src.ir[0])
+			b.b.Assign(dest.ir, src.ir)
 		}
 	} else {
-		temps := make([]*ref, len(dest.ir))
+		temps := make([]*ref, ndest)
 		// perform the assignment
-		for i, srcIr := range src.ir {
-			srcTyp := src.typ[i]
+		for i := 0; i < nsrc; i++ {
+			srcRef := src.At(i)
+			srcIr := srcRef.IR()
+			srcTyp := srcRef.Type()
 			if types.IsNil(srcTyp) {
 				continue // will zero directly later
 			}
@@ -56,12 +57,13 @@ func assign(b *builder, dest, src *ref, op *lex8.Token) bool {
 			b.b.Assign(temps[i].IR(), srcIr)
 		}
 
-		for i, destIr := range dest.ir {
-			srcTyp := src.typ[i]
+		for i := 0; i < ndest; i++ {
+			srcTyp := src.At(i).Type()
+			destIr := dest.At(i).IR()
 			if types.IsNil(srcTyp) {
 				b.b.Zero(destIr)
 			} else if v, ok := types.NumConst(srcTyp); ok {
-				b.b.Assign(destIr, constNumIr(v, dest.typ[i]))
+				b.b.Assign(destIr, constNumIr(v, dest.At(i).Type()))
 			} else {
 				b.b.Assign(destIr, temps[i].IR())
 			}

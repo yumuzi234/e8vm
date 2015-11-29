@@ -15,7 +15,7 @@ func allocTypedVars(b *builder, toks []*lex8.Token, t types.T) *ref {
 }
 
 func zero(b *builder, ref *ref) {
-	for _, r := range ref.ir {
+	for _, r := range ref.IRList() {
 		b.b.Zero(r)
 	}
 }

@@ -25,47 +25,58 @@ func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) {
 			return
 		}
 
-		ref := buildExprList(b, stmt.Exprs)
-		if ref == nil {
+		src := buildExprList(b, stmt.Exprs)
+		if src == nil {
 			return
 		}
 
 		nret := b.fretRef.Len()
-		nsrc := ref.Len()
+		nsrc := src.Len()
 		if nret != nsrc {
-			b.Errorf(pos, "expect (%s), returning (%s)", b.fretRef, ref)
+			b.Errorf(pos, "expect (%s), returning (%s)", b.fretRef, src)
 			return
 		}
 
-		for i, t := range b.fretRef.typ {
-			if !b.fretRef.addressable[i] {
+		for i := 0; i < nret; i++ {
+			r := b.fretRef.At(i)
+			if !r.Addressable() {
 				panic("bug")
 			}
+			t := r.Type()
 
-			srcType := ref.typ[i]
+			srcType := src.At(i).Type()
 			if !types.CanAssign(t, srcType) {
-				b.Errorf(pos, "expect (%s), returning (%s)", b.fretRef, ref)
+				b.Errorf(pos, "expect (%s), returning (%s)", b.fretRef, src)
 				return
 			}
 		}
 
-		if len(ref.addressable) > 1 {
-			for i, addressable := range ref.addressable {
-				if addressable {
-					tmp := b.newTemp(ref.typ[i])
-					b.b.Assign(tmp.IR(), ref.ir[i])
-					ref.ir[i] = tmp.IR()
+		if nsrc > 1 {
+			srcCasted := new(ref)
+			for i := 0; i < nsrc; i++ {
+				r := src.At(i)
+				if r.Addressable() {
+					tmp := b.newTemp(r.Type())
+					b.b.Assign(tmp.IR(), r.IR())
+					srcCasted = appendRef(srcCasted, tmp)
+				} else {
+					srcCasted = appendRef(srcCasted, r)
 				}
 			}
+			src = srcCasted
 		}
 
-		for i, dest := range b.fretRef.ir {
-			if types.IsNil(ref.typ[i]) {
+		for i := 0; i < nret; i++ {
+			r := b.fretRef.At(i)
+			dest := r.IR()
+			srcRef := src.At(i)
+			t := srcRef.Type()
+			if types.IsNil(t) {
 				b.b.Zero(dest)
-			} else if v, ok := types.NumConst(ref.typ[i]); ok {
-				b.b.Assign(dest, constNumIr(v, b.fretRef.typ[i]))
+			} else if v, ok := types.NumConst(t); ok {
+				b.b.Assign(dest, constNumIr(v, r.Type()))
 			} else {
-				b.b.Assign(dest, ref.ir[i])
+				b.b.Assign(dest, srcRef.IR())
 			}
 		}
 

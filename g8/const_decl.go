@@ -27,10 +27,8 @@ func buildConstExprList(b *builder, list *ast.ExprList) *ref {
 			b.Errorf(ast.ExprPos(expr), "cannot composite list in a list")
 			return nil
 		}
-
-		ret.typ = append(ret.typ, ref.Type())
-		ret.ir = append(ret.ir, ref.IR())
-		ret.addressable = append(ret.addressable, false)
+		ref.addressable = false
+		ret = appendRef(ret, ref)
 	}
 
 	return ret
@@ -72,7 +70,8 @@ func buildConstDecl(b *builder, d *ast.ConstDecl) {
 	}
 
 	for i, ident := range idents {
-		t := right.typ[i]
+		rightRef := right.At(i)
+		t := rightRef.Type()
 		if !types.IsConst(t) {
 			b.Errorf(ast.ExprPos(d.Exprs.Exprs[i]), "not a const")
 			return
@@ -82,7 +81,7 @@ func buildConstDecl(b *builder, d *ast.ConstDecl) {
 		if obj == nil {
 			return
 		}
-		obj.ref = newRef(t, right.ir[i])
+		obj.ref = newRef(t, rightRef.IR())
 	}
 }
 

@@ -13,7 +13,6 @@ func buildExprList(b *builder, list *ast.ExprList) *ref {
 	}
 
 	n := list.Len()
-
 	if n == 0 {
 		return ret // empty ref
 	} else if n == 1 {
@@ -21,7 +20,9 @@ func buildExprList(b *builder, list *ast.ExprList) *ref {
 	}
 
 	for _, expr := range list.Exprs {
-		ref := b.buildExpr(expr)
+		var ref *ref
+		ref = b.buildExpr(expr)
+
 		if ref == nil {
 			return nil
 		}
@@ -30,9 +31,7 @@ func buildExprList(b *builder, list *ast.ExprList) *ref {
 			return nil
 		}
 
-		ret.typ = append(ret.typ, ref.Type())
-		ret.ir = append(ret.ir, ref.IR())
-		ret.addressable = append(ret.addressable, ref.Addressable())
+		ret = appendRef(ret, ref)
 	}
 
 	return ret

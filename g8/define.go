@@ -9,19 +9,15 @@ import (
 
 func allocVars(b *builder, toks []*lex8.Token, ts []types.T) *ref {
 	ret := new(ref)
-	ret.typ = append(ret.typ, ts...)
 
 	for i, tok := range toks {
-		// the name here is just for debugging
-		// it is not a var declare
-		t := ret.typ[i]
+		t := ts[i]
 		if types.IsNil(t) {
 			b.Errorf(tok.Pos, "cannot infer type from nil for %q", tok.Lit)
 			return nil
 		}
 		if types.IsConst(t) {
 			t = types.Int
-			ret.typ[i] = t
 		}
 		if !types.IsAllocable(t) {
 			b.Errorf(tok.Pos, "cannot allocate for %s", t)
@@ -29,8 +25,7 @@ func allocVars(b *builder, toks []*lex8.Token, ts []types.T) *ref {
 		}
 
 		v := b.newLocal(t, tok.Lit)
-		ret.ir = append(ret.ir, v)
-		ret.addressable = append(ret.addressable, true)
+		ret = appendRef(ret, newAddressableRef(t, v))
 	}
 	return ret
 }
@@ -57,8 +52,13 @@ func declareVarRef(b *builder, tok *lex8.Token, r *ref) {
 }
 
 func declareVars(b *builder, toks []*lex8.Token, r *ref) {
-	for i, t := range r.typ {
-		declareVarRef(b, toks[i], newAddressableRef(t, r.ir[i]))
+	n := r.Len()
+	for i := 0; i < n; i++ {
+		ref := r.At(i)
+		if !ref.Addressable() {
+			panic("ref not addressable")
+		}
+		declareVarRef(b, toks[i], ref)
 	}
 }
 
@@ -74,7 +74,7 @@ func define(b *builder, idents []*lex8.Token, expr *ref, eq *lex8.Token) {
 		return
 	}
 
-	left := allocVars(b, idents, expr.typ)
+	left := allocVars(b, idents, expr.TypeList())
 	if left == nil {
 		return
 	}

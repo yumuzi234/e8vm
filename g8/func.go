@@ -72,14 +72,9 @@ func makeRetRef(ts []*types.Arg, irs []ir.Ref) *ref {
 	}
 
 	ret := new(ref)
-	ret.typ = make([]types.T, len(ts))
-	ret.ir = irs
-	ret.addressable = make([]bool, len(ts))
 	for i, t := range ts {
-		ret.typ[i] = t.T
-		ret.addressable[i] = true
+		ret = appendRef(ret, newAddressableRef(t.T, irs[i]))
 	}
-
 	return ret
 }
 

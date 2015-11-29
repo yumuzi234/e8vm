@@ -75,15 +75,17 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) *ref {
 		return nil
 	}
 
-	if args.Len() != len(funcType.Args) {
+	nargs := args.Len()
+	if nargs != len(funcType.Args) {
 		b.Errorf(ast.ExprPos(expr), "argument expects (%s), got (%s)",
-			fmt8.Join(funcType.Args, ","), fmt8.Join(args.typ, ","),
+			fmt8.Join(funcType.Args, ","), fmt8.Join(args.TypeList(), ","),
 		)
 		return nil
 	}
 
 	// type check on parameters
-	for i, argType := range args.typ {
+	for i := 0; i < nargs; i++ {
+		argType := args.At(i).Type()
 		expect := funcType.Args[i].T
 		if !types.CanAssign(expect, argType) {
 			pos := ast.ExprPos(expr.Args.Exprs[i])
@@ -94,35 +96,42 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) *ref {
 		}
 	}
 
-	for i, argType := range args.typ {
+	argsCasted := new(ref)
+
+	// auto type casts for nil and consts.
+	for i := 0; i < nargs; i++ {
+		argRef := args.At(i)
+		argType := argRef.Type()
 		expect := funcType.Args[i].T
+
 		if types.IsNil(argType) {
 			tmp := b.newTemp(expect).IR()
 			b.b.Zero(tmp)
-			args.ir[i] = tmp
+			argsCasted = appendRef(argsCasted, newRef(argType, tmp))
 		} else if v, ok := types.NumConst(argType); ok {
 			tmp := b.newTemp(expect).IR()
 			b.b.Assign(tmp, constNumIr(v, expect))
-			args.ir[i] = tmp
+			argsCasted = appendRef(argsCasted, newRef(argType, tmp))
+		} else {
+			argsCasted = appendRef(argsCasted, argRef)
 		}
 	}
 
 	ret := new(ref)
-	ret.typ = funcType.RetTypes
 	for _, t := range funcType.RetTypes {
-		ret.ir = append(ret.ir, b.newTempIR(t))
-		ret.addressable = append(ret.addressable, false)
+		ret = appendRef(ret, newRef(t, b.newTempIR(t)))
 	}
 
 	// call the func in IR
 	if f.recv == nil {
-		b.b.Call(ret.ir, f.IR(), funcType.Sig, args.ir...)
+		irs := argsCasted.IRList()
+		b.b.Call(ret.IRList(), f.IR(), funcType.Sig, irs...)
 	} else {
 		var irs []ir.Ref
 		irs = append(irs, f.recv.IR())
-		irs = append(irs, args.ir...)
+		irs = append(irs, argsCasted.IRList()...)
 
-		b.b.Call(ret.ir, f.IR(), f.recvFunc.Sig, irs...)
+		b.b.Call(ret.IRList(), f.IR(), f.recvFunc.Sig, irs...)
 	}
 
 	return ret
