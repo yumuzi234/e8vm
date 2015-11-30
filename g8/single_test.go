@@ -213,6 +213,7 @@ func TestSingleFile_good(t *testing.T) {
 	o(`	const a, b = 1, a; const c, d = d, 3
 		func main() { printInt(a); printInt(b); printInt(c); printInt(d) }`,
 		"1\n1\n3\n3\n")
+	o(`const a, b = b + 3, 30; func main() { printInt(a) }`, "33")
 
 	// Bugs found by the fuzzer in the past
 	o("func main() { a := 0==0; if a { printInt(33) } }", "33")
