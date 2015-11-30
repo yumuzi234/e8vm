@@ -5,6 +5,7 @@ import (
 	"e8vm.io/e8vm/g8/parse"
 	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/toposort"
 )
 
 type structInfo struct {
@@ -55,6 +56,22 @@ func newStructInfo(s *ast.Struct) *structInfo {
 	ret.deps = structDeps(s)
 	ret.t = types.NewStruct(ret.name.Lit)
 	ret.pt = types.NewPointer(ret.t)
+
+	return ret
+}
+
+func sortStructs(b *builder, m map[string]*structInfo) []*structInfo {
+	s := toposort.NewSorter("struct")
+
+	for name, info := range m {
+		s.AddNode(name, info.name, info.deps)
+	}
+
+	order := s.Sort(b)
+	var ret []*structInfo
+	for _, name := range order {
+		ret = append(ret, m[name])
+	}
 
 	return ret
 }
