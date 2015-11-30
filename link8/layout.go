@@ -4,7 +4,9 @@ import (
 	"fmt"
 )
 
-func layout(used []pkgSym, initPC uint32) (funcs, vars []pkgSym, e error) {
+func layout(used []pkgSym, initPC uint32) (
+	funcs, vars, zeros []pkgSym, e error,
+) {
 	pt := initPC
 	codeMax := uint32(0xffffffff)
 
@@ -18,11 +20,16 @@ func layout(used []pkgSym, initPC uint32) (funcs, vars []pkgSym, e error) {
 			f.addr = pt
 			size := f.Size()
 			if size > codeMax-pt {
-				return nil, nil, fmt.Errorf("code section too large")
+				return nil, nil, nil, fmt.Errorf("code section too large")
 			}
 			pt += size
 		case SymVar:
-			vars = append(vars, ps)
+			v := ps.Var()
+			if !v.IsZeros() {
+				vars = append(vars, ps)
+			} else {
+				zeros = append(zeros, ps)
+			}
 		default:
 			panic("bug")
 		}
@@ -30,13 +37,7 @@ func layout(used []pkgSym, initPC uint32) (funcs, vars []pkgSym, e error) {
 
 	dataMax := uint32(0xffffffff)
 
-	for _, ps := range vars {
-		if ps.Type() != SymVar {
-			panic("bug")
-		}
-
-		v := ps.Var()
-
+	putVar := func(v *Var) error {
 		if v.align > 1 && pt%v.align != 0 {
 			v.prePad = v.align - pt%v.align
 			pt += v.prePad
@@ -48,10 +49,25 @@ func layout(used []pkgSym, initPC uint32) (funcs, vars []pkgSym, e error) {
 		v.addr = pt
 		size := v.Size()
 		if size > dataMax-pt {
-			return nil, nil, fmt.Errorf("binary too large")
+			return fmt.Errorf("binary too large")
 		}
 
 		pt += size
+		return nil
+	}
+
+	for _, ps := range vars {
+		err := putVar(ps.Var())
+		if err != nil {
+			return nil, nil, nil, err
+		}
+	}
+
+	for _, ps := range zeros {
+		err := putVar(ps.Var())
+		if err != nil {
+			return nil, nil, nil, err
+		}
 	}
 
 	return

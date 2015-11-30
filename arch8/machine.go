@@ -119,12 +119,7 @@ func (m *Machine) Run(nticks int) (int, *CoreExcep) {
 
 // WriteBytes write a byte buffer to the memory at a particular offset.
 func (m *Machine) WriteBytes(r io.Reader, offset uint32) error {
-	mod := offset % PageSize
-	start := uint32(0)
-	if mod != 0 {
-		start = PageSize - mod
-	}
-
+	start := offset % PageSize
 	pageBuf := make([]byte, PageSize)
 	pn := offset / PageSize
 	for {

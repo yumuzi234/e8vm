@@ -14,7 +14,7 @@ func BuildPkg(p *Pkg) *link8.Pkg {
 			align = 1
 		}
 		obj := link8.NewVar(align)
-		obj.Pad(uint32(v.size))
+		obj.Zeros(uint32(v.size))
 		p.lib.DefineVar(v.sym, obj)
 	}
 

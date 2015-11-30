@@ -16,6 +16,8 @@ type Var struct {
 	addr   uint32
 	prePad uint32
 
+	zeros uint32
+
 	links []*link // symbols
 }
 
@@ -35,18 +37,34 @@ func NewVar(align uint32) *Var {
 	return ret
 }
 
+// Zeros set this variable as a BSS section.
+func (v *Var) Zeros(n uint32) { v.zeros = n }
+
+// IsZeros checks if the variable section is a BSS section.
+func (v *Var) IsZeros() bool { return v.zeros > 0 }
+
 // Write appends bytes to this data section.
 func (v *Var) Write(buf []byte) (int, error) {
+	if v.zeros != 0 {
+		panic("cannot write to zeros section")
+	}
 	return v.buf.Write(buf)
 }
 
 // Pad pads n bytes into this data section
 func (v *Var) Pad(n uint32) {
+	if v.zeros != 0 {
+		panic("cannot pad to zeros section")
+	}
 	v.buf.Write(make([]byte, n))
 }
 
 // WriteLink writes a symbol link into the data section.
 func (v *Var) WriteLink(pkg, sym uint32) error {
+	if v.zeros != 0 {
+		panic("cannot write link to zeros section")
+	}
+
 	if v.align%arch8.RegSize != 0 {
 		return fmt.Errorf("align %d, not register size aligned", v.align)
 	}
@@ -66,9 +84,14 @@ func (v *Var) WriteLink(pkg, sym uint32) error {
 }
 
 // Size returns the current size of the section
-func (v *Var) Size() uint32 { return uint32(v.buf.Len()) }
+func (v *Var) Size() uint32 {
+	if v.zeros != 0 {
+		return v.zeros
+	}
+	return uint32(v.buf.Len())
+}
 
 // TooLarge checks if the size is larger than 2GB
 func (v *Var) TooLarge() bool {
-	return v.buf.Len() > math.MaxInt32
+	return v.Size() > math.MaxInt32
 }

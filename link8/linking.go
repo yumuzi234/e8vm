@@ -44,33 +44,64 @@ func (j *Job) Link(out io.Writer) error {
 	roots = append(roots, index)
 	used := traceUsed(lnk, j.Pkg, roots)
 
-	funcs, vars, e := layout(used, j.InitPC)
+	funcs, vars, zeros, e := layout(used, j.InitPC)
 	if e != nil {
 		return e
 	}
 
-	buf := new(bytes.Buffer)
+	var secs []*e8.Section
+	if len(funcs) > 0 {
+		buf := new(bytes.Buffer)
+		w := newWriter(buf)
+		for _, f := range funcs {
+			writeFunc(w, f.pkg, f.Func())
+		}
+		if err := w.Err(); err != nil {
+			return err
+		}
 
-	w := newWriter(buf)
-	for _, f := range funcs {
-		writeFunc(w, f.pkg, f.Func())
-	}
-	for _, v := range vars {
-		writeVar(w, v.pkg, v.Var())
-	}
-	if err := w.Err(); err != nil {
-		return err
+		secs = append(secs, &e8.Section{
+			Header: &e8.Header{
+				Type: e8.Code,
+				Addr: j.InitPC,
+			},
+			Bytes: buf.Bytes(),
+		})
 	}
 
-	sec := &e8.Section{
-		Header: &e8.Header{
-			Type: e8.Code,
-			Addr: j.InitPC,
-		},
-		Bytes: buf.Bytes(),
+	if len(vars) > 0 {
+		buf := new(bytes.Buffer)
+		w := newWriter(buf)
+		for _, v := range vars {
+			writeVar(w, v.pkg, v.Var())
+		}
+		if err := w.Err(); err != nil {
+			return err
+		}
+
+		secs = append(secs, &e8.Section{
+			Header: &e8.Header{
+				Type: e8.Data,
+				Addr: vars[0].Var().addr,
+			},
+			Bytes: buf.Bytes(),
+		})
 	}
 
-	return e8.Write(out, []*e8.Section{sec})
+	if len(zeros) > 0 {
+		start := zeros[0].Var().addr
+		lastVar := zeros[len(zeros)-1].Var()
+		end := lastVar.addr + lastVar.Size()
+		secs = append(secs, &e8.Section{
+			Header: &e8.Header{
+				Type: e8.Zeros,
+				Addr: start,
+				Size: end - start,
+			},
+		})
+	}
+
+	return e8.Write(out, secs)
 }
 
 // LinkBareFunc produces a image of a single function that has no links.

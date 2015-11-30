@@ -83,9 +83,9 @@ func main() {
 func runImage(bs []byte, dasm bool, n int) {
 	// TODO: need to load sections now.
 	if dasm {
-		lines := dasm8.Dasm(bs, arch8.InitPC)
-		for _, line := range lines {
-			fmt.Println(line)
+		err := dasm8.DumpImage(bytes.NewReader(bs), os.Stdout)
+		if err != nil {
+			fmt.Println(err)
 		}
 	}
 	if len(bs) == 0 {

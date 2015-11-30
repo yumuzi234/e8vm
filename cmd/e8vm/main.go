@@ -6,10 +6,10 @@ import (
 	"io/ioutil"
 	"log"
 	"math"
+	"os"
 
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/dasm8"
-	"e8vm.io/e8vm/e8"
 )
 
 var (
@@ -65,19 +65,12 @@ func main() {
 	fname := args[0]
 
 	if *doDasm {
-		secs, err := e8.Open(fname)
+		f, err := os.Open(fname)
+		defer f.Close()
+
+		err = dasm8.DumpImage(f, os.Stdout)
 		if err != nil {
 			log.Fatal(err)
-		}
-		for _, sec := range secs {
-			switch sec.Type {
-			case e8.Code:
-				fmt.Println("[code section]")
-				lines := dasm8.Dasm(sec.Bytes, sec.Addr)
-				for _, line := range lines {
-					fmt.Println(line)
-				}
-			}
 		}
 	} else {
 		bs, err := ioutil.ReadFile(fname)

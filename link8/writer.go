@@ -53,6 +53,12 @@ func writeVar(w *writer, p *Pkg, v *Var) {
 	if v.prePad > 0 {
 		w.Write(make([]byte, v.prePad))
 	}
+
+	if v.IsZeros() {
+		w.Write(make([]byte, v.Size()))
+		return
+	}
+
 	bs := v.buf.Bytes()
 
 	// fill the links
