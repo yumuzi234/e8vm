@@ -56,7 +56,9 @@ func instReg(addr uint32, in uint32) *Line {
 
 	var s string
 	if isFloat == 0 {
-		if funct == 0 && shift == 0 {
+		if funct == arch8.PANIC {
+			s = fmt.Sprintf("panic")
+		} else if funct == arch8.SLLV && shift == 0 {
 			s = fmt.Sprintf("mov %s %s", dest, src1)
 		} else if opStr, found := opShiftMap[funct]; found {
 			s = fmt.Sprintf("%s %s %s %d", opStr, dest, src1, shift)

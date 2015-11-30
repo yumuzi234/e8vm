@@ -28,6 +28,8 @@ func (i *instReg) I(cpu *cpu, in uint32) *Excep {
 
 	if isFloat == 0 {
 		switch funct {
+		case PANIC:
+			return errPanic
 		case SLL:
 			d = s1 << shift
 		case SRL:

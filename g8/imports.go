@@ -104,6 +104,7 @@ func declareImports(b *builder, f *ast.File, pinfo *build8.PkgInfo) {
 		pindex := b.p.Require(compiled.Lib())
 		lang, syms := compiled.Symbols()
 		if lang != "g8" {
+			// TODO: import assembly
 			b.Errorf(d.Path.Pos, "not a G language package")
 			continue
 		}
@@ -119,39 +120,6 @@ func declareImports(b *builder, f *ast.File, pinfo *build8.PkgInfo) {
 			continue
 		}
 	}
-}
-
-func makeMemberTable(b *builder, s *types.Struct, pindex uint32) *sym8.Table {
-	lst := s.Syms.List()
-	ret := sym8.NewTable()
-
-	for _, sym := range lst {
-		v := sym.Item
-		switch sym.Type {
-		case symFunc:
-			v := v.(*objFunc)
-			if !v.isMethod {
-				panic("bug")
-			}
-			irRef := v.ref.IR().(*ir.Func)
-			funcSym := irRef.Import(pindex)
-			ref := newRef(v.ref.Type(), funcSym)
-			obj := &objFunc{name: v.name, ref: ref, isMethod: true}
-			pre := ret.Declare(sym.Clone(obj))
-			if pre != nil {
-				panic("bug")
-			}
-		case symField:
-			pre := ret.Declare(sym)
-			if pre != nil {
-				panic("bug")
-			}
-		default:
-			panic("bug")
-		}
-	}
-
-	return ret
 }
 
 func importSymbols(b *builder, syms *sym8.Table, pindex uint32) *sym8.Table {
@@ -196,6 +164,39 @@ func importSymbols(b *builder, syms *sym8.Table, pindex uint32) *sym8.Table {
 			}
 		case symImport, symType:
 			// Ignore
+		default:
+			panic("bug")
+		}
+	}
+
+	return ret
+}
+
+func makeMemberTable(b *builder, s *types.Struct, pindex uint32) *sym8.Table {
+	lst := s.Syms.List()
+	ret := sym8.NewTable()
+
+	for _, sym := range lst {
+		v := sym.Item
+		switch sym.Type {
+		case symFunc:
+			v := v.(*objFunc)
+			if !v.isMethod {
+				panic("bug")
+			}
+			irRef := v.ref.IR().(*ir.Func)
+			funcSym := irRef.Import(pindex)
+			ref := newRef(v.ref.Type(), funcSym)
+			obj := &objFunc{name: v.name, ref: ref, isMethod: true}
+			pre := ret.Declare(sym.Clone(obj))
+			if pre != nil {
+				panic("bug")
+			}
+		case symField:
+			pre := ret.Declare(sym)
+			if pre != nil {
+				panic("bug")
+			}
 		default:
 			panic("bug")
 		}

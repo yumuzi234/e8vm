@@ -11,7 +11,6 @@ var (
 		"halt":    arch8.HALT,
 		"syscall": arch8.SYSCALL,
 		"iret":    arch8.IRET,
-		"panic":   arch8.PANIC,
 	}
 
 	// op reg

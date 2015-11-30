@@ -103,7 +103,9 @@ func resolveInstReg(log lex8.Logger, ops []*lex8.Token) (*inst, bool) {
 	}
 
 	var found bool
-	if fn, found = opShiftMap[opName]; found {
+	if opName == "panic" {
+		// panic
+	} else if fn, found = opShiftMap[opName]; found {
 		// op reg reg shift
 		if argCount(3) {
 			sh = parseShift(log, args[2])

@@ -139,7 +139,7 @@ func TestInstReg(t *testing.T) {
 		}
 	}
 
-	tst(0, 0, 0, 0, 0, 0, 0) // noop
+	// tst(0, 0, 0, 0, 0, 0, 0) // this is panic now
 
 	tf(SLLV, func(a, b uint32) uint32 { return a << b })
 	tf(SRLV, func(a, b uint32) uint32 { return a >> b })

@@ -79,13 +79,15 @@ func (j *Job) Link(out io.Writer) error {
 			return err
 		}
 
-		secs = append(secs, &e8.Section{
-			Header: &e8.Header{
-				Type: e8.Data,
-				Addr: vars[0].Var().addr,
-			},
-			Bytes: buf.Bytes(),
-		})
+		if buf.Len() > 0 {
+			secs = append(secs, &e8.Section{
+				Header: &e8.Header{
+					Type: e8.Data,
+					Addr: vars[0].Var().addr,
+				},
+				Bytes: buf.Bytes(),
+			})
+		}
 	}
 
 	if len(zeros) > 0 {

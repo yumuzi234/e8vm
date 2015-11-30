@@ -18,26 +18,27 @@ const (
 
 // reg instructions
 const (
-	SLL  = 0
-	SRL  = 1
-	SRA  = 2
-	SLLV = 3
-	SRLV = 4
-	SRLA = 5
-	ADD  = 6
-	SUB  = 7
-	AND  = 8
-	OR   = 9
-	XOR  = 10
-	NOR  = 11
-	SLT  = 12
-	SLTU = 13
-	MUL  = 14
-	MULU = 15
-	DIV  = 16
-	DIVU = 17
-	MOD  = 18
-	MODU = 19
+	PANIC = 0
+	SLL   = 1
+	SRL   = 2
+	SRA   = 3
+	SLLV  = 4
+	SRLV  = 5
+	SRLA  = 6
+	ADD   = 7
+	SUB   = 8
+	AND   = 9
+	OR    = 10
+	XOR   = 11
+	NOR   = 12
+	SLT   = 13
+	SLTU  = 14
+	MUL   = 15
+	MULU  = 16
+	DIV   = 17
+	DIVU  = 18
+	MOD   = 19
+	MODU  = 20
 
 	FADD = 0
 	FSUB = 1
@@ -60,7 +61,6 @@ const (
 	VTABLE  = 67
 	IRET    = 68
 	CPUID   = 69
-	PANIC   = 70
 )
 
 // jump instructions

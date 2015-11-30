@@ -34,8 +34,6 @@ func (i *instSys) I(cpu *cpu, in uint32) *Excep {
 		return cpu.Iret()
 	case CPUID:
 		s = uint32(cpu.index)
-	case PANIC:
-		return errPanic
 	default:
 		return errInvalidInst
 	}

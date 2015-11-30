@@ -124,8 +124,11 @@ func buildMember(b *builder, m *ast.MemberExpr) *ref {
 		b.b.Arith(addr, nil, "&", obj.IR()) // load address
 	}
 
+	// TODO: the use of structFields here is more like a hack. It should not
+	// be the way to judge if a struct belongs to another package or not.
 	symTable := b.structFields[tstruct]
 	if symTable == nil {
+		// in this package.
 		symTable = tstruct.Syms
 	}
 	name := m.Sub.Lit

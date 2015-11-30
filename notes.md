@@ -1,3 +1,6 @@
+## Init support
+One thing that is hard about init support is that,
+
 ## Static analysis
 
 - what we want is the type of each identifier.
