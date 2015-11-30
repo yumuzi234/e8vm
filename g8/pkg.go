@@ -16,6 +16,7 @@ type pkg struct {
 	structs []*ast.Struct
 	vars    []*ast.VarDecls
 
+	constMap    map[string]*constInfo
 	structMap   map[string]*structInfo
 	structOrder []*structInfo
 	funcObjs    []*objFunc
@@ -30,15 +31,53 @@ func newPkg(asts map[string]*ast.File) *pkg {
 	ret := new(pkg)
 	ret.files = asts
 	ret.structMap = make(map[string]*structInfo)
+	ret.constMap = make(map[string]*constInfo)
 
 	return ret
+}
+
+func (p *pkg) addConstInfo(b *builder, d *ast.ConstDecl) bool {
+	if d.Type != nil {
+		b.Errorf(ast.ExprPos(d.Type), "typed const not implemented")
+		return false
+	}
+
+	nident := len(d.Idents.Idents)
+	nexpr := len(d.Exprs.Exprs)
+
+	if nident != nexpr {
+		b.Errorf(d.Eq.Pos, "%d consts with %d expressions",
+			nident, nexpr,
+		)
+		return false
+	}
+
+	for i, ident := range d.Idents.Idents {
+		name := ident.Lit
+		if c, found := p.constMap[name]; found {
+			b.Errorf(ident.Pos, "const %s already defined", name)
+			b.Errorf(c.name.Pos, "previously defined here")
+			return false
+		}
+
+		p.constMap[name] = newConstInfo(ident, d.Type, d.Exprs.Exprs[i])
+	}
+
+	return true
 }
 
 func (p *pkg) declareConsts(b *builder) {
 	for _, decls := range p.consts {
 		for _, d := range decls.Decls {
-			buildConstDecl(b, d)
+			if !p.addConstInfo(b, d) {
+				return
+			}
 		}
+	}
+
+	order := sortConsts(b, p.constMap)
+	for _, info := range order {
+		buildGlobalConstDecl(b, info)
 	}
 }
 
@@ -57,51 +96,10 @@ func (p *pkg) declareStructs(b *builder) {
 	}
 }
 
-func (p *pkg) pushStruct(info *structInfo, b *builder) {
-	info.queuing = true
-	name := info.Name()
-
-	for _, dep := range info.deps {
-		if dep == name {
-			b.Errorf(info.name.Pos, "struct %s depends on itself", name)
-			continue
-		}
-
-		depInfo := p.structMap[dep]
-		if depInfo == nil || depInfo.queued {
-			continue
-		}
-
-		if depInfo.queuing {
-			b.Errorf(info.name.Pos,
-				"struct %s circular depends on struct %s",
-				info.name.Lit, dep,
-			)
-			continue
-		}
-
-		p.pushStruct(depInfo, b)
-	}
-
-	info.queuing = false
-	info.queued = true
-	p.structOrder = append(p.structOrder, info)
-}
-
-func (p *pkg) sortStructs(b *builder) {
-	p.structOrder = nil
-
-	for _, info := range p.structMap {
-		if !info.queued {
-			p.pushStruct(info, b)
-		}
-	}
-}
-
 func (p *pkg) defineStructs(b *builder) {
+	p.structOrder = sortStructs(b, p.structMap)
 	for _, info := range p.structOrder {
 		defineStructFields(b, info)
-		info.defined = true
 	}
 }
 
@@ -253,7 +251,6 @@ func (p *pkg) build(b *builder, pinfo *build8.PkgInfo) {
 	o(p.collectSymbols)
 	o(p.declareConsts)
 	o(p.declareStructs)
-	o(p.sortStructs)
 	o(p.defineStructs)
 	o(p.declareFuncs)
 	o(p.declareVars)

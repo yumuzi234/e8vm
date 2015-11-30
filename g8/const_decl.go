@@ -48,13 +48,43 @@ func declareConst(b *builder, tok *lex8.Token) *objConst {
 	return v
 }
 
+func buildGlobalConstDecl(b *builder, info *constInfo) {
+	if info.typ != nil {
+		b.Errorf(ast.ExprPos(info.typ), "typed const not implemented yet")
+		return
+	}
+
+	right := buildConstExpr(b, info.expr)
+	if right == nil {
+		return
+	}
+
+	if !right.IsSingle() {
+		b.Errorf(ast.ExprPos(info.expr), "must be single expression")
+		return
+	}
+
+	t := right.Type()
+	if !types.IsConst(t) {
+		b.Errorf(ast.ExprPos(info.expr), "not a const")
+		return
+	}
+
+	obj := declareConst(b, info.name)
+	if obj == nil {
+		return
+	}
+
+	obj.ref = right
+}
+
 func buildConstDecl(b *builder, d *ast.ConstDecl) {
 	if d.Type != nil {
 		b.Errorf(ast.ExprPos(d.Type), "typed const not implemented yet")
 		return
 	}
 
-	right := buildExprList(b, d.Exprs)
+	right := buildConstExprList(b, d.Exprs)
 	if right == nil {
 		return
 	}

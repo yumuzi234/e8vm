@@ -7,18 +7,23 @@ import (
 )
 
 type symUses struct {
-	toks []*lex8.Token
+	uses map[string]*lex8.Token
 }
 
 func newSymUses() *symUses {
-	return &symUses{}
+	return &symUses{
+		uses: make(map[string]*lex8.Token),
+	}
 }
 
 func (u *symUses) add(tok *lex8.Token) {
-	u.toks = append(u.toks, tok)
+	name := tok.Lit
+	if _, found := u.uses[name]; !found {
+		u.uses[name] = tok
+	}
 }
 
-func symUseExpr(u *symUses, expr ast.Expr) {
+func (u *symUses) symUseExpr(expr ast.Expr) {
 	if expr == nil {
 		return
 	}
@@ -29,34 +34,45 @@ func symUseExpr(u *symUses, expr ast.Expr) {
 			u.add(expr.Token)
 		}
 	case *ast.MemberExpr:
-		symUseExpr(u, expr.Expr)
+		u.symUseExpr(expr.Expr)
 	case *ast.OpExpr:
-		symUseExpr(u, expr.A)
-		symUseExpr(u, expr.B)
+		u.symUseExpr(expr.A)
+		u.symUseExpr(expr.B)
 	case *ast.ParenExpr:
-		symUseExpr(u, expr.Expr)
+		u.symUseExpr(expr.Expr)
 	case *ast.StarExpr:
-		symUseExpr(u, expr.Expr)
+		u.symUseExpr(expr.Expr)
 	case *ast.CallExpr:
-		symUseExpr(u, expr.Func)
+		u.symUseExpr(expr.Func)
 		for _, arg := range expr.Args.Exprs {
-			symUseExpr(u, arg)
+			u.symUseExpr(arg)
 		}
 	case *ast.IndexExpr:
-		symUseExpr(u, expr.Array)
-		symUseExpr(u, expr.Index)
-		symUseExpr(u, expr.IndexEnd)
+		u.symUseExpr(expr.Array)
+		u.symUseExpr(expr.Index)
+		u.symUseExpr(expr.IndexEnd)
 	case *ast.ArrayTypeExpr:
-		symUseExpr(u, expr.Len)
-		symUseExpr(u, expr.Type)
+		u.symUseExpr(expr.Len)
+		u.symUseExpr(expr.Type)
 	case *ast.FuncTypeExpr:
 		sig := expr.FuncSig
 		for _, arg := range sig.Args.Paras {
-			symUseExpr(u, arg.Type)
+			u.symUseExpr(arg.Type)
 		}
 		for _, ret := range sig.Rets.Paras {
-			symUseExpr(u, ret.Type)
+			u.symUseExpr(ret.Type)
 		}
-		symUseExpr(u, sig.RetType)
+		u.symUseExpr(sig.RetType)
 	}
+}
+
+func symUseExpr(expr ast.Expr) []string {
+	u := newSymUses()
+	u.symUseExpr(expr)
+
+	var ret []string
+	for name := range u.uses {
+		ret = append(ret, name)
+	}
+	return ret
 }

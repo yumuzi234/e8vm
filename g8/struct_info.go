@@ -10,15 +10,12 @@ import (
 type structInfo struct {
 	name *lex8.Token
 	ast  *ast.Struct
-	deps []string
 	t    *types.Struct // the struct type
 	pt   *types.Pointer
 
 	methodObjs []*objFunc
 
-	queuing bool
-	queued  bool // flag for topo-sorting structs for define order
-	defined bool
+	deps []string
 }
 
 func addStructDeps(deps []string, t ast.Expr) []string {
