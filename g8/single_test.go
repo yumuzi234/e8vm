@@ -210,6 +210,9 @@ func TestSingleFile_good(t *testing.T) {
 
 	o("const a=33; func main() { printInt(a) }", "33")
 	o("const a=33; func main() { const a=34; printInt(a) }", "34")
+	o(`	const a, b = 1, a; const c, d = d, 3
+		func main() { printInt(a); printInt(b); printInt(c); printInt(d) }`,
+		"1\n1\n3\n3\n")
 
 	// Bugs found by the fuzzer in the past
 	o("func main() { a := 0==0; if a { printInt(33) } }", "33")
@@ -274,6 +277,8 @@ func TestSingleFile_bad(t *testing.T) {
 	o("func main() {}; struct A{}; struct A{}")
 
 	o("var a int; func a() {}; func main() {}")
+	o("const a, b = a, b; func main() {}")
+	o("const c, d = d, t; func main() {}")
 }
 
 func TestSingleFile_panic(t *testing.T) {
