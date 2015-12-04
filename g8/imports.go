@@ -42,7 +42,7 @@ func importPathAs(d *ast.ImportDecl) (p, as string, err error) {
 func listImport(
 	f string, rc io.ReadCloser, imp build8.Importer, golike bool,
 ) []*lex8.Error {
-	ast, es := parse.File(f, rc, golike)
+	ast, _, es := parse.File(f, rc, golike)
 	if es != nil {
 		return es
 	}

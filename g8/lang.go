@@ -77,7 +77,7 @@ func (l *lang) parsePkg(pinfo *build8.PkgInfo) (
 			panic("basename in path is different from the file name")
 		}
 
-		f, es := parse.File(src.Path, src, l.golike)
+		f, _, es := parse.File(src.Path, src, l.golike)
 		if es != nil {
 			parseErrs = append(parseErrs, es...)
 		}

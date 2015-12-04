@@ -6,6 +6,7 @@ import (
 
 	"e8vm.io/e8vm/fmt8"
 	"e8vm.io/e8vm/g8/ast"
+	"e8vm.io/e8vm/lex8"
 )
 
 func printTopDecl(p *fmt8.Printer, d ast.Decl) {
@@ -33,7 +34,7 @@ func printFile(p *fmt8.Printer, f *ast.File) {
 }
 
 // FprintFile prints a list of file
-func FprintFile(out io.Writer, f *ast.File) {
+func FprintFile(out io.Writer, f *ast.File, rec *lex8.Recorder) {
 	p := fmt8.NewPrinter(out)
 	printFile(p, f)
 }
