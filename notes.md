@@ -1,5 +1,6 @@
 ## Init support
-One thing that is hard about init support is that,
+
+One thing that is hard about init support is that.
 
 ## Static analysis
 
