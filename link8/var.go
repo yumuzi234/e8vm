@@ -60,7 +60,7 @@ func (v *Var) Pad(n uint32) {
 }
 
 // WriteLink writes a symbol link into the data section.
-func (v *Var) WriteLink(pkg, sym uint32) error {
+func (v *Var) WriteLink(pkg, sym string) error {
 	if v.zeros != 0 {
 		panic("cannot write link to zeros section")
 	}

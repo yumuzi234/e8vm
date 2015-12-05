@@ -99,7 +99,7 @@ func saveRef(b *Block, reg uint32, r Ref, tmpReg uint32) {
 		if r.size == 0 {
 			return
 		}
-		loadSym(b, tmpReg, r.pkg, r.sym)
+		loadSym(b, tmpReg, r.pkg, r.name)
 		if r.size == 1 {
 			b.inst(asm.sb(reg, tmpReg, 0))
 		} else if r.size == regSize {
@@ -114,7 +114,7 @@ func saveRef(b *Block, reg uint32, r Ref, tmpReg uint32) {
 	}
 }
 
-func loadSym(b *Block, reg uint32, pkg, sym uint32) {
+func loadSym(b *Block, reg uint32, pkg, sym string) {
 	high := b.inst(asm.lui(reg, 0))
 	high.sym = &linkSym{link8.FillHigh, pkg, sym}
 	low := b.inst(asm.ori(reg, reg, 0))
@@ -140,9 +140,9 @@ func loadRef(b *Block, reg uint32, r Ref) {
 	case *byt:
 		b.inst(asm.ori(reg, _0, uint32(r.v)))
 	case *Func:
-		loadSym(b, reg, 0, r.index)
+		loadSym(b, reg, "", r.name)
 	case *FuncSym:
-		loadSym(b, reg, r.pkg, r.sym)
+		loadSym(b, reg, r.pkg, r.name)
 	case *addrRef:
 		if r.size == 0 {
 			return
@@ -166,7 +166,7 @@ func loadRef(b *Block, reg uint32, r Ref) {
 		if r.size == 0 {
 			return
 		}
-		loadSym(b, reg, r.pkg, r.sym)
+		loadSym(b, reg, r.pkg, r.name)
 		if r.size == 1 {
 			if r.u8 {
 				b.inst(asm.lb(reg, reg, 0))

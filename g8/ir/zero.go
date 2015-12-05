@@ -21,7 +21,7 @@ func zeroAddr(g *gener, b *Block, reg uint32, size int32, regSizeAlign bool) {
 		loadUint32(b, _2, uint32(size))
 		jal := b.inst(asm.jal(0))
 		f := g.memClear
-		jal.sym = &linkSym{link8.FillLink, f.pkg, f.sym}
+		jal.sym = &linkSym{link8.FillLink, f.pkg, f.name}
 	}
 }
 
@@ -42,7 +42,7 @@ func zeroRef(g *gener, b *Block, r Ref) {
 
 			jal := b.inst(asm.jal(0))
 			f := g.memClear
-			jal.sym = &linkSym{link8.FillLink, f.pkg, f.sym}
+			jal.sym = &linkSym{link8.FillLink, f.pkg, f.name}
 		}
 	case *addrRef:
 		if r.size == 0 {

@@ -1,36 +1,43 @@
 package link8
 
+import (
+	"fmt"
+)
+
 type tracer struct {
 	lnk  *linker
-	hits map[string][]bool
+	hits map[string]map[string]bool
 }
 
 func newTracer(lnk *linker) *tracer {
 	ret := new(tracer)
 	ret.lnk = lnk
-	ret.hits = make(map[string][]bool)
-	for path, p := range lnk.pkgs {
-		ret.hits[path] = make([]bool, len(p.symbols))
+	ret.hits = make(map[string]map[string]bool)
+	for path := range lnk.pkgs {
+		ret.hits[path] = make(map[string]bool)
 	}
 
 	return ret
 }
 
-func (t *tracer) hit(pkg *Pkg, sym uint32) bool {
-	pt := &t.hits[pkg.path][sym]
-	ret := *pt
-	*pt = true
+func (t *tracer) hit(pkg *Pkg, sym string) bool {
+	p, found := t.hits[pkg.path]
+	if !found {
+		panic("path not found")
+	}
+	ret := p[sym]
+	p[sym] = true
 	return ret
 }
 
 // traceUsed traces symbols/objects that are used.
 // only these objects need to be linked into the final result.
-func traceUsed(lnk *linker, p *Pkg, roots []uint32) []pkgSym {
+func traceUsed(lnk *linker, p *Pkg, roots []string) []pkgSym {
 	t := newTracer(lnk)
 
 	var cur []pkgSym
-	for _, index := range roots {
-		cur = append(cur, pkgSym{p, index})
+	for _, name := range roots {
+		cur = append(cur, pkgSym{p, name})
 	}
 
 	var next []pkgSym
@@ -38,6 +45,10 @@ func traceUsed(lnk *linker, p *Pkg, roots []uint32) []pkgSym {
 
 	addLink := func(ps pkgSym, lnk *link) {
 		pkg := ps.Import(lnk.pkg)
+		if pkg == nil {
+			panic(fmt.Errorf("package %q missing", lnk.pkg))
+		}
+
 		if t.hit(pkg, lnk.sym) {
 			return
 		}

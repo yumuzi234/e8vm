@@ -101,7 +101,8 @@ func declareImports(b *builder, f *ast.File, pinfo *build8.PkgInfo) {
 		}
 
 		compiled := imported.Compiled
-		pindex := b.p.Require(compiled.Lib())
+		lib := compiled.Lib()
+		b.p.Require(lib)
 		lang, syms := compiled.Symbols()
 		if lang != "g8" {
 			// TODO: import assembly
@@ -109,8 +110,7 @@ func declareImports(b *builder, f *ast.File, pinfo *build8.PkgInfo) {
 			continue
 		}
 
-		syms = importSymbols(b, syms, pindex)
-
+		syms = importSymbols(b, syms, lib.Path())
 		pos := importPos(d)
 		ref := newRef(&types.Pkg{as, syms}, nil)
 		obj := &objImport{ref}
@@ -122,7 +122,7 @@ func declareImports(b *builder, f *ast.File, pinfo *build8.PkgInfo) {
 	}
 }
 
-func importSymbols(b *builder, syms *sym8.Table, pindex uint32) *sym8.Table {
+func importSymbols(b *builder, syms *sym8.Table, path string) *sym8.Table {
 	lst := syms.List()
 	ret := sym8.NewTable()
 	for _, sym := range lst {
@@ -136,7 +136,7 @@ func importSymbols(b *builder, syms *sym8.Table, pindex uint32) *sym8.Table {
 		case symVar:
 			v := v.(*objVar)
 			irRef := v.ref.IR().(*ir.HeapSym)
-			irRef = irRef.Import(pindex)
+			irRef = irRef.Import(path)
 			obj := &objVar{v.name, newAddressableRef(v.ref.Type(), irRef)}
 			pre := ret.Declare(sym.Clone(obj))
 			if pre != nil {
@@ -148,7 +148,7 @@ func importSymbols(b *builder, syms *sym8.Table, pindex uint32) *sym8.Table {
 				panic("bug")
 			}
 			irRef := v.ref.IR().(*ir.Func)
-			funcSym := irRef.Import(pindex)
+			funcSym := irRef.ImportSym(path)
 			obj := &objFunc{name: v.name, ref: newRef(v.ref.Type(), funcSym)}
 			pre := ret.Declare(sym.Clone(obj))
 			if pre != nil {
@@ -157,7 +157,7 @@ func importSymbols(b *builder, syms *sym8.Table, pindex uint32) *sym8.Table {
 		case symStruct:
 			v := v.(*objType)
 			st := v.ref.TypeType().(*types.Struct)
-			b.structFields[st] = makeMemberTable(b, st, pindex)
+			b.structFields[st] = makeMemberTable(b, st, path)
 			pre := ret.Declare(sym)
 			if pre != nil {
 				panic("bug")
@@ -172,7 +172,7 @@ func importSymbols(b *builder, syms *sym8.Table, pindex uint32) *sym8.Table {
 	return ret
 }
 
-func makeMemberTable(b *builder, s *types.Struct, pindex uint32) *sym8.Table {
+func makeMemberTable(b *builder, s *types.Struct, path string) *sym8.Table {
 	lst := s.Syms.List()
 	ret := sym8.NewTable()
 
@@ -185,7 +185,7 @@ func makeMemberTable(b *builder, s *types.Struct, pindex uint32) *sym8.Table {
 				panic("bug")
 			}
 			irRef := v.ref.IR().(*ir.Func)
-			funcSym := irRef.Import(pindex)
+			funcSym := irRef.ImportSym(path)
 			ref := newRef(v.ref.Type(), funcSym)
 			obj := &objFunc{name: v.name, ref: ref, isMethod: true}
 			pre := ret.Declare(sym.Clone(obj))

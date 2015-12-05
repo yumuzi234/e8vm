@@ -15,7 +15,7 @@ func BuildPkg(p *Pkg) *link8.Pkg {
 		}
 		obj := link8.NewVar(align)
 		obj.Zeros(uint32(v.size))
-		p.lib.DefineVar(v.sym, obj)
+		p.lib.DefineVar(v.name, obj)
 	}
 
 	for _, f := range p.funcs {
@@ -26,7 +26,7 @@ func BuildPkg(p *Pkg) *link8.Pkg {
 	if p.tests != nil {
 		v := link8.NewVar(regSize)
 		for _, f := range p.tests.funcs {
-			if err := v.WriteLink(0, f.index); err != nil {
+			if err := v.WriteLink("", f.name); err != nil {
 				panic(err)
 			}
 		}

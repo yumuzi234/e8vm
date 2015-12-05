@@ -13,7 +13,7 @@ type builder struct {
 
 	curPkg *lib
 
-	indices map[string]uint32
+	imports map[string]string
 	pkgUsed map[string]struct{}
 }
 
@@ -22,7 +22,7 @@ func newBuilder() *builder {
 	ret.ErrorList = lex8.NewErrorList()
 	ret.scope = sym8.NewScope()
 	ret.symPkg = new(sym8.Pkg)
-	ret.indices = make(map[string]uint32)
+	ret.imports = make(map[string]string)
 	ret.pkgUsed = make(map[string]struct{})
 
 	return ret
@@ -33,17 +33,17 @@ func (b *builder) Errs() []*lex8.Error {
 	return b.ErrorList.Errs()
 }
 
-func (b *builder) index(name string, index uint32) {
-	_, found := b.indices[name]
+func (b *builder) importPkg(path, as string) {
+	_, found := b.imports[as]
 	if found {
 		panic("redeclare")
 	}
 
-	b.indices[name] = index
+	b.imports[as] = path
 }
 
-func (b *builder) getIndex(name string) uint32 {
-	ret, found := b.indices[name]
+func (b *builder) pkgPath(as string) string {
+	ret, found := b.imports[as]
 	if !found {
 		panic("not found")
 	}

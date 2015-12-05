@@ -102,10 +102,10 @@ func fillLabels(b *builder, f *funcDecl) {
 	}
 }
 
-func queryPkg(b *builder, t *lex8.Token, pack string) *importStmt {
-	sym := b.scope.Query(pack)
+func queryPkg(b *builder, t *lex8.Token, pkg string) *importStmt {
+	sym := b.scope.Query(pkg)
 	if sym == nil {
-		b.Errorf(t.Pos, "package %q not found", pack)
+		b.Errorf(t.Pos, "package %q not found", pkg)
 		return nil
 	} else if sym.Type != SymImport {
 		b.Errorf(t.Pos, "%q is a %s, not a package", t.Lit, symStr(sym.Type))
@@ -132,16 +132,15 @@ func init() {
 //
 // this function only resolves symbol that requires linking
 // which are variables and functions
-func resolveSymbol(b *builder, s *funcStmt) (typ int, pkg, index uint32) {
+func resolveSymbol(b *builder, s *funcStmt) (typ int, pkg, name string) {
 	t := s.symTok
 
-	// TODO: this code part is too messy, need to clean this.
-	if s.pkg == "" {
+	if s.pkg == "" { // in this package
 		sym := b.scope.Query(s.sym) // find the symbol in scope
 		if sym != nil {
 			typ = sym.Type
 			if typ == SymVar || typ == SymFunc {
-				index = b.curPkg.SymIndex(sym.Name())
+				name = sym.Name()
 			}
 		}
 	} else {
@@ -149,12 +148,11 @@ func resolveSymbol(b *builder, s *funcStmt) (typ int, pkg, index uint32) {
 		if p != nil {
 			var sym *link8.Symbol // for saving the linking symbol in the lib
 
-			pkg = b.getIndex(p.as)       // package index, based on alias
+			pkg = b.pkgPath(p.as)        // package index, based on alias
 			b.pkgUsed[p.as] = struct{}{} // mark pkg used
 
-			// TODO: we should find this in back in linkable when possible
-			// this is required for handling consts
-			sym, index = p.lib.SymbolByName(s.sym) // find the symbol
+			// TODO: support consts in assembly
+			sym = p.lib.SymbolByName(s.sym) // find the symbol
 			if sym != nil {
 				if sym.Type == link8.SymFunc {
 					typ = SymFunc
@@ -189,7 +187,7 @@ func linkSymbol(b *builder, s *funcStmt, f *link8.Func) {
 		return // this may happen for bare function
 	}
 
-	typ, pkg, index := resolveSymbol(b, s)
+	typ, pkg, name := resolveSymbol(b, s)
 	if typ == SymNone {
 		return
 	}
@@ -197,14 +195,14 @@ func linkSymbol(b *builder, s *funcStmt, f *link8.Func) {
 	if s.fill == fillLink && typ != SymFunc {
 		b.Errorf(t.Pos, "%s %q is not a function", symStr(typ), t.Lit)
 		return
-	} else if pkg > 0 && !sym8.IsPublic(s.sym) {
+	} else if pkg != "" && !sym8.IsPublic(s.sym) {
 		// for imported package, check if it is public
 		b.Errorf(t.Pos, "%q is not public", t.Lit)
 		return
 	}
 
 	// save the link
-	f.AddLink(s.fill, pkg, index)
+	f.AddLink(s.fill, pkg, name)
 }
 
 // makeFuncObj converts a function AST node f into a function object. It

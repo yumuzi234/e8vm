@@ -25,21 +25,15 @@ func (p *lib) Tests() (map[string]uint32, string) {
 func newLib(p string) *lib {
 	ret := new(lib)
 	ret.Pkg = link8.NewPkg(p)
-
 	ret.symbols = make(map[string]*sym8.Symbol)
-
-	id := ret.Require(ret.Pkg) // require itself
-	if id != 0 {
-		panic("bug")
-	}
-
+	ret.Require(ret.Pkg) // require itself
 	return ret
 }
 
 // Link returns the link8.Package for linking.
 func (p *lib) Link() *link8.Pkg { return p.Pkg }
 
-func (p *lib) Declare(s *sym8.Symbol) uint32 {
+func (p *lib) Declare(s *sym8.Symbol) {
 	_, found := p.symbols[s.Name()]
 	if found {
 		panic("redeclare")
@@ -50,9 +44,9 @@ func (p *lib) Declare(s *sym8.Symbol) uint32 {
 	case SymConst:
 		panic("todo")
 	case SymFunc:
-		return p.Pkg.DeclareFunc(s.Name())
+		p.Pkg.DeclareFunc(s.Name())
 	case SymVar:
-		return p.Pkg.DeclareVar(s.Name())
+		p.Pkg.DeclareVar(s.Name())
 	default:
 		panic("declare with invalid sym type")
 	}
@@ -61,21 +55,21 @@ func (p *lib) Declare(s *sym8.Symbol) uint32 {
 // Query returns the symbol declared by name and its symbol index
 // if the symbol is a function or variable. It returns nil, 0 when
 // the symbol of name is not found.
-func (p *lib) query(name string) (*sym8.Symbol, uint32) {
+func (p *lib) query(name string) *sym8.Symbol {
 	ret, found := p.symbols[name]
 	if !found {
-		return nil, 0
+		return nil
 	}
 
 	switch ret.Type {
 	case SymConst:
-		return ret, 0
+		return ret
 	case SymFunc, SymVar:
-		s, index := p.Pkg.SymbolByName(name)
+		s := p.Pkg.SymbolByName(name)
 		if s == nil {
 			panic("symbol missing")
 		}
-		return ret, index
+		return ret
 	default:
 		panic("bug")
 	}

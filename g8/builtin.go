@@ -14,14 +14,15 @@ var (
 )
 
 func declareBuiltin(b *builder, builtin *link8.Pkg) {
-	pindex, e := b.p.RequireBuiltin(builtin)
+	path := builtin.Path()
+	e := b.p.RequireBuiltin(builtin)
 	if e != nil {
 		b.Errorf(nil, e.Error())
 		return
 	}
 
 	o := func(name string, as string, t *types.Func) ir.Ref {
-		sym, index := builtin.SymbolByName(name)
+		sym := builtin.SymbolByName(name)
 		if sym == nil {
 			b.Errorf(nil, "builtin symbol %s missing", name)
 			return nil
@@ -30,7 +31,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 			return nil
 		}
 
-		ref := ir.NewFuncSym(as, pindex, index, nil)
+		ref := ir.NewFuncSym(path, name, nil)
 		obj := &objFunc{as, newRef(t, ref), nil, false}
 		pre := b.scope.Declare(sym8.Make(b.symPkg, as, symFunc, obj, nil))
 		if pre != nil {
@@ -57,12 +58,12 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 
 	// TODO: these are just hacks for context switch
 	oe := func(name string, as string, t *types.Func) {
-		sym, index := builtin.SymbolByName(name)
+		sym := builtin.SymbolByName(name)
 		if sym == nil {
 			return
 		}
 
-		ref := ir.NewFuncSym(as, pindex, index, nil)
+		ref := ir.NewFuncSym(path, name, nil)
 		obj := &objFunc{as, newRef(t, ref), nil, false}
 		pre := b.scope.Declare(sym8.Make(b.symPkg, as, symFunc, obj, nil))
 		if pre != nil {
@@ -75,11 +76,11 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 	oe("Ustart", "ustart", types.NewVoidFunc(types.Uint, types.Uint))
 
 	ov := func(name string, as string, t types.T) {
-		sym, index := builtin.SymbolByName(name)
+		sym := builtin.SymbolByName(name)
 		if sym == nil {
 			return
 		}
-		ref := ir.NewHeapSym(as, pindex, index, t.Size(), false, true)
+		ref := ir.NewHeapSym(path, name, t.Size(), false, true)
 		obj := &objVar{name: name, ref: newAddressableRef(t, ref)}
 		pre := b.scope.Declare(sym8.Make(b.symPkg, as, symVar, obj, nil))
 		if pre != nil {

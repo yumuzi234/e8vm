@@ -14,7 +14,7 @@ func loadAddr(b *Block, reg uint32, r Ref) {
 			b.inst(asm.addi(reg, reg, r.offset))
 		}
 	case *HeapSym:
-		loadSym(b, reg, r.pkg, r.sym)
+		loadSym(b, reg, r.pkg, r.name)
 	case *testList:
 		loadSym(b, reg, r.pkg, r.sym)
 	default:

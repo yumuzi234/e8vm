@@ -33,15 +33,16 @@ func LinkMain(p *Pkg, out io.Writer, start string) error {
 // Link performs the linking job and writes the output to out.
 func (j *Job) Link(out io.Writer) error {
 	lnk := newLinker()
-	lnk.addPkgs(j.Pkg)
+	lnk.addPkgs(j.Pkg) // add all dependencies
 
-	var roots []uint32
+	var roots []string
 
-	funcMain, index := j.Pkg.SymbolByName(j.StartSym)
+	funcMain := j.Pkg.SymbolByName(j.StartSym)
 	if funcMain == nil || funcMain.Type != SymFunc {
 		return fmt.Errorf("start function missing")
 	}
-	roots = append(roots, index)
+
+	roots = append(roots, j.StartSym)
 	used := traceUsed(lnk, j.Pkg, roots)
 
 	funcs, vars, zeros, e := layout(used, j.InitPC)

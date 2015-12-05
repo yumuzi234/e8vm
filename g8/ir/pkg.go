@@ -36,15 +36,7 @@ func NewPkg(path string) *Pkg {
 // NewFunc creates a new function for the package.
 func (p *Pkg) NewFunc(name string, sig *FuncSig) *Func {
 	ret := newFunc(name, sig)
-	ret.index = p.lib.DeclareFunc(ret.name)
-	p.funcs = append(p.funcs, ret)
-	return ret
-}
-
-// NewMethod creates a new method function for the package.
-func (p *Pkg) NewMethod(name string, sig *FuncSig) *Func {
-	ret := newMethod(name, sig)
-	ret.index = p.lib.DeclareFunc(ret.name)
+	p.lib.DeclareFunc(ret.name)
 	p.funcs = append(p.funcs, ret)
 	return ret
 }
@@ -54,7 +46,7 @@ func (p *Pkg) NewGlobalVar(
 	size int32, name string, u8, regSizeAlign bool,
 ) Ref {
 	ret := newHeapSym(size, name, u8, regSizeAlign)
-	ret.sym = p.lib.DeclareVar(ret.name)
+	p.lib.DeclareVar(ret.name)
 	p.vars = append(p.vars, ret)
 	return ret
 }
@@ -69,19 +61,19 @@ func (p *Pkg) NewTestList(name string, funcs []*Func) Ref {
 	}
 
 	ret := newTestList(name, funcs)
-	ret.sym = p.lib.DeclareVar(ret.name)
+	p.lib.DeclareVar(ret.name)
 	p.tests = ret
 
 	return ret
 }
 
 // Require imports a linkable package.
-func (p *Pkg) Require(pkg *link8.Pkg) uint32 { return p.lib.Require(pkg) }
+func (p *Pkg) Require(pkg *link8.Pkg) { p.lib.Require(pkg) }
 
 // RequireBuiltin imports the builtin package that provides neccessary
 // builtin functions.
-func (p *Pkg) RequireBuiltin(pkg *link8.Pkg) (uint32, error) {
-	ret := p.Require(pkg)
+func (p *Pkg) RequireBuiltin(pkg *link8.Pkg) error {
+	p.Require(pkg)
 
 	var err error
 	se := func(e error) {
@@ -91,20 +83,20 @@ func (p *Pkg) RequireBuiltin(pkg *link8.Pkg) (uint32, error) {
 	}
 
 	o := func(f string) *FuncSym {
-		sym, index := pkg.SymbolByName(f)
+		sym := pkg.SymbolByName(f)
 		if sym == nil {
 			se(fmt.Errorf("%s missing in builtin", f))
 		} else if sym.Type != link8.SymFunc {
 			se(fmt.Errorf("%s is not a function", f))
 		}
 
-		return &FuncSym{pkg: ret, sym: index}
+		return &FuncSym{pkg: pkg.Path(), name: f}
 	}
 
 	p.g.memCopy = o("MemCopy")
 	p.g.memClear = o("MemClear")
 
-	return ret, err
+	return err
 }
 
 // NewString adds a new string constant and returns its reference.

@@ -2,8 +2,8 @@ package ir
 
 type linkSym struct {
 	fill int
-	pkg  uint32 // package index, 0 for the same package
-	sym  uint32 // symbol index
+	pkg  string // package path, empty string for the same package
+	sym  string // symbol name
 }
 
 type inst struct {

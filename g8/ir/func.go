@@ -23,7 +23,6 @@ type Func struct {
 	nvar      int
 	frameSize int32
 
-	index    uint32 // the index in the lib
 	isMain   bool
 	isMethod bool
 }
@@ -128,11 +127,11 @@ func (f *Func) Size() int32 { return regSize }
 // RegSizeAlign returns true. A function pointer is always word aligned.
 func (f *Func) RegSizeAlign() bool { return true }
 
-// Index returns the symbol index of this function in the package.
-func (f *Func) Index() uint32 { return f.index }
+// Name returns the symbol name of the function.
+func (f *Func) Name() string { return f.name }
 
-// Import returns the function symbol for the function where the package
-// is imported as pindex.
-func (f *Func) Import(pindex uint32) *FuncSym {
-	return &FuncSym{name: f.name, pkg: pindex, sym: f.index, sig: f.sig}
+// ImportSym returns the function symbol for the function where the package is
+// imported as pindex.
+func (f *Func) ImportSym(path string) *FuncSym {
+	return &FuncSym{pkg: path, name: f.name, sig: f.sig}
 }

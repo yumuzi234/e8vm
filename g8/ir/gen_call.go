@@ -24,10 +24,10 @@ func genCallOp(g *gener, b *Block, op *callOp) {
 	// do the function call
 	if s, ok := op.f.(*FuncSym); ok {
 		jal := b.inst(asm.jal(0))
-		jal.sym = &linkSym{link8.FillLink, s.pkg, s.sym}
+		jal.sym = &linkSym{link8.FillLink, s.pkg, s.name}
 	} else if f, ok := op.f.(*Func); ok {
 		jal := b.inst(asm.jal(0))
-		jal.sym = &linkSym{link8.FillLink, 0, f.index}
+		jal.sym = &linkSym{link8.FillLink, "", f.name}
 	} else {
 		// function pointer, set PC manually
 		loadRef(b, _4, op.f)
@@ -50,7 +50,7 @@ func genCallOp(g *gener, b *Block, op *callOp) {
 			loadUint32(b, _3, uint32(ret.Size()))
 			jal := b.inst(asm.jal(0))
 			f := g.memCopy
-			jal.sym = &linkSym{link8.FillLink, f.pkg, f.sym}
+			jal.sym = &linkSym{link8.FillLink, f.pkg, f.name}
 		}
 	}
 }

@@ -21,5 +21,5 @@ func writeFunc(p *Pkg, f *Func) {
 		writeBlock(lfunc, b)
 	}
 
-	p.lib.DefineFunc(f.index, lfunc)
+	p.lib.DefineFunc(f.name, lfunc)
 }

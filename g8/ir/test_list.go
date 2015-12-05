@@ -1,7 +1,7 @@
 package ir
 
 type testList struct {
-	pkg, sym uint32
+	pkg, sym string
 
 	name  string
 	funcs []*Func

@@ -39,6 +39,6 @@ func copyRef(g *gener, b *Block, dest, src Ref, isArg bool) {
 
 		jal := b.inst(asm.jal(0))
 		f := g.memCopy
-		jal.sym = &linkSym{link8.FillLink, f.pkg, f.sym}
+		jal.sym = &linkSym{link8.FillLink, f.pkg, f.name}
 	}
 }

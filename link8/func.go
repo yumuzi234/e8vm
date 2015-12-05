@@ -32,14 +32,12 @@ func (f *Func) Size() uint32 {
 	return uint32(len(f.insts) * 4)
 }
 
-// AddLink links the last instruction in inst to
-// the symbol pkg.sym, where pkg and sym are using the
-// indexing of the object file.
-// fill field must be less than 4 so that it fits in the
-// lowest 2 bits in the offset field. The other bits
-// of the offset fields will be automatically calculated
-// based on the number of instructions in insts.
-func (f *Func) AddLink(fill int, pkg, sym uint32) {
+// AddLink links the last instruction in inst to the symbol pkg.sym, where pkg
+// and sym are using the indexing of the object file.  fill field must be less
+// than 4 so that it fits in the lowest 2 bits in the offset field. The other
+// bits of the offset fields will be automatically calculated based on the
+// number of instructions in insts.
+func (f *Func) AddLink(fill int, pkg, sym string) {
 	if len(f.insts) == 0 {
 		panic("no inst to link")
 	}

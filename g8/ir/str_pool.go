@@ -7,9 +7,9 @@ import (
 )
 
 type strConst struct {
-	id  int
-	str string
-	sym uint32
+	id   int
+	str  string
+	name string
 }
 
 func newStrConst(id int, s string) *strConst {
@@ -71,11 +71,11 @@ func (p *strPool) declare(lib *link8.Pkg) {
 	nfmt := fmt.Sprintf(":str_%%0%dd", ndigit)
 
 	for i, s := range p.strs {
-		name := fmt.Sprintf(nfmt, i)
+		s.name = fmt.Sprintf(nfmt, i)
 		v := link8.NewVar(0)
 		v.Write([]byte(s.str))
 
-		s.sym = lib.DeclareVar(name)
-		lib.DefineVar(s.sym, v)
+		lib.DeclareVar(s.name)
+		lib.DefineVar(s.name, v)
 	}
 }

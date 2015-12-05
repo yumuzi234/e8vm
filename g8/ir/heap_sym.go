@@ -2,8 +2,7 @@ package ir
 
 // HeapSym is a variable on heap.
 type HeapSym struct {
-	pkg, sym uint32 // base
-
+	pkg          string // base
 	name         string
 	size         int32
 	u8           bool
@@ -12,12 +11,11 @@ type HeapSym struct {
 
 // NewHeapSym creates a new heap var symbol.
 func NewHeapSym(
-	name string, pkg, sym uint32, size int32, u8, regSizeAlign bool,
+	pkg, name string, size int32, u8, regSizeAlign bool,
 ) *HeapSym {
 	return &HeapSym{
-		name:         name,
 		pkg:          pkg,
-		sym:          sym,
+		name:         name,
 		size:         size,
 		u8:           u8,
 		regSizeAlign: regSizeAlign,
@@ -41,8 +39,8 @@ func (s *HeapSym) RegSizeAlign() bool { return s.regSizeAlign }
 
 // Import returns a copy of the heap sym which package index is the given
 // pindex.
-func (s *HeapSym) Import(pindex uint32) *HeapSym {
+func (s *HeapSym) Import(path string) *HeapSym {
 	ret := *s
-	ret.pkg = pindex
+	ret.pkg = path
 	return &ret
 }
