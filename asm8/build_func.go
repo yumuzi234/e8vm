@@ -163,6 +163,7 @@ func resolveSymbol(b *builder, s *funcStmt) (typ int, pkg, name string) {
 					return
 				}
 			}
+			name = s.sym
 		}
 	}
 
