@@ -30,7 +30,7 @@ func BuildPkg(p *Pkg) *link8.Pkg {
 				panic(err)
 			}
 		}
-		p.lib.DefineVar(p.tests.sym, v)
+		p.lib.DefineVar(p.tests.name, v)
 	}
 
 	return p.lib

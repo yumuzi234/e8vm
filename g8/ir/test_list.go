@@ -1,10 +1,8 @@
 package ir
 
 type testList struct {
-	pkg, sym string
-
-	name  string
-	funcs []*Func
+	pkg, name string
+	funcs     []*Func
 }
 
 func newTestList(name string, funcs []*Func) *testList {

@@ -16,7 +16,7 @@ func loadAddr(b *Block, reg uint32, r Ref) {
 	case *HeapSym:
 		loadSym(b, reg, r.pkg, r.name)
 	case *testList:
-		loadSym(b, reg, r.pkg, r.sym)
+		loadSym(b, reg, r.pkg, r.name)
 	default:
 		panic(fmt.Errorf("load addr of %T", r))
 	}

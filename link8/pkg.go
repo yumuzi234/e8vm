@@ -107,6 +107,9 @@ func (p *Pkg) DefineFunc(name string, f *Func) {
 // DefineVar instantiates a variable object.
 func (p *Pkg) DefineVar(name string, v *Var) {
 	sym := p.SymbolByName(name)
+	if sym == nil {
+		panic(fmt.Errorf("symbol %q not found", name))
+	}
 	if sym.Type != SymVar {
 		panic("not a var")
 	}
