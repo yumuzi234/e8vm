@@ -2,25 +2,22 @@ package link8
 
 type tracer struct {
 	lnk  *linker
-	hits [][]bool
+	hits map[string][]bool
 }
 
 func newTracer(lnk *linker) *tracer {
-	npkg := lnk.npkg()
 	ret := new(tracer)
 	ret.lnk = lnk
-	ret.hits = make([][]bool, npkg)
-	for i := 0; i < npkg; i++ {
-		p := lnk.pkg(i)
-		ret.hits[i] = make([]bool, len(p.symbols))
+	ret.hits = make(map[string][]bool)
+	for path, p := range lnk.pkgs {
+		ret.hits[path] = make([]bool, len(p.symbols))
 	}
 
 	return ret
 }
 
 func (t *tracer) hit(pkg *Pkg, sym uint32) bool {
-	i := t.lnk.pkgIndex(pkg.path)
-	pt := &t.hits[i][sym]
+	pt := &t.hits[pkg.path][sym]
 	ret := *pt
 	*pt = true
 	return ret

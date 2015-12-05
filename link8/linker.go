@@ -1,50 +1,33 @@
 package link8
 
 type linker struct {
-	pkgs        []*Pkg
-	pkgIndexMap map[string]int
+	pkgs map[string]*Pkg
 }
 
 func newLinker() *linker {
 	ret := new(linker)
-	ret.pkgIndexMap = make(map[string]int)
+	ret.pkgs = make(map[string]*Pkg)
 	return ret
 }
 
-func (lnk *linker) addPkg(p *Pkg) (index int, isNew bool) {
+func (lnk *linker) addPkg(p *Pkg) bool {
 	path := p.path
-	index, found := lnk.pkgIndexMap[path]
-	if found {
-		return index, false
+	if _, found := lnk.pkgs[path]; found {
+		return false
 	}
 
-	index = len(lnk.pkgs)
-	lnk.pkgs = append(lnk.pkgs, p)
-	lnk.pkgIndexMap[path] = index
-	return index, true
+	lnk.pkgs[path] = p
+	return true
 }
 
-func (lnk *linker) addPkgs(p *Pkg) int {
-	index, isNew := lnk.addPkg(p)
-	if isNew {
+// addPkgs add a package and recursively adds
+// all the packages that this package requires.
+func (lnk *linker) addPkgs(p *Pkg) {
+	if lnk.addPkg(p) {
 		for _, req := range p.requires {
 			lnk.addPkgs(req)
 		}
 	}
-
-	return index
-}
-
-func (lnk *linker) pkgIndex(path string) int {
-	ret, found := lnk.pkgIndexMap[path]
-	if !found {
-		panic("not found")
-	}
-	return ret
-}
-
-func (lnk *linker) pkg(i int) *Pkg {
-	return lnk.pkgs[i]
 }
 
 func (lnk *linker) npkg() int {
