@@ -10,7 +10,7 @@ import (
 type Pkg struct {
 	path string
 
-	requires map[string]*Pkg    // all the packages that requires for building
+	imported map[string]*Pkg    // all the packages that requires for building
 	symbols  map[string]*Symbol // all the symbol objects
 
 	funcs map[string]*Func
@@ -21,12 +21,12 @@ type Pkg struct {
 func NewPkg(p string) *Pkg {
 	ret := &Pkg{
 		path:     p,
-		requires: make(map[string]*Pkg),
+		imported: make(map[string]*Pkg),
 		symbols:  make(map[string]*Symbol),
 		funcs:    make(map[string]*Func),
 		vars:     make(map[string]*Var),
 	}
-	ret.Require(ret) // requires self
+	ret.Import(ret) // import self
 
 	return ret
 }
@@ -34,16 +34,24 @@ func NewPkg(p string) *Pkg {
 // Path returns the package's path string.
 func (p *Pkg) Path() string { return p.path }
 
-// Require assigns a relative index for the required package.
-func (p *Pkg) Require(req *Pkg) {
-	if old, found := p.requires[req.path]; found {
-		if old != req {
+// Import marks a package as a dependency.
+func (p *Pkg) Import(imp *Pkg) {
+	if old, found := p.imported[imp.path]; found {
+		if old != imp {
 			panic("package name conflict")
 		}
 		return
 	}
 
-	p.requires[req.path] = req
+	p.imported[imp.path] = imp
+}
+
+// Imported is a temp halper for loading a required package.
+func (p *Pkg) Imported(path string) *Pkg {
+	if path == "" {
+		path = p.path
+	}
+	return p.imported[path]
 }
 
 // Declare declares a symbol and assigns a symbol index.

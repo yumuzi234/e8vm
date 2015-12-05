@@ -76,7 +76,7 @@ func writeVar(w *writer, p *Pkg, v *Var) {
 }
 
 func symAddr(p *Pkg, lnk *link) uint32 {
-	pkg := p.requires[lnk.pkg]
+	pkg := p.Imported(lnk.pkg)
 	s := pkg.symbols[lnk.sym]
 	switch s.Type {
 	case SymFunc:
@@ -88,7 +88,7 @@ func symAddr(p *Pkg, lnk *link) uint32 {
 }
 
 func funcAddr(p *Pkg, lnk *link) uint32 {
-	return p.requires[lnk.pkg].Func(lnk.sym).addr
+	return p.Imported(lnk.pkg).Func(lnk.sym).addr
 }
 
 func writeFunc(w *writer, p *Pkg, f *Func) {

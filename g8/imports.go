@@ -102,7 +102,7 @@ func declareImports(b *builder, f *ast.File, pinfo *build8.PkgInfo) {
 
 		compiled := imported.Compiled
 		lib := compiled.Lib()
-		b.p.Require(lib)
+		b.p.Import(lib)
 		lang, syms := compiled.Symbols()
 		if lang != "g8" {
 			// TODO: import assembly

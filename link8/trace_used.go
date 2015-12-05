@@ -46,7 +46,9 @@ func traceUsed(lnk *linker, p *Pkg, roots []string) []pkgSym {
 	addLink := func(ps pkgSym, lnk *link) {
 		pkg := ps.Import(lnk.pkg)
 		if pkg == nil {
-			panic(fmt.Errorf("package %q missing", lnk.pkg))
+			panic(fmt.Errorf(
+				"package %q missing in %q", lnk.pkg, ps.pkg.path,
+			))
 		}
 
 		if t.hit(pkg, lnk.sym) {

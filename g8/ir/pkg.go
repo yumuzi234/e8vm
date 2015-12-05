@@ -67,13 +67,13 @@ func (p *Pkg) NewTestList(name string, funcs []*Func) Ref {
 	return ret
 }
 
-// Require imports a linkable package.
-func (p *Pkg) Require(pkg *link8.Pkg) { p.lib.Require(pkg) }
+// Import imports a linkable package.
+func (p *Pkg) Import(pkg *link8.Pkg) { p.lib.Import(pkg) }
 
-// RequireBuiltin imports the builtin package that provides neccessary
+// ImportBuiltin imports the builtin package that provides neccessary
 // builtin functions.
-func (p *Pkg) RequireBuiltin(pkg *link8.Pkg) error {
-	p.Require(pkg)
+func (p *Pkg) ImportBuiltin(pkg *link8.Pkg) error {
+	p.Import(pkg)
 
 	var err error
 	se := func(e error) {

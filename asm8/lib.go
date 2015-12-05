@@ -26,7 +26,6 @@ func newLib(p string) *lib {
 	ret := new(lib)
 	ret.Pkg = link8.NewPkg(p)
 	ret.symbols = make(map[string]*sym8.Symbol)
-	ret.Require(ret.Pkg) // require itself
 	return ret
 }
 

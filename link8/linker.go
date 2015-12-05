@@ -21,10 +21,10 @@ func (lnk *linker) addPkg(p *Pkg) bool {
 }
 
 // addPkgs add a package and recursively adds
-// all the packages that this package requires.
+// all the packages that this package imported.
 func (lnk *linker) addPkgs(p *Pkg) {
 	if lnk.addPkg(p) {
-		for _, req := range p.requires {
+		for _, req := range p.imported {
 			lnk.addPkgs(req)
 		}
 	}

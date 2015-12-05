@@ -49,7 +49,7 @@ func buildPkgScope(b *builder, pkg *pkg) {
 				continue
 			}
 
-			b.curPkg.Require(stmt.lib)
+			b.curPkg.Import(stmt.lib)
 			b.importPkg(stmt.path, as)
 			// b.index(as, b.curPkg.Require(stmt.lib))
 		}
