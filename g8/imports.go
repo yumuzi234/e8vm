@@ -7,7 +7,6 @@ import (
 
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/g8/ast"
-	"e8vm.io/e8vm/g8/ir"
 	"e8vm.io/e8vm/g8/parse"
 	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/lex8"
@@ -120,4 +119,3 @@ func declareImports(b *builder, f *ast.File, pinfo *build8.PkgInfo) {
 		}
 	}
 }
-
