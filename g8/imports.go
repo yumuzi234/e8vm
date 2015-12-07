@@ -110,7 +110,6 @@ func declareImports(b *builder, f *ast.File, pinfo *build8.PkgInfo) {
 			continue
 		}
 
-		syms = importSymbols(b, syms, lib.Path())
 		pos := importPos(d)
 		ref := newRef(&types.Pkg{as, syms}, nil)
 		obj := &objImport{ref}
@@ -122,82 +121,3 @@ func declareImports(b *builder, f *ast.File, pinfo *build8.PkgInfo) {
 	}
 }
 
-func importSymbols(b *builder, syms *sym8.Table, path string) *sym8.Table {
-	lst := syms.List()
-	ret := sym8.NewTable()
-	for _, sym := range lst {
-		v := sym.Item
-		switch sym.Type {
-		case symConst:
-			pre := ret.Declare(sym)
-			if pre != nil {
-				panic("bug")
-			}
-		case symVar:
-			v := v.(*objVar)
-			irRef := v.ref.IR().(*ir.HeapSym)
-			obj := &objVar{v.name, newAddressableRef(v.ref.Type(), irRef)}
-			pre := ret.Declare(sym.Clone(obj))
-			if pre != nil {
-				panic("bug")
-			}
-		case symFunc:
-			v := v.(*objFunc)
-			if v.isMethod {
-				panic("bug")
-			}
-			irRef := v.ref.IR().(*ir.Func)
-			obj := &objFunc{name: v.name, ref: newRef(v.ref.Type(), irRef)}
-			pre := ret.Declare(sym.Clone(obj))
-			if pre != nil {
-				panic("bug")
-			}
-		case symStruct:
-			v := v.(*objType)
-			st := v.ref.TypeType().(*types.Struct)
-			b.structFields[st] = makeMemberTable(b, st, path)
-			pre := ret.Declare(sym)
-			if pre != nil {
-				panic("bug")
-			}
-		case symImport, symType:
-			// Ignore
-		default:
-			panic("bug")
-		}
-	}
-
-	return ret
-}
-
-func makeMemberTable(b *builder, s *types.Struct, path string) *sym8.Table {
-	lst := s.Syms.List()
-	ret := sym8.NewTable()
-
-	for _, sym := range lst {
-		v := sym.Item
-		switch sym.Type {
-		case symFunc:
-			v := v.(*objFunc)
-			if !v.isMethod {
-				panic("bug")
-			}
-			irRef := v.ref.IR().(*ir.Func)
-			ref := newRef(v.ref.Type(), irRef)
-			obj := &objFunc{name: v.name, ref: ref, isMethod: true}
-			pre := ret.Declare(sym.Clone(obj))
-			if pre != nil {
-				panic("bug")
-			}
-		case symField:
-			pre := ret.Declare(sym)
-			if pre != nil {
-				panic("bug")
-			}
-		default:
-			panic("bug")
-		}
-	}
-
-	return ret
-}
