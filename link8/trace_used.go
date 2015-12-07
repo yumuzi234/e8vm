@@ -5,15 +5,16 @@ import (
 )
 
 type tracer struct {
-	lnk  *linker
+	pkgs map[string]*Pkg
 	hits map[string]map[string]bool
 }
 
-func newTracer(lnk *linker) *tracer {
-	ret := new(tracer)
-	ret.lnk = lnk
-	ret.hits = make(map[string]map[string]bool)
-	for path := range lnk.pkgs {
+func newTracer(pkgs map[string]*Pkg) *tracer {
+	ret := &tracer{
+		pkgs: pkgs,
+		hits: make(map[string]map[string]bool),
+	}
+	for path := range pkgs {
 		ret.hits[path] = make(map[string]bool)
 	}
 
@@ -32,8 +33,8 @@ func (t *tracer) hit(pkg *Pkg, sym string) bool {
 
 // traceUsed traces symbols/objects that are used.
 // only these objects need to be linked into the final result.
-func traceUsed(lnk *linker, p *Pkg, roots []string) []pkgSym {
-	t := newTracer(lnk)
+func traceUsed(pkgs map[string]*Pkg, p *Pkg, roots []string) []pkgSym {
+	t := newTracer(pkgs)
 
 	var cur []pkgSym
 	for _, name := range roots {
@@ -44,7 +45,7 @@ func traceUsed(lnk *linker, p *Pkg, roots []string) []pkgSym {
 	var ret []pkgSym
 
 	addLink := func(ps pkgSym, link *link) {
-		pkg := lnk.pkg(link.pkg)
+		pkg := pkgs[link.pkg]
 		if pkg == nil {
 			panic(fmt.Errorf(
 				"package %q missing in %q", link.pkg, ps.pkg.path,

@@ -32,12 +32,12 @@ func LinkMain(p *Pkg, out io.Writer, start string) error {
 
 // Link performs the linking job and writes the output to out.
 func (j *Job) Link(out io.Writer) error {
-	lnk := newLinker()
+	pkgs := make(map[string]*Pkg)
 
 	// add all dependencies
 	// TODO: move this to the builder, so that we do not add
 	// all deps everytime we link a package.
-	lnk.addPkgs(j.Pkg)
+	addPkgs(pkgs, j.Pkg)
 
 	var roots []string
 
@@ -47,7 +47,7 @@ func (j *Job) Link(out io.Writer) error {
 	}
 
 	roots = append(roots, j.StartSym)
-	used := traceUsed(lnk, j.Pkg, roots)
+	used := traceUsed(pkgs, j.Pkg, roots)
 
 	funcs, vars, zeros, e := layout(used, j.InitPC)
 	if e != nil {
@@ -57,7 +57,7 @@ func (j *Job) Link(out io.Writer) error {
 	var secs []*e8.Section
 	if len(funcs) > 0 {
 		buf := new(bytes.Buffer)
-		w := newWriter(lnk, buf)
+		w := newWriter(pkgs, buf)
 		for _, f := range funcs {
 			w.writeFunc(f.Func())
 		}
@@ -76,7 +76,7 @@ func (j *Job) Link(out io.Writer) error {
 
 	if len(vars) > 0 {
 		buf := new(bytes.Buffer)
-		w := newWriter(lnk, buf)
+		w := newWriter(pkgs, buf)
 		for _, v := range vars {
 			w.writeVar(v.Var())
 		}
@@ -118,7 +118,7 @@ func LinkBareFunc(f *Func) ([]byte, error) {
 	}
 
 	buf := new(bytes.Buffer)
-	w := newWriter(newLinker(), buf)
+	w := newWriter(make(map[string]*Pkg), buf)
 	w.writeBareFunc(f)
 	if err := w.Err(); err != nil {
 		return nil, err

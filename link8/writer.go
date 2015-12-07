@@ -7,13 +7,13 @@ import (
 )
 
 type writer struct {
-	lnk *linker
-	w   io.Writer
-	e   error
+	pkgs map[string]*Pkg
+	w    io.Writer
+	e    error
 }
 
-func newWriter(lnk *linker, w io.Writer) *writer {
-	return &writer{lnk: lnk, w: w}
+func newWriter(pkgs map[string]*Pkg, w io.Writer) *writer {
+	return &writer{pkgs: pkgs, w: w}
 }
 
 func (w *writer) Err() error {
@@ -75,7 +75,7 @@ func (w *writer) writeVar(v *Var) {
 }
 
 func (w *writer) symAddr(lnk *link) uint32 {
-	pkg := w.lnk.pkg(lnk.pkg)
+	pkg := w.pkgs[lnk.pkg]
 	s := pkg.symbols[lnk.sym]
 	switch s.Type {
 	case SymFunc:
@@ -87,7 +87,7 @@ func (w *writer) symAddr(lnk *link) uint32 {
 }
 
 func (w *writer) funcAddr(lnk *link) uint32 {
-	return w.lnk.pkg(lnk.pkg).Func(lnk.sym).addr
+	return w.pkgs[lnk.pkg].Func(lnk.sym).addr
 }
 
 func (w *writer) writeFunc(f *Func) {
