@@ -30,6 +30,10 @@ func (lnk *linker) addPkgs(p *Pkg) {
 	}
 }
 
-func (lnk *linker) npkg() int {
-	return len(lnk.pkgs)
+func (lnk *linker) pkg(path string) *Pkg {
+	ret, found := lnk.pkgs[path]
+	if !found {
+		panic("package missing")
+	}
+	return ret
 }

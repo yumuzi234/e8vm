@@ -43,19 +43,19 @@ func traceUsed(lnk *linker, p *Pkg, roots []string) []pkgSym {
 	var next []pkgSym
 	var ret []pkgSym
 
-	addLink := func(ps pkgSym, lnk *link) {
-		pkg := ps.Import(lnk.pkg)
+	addLink := func(ps pkgSym, link *link) {
+		pkg := lnk.pkg(link.pkg)
 		if pkg == nil {
 			panic(fmt.Errorf(
-				"package %q missing in %q", lnk.pkg, ps.pkg.path,
+				"package %q missing in %q", link.pkg, ps.pkg.path,
 			))
 		}
 
-		if t.hit(pkg, lnk.sym) {
+		if t.hit(pkg, link.sym) {
 			return
 		}
 
-		item := pkgSym{pkg, lnk.sym}
+		item := pkgSym{pkg, link.sym}
 		next = append(next, item)
 	}
 

@@ -44,22 +44,6 @@ func (p *Pkg) Import(imp *Pkg) {
 	}
 
 	p.imported[imp.path] = imp
-
-	// recursively import dependencies
-	for _, pkg := range imp.imported {
-		if pkg == p {
-			continue
-		}
-		p.Import(pkg)
-	}
-}
-
-// Imported is a helper for loading a required package.
-func (p *Pkg) Imported(path string) *Pkg {
-	if path == "" {
-		panic(fmt.Errorf("path cannot be empty in %s", p.path))
-	}
-	return p.imported[path]
 }
 
 // Declare declares a symbol and assigns a symbol index.

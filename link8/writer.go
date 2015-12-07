@@ -7,14 +7,13 @@ import (
 )
 
 type writer struct {
-	w io.Writer
-	e error
+	lnk *linker
+	w   io.Writer
+	e   error
 }
 
-func newWriter(w io.Writer) *writer {
-	ret := new(writer)
-	ret.w = w
-	return ret
+func newWriter(lnk *linker, w io.Writer) *writer {
+	return &writer{lnk: lnk, w: w}
 }
 
 func (w *writer) Err() error {
@@ -49,7 +48,7 @@ func (w *writer) writeBareFunc(f *Func) {
 	}
 }
 
-func writeVar(w *writer, p *Pkg, v *Var) {
+func (w *writer) writeVar(v *Var) {
 	if v.prePad > 0 {
 		w.Write(make([]byte, v.prePad))
 	}
@@ -68,15 +67,15 @@ func writeVar(w *writer, p *Pkg, v *Var) {
 			panic("data to fill non zero")
 		}
 
-		v := symAddr(p, lnk)
+		v := w.symAddr(lnk)
 		binary.LittleEndian.PutUint32(s, v)
 	}
 
 	w.Write(bs)
 }
 
-func symAddr(p *Pkg, lnk *link) uint32 {
-	pkg := p.Imported(lnk.pkg)
+func (w *writer) symAddr(lnk *link) uint32 {
+	pkg := w.lnk.pkg(lnk.pkg)
 	s := pkg.symbols[lnk.sym]
 	switch s.Type {
 	case SymFunc:
@@ -87,11 +86,11 @@ func symAddr(p *Pkg, lnk *link) uint32 {
 	panic("bug")
 }
 
-func funcAddr(p *Pkg, lnk *link) uint32 {
-	return p.Imported(lnk.pkg).Func(lnk.sym).addr
+func (w *writer) funcAddr(lnk *link) uint32 {
+	return w.lnk.pkg(lnk.pkg).Func(lnk.sym).addr
 }
 
-func writeFunc(w *writer, p *Pkg, f *Func) {
+func (w *writer) writeFunc(f *Func) {
 	cur := 0
 	var curLink *link
 	var curIndex int
@@ -115,14 +114,14 @@ func writeFunc(w *writer, p *Pkg, f *Func) {
 				}
 
 				pc := f.addr + uint32(i)*4 + 4
-				target := funcAddr(p, curLink)
+				target := w.funcAddr(curLink)
 				inst |= (target - pc) >> 2
 			} else if fill == FillHigh || fill == FillLow {
 				if (inst & 0xffff) != 0 {
 					panic("already filled")
 				}
 
-				v := symAddr(p, curLink)
+				v := w.symAddr(curLink)
 				if fill == FillHigh {
 					inst |= v >> 16
 				} else { // fillLow

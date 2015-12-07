@@ -9,5 +9,3 @@ type pkgSym struct {
 func (ps pkgSym) Type() int   { return ps.pkg.symbols[ps.sym].Type }
 func (ps pkgSym) Func() *Func { return ps.pkg.Func(ps.sym) }
 func (ps pkgSym) Var() *Var   { return ps.pkg.Var(ps.sym) }
-
-func (ps pkgSym) Import(p string) *Pkg { return ps.pkg.Imported(p) }
