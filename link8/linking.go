@@ -30,6 +30,23 @@ func LinkMain(p *Pkg, out io.Writer, start string) error {
 	return NewJob(p, start).Link(out)
 }
 
+// addPkgs add a package and recursively adds
+// all the packages that this package imported.
+func addPkgs(pkgs map[string]*Pkg, p *Pkg) {
+	exists := pkgs[p.path]
+	if exists != nil {
+		if exists != p {
+			panic("package path conflict")
+		}
+		return
+	}
+
+	pkgs[p.path] = p
+	for _, req := range p.imported {
+		addPkgs(pkgs, req)
+	}
+}
+
 // Link performs the linking job and writes the output to out.
 func (j *Job) Link(out io.Writer) error {
 	pkgs := make(map[string]*Pkg)
