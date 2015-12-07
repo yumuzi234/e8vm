@@ -94,7 +94,7 @@ var VoidFunc = NewVoidFunc()
 
 // String returns the function signature (without the argument names).
 func (t *Func) String() string {
-	// TODO: this is kind of ugly, need some refactor
+	// TODO: this is kind of ugly, need some refactoring
 	buf := new(bytes.Buffer)
 	fmt.Fprintf(buf, "func (%s)", fmt8.Join(t.Args, ","))
 	if len(t.Rets) > 1 {

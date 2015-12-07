@@ -104,10 +104,9 @@ func buildBinaryOpExpr(b *builder, expr *ast.OpExpr) *ref {
 		}
 	}
 
-	// TODO: the branches here are fundamentally
-	// upcasting nil pointer to pointer, slice or func pointer
-	// this should be done in a better way that is
-	// similar to upcasting consts.
+	// TODO: the branches here are fundamentally upcasting nil pointer to
+	// pointer, slice or func pointer this should be done in a better way that
+	// is similar to upcasting consts.
 	if types.IsNil(atyp) && types.IsNil(btyp) {
 		return binaryOpNil(b, opTok, A, B)
 	} else if types.BothPointer(atyp, btyp) {

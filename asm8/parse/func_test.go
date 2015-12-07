@@ -97,30 +97,3 @@ func ExampleFunc_4() {
 	// Output:
 	// t.s8:2: expect '{', got operand
 }
-
-// TODO: move these to asm8
-/*
-func ExampleFunc_5() {
-	pf(`
-	func main {
-		a "something" "key"
-		j .lab
-	}
-	`)
-	// Output:
-	// t.s8:3: expect operand, got string
-}
-
-func ExampleFunc_6() {
-	pf(`func main { invalid }`)
-	// Output:
-	// t.s8:1: invalid asm instruction "invalid"
-}
-
-func ExampleFunc_7() {
-	pf(`func main { j .lab:inv }`)
-	// Output:
-	// t.s8:1: invalid label: ".lab:inv"
-}
-
-*/

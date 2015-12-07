@@ -165,8 +165,8 @@ func unaryOpConst(b *builder, opTok *lex8.Token, B *ref) *ref {
 
 	v, ok := types.NumConst(B.Type())
 	if !ok {
-		// TODO
-		b.Errorf(opTok.Pos, "typed operation not implemented")
+		// TODO: support type const
+		b.Errorf(opTok.Pos, "typed const operation not implemented")
 		return nil
 	}
 

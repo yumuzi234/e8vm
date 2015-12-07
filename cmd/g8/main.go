@@ -81,7 +81,6 @@ func main() {
 }
 
 func runImage(bs []byte, dasm bool, n int) {
-	// TODO: need to load sections now.
 	if dasm {
 		err := dasm8.DumpImage(bytes.NewReader(bs), os.Stdout)
 		if err != nil {

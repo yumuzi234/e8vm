@@ -93,12 +93,7 @@ func (b *Block) JumpIf(cond Ref, dest *Block) {
 }
 
 func (b *Block) inst(i uint32) *inst {
-	ret := new(inst)
-	ret.inst = i
+	ret := &inst{inst: i}
 	b.insts = append(b.insts, ret)
-
-	// TODO: write this to gen log
-	// println("    " + dasm8.LineStr(i))
-
 	return ret
 }
