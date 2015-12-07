@@ -1,7 +1,5 @@
 import (
 	"b"
-	"fmt"
-	"testing"
 )
 
 func main() {

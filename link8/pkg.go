@@ -44,9 +44,17 @@ func (p *Pkg) Import(imp *Pkg) {
 	}
 
 	p.imported[imp.path] = imp
+
+	// recursively import dependencies
+	for _, pkg := range imp.imported {
+		if pkg == p {
+			continue
+		}
+		p.Import(pkg)
+	}
 }
 
-// Imported is a temp halper for loading a required package.
+// Imported is a helper for loading a required package.
 func (p *Pkg) Imported(path string) *Pkg {
 	if path == "" {
 		panic(fmt.Errorf("path cannot be empty in %s", p.path))
