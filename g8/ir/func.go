@@ -8,9 +8,9 @@ import (
 // or unamed local variables and also a set of basic blocks.
 // it can generate a linkable function.
 type Func struct {
+	pkg  string
 	name string
-
-	sig *FuncSig
+	sig  *FuncSig
 
 	savedRegs []*varRef
 	locals    []*varRef // local variables
@@ -27,10 +27,12 @@ type Func struct {
 	isMethod bool
 }
 
-func newFunc(name string, sig *FuncSig) *Func {
-	ret := new(Func)
-	ret.name = name
-	ret.sig = sig
+func newFunc(pkg, name string, sig *FuncSig) *Func {
+	ret := &Func{
+		pkg:  pkg,
+		name: name,
+		sig:  sig,
+	}
 
 	ret.prologue = ret.newBlock(nil)
 	ret.epilogue = ret.newBlock(ret.prologue)
@@ -38,8 +40,8 @@ func newFunc(name string, sig *FuncSig) *Func {
 	return ret
 }
 
-func newMethod(name string, sig *FuncSig) *Func {
-	ret := newFunc(name, sig)
+func newMethod(pkg, name string, sig *FuncSig) *Func {
+	ret := newFunc(pkg, name, sig)
 	ret.isMethod = true
 	return ret
 }
@@ -129,9 +131,3 @@ func (f *Func) RegSizeAlign() bool { return true }
 
 // Name returns the symbol name of the function.
 func (f *Func) Name() string { return f.name }
-
-// ImportSym returns the function symbol for the function where the package is
-// imported as pindex.
-func (f *Func) ImportSym(path string) *FuncSym {
-	return &FuncSym{pkg: path, name: f.name, sig: f.sig}
-}

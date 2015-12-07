@@ -141,6 +141,7 @@ func resolveSymbol(b *builder, s *funcStmt) (typ int, pkg, name string) {
 			typ = sym.Type
 			if typ == SymVar || typ == SymFunc {
 				name = sym.Name()
+				pkg = b.curPkg.Path()
 			}
 		}
 	} else {
@@ -196,7 +197,7 @@ func linkSymbol(b *builder, s *funcStmt, f *link8.Func) {
 	if s.fill == fillLink && typ != SymFunc {
 		b.Errorf(t.Pos, "%s %q is not a function", symStr(typ), t.Lit)
 		return
-	} else if pkg != "" && !sym8.IsPublic(s.sym) {
+	} else if pkg != b.curPkg.Path() && !sym8.IsPublic(s.sym) {
 		// for imported package, check if it is public
 		b.Errorf(t.Pos, "%q is not public", t.Lit)
 		return

@@ -136,7 +136,6 @@ func importSymbols(b *builder, syms *sym8.Table, path string) *sym8.Table {
 		case symVar:
 			v := v.(*objVar)
 			irRef := v.ref.IR().(*ir.HeapSym)
-			irRef = irRef.Import(path)
 			obj := &objVar{v.name, newAddressableRef(v.ref.Type(), irRef)}
 			pre := ret.Declare(sym.Clone(obj))
 			if pre != nil {
@@ -148,8 +147,7 @@ func importSymbols(b *builder, syms *sym8.Table, path string) *sym8.Table {
 				panic("bug")
 			}
 			irRef := v.ref.IR().(*ir.Func)
-			funcSym := irRef.ImportSym(path)
-			obj := &objFunc{name: v.name, ref: newRef(v.ref.Type(), funcSym)}
+			obj := &objFunc{name: v.name, ref: newRef(v.ref.Type(), irRef)}
 			pre := ret.Declare(sym.Clone(obj))
 			if pre != nil {
 				panic("bug")
@@ -185,8 +183,7 @@ func makeMemberTable(b *builder, s *types.Struct, path string) *sym8.Table {
 				panic("bug")
 			}
 			irRef := v.ref.IR().(*ir.Func)
-			funcSym := irRef.ImportSym(path)
-			ref := newRef(v.ref.Type(), funcSym)
+			ref := newRef(v.ref.Type(), irRef)
 			obj := &objFunc{name: v.name, ref: ref, isMethod: true}
 			pre := ret.Declare(sym.Clone(obj))
 			if pre != nil {

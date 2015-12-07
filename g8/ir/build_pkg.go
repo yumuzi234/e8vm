@@ -26,7 +26,7 @@ func BuildPkg(p *Pkg) *link8.Pkg {
 	if p.tests != nil {
 		v := link8.NewVar(regSize)
 		for _, f := range p.tests.funcs {
-			if err := v.WriteLink("", f.name); err != nil {
+			if err := v.WriteLink(p.path, f.name); err != nil {
 				panic(err)
 			}
 		}

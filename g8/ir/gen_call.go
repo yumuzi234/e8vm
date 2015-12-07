@@ -27,7 +27,7 @@ func genCallOp(g *gener, b *Block, op *callOp) {
 		jal.sym = &linkSym{link8.FillLink, s.pkg, s.name}
 	} else if f, ok := op.f.(*Func); ok {
 		jal := b.inst(asm.jal(0))
-		jal.sym = &linkSym{link8.FillLink, "", f.name}
+		jal.sym = &linkSym{link8.FillLink, f.pkg, f.name}
 	} else {
 		// function pointer, set PC manually
 		loadRef(b, _4, op.f)

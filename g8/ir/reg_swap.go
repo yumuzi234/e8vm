@@ -140,7 +140,7 @@ func loadRef(b *Block, reg uint32, r Ref) {
 	case *byt:
 		b.inst(asm.ori(reg, _0, uint32(r.v)))
 	case *Func:
-		loadSym(b, reg, "", r.name)
+		loadSym(b, reg, r.pkg, r.name)
 	case *FuncSym:
 		loadSym(b, reg, r.pkg, r.name)
 	case *addrRef:

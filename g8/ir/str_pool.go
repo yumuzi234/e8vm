@@ -9,6 +9,7 @@ import (
 type strConst struct {
 	id   int
 	str  string
+	pkg  string
 	name string
 }
 
@@ -33,12 +34,14 @@ func (s *strConst) Size() int32 {
 }
 
 type strPool struct {
+	pkg    string
 	strs   []*strConst
 	strMap map[string]*strConst
 }
 
-func newStrPool() *strPool {
+func newStrPool(pkg string) *strPool {
 	ret := new(strPool)
+	ret.pkg = pkg
 	ret.strMap = make(map[string]*strConst)
 	return ret
 }
@@ -67,11 +70,16 @@ func countDigit(n int) int {
 }
 
 func (p *strPool) declare(lib *link8.Pkg) {
+	if lib.Path() != p.pkg {
+		panic("package name mismatch")
+	}
+
 	ndigit := countDigit(len(p.strs))
 	nfmt := fmt.Sprintf(":str_%%0%dd", ndigit)
 
 	for i, s := range p.strs {
 		s.name = fmt.Sprintf(nfmt, i)
+		s.pkg = p.pkg
 		v := link8.NewVar(0)
 		v.Write([]byte(s.str))
 

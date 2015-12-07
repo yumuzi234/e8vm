@@ -61,6 +61,10 @@ func (v *Var) Pad(n uint32) {
 
 // WriteLink writes a symbol link into the data section.
 func (v *Var) WriteLink(pkg, sym string) error {
+	if pkg == "" {
+		panic("empty package")
+	}
+
 	if v.zeros != 0 {
 		panic("cannot write link to zeros section")
 	}

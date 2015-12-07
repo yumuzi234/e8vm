@@ -5,8 +5,8 @@ type testList struct {
 	funcs     []*Func
 }
 
-func newTestList(name string, funcs []*Func) *testList {
-	return &testList{name: name, funcs: funcs}
+func newTestList(pkg, name string, funcs []*Func) *testList {
+	return &testList{pkg: pkg, name: name, funcs: funcs}
 }
 
 func (lst *testList) String() string     { return lst.name }

@@ -87,7 +87,7 @@ func genArithOp(g *gener, b *Block, op *arithOp) {
 					panic("string too long")
 				}
 			*/
-			loadSym(b, _4, "", s.name)
+			loadSym(b, _4, s.pkg, s.name)
 			loadAddr(b, _1, op.dest)
 			b.inst(asm.sw(_4, _1, 0))
 			loadUint32(b, _4, uint32(n))

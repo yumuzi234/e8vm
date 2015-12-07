@@ -49,7 +49,7 @@ func (p *Pkg) Import(imp *Pkg) {
 // Imported is a temp halper for loading a required package.
 func (p *Pkg) Imported(path string) *Pkg {
 	if path == "" {
-		path = p.path
+		panic(fmt.Errorf("path cannot be empty in %s", p.path))
 	}
 	return p.imported[path]
 }

@@ -20,9 +20,6 @@ type FuncSym struct {
 }
 
 func (s *FuncSym) String() string {
-	if s.pkg == "" {
-		return s.name
-	}
 	return fmt.Sprintf("%s.%s", s.pkg, s.name)
 }
 

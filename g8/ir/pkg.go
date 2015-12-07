@@ -26,7 +26,7 @@ func NewPkg(path string) *Pkg {
 	ret := new(Pkg)
 	ret.path = path
 	ret.lib = link8.NewPkg(path)
-	ret.strPool = newStrPool()
+	ret.strPool = newStrPool(path)
 
 	ret.g = new(gener)
 
@@ -35,7 +35,7 @@ func NewPkg(path string) *Pkg {
 
 // NewFunc creates a new function for the package.
 func (p *Pkg) NewFunc(name string, sig *FuncSig) *Func {
-	ret := newFunc(name, sig)
+	ret := newFunc(p.path, name, sig)
 	p.lib.DeclareFunc(ret.name)
 	p.funcs = append(p.funcs, ret)
 	return ret
@@ -45,7 +45,7 @@ func (p *Pkg) NewFunc(name string, sig *FuncSig) *Func {
 func (p *Pkg) NewGlobalVar(
 	size int32, name string, u8, regSizeAlign bool,
 ) Ref {
-	ret := newHeapSym(size, name, u8, regSizeAlign)
+	ret := NewHeapSym(p.path, name, size, u8, regSizeAlign)
 	p.lib.DeclareVar(ret.name)
 	p.vars = append(p.vars, ret)
 	return ret
@@ -60,7 +60,7 @@ func (p *Pkg) NewTestList(name string, funcs []*Func) Ref {
 		panic("tests already built")
 	}
 
-	ret := newTestList(name, funcs)
+	ret := newTestList(p.path, name, funcs)
 	p.lib.DeclareVar(ret.name)
 	p.tests = ret
 

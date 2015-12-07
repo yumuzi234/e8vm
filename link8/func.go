@@ -38,6 +38,10 @@ func (f *Func) Size() uint32 {
 // bits of the offset fields will be automatically calculated based on the
 // number of instructions in insts.
 func (f *Func) AddLink(fill int, pkg, sym string) {
+	if pkg == "" {
+		panic("empty package")
+	}
+
 	if len(f.insts) == 0 {
 		panic("no inst to link")
 	}
