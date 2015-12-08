@@ -1,5 +1,9 @@
 package ir
 
+import (
+	"math"
+)
+
 var basicOpFuncs = map[string]func(
 	dest, r1, r2 uint32,
 ) uint32{
@@ -82,11 +86,9 @@ func genArithOp(g *gener, b *Block, op *arithOp) {
 		s := op.b.(*strConst)
 		n := len(s.str)
 		if n > 0 {
-			/*
-				if n > math.MaxUint32 {
-					panic("string too long")
-				}
-			*/
+			if n > math.MaxUint32-1 {
+				panic("string too long")
+			}
 			loadSym(b, _4, s.pkg, s.name)
 			loadAddr(b, _1, op.dest)
 			b.inst(asm.sw(_4, _1, 0))
