@@ -7,6 +7,64 @@ import (
 	"e8vm.io/e8vm/g8/types"
 )
 
+func buildCallMake(b *builder, expr *ast.CallExpr) *ref {
+	args := buildExprList(b, expr.Args)
+	if args == nil {
+		return nil
+	}
+
+	n := args.Len()
+	if n == 0 {
+		b.Errorf(expr.Lparen.Pos, "make() takes at least one argument")
+		return nil
+	}
+
+	arg0 := args.At(0)
+	if !arg0.IsType() {
+		b.Errorf(expr.Lparen.Pos, "make() expects a type as the 1st argument")
+		return nil
+	}
+
+	t := arg0.Type().(*types.Type).T
+	switch t := t.(type) {
+	case *types.Slice:
+		if n != 3 {
+			b.Errorf(expr.Lparen.Pos, "make() slice expects 3 arguments")
+			return nil
+		}
+
+		size := args.At(1)
+		pos := ast.ExprPos(expr.Args.Exprs[1])
+		sizeIr := checkArrayIndex(b, size, pos)
+		if sizeIr == nil {
+			return nil
+		}
+
+		start := args.At(2)
+		startType := start.Type()
+		startPos := ast.ExprPos(expr.Args.Exprs[2])
+		if v, ok := types.NumConst(startType); ok {
+			start = constCastUint(b, startPos, v)
+			if start == nil {
+				return nil
+			}
+		} else if !types.IsBasic(startType, types.Uint) {
+			pt := types.PointerOf(startType)
+			if pt == nil || !types.SameType(pt, t.T) {
+				b.Errorf(startPos,
+					"make() takes an uint or a typed pointer as 3rd argument",
+				)
+				return nil
+			}
+		}
+
+		return newSlice(b, t.T, start.IR(), sizeIr)
+	}
+
+	b.Errorf(expr.Lparen.Pos, "cannot make() type %s", t)
+	return nil
+}
+
 func buildCallLen(b *builder, expr *ast.CallExpr) *ref {
 	args := buildExprList(b, expr.Args)
 	if args == nil {
@@ -56,6 +114,8 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) *ref {
 		switch builtin.Name {
 		case "len":
 			return buildCallLen(b, expr)
+		case "make":
+			return buildCallMake(b, expr)
 		}
 		b.Errorf(pos, "builtin %s() not implemented", builtin.Name)
 		return nil

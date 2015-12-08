@@ -32,15 +32,7 @@ func loadArray(b *builder, array *ref) (addr, n ir.Ref, et types.T) {
 	}
 }
 
-func buildArrayIndex(b *builder, expr ast.Expr, pos *lex8.Pos) ir.Ref {
-	index := b.buildExpr(expr)
-	if index == nil {
-		return nil
-	} else if !index.IsSingle() {
-		b.Errorf(pos, "index with expression list")
-		return nil
-	}
-
+func checkArrayIndex(b *builder, index *ref, pos *lex8.Pos) ir.Ref {
 	t := index.Type()
 	if v, ok := types.NumConst(t); ok {
 		if v < 0 {
@@ -77,6 +69,18 @@ func buildArrayIndex(b *builder, expr ast.Expr, pos *lex8.Pos) ir.Ref {
 	return index.IR()
 }
 
+func buildArrayIndex(b *builder, expr ast.Expr, pos *lex8.Pos) ir.Ref {
+	index := b.buildExpr(expr)
+	if index == nil {
+		return nil
+	} else if !index.IsSingle() {
+		b.Errorf(pos, "index with expression list")
+		return nil
+	}
+
+	return checkArrayIndex(b, index, pos)
+}
+
 func checkInRange(b *builder, index, n ir.Ref, op string) {
 	inRange := b.newCond()
 	b.b.Arith(inRange, index, op, n)
@@ -89,6 +93,15 @@ func checkInRange(b *builder, index, n ir.Ref, op string) {
 	callPanic(b, "index out of range")
 
 	b.b = after
+}
+
+func newSlice(b *builder, t types.T, addr, size ir.Ref) *ref {
+	ret := b.newTemp(&types.Slice{T: t})
+	retAddr := b.newPtr()
+	b.b.Arith(retAddr, nil, "&", ret.IR())
+	b.b.Assign(ir.NewAddrRef(retAddr, 4, 0, false, true), addr)
+	b.b.Assign(ir.NewAddrRef(retAddr, 4, 4, false, true), size)
+	return ret
 }
 
 func buildSlicing(b *builder, expr *ast.IndexExpr, array *ref) *ref {
@@ -121,18 +134,10 @@ func buildSlicing(b *builder, expr *ast.IndexExpr, array *ref) *ref {
 		checkInRange(b, indexStart, indexEnd, "u<=")
 	}
 
-	ret := b.newTemp(&types.Slice{T: et})
-
-	retAddr := b.newPtr()
-	b.b.Arith(retAddr, nil, "&", ret.IR())
-
-	b.b.Assign(ir.NewAddrRef(retAddr, 4, 0, false, true), addr)
-
 	size := b.newPtr()
 	b.b.Arith(size, indexEnd, "-", indexStart)
-	b.b.Assign(ir.NewAddrRef(retAddr, 4, 4, false, true), size)
 
-	return ret
+	return newSlice(b, et, addr, size)
 }
 
 func buildArrayGet(b *builder, expr *ast.IndexExpr, array *ref) *ref {

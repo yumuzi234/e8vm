@@ -103,7 +103,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 	}
 
 	bi("len")
-	// TODO: make
+	bi("make")
 
 	c := func(name string, r *ref) {
 		// TODO: declare these as typed consts

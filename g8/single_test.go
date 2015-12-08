@@ -215,6 +215,13 @@ func TestSingleFile_good(t *testing.T) {
 		"1\n1\n3\n3\n")
 	o(`const a, b = b + 3, 30; func main() { printInt(a) }`, "33")
 
+	o(`	var a [4]int
+		func main() {
+			s := make([]int, 2, &a[1])
+			s[0] = 33; s[1] = 47
+			printInt(a[1]); printInt(a[2])
+		}`, "33\n47")
+
 	// Bugs found by the fuzzer in the past
 	o("func main() { a := 0==0; if a { printInt(33) } }", "33")
 	o("func n()[(3+4)*5]string{}; func main() { printInt(len(n())) }", "35")
