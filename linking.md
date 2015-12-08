@@ -12,14 +12,6 @@ Each package have many faces.
 - A package can be loaded with only the header or the header and the content.
 - Only the header part is enough to support other dependant packages.
 
-// a linking package
-type link8.Package interface {
-	Link() (map[string]*Var, map[string]*Func)
-}
-
-- linker is prepared only when linking starts, which is after all the builds
-- all packages that hits in the dependency tree will be added into the linker
-
 type build8.Lang interface {
 	IsSrc(filename string) bool
 	NewPackage(path, src map[string]*File) (Package, error)
@@ -36,7 +28,7 @@ type build8.Package interface {
 	Lang() string // language name
 	ListImports() ([]*Import, []*lex8.Error) // list of imports
 	Build(imports []*Import) []*lex8.Error
-	Linkables() (map[string]*Var, map[string]*Func)
+	Link() (map[string]*link8.Var, map[string]*link8.Func)
 	Main() string
 	Tests() (tests string, testMain string)
 }

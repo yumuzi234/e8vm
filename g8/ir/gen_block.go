@@ -2,11 +2,8 @@ package ir
 
 func genBlock(g *gener, b *Block) {
 	for _, op := range b.ops {
-		// printOp(os.Stderr, op)
 		genOp(g, b, op)
 	}
-
-	// printJump(os.Stderr, b.jump)
 
 	if b.jump == nil {
 		/* do nothing */
