@@ -170,7 +170,10 @@ func (l *lang) Compile(pinfo *build8.PkgInfo) (
 	}
 
 	// codegen
-	lib := ir.BuildPkg(b.p)
+	lib, errs := ir.BuildPkg(b.p)
+	if errs != nil {
+		return nil, errs
+	}
 
 	// IR logging
 	if err := logIr(pinfo, b); err != nil {

@@ -83,7 +83,7 @@ func declareMethod(b *builder, info *structInfo, f *ast.Func) *objFunc {
 	}
 
 	fullName := fmt.Sprintf("%s:%s", info.name.Lit, name)
-	irFunc := b.p.NewFunc(fullName, t.Sig)
+	irFunc := b.p.NewFunc(fullName, f.Name.Pos, t.Sig)
 	ret.ref = newRef(t, irFunc)
 
 	return ret

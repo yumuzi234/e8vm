@@ -2,6 +2,8 @@ package ir
 
 import (
 	"fmt"
+
+	"e8vm.io/e8vm/lex8"
 )
 
 // Func is an IR function. It consists of a bunch of named
@@ -10,6 +12,7 @@ import (
 type Func struct {
 	pkg  string
 	name string
+	pos  *lex8.Pos
 	sig  *FuncSig
 
 	savedRegs []*varRef
@@ -23,26 +26,20 @@ type Func struct {
 	nvar      int
 	frameSize int32
 
-	isMain   bool
-	isMethod bool
+	isMain bool
 }
 
-func newFunc(pkg, name string, sig *FuncSig) *Func {
+func newFunc(pkg, name string, pos *lex8.Pos, sig *FuncSig) *Func {
 	ret := &Func{
 		pkg:  pkg,
 		name: name,
+		pos:  pos,
 		sig:  sig,
 	}
 
 	ret.prologue = ret.newBlock(nil)
 	ret.epilogue = ret.newBlock(ret.prologue)
 
-	return ret
-}
-
-func newMethod(pkg, name string, sig *FuncSig) *Func {
-	ret := newFunc(pkg, name, sig)
-	ret.isMethod = true
 	return ret
 }
 

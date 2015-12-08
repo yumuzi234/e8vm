@@ -1,11 +1,12 @@
 package ir
 
 import (
+	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/link8"
 )
 
 // BuildPkg builds a package and returns the built lib
-func BuildPkg(p *Pkg) *link8.Pkg {
+func BuildPkg(p *Pkg) (*link8.Pkg, []*lex8.Error) {
 	p.strPool.declare(p.lib)
 
 	for _, v := range p.vars {
@@ -20,6 +21,12 @@ func BuildPkg(p *Pkg) *link8.Pkg {
 
 	for _, f := range p.funcs {
 		genFunc(p.g, f)
+	}
+	if errs := p.g.Errs(); errs != nil {
+		return nil, errs
+	}
+
+	for _, f := range p.funcs {
 		writeFunc(p, f)
 	}
 
@@ -33,5 +40,5 @@ func BuildPkg(p *Pkg) *link8.Pkg {
 		p.lib.DefineVar(p.tests.name, v)
 	}
 
-	return p.lib
+	return p.lib, nil
 }

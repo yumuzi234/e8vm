@@ -121,6 +121,10 @@ func makeEpilogue(g *gener, f *Func) {
 
 func genFunc(g *gener, f *Func) {
 	layoutLocals(f)
+	if f.frameSize > arch8.PageSize {
+		g.Errorf(f.pos, "stack too large in function %s", f.name)
+		return
+	}
 
 	if f.isMain {
 		makeMainPrologue(f)

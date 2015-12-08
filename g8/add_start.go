@@ -32,7 +32,7 @@ func addStart(b *builder) {
 		return
 	}
 
-	b.f = b.p.NewFunc(startName, ir.VoidFuncSig)
+	b.f = b.p.NewFunc(startName, nil, ir.VoidFuncSig)
 	b.f.SetAsMain()
 	b.b = b.f.NewBlock(nil)
 	b.b.Call(nil, mainFunc.IR(), ir.VoidFuncSig)
@@ -50,7 +50,7 @@ var testMainFuncSig = ir.NewFuncSig(
 )
 
 func addTestStart(b *builder, testList ir.Ref, n int) {
-	b.f = b.p.NewFunc(testStartName, ir.VoidFuncSig)
+	b.f = b.p.NewFunc(testStartName, nil, ir.VoidFuncSig)
 	b.f.SetAsMain()
 	b.b = b.f.NewBlock(nil)
 

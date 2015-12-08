@@ -27,7 +27,7 @@ func (bareFunc) Prepare(
 }
 
 func buildBareFunc(b *builder, stmts []ast.Stmt) {
-	b.f = b.p.NewFunc(":start", ir.VoidFuncSig)
+	b.f = b.p.NewFunc(":start", nil, ir.VoidFuncSig)
 	b.fretNamed = false
 	b.fretRef = nil
 	b.f.SetAsMain()
@@ -80,7 +80,10 @@ func (bare bareFunc) Compile(pinfo *build8.PkgInfo) (
 	}
 
 	// codegen
-	lib := ir.BuildPkg(b.p)
+	lib, errs := ir.BuildPkg(b.p)
+	if errs != nil {
+		return nil, errs
+	}
 
 	return &builtPkg{isBare: true, lib: lib}, nil
 }
