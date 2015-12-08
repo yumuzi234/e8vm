@@ -151,7 +151,7 @@ func (m *Machine) loadSections(secs []*e8.Section) error {
 	for _, s := range secs {
 		var buf io.Reader
 		if s.Type == e8.Zeros {
-			buf = &zeroReader{s.Size}
+			buf = &zeroReader{s.Header.Size}
 		} else {
 			buf = bytes.NewReader(s.Bytes)
 		}

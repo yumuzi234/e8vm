@@ -8,7 +8,7 @@ func layout(used []pkgSym, initPC uint32) (
 	funcs, vars, zeros []pkgSym, e error,
 ) {
 	pt := initPC
-	codeMax := uint32(0xffffffff)
+	const codeMax uint32 = 0xffffffff
 
 	for _, ps := range used {
 		typ := ps.Type()
@@ -35,7 +35,7 @@ func layout(used []pkgSym, initPC uint32) (
 		}
 	}
 
-	dataMax := uint32(0xffffffff)
+	const dataMax uint32 = 0xffffffff
 
 	putVar := func(v *Var) error {
 		if v.align > 1 && pt%v.align != 0 {
@@ -68,6 +68,11 @@ func layout(used []pkgSym, initPC uint32) (
 		if err != nil {
 			return nil, nil, nil, err
 		}
+	}
+
+	const totalMax = 1024 * 1024 // 1MB
+	if pt-initPC > totalMax {
+		return nil, nil, nil, fmt.Errorf("binary too large")
 	}
 
 	return
