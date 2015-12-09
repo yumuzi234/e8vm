@@ -28,9 +28,7 @@ func (lang) Prepare(
 	return listImport(f.Path, f, imp)
 }
 
-func (lang) Compile(pinfo *build8.PkgInfo) (
-	compiled build8.Linkable, es []*lex8.Error,
-) {
+func (lang) Compile(pinfo *build8.PkgInfo) (*build8.Package, []*lex8.Error) {
 	// resolve pass, will also parse the files
 	pkg, es := resolvePkg(pinfo.Path, pinfo.Src)
 	if es != nil {
@@ -42,17 +40,15 @@ func (lang) Compile(pinfo *build8.PkgInfo) (
 	if pkg.imports != nil {
 		for _, stmt := range pkg.imports.stmts {
 			imp := pinfo.Import[stmt.as]
-			if imp == nil || imp.Compiled == nil {
+			if imp == nil || imp.Package == nil {
 				errs.Errorf(stmt.Path.Pos, "import missing")
 				continue
 			}
 
-			stmt.linkable = imp.Compiled
-			if stmt.linkable == nil {
+			stmt.pkg = imp.Package
+			if stmt.pkg == nil {
 				panic("import missing")
 			}
-
-			stmt.lib = stmt.linkable.Lib()
 		}
 
 		if es := errs.Errs(); es != nil {
@@ -67,7 +63,12 @@ func (lang) Compile(pinfo *build8.PkgInfo) (
 		return nil, es
 	}
 
-	return lib, nil
+	ret := &build8.Package{
+		Lang: "asm8",
+		Lib:  lib.Pkg,
+		Main: "main",
+	}
+	return ret, nil
 }
 
 // Lang returns the assembly language builder for the building system

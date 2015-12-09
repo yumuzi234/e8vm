@@ -74,14 +74,15 @@ func (b *Builder) buildImports(p *pkg, forTest bool) []*lex8.Error {
 		if es != nil {
 			return es
 		}
-		imp.Compiled = built.compiled
+		imp.Package = built.pkg
 	}
 	return nil
 }
 
 func (b *Builder) buildMain(p *pkg) []*lex8.Error {
-	lib := p.compiled.Lib()
-	main := p.compiled.Main()
+	lib := p.pkg.Lib
+	main := p.pkg.Main
+
 	if main != "" && lib.HasFunc(main) {
 		log := lex8.NewErrorList()
 
@@ -98,8 +99,9 @@ func (b *Builder) buildMain(p *pkg) []*lex8.Error {
 }
 
 func (b *Builder) runTests(p *pkg) []*lex8.Error {
-	lib := p.compiled.Lib()
-	tests, testMain := p.compiled.Tests()
+	lib := p.pkg.Lib
+	tests := p.pkg.Tests
+	testMain := p.pkg.TestMain
 	if testMain != "" && lib.HasFunc(testMain) {
 		log := lex8.NewErrorList()
 		if len(tests) > 0 {
@@ -143,7 +145,7 @@ func (b *Builder) build(p string, forTest bool) (*pkg, []*lex8.Error) {
 	}
 
 	// if already compiled, just return
-	if ret.compiled != nil {
+	if ret.pkg != nil {
 		return ret, nil
 	}
 
@@ -170,7 +172,7 @@ func (b *Builder) build(p string, forTest bool) (*pkg, []*lex8.Error) {
 	if es != nil {
 		return nil, es
 	}
-	ret.compiled = compiled
+	ret.pkg = compiled
 
 	// build main
 	es = b.buildMain(ret)

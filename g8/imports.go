@@ -99,18 +99,16 @@ func declareImports(b *builder, f *ast.File, pinfo *build8.PkgInfo) {
 			continue
 		}
 
-		compiled := imported.Compiled
-		lib := compiled.Lib()
-		b.p.Import(lib)
-		lang, syms := compiled.Symbols()
-		if lang != "g8" {
+		p := imported.Package
+		b.p.Import(p.Lib)
+		if p.Lang != "g8" {
 			// TODO: import assembly
 			b.Errorf(d.Path.Pos, "not a G language package")
 			continue
 		}
 
 		pos := importPos(d)
-		ref := newRef(&types.Pkg{as, syms}, nil)
+		ref := newRef(&types.Pkg{as, p.Symbols}, nil)
 		obj := &objImport{ref}
 		pre := b.scope.Declare(sym8.Make(b.symPkg, as, symImport, obj, pos))
 		if pre != nil {

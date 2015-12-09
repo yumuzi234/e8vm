@@ -102,7 +102,7 @@ func fillLabels(b *builder, f *funcDecl) {
 	}
 }
 
-func queryPkg(b *builder, t *lex8.Token, pkg string) *importStmt {
+func findImport(b *builder, t *lex8.Token, pkg string) *importStmt {
 	sym := b.scope.Query(pkg)
 	if sym == nil {
 		b.Errorf(t.Pos, "package %q not found", pkg)
@@ -145,7 +145,7 @@ func resolveSymbol(b *builder, s *funcStmt) (typ int, pkg, name string) {
 			}
 		}
 	} else {
-		p := queryPkg(b, t, s.pkg) // find the package importStmt
+		p := findImport(b, t, s.pkg) // find the package importStmt
 		if p != nil {
 			var sym *link8.Symbol // for saving the linking symbol in the lib
 
@@ -153,7 +153,7 @@ func resolveSymbol(b *builder, s *funcStmt) (typ int, pkg, name string) {
 			b.pkgUsed[p.as] = struct{}{} // mark pkg used
 
 			// TODO: support consts in assembly
-			sym = p.lib.SymbolByName(s.sym) // find the symbol
+			sym = p.pkg.Lib.SymbolByName(s.sym) // find the symbol
 			if sym != nil {
 				if sym.Type == link8.SymFunc {
 					typ = SymFunc

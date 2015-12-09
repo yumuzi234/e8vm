@@ -24,7 +24,7 @@ func declareFile(b *builder, pkg *pkg, file *file) {
 			continue
 		}
 
-		b.curPkg.Declare(sym)
+		b.curPkg.declare(sym)
 		// b.index(t.Lit, b.curPkg.Declare(sym))
 	}
 
@@ -36,7 +36,7 @@ func declareFile(b *builder, pkg *pkg, file *file) {
 			continue
 		}
 
-		b.curPkg.Declare(sym)
+		b.curPkg.declare(sym)
 		// b.index(t.Lit, b.curPkg.Declare(sym))
 	}
 }
@@ -49,7 +49,7 @@ func buildPkgScope(b *builder, pkg *pkg) {
 				continue
 			}
 
-			b.curPkg.Import(stmt.lib)
+			b.curPkg.Import(stmt.pkg.Lib)
 			b.importPkg(stmt.path, as)
 			// b.index(as, b.curPkg.Require(stmt.lib))
 		}

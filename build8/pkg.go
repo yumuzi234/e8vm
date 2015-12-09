@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"e8vm.io/e8vm/lex8"
-	"e8vm.io/e8vm/link8"
 )
 
 type pkg struct {
@@ -17,8 +16,7 @@ type pkg struct {
 	imports      map[string]*Import
 	buildStarted bool
 
-	compiled Linkable
-	lib      *link8.Pkg
+	pkg *Package
 
 	err error
 }

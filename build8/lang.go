@@ -17,28 +17,30 @@ type File struct {
 
 // Import is an import identity
 type Import struct {
-	Path     string
-	Pos      *lex8.Pos
-	Compiled Linkable
+	Path string
+	Pos  *lex8.Pos
+	*Package
 }
 
-// Linkable is an interface for a linkable package
-type Linkable interface {
-	// Main is the entry point for linking. It will
-	// be placed at the entry address of the image.
-	Main() string
+// Package is an interface for a linkable package
+type Package struct {
+	// Lang is the language name this package used
+	Lang string
 
-	// Tests are function symbols that should be preserved,
-	// and sent into the image as an argument for running
-	// testing.
-	Tests() (tests map[string]uint32, main string)
+	// Main is the main entrance of this package, if any
+	Main string
 
-	// Lib is the linkable object file.
-	Lib() *link8.Pkg
+	// TestMain is the main entrance for testing of this package, if any
+	TestMain string
 
-	// Symbols returns all the top-level symbols in this package.
-	// This is used for other packages to import and use this package.
-	Symbols() (lang string, table *sym8.Table)
+	// Tests is the list of test cases, mapping from names to test ids.
+	Tests map[string]uint32
+
+	// Lib is the linkable library.
+	Lib *link8.Pkg
+
+	// Symbols stores all the symbols of this package.
+	Symbols *sym8.Table
 }
 
 // Importer is an interface for importing required packages for compiling
@@ -64,5 +66,5 @@ type Lang interface {
 	Prepare(src map[string]*File, importer Importer) []*lex8.Error
 
 	// Compile compiles a list of source files into a compiled linkable
-	Compile(pinfo *PkgInfo) (Linkable, []*lex8.Error)
+	Compile(pinfo *PkgInfo) (*Package, []*lex8.Error)
 }

@@ -13,13 +13,13 @@ import (
 func BuildSingleFile(f string, rc io.ReadCloser) ([]byte, []*lex8.Error) {
 	pinfo := build8.SimplePkg("_", f, rc)
 
-	compiled, es := Lang().Compile(pinfo)
+	pkg, es := Lang().Compile(pinfo)
 	if es != nil {
 		return nil, es
 	}
 
 	buf := new(bytes.Buffer)
-	e := link8.LinkMain(compiled.Lib(), buf, "main")
+	e := link8.LinkMain(pkg.Lib, buf, pkg.Main)
 	if e != nil {
 		return nil, lex8.SingleErr(e)
 	}
