@@ -26,7 +26,7 @@ func shortestCircle(nodes map[string]*MapNode) []*MapNode {
 
 	var shortestNode *MapNode
 	var shortestDist int
-	shortest := 2*len(nodes)
+	shortestDist = 2*len(nodes)
 
 	for _, via := range nodes {
 		for _, from := range nodes {
