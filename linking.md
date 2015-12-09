@@ -12,25 +12,26 @@ Each package have many faces.
 - A package can be loaded with only the header or the header and the content.
 - Only the header part is enough to support other dependant packages.
 
-type build8.Lang interface {
-	IsSrc(filename string) bool
-	NewPackage(path, src map[string]*File) (Package, error)
+type Lang interface {
+	Load(path, src map[string]*File) (*PkgIndex, error)
+	Build(p *PkgIndex) (Package, error)
 }
 
-type build8.Import struct {
-	Path string
-	As string // import as
-	Pos *lex8.Pos // import position
-	Package
+type PkgIndex struct {
+	// fill these on new
+	Src map[string]*File // selected source files
+	Imports []string // required other packages
 }
 
-type build8.Package interface {
-	Lang() string // language name
-	ListImports() ([]*Import, []*lex8.Error) // list of imports
-	Build(imports []*Import) []*lex8.Error
-	Link() (map[string]*link8.Var, map[string]*link8.Func)
-	Main() string
-	Tests() (tests string, testMain string)
+type Package interface {
+	Linkable() *Linkable
+}
+
+type Linkable struct {
+	Vars map[string]*link8.Var
+	Funcs map[string]*link8.Var
+	Main string
+	Tests, TestMain string
 }
 
 // when building, importing a symbol will look into the package (header) rather than just the linkable. linkable and headers are differet.
