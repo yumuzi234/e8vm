@@ -23,7 +23,7 @@ func TestFile_good(t *testing.T) {
 		"func f(int) (a int, b int) {}",
 		"func f(int) (a int, b int,) {}",
 		`func f(int) (
-			a int, 
+			a int,
 			b int,
 		) {}
 		`,
@@ -34,7 +34,7 @@ func TestFile_good(t *testing.T) {
 		`import ( a "a"; "b" )`,
 	} {
 		buf := strings.NewReader(s)
-		f, es := File("test.g", buf, false)
+		f, _, es := File("test.g", buf, false)
 		if es != nil {
 			t.Log(s)
 			for _, e := range es {
@@ -71,7 +71,7 @@ func TestFile_bad(t *testing.T) {
 		`var (a "a";}`,
 	} {
 		buf := strings.NewReader(s)
-		_, es := File("test.g", buf, false)
+		_, _, es := File("test.g", buf, false)
 		if es == nil {
 			t.Log(s)
 			t.Log("should fail")

@@ -7,38 +7,37 @@ import (
 	"e8vm.io/e8vm/g8/ast"
 )
 
-func printParaList(p *fmt8.Printer, lst *ast.ParaList) {
-	fmt.Fprint(p, "(")
+func printParaList(p *fmt8.Printer, m *matcher, lst *ast.ParaList) {
+	printToken(p, m, lst.Lparen)
 	for i, para := range lst.Paras {
 		if i > 0 {
-			fmt.Fprint(p, ", ")
+			printExprs(p, m, lst.Commas[i-1], " ")
 		}
 		if para.Ident != nil {
-			fmt.Fprintf(p, "%s", para.Ident.Lit)
+			printToken(p, m, para.Ident)
 			if para.Type != nil {
 				fmt.Fprint(p, " ")
 			}
 		}
 
 		if para.Type != nil {
-			printExpr(p, para.Type)
+			printExpr(p, m, para.Type)
 		}
 	}
-	fmt.Fprint(p, ")")
+	printToken(p, m, lst.Rparen)
 }
 
-func printFunc(p *fmt8.Printer, f *ast.Func) {
-	fmt.Fprintf(p, "func %s", f.Name.Lit)
-	printParaList(p, f.Args)
+func printFunc(p *fmt8.Printer, m *matcher, f *ast.Func) {
+	printExprs(p, m, f.Kw, " ", f.Name)
+	printParaList(p, m, f.Args)
 	if f.RetType != nil {
-		fmt.Fprint(p, " ")
-		printExpr(p, f.RetType)
+		printExprs(p, m, " ", f.RetType)
 	} else if f.Rets != nil {
 		fmt.Fprint(p, " ")
-		printParaList(p, f.Rets)
+		printParaList(p, m, f.Rets)
 	}
 
 	fmt.Fprint(p, " ")
-	printStmt(p, f.Body)
+	printStmt(p, m, f.Body)
 	fmt.Fprintln(p)
 }

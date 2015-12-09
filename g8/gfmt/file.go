@@ -9,32 +9,34 @@ import (
 	"e8vm.io/e8vm/lex8"
 )
 
-func printTopDecl(p *fmt8.Printer, d ast.Decl) {
+func printTopDecl(p *fmt8.Printer, m *matcher, d ast.Decl) {
 	switch d := d.(type) {
 	case *ast.Func:
-		printFunc(p, d)
+		printFunc(p, m, d)
 	case *ast.Struct:
-		printStruct(p, d)
+		printStruct(p, m, d)
 	case *ast.VarDecls:
-		printVarDecls(p, d)
+		printVarDecls(p, m, d)
 	case *ast.ConstDecls:
-		printConstDecls(p, d)
+		printConstDecls(p, m, d)
 	default:
 		panic(fmt.Errorf("invalid top-level declaration type: %T", d))
 	}
 }
 
-func printFile(p *fmt8.Printer, f *ast.File) {
+func printFile(p *fmt8.Printer, m *matcher, f *ast.File) {
 	for i, decl := range f.Decls {
-		printTopDecl(p, decl)
+		printTopDecl(p, m, decl)
 		if i < len(f.Decls)-1 {
 			fmt.Fprintln(p)
 		}
 	}
+	m.finish()
 }
 
-// FprintFile prints a list of file
+// FprintFile prints a file
 func FprintFile(out io.Writer, f *ast.File, rec *lex8.Recorder) {
 	p := fmt8.NewPrinter(out)
-	printFile(p, f)
+	m := newMatcher(rec.Tokens())
+	printFile(p, m, f)
 }

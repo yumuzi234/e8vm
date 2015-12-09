@@ -1,5 +1,9 @@
 package lex8
 
+import (
+	"fmt"
+)
+
 // Token defines a token structure.
 type Token struct {
 	Type int
@@ -13,3 +17,7 @@ const (
 	Comment
 	Illegal
 )
+
+func (t *Token) String() string {
+	return fmt.Sprintf("'%s' (%v)", t.Lit, t.Pos)
+}

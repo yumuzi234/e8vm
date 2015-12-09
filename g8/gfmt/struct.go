@@ -7,22 +7,24 @@ import (
 	"e8vm.io/e8vm/g8/ast"
 )
 
-func printStruct(p *fmt8.Printer, d *ast.Struct) {
-	fmt.Fprintf(p, "struct %s {\n", d.Name.Lit)
+func printStruct(p *fmt8.Printer, m *matcher, d *ast.Struct) {
+	printExprs(p, m, d.Kw, " ", d.Name, " ", d.Lbrace)
+	fmt.Fprintln(p)
 	p.Tab()
 
 	for _, field := range d.Fields {
-		printIdents(p, field.Idents)
+		printIdents(p, m, field.Idents)
 		fmt.Fprint(p, " ")
-		printExpr(p, field.Type)
+		printExpr(p, m, field.Type)
 		fmt.Fprintln(p)
 	}
 
 	fmt.Fprintln(p)
 	for _, method := range d.Methods {
-		printFunc(p, method)
+		printFunc(p, m, method)
 	}
 
 	p.ShiftTab()
-	fmt.Fprintln(p, "}")
+	printToken(p, m, d.Rbrace)
+	fmt.Fprintln(p)
 }

@@ -7,74 +7,75 @@ import (
 	"e8vm.io/e8vm/g8/ast"
 )
 
-func printIdents(p *fmt8.Printer, idents *ast.IdentList) {
-	ss := make([]string, len(idents.Idents))
+func printIdents(p *fmt8.Printer, m *matcher, idents *ast.IdentList) {
 	for i, id := range idents.Idents {
-		ss[i] = id.Lit
+		if i > 0 {
+			printExprs(p, m, idents.Commas[i-1], " ")
+		}
+		printToken(p, m, id)
 	}
-	fmt.Fprint(p, fmt8.Join(ss, ", "))
 }
 
-func printVarDecl(p *fmt8.Printer, d *ast.VarDecl) {
-	printIdents(p, d.Idents)
+func printVarDecl(p *fmt8.Printer, m *matcher, d *ast.VarDecl) {
+	printIdents(p, m, d.Idents)
 	if d.Type != nil {
-		fmt.Fprint(p, " ")
-		printExpr(p, d.Type)
+		printExprs(p, m, " ", d.Type)
 	}
 
 	if d.Eq != nil {
-		fmt.Fprint(p, " = ")
-		printExpr(p, d.Exprs)
+		printExprs(p, m, " ", d.Eq, " ", d.Exprs)
 	}
+	fmt.Fprintln(p)
 }
 
-func printVarDecls(p *fmt8.Printer, d *ast.VarDecls) {
-	fmt.Fprintf(p, "var ")
+func printVarDecls(p *fmt8.Printer, m *matcher, d *ast.VarDecls) {
+	printExprs(p, m, d.Kw, " ")
 	if d.Lparen == nil {
 		// single declare
 		for _, decl := range d.Decls {
-			printVarDecl(p, decl)
+			printVarDecl(p, m, decl)
 		}
 	} else {
-		fmt.Fprintf(p, "(\n")
+		printToken(p, m, d.Lparen)
+		fmt.Fprintln(p)
 		p.Tab()
 		for _, decl := range d.Decls {
-			printVarDecl(p, decl)
-			fmt.Println(p)
+			printVarDecl(p, m, decl)
 		}
 		p.ShiftTab()
-		fmt.Fprintf(p, ")")
+		printToken(p, m, d.Rparen)
+		fmt.Fprintln(p)
 	}
 }
 
-func printConstDecl(p *fmt8.Printer, d *ast.ConstDecl) {
-	printIdents(p, d.Idents)
+func printConstDecl(p *fmt8.Printer, m *matcher, d *ast.ConstDecl) {
+	printIdents(p, m, d.Idents)
 	if d.Type != nil {
-		fmt.Fprint(p, " ")
-		printExpr(p, d.Type)
+		printExprs(p, m, " ", d.Type)
 	}
 
 	if d.Eq != nil {
-		fmt.Fprint(p, " = ")
-		printExpr(p, d.Exprs)
+		printExprs(p, m, " ", d.Eq, " ", d.Exprs)
 	}
+	fmt.Fprintln(p)
 }
 
-func printConstDecls(p *fmt8.Printer, d *ast.ConstDecls) {
-	fmt.Fprintf(p, "const ")
+func printConstDecls(p *fmt8.Printer, m *matcher, d *ast.ConstDecls) {
+	printExprs(p, m, d.Kw, " ")
 	if d.Lparen == nil {
 		// single declare
 		for _, decl := range d.Decls {
-			printConstDecl(p, decl)
+			printConstDecl(p, m, decl)
 		}
 	} else {
-		fmt.Fprintf(p, "(\n")
+		printToken(p, m, d.Lparen)
+		fmt.Fprintln(p)
 		p.Tab()
 		for _, decl := range d.Decls {
-			printConstDecl(p, decl)
-			fmt.Println(p)
+			printConstDecl(p, m, decl)
 		}
 		p.ShiftTab()
-		fmt.Fprintf(p, ")")
+		printToken(p, m, d.Rparen)
+		fmt.Fprintln(p)
 	}
 }

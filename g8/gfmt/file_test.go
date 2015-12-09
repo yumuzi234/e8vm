@@ -11,7 +11,7 @@ import (
 func TestFormatFile(t *testing.T) {
 	gfmt := func(s string) string {
 		r := strings.NewReader(s)
-		ast, es := parse.File("", r, false)
+		ast, rec, es := parse.File("", r, false)
 		if len(es) > 0 {
 			t.Errorf("parsing %q failed with errors", s)
 			for _, err := range es {
@@ -20,7 +20,7 @@ func TestFormatFile(t *testing.T) {
 		}
 
 		out := new(bytes.Buffer)
-		FprintFile(out, ast)
+		FprintFile(out, ast, rec)
 		return out.String()
 	}
 
