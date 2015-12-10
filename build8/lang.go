@@ -27,10 +27,14 @@ type Package struct {
 	// Lang is the language name this package used
 	Lang string
 
-	// Main is the main entrance of this package, if any
+	// Init is the init function of this package.
+	// It is always a function that has no paramters.
+	Init string
+
+	// Main is the main entrance of this package, if any.
 	Main string
 
-	// TestMain is the main entrance for testing of this package, if any
+	// TestMain is the main entrance for testing of this package, if any.
 	TestMain string
 
 	// Tests is the list of test cases, mapping from names to test ids.
@@ -48,11 +52,18 @@ type Importer interface {
 	Import(name, path string, pos *lex8.Pos) // imports a package
 }
 
+// PkgSym is a pointer to a symbol in a package.
+type PkgSym struct {
+	Pkg, Sym string
+}
+
 // PkgInfo contains the information for compiling a package
 type PkgInfo struct {
 	Path   string
 	Src    map[string]*File
 	Import map[string]*Import
+
+	Inits []*PkgSym
 
 	CreateLog func(name string) io.WriteCloser
 }
