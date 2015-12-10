@@ -100,9 +100,8 @@ func declareImports(b *builder, f *ast.File, pinfo *build8.PkgInfo) {
 		}
 
 		p := imported.Package
-		b.p.Import(p.Lib)
 		if p.Lang != "g8" {
-			// TODO: import assembly
+			// TODO(h8liu): issue #24, import assembly
 			b.Errorf(d.Path.Pos, "not a G language package")
 			continue
 		}

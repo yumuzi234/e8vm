@@ -11,60 +11,49 @@ import (
 
 // Job is a linking job.
 type Job struct {
-	Pkg      *Pkg
+	Pkgs     map[string]*Pkg
+	Path     string
 	StartSym string
 	InitPC   uint32
 }
 
 // NewJob creates a new linking job which init pc is the default one.
-func NewJob(p *Pkg, start string) *Job {
+func NewJob(pkgs map[string]*Pkg, path, start string) *Job {
 	return &Job{
-		Pkg:      p,
+		Pkgs:     pkgs,
+		Path:     path,
 		StartSym: start,
 		InitPC:   arch8.InitPC,
 	}
 }
 
-// LinkMain is a short hand for NewJob(p, start).Link(out)
-func LinkMain(p *Pkg, out io.Writer, start string) error {
-	return NewJob(p, start).Link(out)
+// LinkMain is a short hand for NewJob(pkgs, path, start).Link(out)
+func LinkMain(out io.Writer, pkgs map[string]*Pkg, path, start string) error {
+	return NewJob(pkgs, path, start).Link(out)
 }
 
-// addPkgs add a package and recursively adds
-// all the packages that this package imported.
-func addPkgs(pkgs map[string]*Pkg, p *Pkg) {
-	exists := pkgs[p.path]
-	if exists != nil {
-		if exists != p {
-			panic("package path conflict")
-		}
-		return
-	}
-
-	pkgs[p.path] = p
-	for _, req := range p.imported {
-		addPkgs(pkgs, req)
-	}
+// LinkSingle call LinkMain with only one single package.
+func LinkSingle(out io.Writer, pkg *Pkg, start string) error {
+	path := pkg.Path()
+	pkgs := map[string]*Pkg{path: pkg}
+	return LinkMain(out, pkgs, path, start)
 }
 
 // Link performs the linking job and writes the output to out.
 func (j *Job) Link(out io.Writer) error {
-	pkgs := make(map[string]*Pkg)
-
-	// add all dependencies
-	// TODO: move this to the builder, so that we do not add
-	// all deps everytime we link a package.
-	addPkgs(pkgs, j.Pkg)
+	pkgs := j.Pkgs
 
 	var roots []string
 
-	funcMain := j.Pkg.SymbolByName(j.StartSym)
+	pkg := j.Pkgs[j.Path]
+
+	funcMain := pkg.SymbolByName(j.StartSym)
 	if funcMain == nil || funcMain.Type != SymFunc {
 		return fmt.Errorf("start function missing")
 	}
 
 	roots = append(roots, j.StartSym)
-	used := traceUsed(pkgs, j.Pkg, roots)
+	used := traceUsed(pkgs, pkg, roots)
 
 	funcs, vars, zeros, e := layout(used, j.InitPC)
 	if e != nil {

@@ -15,7 +15,7 @@ var (
 
 func declareBuiltin(b *builder, builtin *link8.Pkg) {
 	path := builtin.Path()
-	e := b.p.ImportBuiltin(builtin)
+	e := b.p.HookBuiltin(builtin)
 	if e != nil {
 		b.Errorf(nil, e.Error())
 		return

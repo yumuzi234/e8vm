@@ -17,6 +17,8 @@ type Builder struct {
 	pkgs map[string]*pkg
 	deps map[string][]string
 
+	linkPkgs map[string]*link8.Pkg
+
 	Verbose  bool
 	InitPC   uint32
 	RunTests bool
@@ -25,10 +27,11 @@ type Builder struct {
 // NewBuilder creates a new builder with a particular home directory
 func NewBuilder(home Home) *Builder {
 	return &Builder{
-		home:   home,
-		pkgs:   make(map[string]*pkg),
-		deps:   make(map[string][]string),
-		InitPC: arch8.InitPC,
+		home:     home,
+		pkgs:     make(map[string]*pkg),
+		deps:     make(map[string][]string),
+		linkPkgs: make(map[string]*link8.Pkg),
+		InitPC:   arch8.InitPC,
 	}
 }
 
@@ -73,8 +76,8 @@ func (b *Builder) prepare(p string) (*pkg, []*lex8.Error) {
 	return pkg, nil
 }
 
-func (b *Builder) link(p *link8.Pkg, out io.Writer, main string) error {
-	job := link8.NewJob(p, main)
+func (b *Builder) link(out io.Writer, p, main string) error {
+	job := link8.NewJob(b.linkPkgs, p, main)
 	job.InitPC = b.InitPC
 	return job.Link(out)
 }
@@ -92,19 +95,17 @@ func (b *Builder) buildMain(p *pkg) []*lex8.Error {
 	lib := p.pkg.Lib
 	main := p.pkg.Main
 
-	if main != "" && lib.HasFunc(main) {
-		log := lex8.NewErrorList()
-
-		fout := b.home.CreateBin(p.path)
-		lex8.LogError(log, b.link(lib, fout, main))
-		lex8.LogError(log, fout.Close())
-
-		if es := log.Errs(); es != nil {
-			return es
-		}
+	if main == "" || !lib.HasFunc(main) {
+		return nil
 	}
 
-	return nil
+	log := lex8.NewErrorList()
+
+	fout := b.home.CreateBin(p.path)
+	lex8.LogError(log, b.link(fout, p.path, main))
+	lex8.LogError(log, fout.Close())
+
+	return log.Errs()
 }
 
 func (b *Builder) runTests(p *pkg) []*lex8.Error {
@@ -115,7 +116,7 @@ func (b *Builder) runTests(p *pkg) []*lex8.Error {
 		log := lex8.NewErrorList()
 		if len(tests) > 0 {
 			bs := new(bytes.Buffer)
-			lex8.LogError(log, b.link(lib, bs, testMain))
+			lex8.LogError(log, b.link(bs, p.path, testMain))
 			fout := b.home.CreateTestBin(p.path)
 
 			img := bs.Bytes()
@@ -161,6 +162,7 @@ func (b *Builder) build(p string) (*pkg, []*lex8.Error) {
 		return nil, es
 	}
 	ret.pkg = pkg
+	b.linkPkgs[p] = ret.pkg.Lib
 
 	// build main
 	es = b.buildMain(ret)
@@ -182,7 +184,6 @@ func (b *Builder) build(p string) (*pkg, []*lex8.Error) {
 // BuildPkgs builds a list of packages
 func (b *Builder) BuildPkgs(pkgs []string) []*lex8.Error {
 	for _, p := range pkgs {
-		fmt.Println("prepare: ", p)
 		if _, es := b.prepare(p); es != nil {
 			return es
 		}
@@ -199,7 +200,6 @@ func (b *Builder) BuildPkgs(pkgs []string) []*lex8.Error {
 
 	nodes := m.SortedNodes()
 	for _, node := range nodes {
-		fmt.Println("build: ", node.Name)
 		if b.Verbose { // report progress
 			fmt.Println(node.Name)
 		}

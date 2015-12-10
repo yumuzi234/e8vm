@@ -11,17 +11,19 @@ import (
 
 // BuildSingleFile builds a package named "main" from a single file.
 func BuildSingleFile(f string, rc io.ReadCloser) ([]byte, []*lex8.Error) {
-	pinfo := build8.SimplePkg("_", f, rc)
+	path := "_"
 
-	pkg, es := Lang().Compile(pinfo)
-	if es != nil {
-		return nil, es
+	pinfo := build8.SimplePkg(path, f, rc)
+
+	pkg, errs := Lang().Compile(pinfo)
+	if errs != nil {
+		return nil, errs
 	}
 
 	buf := new(bytes.Buffer)
-	e := link8.LinkMain(pkg.Lib, buf, pkg.Main)
-	if e != nil {
-		return nil, lex8.SingleErr(e)
+	err := link8.LinkSingle(buf, pkg.Lib, pkg.Main)
+	if err != nil {
+		return nil, lex8.SingleErr(err)
 	}
 
 	return buf.Bytes(), nil
