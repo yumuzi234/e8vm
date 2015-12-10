@@ -215,7 +215,8 @@ func (m *Map) buildCrits() {
 	}
 }
 
-func (m *Map) sortedNodes() []*MapNode {
+// SortedNodes returns a nodes that are sorted in topological order.
+func (m *Map) SortedNodes() []*MapNode {
 	var ret mapNodes
 
 	for _, node := range m.Nodes {
@@ -226,7 +227,9 @@ func (m *Map) sortedNodes() []*MapNode {
 	return ret
 }
 
-func (m *Map) sortedLayers() [][]*MapNode {
+// SortedLayers returns nodes that are sorted in topological layers.
+// Each node resides in its lowest possible layer.
+func (m *Map) SortedLayers() [][]*MapNode {
 	ret := make([][]*MapNode, m.Nlayer)
 
 	for _, node := range m.Nodes {

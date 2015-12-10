@@ -6,6 +6,7 @@ import (
 	"io"
 
 	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/dagvis"
 	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/link8"
 )
@@ -14,18 +15,21 @@ import (
 type Builder struct {
 	home Home
 	pkgs map[string]*pkg
+	deps map[string][]string
 
-	Verbose bool
-	InitPC  uint32
+	Verbose  bool
+	InitPC   uint32
+	RunTests bool
 }
 
 // NewBuilder creates a new builder with a particular home directory
 func NewBuilder(home Home) *Builder {
-	ret := new(Builder)
-	ret.home = home
-	ret.pkgs = make(map[string]*pkg)
-	ret.InitPC = arch8.InitPC
-	return ret
+	return &Builder{
+		home:   home,
+		pkgs:   make(map[string]*pkg),
+		deps:   make(map[string][]string),
+		InitPC: arch8.InitPC,
+	}
 }
 
 func (b *Builder) prepare(p string) (*pkg, []*lex8.Error) {
@@ -59,6 +63,13 @@ func (b *Builder) prepare(p string) (*pkg, []*lex8.Error) {
 		}
 	}
 
+	// mount the deps
+	deps := make([]string, 0, len(pkg.imports))
+	for _, imp := range pkg.imports {
+		deps = append(deps, imp.Path)
+	}
+	b.deps[p] = deps
+
 	return pkg, nil
 }
 
@@ -68,15 +79,13 @@ func (b *Builder) link(p *link8.Pkg, out io.Writer, main string) error {
 	return job.Link(out)
 }
 
-func (b *Builder) buildImports(p *pkg, forTest bool) []*lex8.Error {
+func (b *Builder) fillImports(p *pkg) {
 	for _, imp := range p.imports {
-		built, es := b.build(imp.Path, forTest)
-		if es != nil {
-			return es
+		imp.Package = b.pkgs[imp.Path].pkg
+		if imp.Package == nil {
+			panic("bug")
 		}
-		imp.Package = built.pkg
 	}
-	return nil
 }
 
 func (b *Builder) buildMain(p *pkg) []*lex8.Error {
@@ -138,41 +147,20 @@ func (b *Builder) makePkgInfo(p *pkg) *PkgInfo {
 	}
 }
 
-func (b *Builder) build(p string, forTest bool) (*pkg, []*lex8.Error) {
+func (b *Builder) build(p string) (*pkg, []*lex8.Error) {
 	ret := b.pkgs[p]
 	if ret == nil {
 		panic("build without preparing")
 	}
 
-	// if already compiled, just return
-	if ret.pkg != nil {
-		return ret, nil
-	}
-
-	// circ dep check
-	if ret.buildStarted {
-		e := fmt.Errorf("package %q circular depends itself", p)
-		return ret, lex8.SingleErr(e)
-	}
-	ret.buildStarted = true
-
-	// build imports
-	es := b.buildImports(ret, forTest)
-	if es != nil {
-		return nil, es
-	}
-
-	// report progress
-	if b.Verbose {
-		fmt.Println(p)
-	}
+	b.fillImports(ret)
 
 	// compile
-	compiled, es := ret.lang.Compile(b.makePkgInfo(ret))
+	pkg, es := ret.lang.Compile(b.makePkgInfo(ret))
 	if es != nil {
 		return nil, es
 	}
-	ret.pkg = compiled
+	ret.pkg = pkg
 
 	// build main
 	es = b.buildMain(ret)
@@ -181,7 +169,7 @@ func (b *Builder) build(p string, forTest bool) (*pkg, []*lex8.Error) {
 	}
 
 	// run tests
-	if forTest {
+	if b.RunTests {
 		es := b.runTests(ret)
 		if es != nil {
 			return nil, es
@@ -191,32 +179,46 @@ func (b *Builder) build(p string, forTest bool) (*pkg, []*lex8.Error) {
 	return ret, nil
 }
 
-// Build builds a package
-func (b *Builder) Build(p string) []*lex8.Error {
-	if _, es := b.prepare(p); es != nil {
-		return es
-	}
-
-	_, es := b.build(p, false)
-	return es
-}
-
-// BuildAll builds all packages, when andTest is also true,
-// it will also test the packages.
-func (b *Builder) BuildAll(andTest bool) []*lex8.Error {
-	pkgs := b.home.Pkgs("")
-
+// BuildPkgs builds a list of packages
+func (b *Builder) BuildPkgs(pkgs []string) []*lex8.Error {
 	for _, p := range pkgs {
+		fmt.Println("prepare: ", p)
 		if _, es := b.prepare(p); es != nil {
 			return es
 		}
 	}
 
-	for _, p := range pkgs {
-		if _, es := b.build(p, andTest); es != nil {
+	g := &dagvis.Graph{b.deps}
+	g = g.Reverse()
+
+	m, err := dagvis.Layout(g)
+	if err != nil {
+		return lex8.SingleErr(err)
+	}
+	// TODO: save the package dep map
+
+	nodes := m.SortedNodes()
+	for _, node := range nodes {
+		fmt.Println("build: ", node.Name)
+		if b.Verbose { // report progress
+			fmt.Println(node.Name)
+		}
+
+		if _, es := b.build(node.Name); es != nil {
 			return es
 		}
 	}
 
 	return nil
+}
+
+// Build builds a package.
+func (b *Builder) Build(p string) []*lex8.Error {
+	return b.BuildPkgs([]string{p})
+}
+
+// BuildAll builds all packages, when andTest is also true,
+// it will also test the packages.
+func (b *Builder) BuildAll() []*lex8.Error {
+	return b.BuildPkgs(b.home.Pkgs(""))
 }

@@ -50,7 +50,7 @@ func pushNode(m *Map, node *MapNode, pushed map[string]*MapNode) {
 // pushTight pushes map nodes to upper layers if possible
 // so that the nodes are closer to its dependencies
 func pushTight(m *Map) {
-	nodes := m.sortedNodes() // sorted nodes by layer
+	nodes := m.SortedNodes()
 
 	n := len(nodes)
 	for i := range nodes {

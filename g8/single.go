@@ -23,7 +23,7 @@ func buildSingle(fname, s string, lang build8.Lang) (
 	builtin.AddFile("", "builtin.s", builtInSrc)
 
 	b := build8.NewBuilder(home)
-	es = b.BuildAll(false)
+	es = b.BuildAll()
 	if es != nil {
 		return nil, es, nil
 	}
