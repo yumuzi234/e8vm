@@ -9,6 +9,8 @@ type Func struct {
 	insts []uint32
 	links []*link
 
+	// filled when linking
+	// TODO: this should not be here.
 	addr uint32
 }
 

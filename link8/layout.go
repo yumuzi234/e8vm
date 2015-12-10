@@ -41,6 +41,8 @@ func layout(used []pkgSym, initPC uint32) (
 		if v.align > 1 && pt%v.align != 0 {
 			v.prePad = v.align - pt%v.align
 			pt += v.prePad
+		} else {
+			v.prePad = 0
 		}
 		if v.align > 1 && pt%v.align != 0 {
 			panic("bug")
