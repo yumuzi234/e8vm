@@ -43,8 +43,6 @@ func LinkSingle(out io.Writer, pkg *Pkg, start string) error {
 func (j *Job) Link(out io.Writer) error {
 	pkgs := j.Pkgs
 
-	var roots []string
-
 	pkg := j.Pkgs[j.Path]
 
 	funcMain := pkg.SymbolByName(j.StartSym)
@@ -52,8 +50,8 @@ func (j *Job) Link(out io.Writer) error {
 		return fmt.Errorf("start function missing")
 	}
 
-	roots = append(roots, j.StartSym)
-	used := traceUsed(pkgs, pkg, roots)
+	roots := []string{j.StartSym}
+	used := traceUsed(pkgs, j.Path, roots)
 
 	funcs, vars, zeros, e := layout(used, j.InitPC)
 	if e != nil {

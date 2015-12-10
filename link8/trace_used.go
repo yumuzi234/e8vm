@@ -33,7 +33,8 @@ func (t *tracer) hit(pkg *Pkg, sym string) bool {
 
 // traceUsed traces symbols/objects that are used.
 // only these objects need to be linked into the final result.
-func traceUsed(pkgs map[string]*Pkg, p *Pkg, roots []string) []pkgSym {
+func traceUsed(pkgs map[string]*Pkg, path string, roots []string) []pkgSym {
+	p := pkgs[path]
 	t := newTracer(pkgs)
 
 	var cur []pkgSym
