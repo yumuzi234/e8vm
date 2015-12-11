@@ -8,6 +8,7 @@ go:
 
 install:
     - go get ./...
+    - go get -u e8vm.io/tools
 
 script:
     - go test ./...
