@@ -49,7 +49,7 @@ func shortestCircle(nodes map[string]*MapNode) []*MapNode {
 				}
 
 				d, inf := dist(from, to)
-				if inf || (d1+d2 < d) {
+				if inf || d1+d2 < d {
 					dists[from][to] = d1 + d2
 					nexts[from][to] = nexts[from][via]
 				}
