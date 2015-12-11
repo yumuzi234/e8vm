@@ -16,7 +16,9 @@ func printStruct(f *formatter, d *ast.Struct) {
 		f.printEndl()
 	}
 
-	f.printEndl()
+	if len(d.Methods) > 0 {
+		f.printEndl()
+	}
 	for _, method := range d.Methods {
 		printFunc(f, method)
 	}
