@@ -9,6 +9,7 @@ go:
 install:
     - go get ./...
     - go get -u e8vm.io/tools
+    - go get -u github.com/golang/lint/golint
 
 script:
     - go test ./...
