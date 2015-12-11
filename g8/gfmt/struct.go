@@ -1,30 +1,27 @@
 package gfmt
 
 import (
-	"fmt"
-
-	"e8vm.io/e8vm/fmt8"
 	"e8vm.io/e8vm/g8/ast"
 )
 
-func printStruct(p *fmt8.Printer, m *matcher, d *ast.Struct) {
-	printExprs(p, m, d.Kw, " ", d.Name, " ", d.Lbrace)
-	fmt.Fprintln(p)
-	p.Tab()
+func printStruct(f *formatter, d *ast.Struct) {
+	printExprs(f, d.Kw, " ", d.Name, " ", d.Lbrace)
+	f.printEndl()
+	f.Tab()
 
 	for _, field := range d.Fields {
-		printIdents(p, m, field.Idents)
-		fmt.Fprint(p, " ")
-		printExpr(p, m, field.Type)
-		fmt.Fprintln(p)
+		printIdents(f, field.Idents)
+		f.printSpace()
+		printExpr(f, field.Type)
+		f.printEndl()
 	}
 
-	fmt.Fprintln(p)
+	f.printEndl()
 	for _, method := range d.Methods {
-		printFunc(p, m, method)
+		printFunc(f, method)
 	}
 
-	p.ShiftTab()
-	printToken(p, m, d.Rbrace)
-	fmt.Fprintln(p)
+	f.ShiftTab()
+	f.printToken(d.Rbrace)
+	f.printEndl()
 }

@@ -4,39 +4,37 @@ import (
 	"fmt"
 	"io"
 
-	"e8vm.io/e8vm/fmt8"
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/lex8"
 )
 
-func printTopDecl(p *fmt8.Printer, m *matcher, d ast.Decl) {
+func printTopDecl(f *formatter, d ast.Decl) {
 	switch d := d.(type) {
 	case *ast.Func:
-		printFunc(p, m, d)
+		printFunc(f, d)
 	case *ast.Struct:
-		printStruct(p, m, d)
+		printStruct(f, d)
 	case *ast.VarDecls:
-		printVarDecls(p, m, d)
+		printVarDecls(f, d)
 	case *ast.ConstDecls:
-		printConstDecls(p, m, d)
+		printConstDecls(f, d)
 	default:
 		panic(fmt.Errorf("invalid top-level declaration type: %T", d))
 	}
 }
 
-func printFile(p *fmt8.Printer, m *matcher, f *ast.File) {
-	for i, decl := range f.Decls {
-		printTopDecl(p, m, decl)
-		if i < len(f.Decls)-1 {
-			fmt.Fprintln(p)
+func printFile(f *formatter, file *ast.File) {
+	for i, decl := range file.Decls {
+		printTopDecl(f, decl)
+		if i < len(file.Decls)-1 {
+			f.printEndl()
 		}
 	}
-	m.finish()
+	f.finish()
 }
 
 // FprintFile prints a file
-func FprintFile(out io.Writer, f *ast.File, rec *lex8.Recorder) {
-	p := fmt8.NewPrinter(out)
-	m := newMatcher(rec.Tokens())
-	printFile(p, m, f)
+func FprintFile(out io.Writer, file *ast.File, rec *lex8.Recorder) {
+	f := newFormatter(out, rec.Tokens())
+	printFile(f, file)
 }
