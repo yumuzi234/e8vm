@@ -7,6 +7,7 @@ import (
 )
 
 const (
+	initName      = ":init"
 	startName     = ":start"
 	testStartName = ":test"
 )

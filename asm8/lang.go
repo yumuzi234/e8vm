@@ -45,6 +45,11 @@ func (lang) Compile(pinfo *build8.PkgInfo) (*build8.Package, []*lex8.Error) {
 				continue
 			}
 
+			if imp.Lang != "asm8" {
+				errs.Errorf(stmt.Path.Pos, "can only import asm8 package")
+				continue
+			}
+
 			stmt.pkg = imp.Package
 			if stmt.pkg == nil {
 				panic("import missing")

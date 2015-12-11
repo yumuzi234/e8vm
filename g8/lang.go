@@ -187,6 +187,7 @@ func (l *lang) Compile(pinfo *build8.PkgInfo) (
 
 	ret := &build8.Package{
 		Lang:     "g8",
+		Init:     initName,
 		Main:     startName,
 		TestMain: testStartName,
 		Tests:    tests,

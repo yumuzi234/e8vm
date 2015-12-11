@@ -1,6 +1,7 @@
 package asm8
 
 import (
+	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/sym8"
 )
@@ -15,17 +16,17 @@ type builder struct {
 
 	imports map[string]string
 	pkgUsed map[string]struct{}
+	inits   []*build8.PkgSym
 }
 
 func newBuilder() *builder {
-	ret := new(builder)
-	ret.ErrorList = lex8.NewErrorList()
-	ret.scope = sym8.NewScope()
-	ret.symPkg = new(sym8.Pkg)
-	ret.imports = make(map[string]string)
-	ret.pkgUsed = make(map[string]struct{})
-
-	return ret
+	return &builder{
+		ErrorList: lex8.NewErrorList(),
+		scope:     sym8.NewScope(),
+		symPkg:    new(sym8.Pkg),
+		imports:   make(map[string]string),
+		pkgUsed:   make(map[string]struct{}),
+	}
 }
 
 // Errs returns the building errors.
