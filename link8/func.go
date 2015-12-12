@@ -39,8 +39,8 @@ func (f *Func) Size() uint32 {
 // than 4 so that it fits in the lowest 2 bits in the offset field. The other
 // bits of the offset fields will be automatically calculated based on the
 // number of instructions in insts.
-func (f *Func) AddLink(fill int, pkg, sym string) {
-	if pkg == "" {
+func (f *Func) AddLink(fill int, ps *PkgSym) {
+	if ps.Pkg == "" {
 		panic("empty package")
 	}
 
@@ -53,7 +53,7 @@ func (f *Func) AddLink(fill int, pkg, sym string) {
 
 	offset := uint32(len(f.insts))*4 - 4
 	offset |= uint32(fill) & 0x3
-	link := &link{offset: offset, PkgSym: &PkgSym{pkg, sym}}
+	link := &link{offset: offset, PkgSym: ps}
 	f.links = append(f.links, link)
 }
 

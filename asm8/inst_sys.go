@@ -2,6 +2,7 @@ package asm8
 
 import (
 	"e8vm.io/e8vm/arch8"
+	asminst "e8vm.io/e8vm/asm8/inst"
 	"e8vm.io/e8vm/lex8"
 )
 
@@ -21,13 +22,8 @@ var (
 	}
 )
 
-// InstSys makes a system instruction
-func InstSys(op, reg uint32) uint32 {
-	return ((op & 0xff) << 24) | ((reg & 0x7) << 21)
-}
-
 func makeInstSys(op, reg uint32) *inst {
-	return &inst{inst: InstSys(op, reg)}
+	return &inst{inst: asminst.Sys(op, reg)}
 }
 
 func resolveInstSys(p lex8.Logger, ops []*lex8.Token) (*inst, bool) {

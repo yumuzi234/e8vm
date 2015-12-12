@@ -204,7 +204,7 @@ func linkSymbol(b *builder, s *funcStmt, f *link8.Func) {
 	}
 
 	// save the link
-	f.AddLink(s.fill, pkg, name)
+	f.AddLink(s.fill, &link8.PkgSym{pkg, name})
 }
 
 // makeFuncObj converts a function AST node f into a function object. It

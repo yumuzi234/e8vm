@@ -17,24 +17,24 @@ type Job struct {
 }
 
 // NewJob creates a new linking job which init pc is the default one.
-func NewJob(pkgs map[string]*Pkg, path, start string) *Job {
+func NewJob(pkgs map[string]*Pkg, funcs []*PkgSym) *Job {
 	return &Job{
 		Pkgs:   pkgs,
-		Funcs:  []*PkgSym{{path, start}},
+		Funcs:  funcs,
 		InitPC: arch8.InitPC,
 	}
 }
 
 // LinkMain is a short hand for NewJob(pkgs, path, start).Link(out)
-func LinkMain(out io.Writer, pkgs map[string]*Pkg, path, start string) error {
-	return NewJob(pkgs, path, start).Link(out)
+func LinkMain(out io.Writer, pkgs map[string]*Pkg, funcs []*PkgSym) error {
+	return NewJob(pkgs, funcs).Link(out)
 }
 
 // LinkSingle call LinkMain with only one single package.
 func LinkSingle(out io.Writer, pkg *Pkg, start string) error {
 	path := pkg.Path()
 	pkgs := map[string]*Pkg{path: pkg}
-	return LinkMain(out, pkgs, path, start)
+	return LinkMain(out, pkgs, []*PkgSym{{path, start}})
 }
 
 // Link performs the linking job and writes the output to out.

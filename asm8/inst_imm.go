@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"e8vm.io/e8vm/arch8"
+	asminst "e8vm.io/e8vm/asm8/inst"
 	"e8vm.io/e8vm/lex8"
 )
 
@@ -83,18 +84,8 @@ func parseImm(p lex8.Logger, op *lex8.Token) uint32 {
 	return uint32(ret) & 0xffff
 }
 
-// InstImm composes an immediate based instruction
-func InstImm(op, d, s, im uint32) uint32 {
-	ret := uint32(0)
-	ret |= (op & 0xff) << 24
-	ret |= (d & 0x7) << 21
-	ret |= (s & 0x7) << 18
-	ret |= (im & 0xffff)
-	return ret
-}
-
 func makeInstImm(op, d, s, im uint32) *inst {
-	ret := InstImm(op, d, s, im)
+	ret := asminst.Imm(op, d, s, im)
 	return &inst{inst: ret}
 }
 

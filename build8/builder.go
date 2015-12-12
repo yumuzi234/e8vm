@@ -77,7 +77,8 @@ func (b *Builder) prepare(p string) (*pkg, []*lex8.Error) {
 }
 
 func (b *Builder) link(out io.Writer, p, main string) error {
-	job := link8.NewJob(b.linkPkgs, p, main)
+	funcs := []*link8.PkgSym{{p, main}}
+	job := link8.NewJob(b.linkPkgs, funcs)
 	job.InitPC = b.InitPC
 	return job.Link(out)
 }
