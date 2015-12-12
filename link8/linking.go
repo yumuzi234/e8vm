@@ -11,19 +11,17 @@ import (
 
 // Job is a linking job.
 type Job struct {
-	Pkgs     map[string]*Pkg
-	Path     string
-	StartSym string
-	InitPC   uint32
+	Pkgs   map[string]*Pkg
+	Funcs  []*PkgSym
+	InitPC uint32
 }
 
 // NewJob creates a new linking job which init pc is the default one.
 func NewJob(pkgs map[string]*Pkg, path, start string) *Job {
 	return &Job{
-		Pkgs:     pkgs,
-		Path:     path,
-		StartSym: start,
-		InitPC:   arch8.InitPC,
+		Pkgs:   pkgs,
+		Funcs:  []*PkgSym{{path, start}},
+		InitPC: arch8.InitPC,
 	}
 }
 
@@ -42,20 +40,10 @@ func LinkSingle(out io.Writer, pkg *Pkg, start string) error {
 // Link performs the linking job and writes the output to out.
 func (j *Job) Link(out io.Writer) error {
 	pkgs := j.Pkgs
-
-	pkg := j.Pkgs[j.Path]
-
-	funcMain := pkg.SymbolByName(j.StartSym)
-	if funcMain == nil || funcMain.Type != SymFunc {
-		return fmt.Errorf("start function missing")
-	}
-
-	roots := []string{j.StartSym}
-	used := traceUsed(pkgs, j.Path, roots)
-
-	funcs, vars, zeros, e := layout(used, j.InitPC)
-	if e != nil {
-		return e
+	used := traceUsed(pkgs, j.Funcs)
+	funcs, vars, zeros, err := layout(pkgs, used, j.InitPC)
+	if err != nil {
+		return err
 	}
 
 	var secs []*e8.Section
@@ -63,7 +51,7 @@ func (j *Job) Link(out io.Writer) error {
 		buf := new(bytes.Buffer)
 		w := newWriter(pkgs, buf)
 		for _, f := range funcs {
-			w.writeFunc(f.Func())
+			w.writeFunc(pkgFunc(pkgs, f))
 		}
 		if err := w.Err(); err != nil {
 			return err
@@ -84,7 +72,7 @@ func (j *Job) Link(out io.Writer) error {
 		buf := new(bytes.Buffer)
 		w := newWriter(pkgs, buf)
 		for _, v := range vars {
-			w.writeVar(v.Var())
+			w.writeVar(pkgVar(pkgs, v))
 		}
 		if err := w.Err(); err != nil {
 			return err
@@ -94,7 +82,7 @@ func (j *Job) Link(out io.Writer) error {
 			secs = append(secs, &e8.Section{
 				Header: &e8.Header{
 					Type: e8.Data,
-					Addr: vars[0].Var().addr,
+					Addr: pkgVar(pkgs, vars[0]).addr,
 				},
 				Bytes: buf.Bytes(),
 			})
@@ -102,8 +90,8 @@ func (j *Job) Link(out io.Writer) error {
 	}
 
 	if len(zeros) > 0 {
-		start := zeros[0].Var().addr
-		lastVar := zeros[len(zeros)-1].Var()
+		start := pkgVar(pkgs, zeros[0]).addr
+		lastVar := pkgVar(pkgs, zeros[len(zeros)-1])
 		end := lastVar.addr + lastVar.Size()
 		secs = append(secs, &e8.Section{
 			Header: &e8.Header{

@@ -4,19 +4,20 @@ import (
 	"fmt"
 )
 
-func layout(used []pkgSym, initPC uint32) (
-	funcs, vars, zeros []pkgSym, e error,
+func layout(pkgs map[string]*Pkg, used []*PkgSym, initPC uint32) (
+	funcs, vars, zeros []*PkgSym, e error,
 ) {
 	pt := initPC
 	const codeMax uint32 = 0xffffffff
 
 	for _, ps := range used {
-		typ := ps.Type()
-		switch typ {
+		pkg := pkgs[ps.Pkg]
+		s := pkg.SymbolByName(ps.Sym)
+		switch s.Type {
 		case SymFunc:
 			funcs = append(funcs, ps)
 
-			f := ps.Func()
+			f := pkg.Func(ps.Sym)
 			f.addr = pt
 			size := f.Size()
 			if size > codeMax-pt {
@@ -24,7 +25,7 @@ func layout(used []pkgSym, initPC uint32) (
 			}
 			pt += size
 		case SymVar:
-			v := ps.Var()
+			v := pkg.Var(ps.Sym)
 			if !v.IsZeros() {
 				vars = append(vars, ps)
 			} else {
@@ -37,7 +38,8 @@ func layout(used []pkgSym, initPC uint32) (
 
 	const dataMax uint32 = 0xffffffff
 
-	putVar := func(v *Var) error {
+	putVar := func(ps *PkgSym) error {
+		v := pkgVar(pkgs, ps)
 		if v.align > 1 && pt%v.align != 0 {
 			v.prePad = v.align - pt%v.align
 			pt += v.prePad
@@ -59,14 +61,14 @@ func layout(used []pkgSym, initPC uint32) (
 	}
 
 	for _, ps := range vars {
-		err := putVar(ps.Var())
+		err := putVar(ps)
 		if err != nil {
 			return nil, nil, nil, err
 		}
 	}
 
 	for _, ps := range zeros {
-		err := putVar(ps.Var())
+		err := putVar(ps)
 		if err != nil {
 			return nil, nil, nil, err
 		}

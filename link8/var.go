@@ -83,8 +83,7 @@ func (v *Var) WriteLink(pkg, sym string) error {
 
 	lnk := &link{
 		offset: uint32(v.buf.Len()),
-		pkg:    pkg,
-		sym:    sym,
+		PkgSym: &PkgSym{pkg, sym},
 	}
 	v.links = append(v.links, lnk)
 	v.Pad(arch8.RegSize) // symbol has a size of a register

@@ -119,3 +119,15 @@ func (p *Pkg) PrintSymbols(out io.Writer) {
 		)
 	}
 }
+
+func pkgVar(pkgs map[string]*Pkg, ps *PkgSym) *Var {
+	return pkgs[ps.Pkg].Var(ps.Sym)
+}
+
+func pkgFunc(pkgs map[string]*Pkg, ps *PkgSym) *Func {
+	return pkgs[ps.Pkg].Func(ps.Sym)
+}
+
+func pkgSym(pkgs map[string]*Pkg, ps *PkgSym) *Symbol {
+	return pkgs[ps.Pkg].SymbolByName(ps.Sym)
+}

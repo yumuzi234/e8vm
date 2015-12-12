@@ -5,6 +5,5 @@ package link8
 // offset.  it uses the indices in the package for symbol lookup
 type link struct {
 	offset uint32
-	pkg    string // relative package index
-	sym    string
+	*PkgSym
 }

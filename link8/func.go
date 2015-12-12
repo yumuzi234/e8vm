@@ -53,7 +53,7 @@ func (f *Func) AddLink(fill int, pkg, sym string) {
 
 	offset := uint32(len(f.insts))*4 - 4
 	offset |= uint32(fill) & 0x3
-	link := &link{offset: offset, pkg: pkg, sym: sym}
+	link := &link{offset: offset, PkgSym: &PkgSym{pkg, sym}}
 	f.links = append(f.links, link)
 }
 
