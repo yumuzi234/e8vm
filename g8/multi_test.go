@@ -90,14 +90,14 @@ func TestMultiFile(t *testing.T) {
 	}, "33")
 
 	o(files{
-		"a/a.g": "struct A { func P() { printInt(33) } }",
-		"b/b.g": `import ("a"); var A a.A`,
+		"a/a.g":       "struct A { func P() { printInt(33) } }",
+		"b/b.g":       `import ("a"); var A a.A`,
 		"main/main.g": `import ("b"); func main() { b.A.P() }`,
 	}, "33")
 
 	o(files{
-		"a/a.g": "func init() { printInt(33) }",
-		"b/b.g": `import (_ "a"); func init() { printInt(44) }`,
+		"a/a.g":       "func init() { printInt(33) }",
+		"b/b.g":       `import (_ "a"); func init() { printInt(44) }`,
 		"main/main.g": `import (_ "b"); func main() { printInt(55) }`,
 	}, "33\n44\n55")
 }

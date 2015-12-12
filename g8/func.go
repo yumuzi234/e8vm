@@ -9,6 +9,11 @@ import (
 )
 
 func declareFunc(b *builder, f *ast.Func) *objFunc {
+	if f.Alias != nil {
+		b.Errorf(f.Alias.Eq.Pos, "function aliasing not implemented")
+		return nil
+	}
+
 	t := buildFuncType(b, nil, f.FuncSig)
 	if t == nil {
 		return nil

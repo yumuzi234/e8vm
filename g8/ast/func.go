@@ -13,6 +13,14 @@ type FuncRecv struct {
 	Rparen     *lex8.Token
 }
 
+// FuncAlias is for aliasing an imported function
+type FuncAlias struct {
+	Eq   *lex8.Token
+	Pkg  *lex8.Token
+	Dot  *lex8.Token
+	Name *lex8.Token
+}
+
 // Func is a function
 type Func struct {
 	Kw   *lex8.Token
@@ -21,6 +29,7 @@ type Func struct {
 	Recv *FuncRecv
 	*FuncSig
 
-	Body *Block
-	Semi *lex8.Token
+	Alias *FuncAlias
+	Body  *Block
+	Semi  *lex8.Token
 }
