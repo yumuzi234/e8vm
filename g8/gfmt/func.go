@@ -1,44 +1,40 @@
 package gfmt
 
 import (
-	"fmt"
-
-	"e8vm.io/e8vm/fmt8"
 	"e8vm.io/e8vm/g8/ast"
 )
 
-func printParaList(p *fmt8.Printer, lst *ast.ParaList) {
-	fmt.Fprint(p, "(")
+func printParaList(f *formatter, lst *ast.ParaList) {
+	f.printToken(lst.Lparen)
 	for i, para := range lst.Paras {
 		if i > 0 {
-			fmt.Fprint(p, ", ")
+			printExprs(f, lst.Commas[i-1], " ")
 		}
 		if para.Ident != nil {
-			fmt.Fprintf(p, "%s", para.Ident.Lit)
+			f.printToken(para.Ident)
 			if para.Type != nil {
-				fmt.Fprint(p, " ")
+				f.printSpace()
 			}
 		}
 
 		if para.Type != nil {
-			printExpr(p, para.Type)
+			printExpr(f, para.Type)
 		}
 	}
-	fmt.Fprint(p, ")")
+	f.printToken(lst.Rparen)
 }
 
-func printFunc(p *fmt8.Printer, f *ast.Func) {
-	fmt.Fprintf(p, "func %s", f.Name.Lit)
-	printParaList(p, f.Args)
-	if f.RetType != nil {
-		fmt.Fprint(p, " ")
-		printExpr(p, f.RetType)
-	} else if f.Rets != nil {
-		fmt.Fprint(p, " ")
-		printParaList(p, f.Rets)
+func printFunc(f *formatter, fn *ast.Func) {
+	printExprs(f, fn.Kw, " ", fn.Name)
+	printParaList(f, fn.Args)
+	if fn.RetType != nil {
+		printExprs(f, " ", fn.RetType)
+	} else if fn.Rets != nil {
+		f.printSpace()
+		printParaList(f, fn.Rets)
 	}
 
-	fmt.Fprint(p, " ")
-	printStmt(p, f.Body)
-	fmt.Fprintln(p)
+	f.printSpace()
+	printStmt(f, fn.Body)
+	f.printEndl()
 }

@@ -56,13 +56,13 @@ func fmtFile(fname string) (bool, error) {
 		return false, e
 	}
 
-	f, es := parse.File(fname, bytes.NewBuffer(input), false)
+	f, rec, es := parse.File(fname, bytes.NewBuffer(input), false)
 	if es != nil {
 		return false, fmt.Errorf("%d errors found at parsing", len(es))
 	}
 
 	var output bytes.Buffer
-	gfmt.FprintFile(&output, f)
+	gfmt.FprintFile(&output, f, rec)
 	if bytes.Compare(input, output.Bytes()) == 0 {
 		return false, nil
 	}

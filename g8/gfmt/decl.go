@@ -1,80 +1,78 @@
 package gfmt
 
 import (
-	"fmt"
-
-	"e8vm.io/e8vm/fmt8"
 	"e8vm.io/e8vm/g8/ast"
 )
 
-func printIdents(p *fmt8.Printer, idents *ast.IdentList) {
-	ss := make([]string, len(idents.Idents))
+func printIdents(f *formatter, idents *ast.IdentList) {
 	for i, id := range idents.Idents {
-		ss[i] = id.Lit
+		if i > 0 {
+			printExprs(f, idents.Commas[i-1], " ")
+		}
+		f.printToken(id)
 	}
-	fmt.Fprint(p, fmt8.Join(ss, ", "))
 }
 
-func printVarDecl(p *fmt8.Printer, d *ast.VarDecl) {
-	printIdents(p, d.Idents)
+func printVarDecl(f *formatter, d *ast.VarDecl) {
+	printIdents(f, d.Idents)
 	if d.Type != nil {
-		fmt.Fprint(p, " ")
-		printExpr(p, d.Type)
+		printExprs(f, " ", d.Type)
 	}
 
 	if d.Eq != nil {
-		fmt.Fprint(p, " = ")
-		printExpr(p, d.Exprs)
+		printExprs(f, " ", d.Eq, " ", d.Exprs)
 	}
+	f.printEndl()
 }
 
-func printVarDecls(p *fmt8.Printer, d *ast.VarDecls) {
-	fmt.Fprintf(p, "var ")
+func printVarDecls(f *formatter, d *ast.VarDecls) {
+	printExprs(f, d.Kw, " ")
 	if d.Lparen == nil {
 		// single declare
 		for _, decl := range d.Decls {
-			printVarDecl(p, decl)
+			printVarDecl(f, decl)
 		}
 	} else {
-		fmt.Fprintf(p, "(\n")
-		p.Tab()
+		f.printToken(d.Lparen)
+		f.printEndl()
+		f.Tab()
 		for _, decl := range d.Decls {
-			printVarDecl(p, decl)
-			fmt.Println(p)
+			printVarDecl(f, decl)
 		}
-		p.ShiftTab()
-		fmt.Fprintf(p, ")")
+		f.ShiftTab()
+		f.printToken(d.Rparen)
+		f.printEndl()
 	}
 }
 
-func printConstDecl(p *fmt8.Printer, d *ast.ConstDecl) {
-	printIdents(p, d.Idents)
+func printConstDecl(f *formatter, d *ast.ConstDecl) {
+	printIdents(f, d.Idents)
 	if d.Type != nil {
-		fmt.Fprint(p, " ")
-		printExpr(p, d.Type)
+		printExprs(f, " ", d.Type)
 	}
 
 	if d.Eq != nil {
-		fmt.Fprint(p, " = ")
-		printExpr(p, d.Exprs)
+		printExprs(f, " ", d.Eq, " ", d.Exprs)
 	}
+	f.printEndl()
 }
 
-func printConstDecls(p *fmt8.Printer, d *ast.ConstDecls) {
-	fmt.Fprintf(p, "const ")
+func printConstDecls(f *formatter, d *ast.ConstDecls) {
+	printExprs(f, d.Kw, " ")
 	if d.Lparen == nil {
 		// single declare
 		for _, decl := range d.Decls {
-			printConstDecl(p, decl)
+			printConstDecl(f, decl)
 		}
 	} else {
-		fmt.Fprintf(p, "(\n")
-		p.Tab()
+		f.printToken(d.Lparen)
+		f.printEndl()
+		f.Tab()
 		for _, decl := range d.Decls {
-			printConstDecl(p, decl)
-			fmt.Println(p)
+			printConstDecl(f, decl)
 		}
-		p.ShiftTab()
-		fmt.Fprintf(p, ")")
+		f.ShiftTab()
+		f.printToken(d.Rparen)
+		f.printEndl()
 	}
 }
