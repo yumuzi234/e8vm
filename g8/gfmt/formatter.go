@@ -37,6 +37,17 @@ func (f *formatter) printToken(token *lex8.Token) {
 		f.expect(token)
 	}
 	f.printStr(token.Lit)
+
+	// Dumps same line comments.
+	for f.peek() != nil {
+		next := f.peek()
+		if next.Type != lex8.Comment || next.Pos.Line != token.Pos.Line {
+			return
+		}
+		f.printSpace()
+		f.printStr(next.Lit)
+		f.offset++
+	}
 }
 
 func (f *formatter) expect(token *lex8.Token) {
@@ -49,6 +60,13 @@ func (f *formatter) expect(token *lex8.Token) {
 	}
 }
 
+func (f *formatter) peek() *lex8.Token {
+	if f.offset < len(f.tokens) {
+		return f.tokens[f.offset]
+	}
+	return nil
+}
+
 func (f *formatter) next() *lex8.Token {
 	for f.offset < len(f.tokens) {
 		token := f.tokens[f.offset]
@@ -57,7 +75,8 @@ func (f *formatter) next() *lex8.Token {
 			continue // ignore semi-s
 		}
 		if token.Type == lex8.Comment {
-			// TODO(kcnm): Emit comments.
+			f.printStr(token.Lit)
+			f.printEndl()
 			continue
 		}
 		return token
