@@ -31,28 +31,28 @@ func singleTestRun(t *testing.T, input string, N int) (string, error) {
 	return out, err
 }
 
-func TestSingleFile_good(t *testing.T) {
+func TestSingleFile(t *testing.T) {
 	const N = 100000
 
 	o := func(input, output string) {
-		out, e := singleTestRun(t, input, N)
-		if e == errRunFailed {
-			t.Error(e)
+		out, err := singleTestRun(t, input, N)
+		if err == errRunFailed {
+			t.Error(err)
 			return
 		}
-		if !arch8.IsHalt(e) {
+		if !arch8.IsHalt(err) {
 			t.Log(input)
-			t.Log(e)
+			t.Log(err)
 			t.Error("did not halt gracefully")
 			return
 		}
 
-		out = strings.TrimSpace(out)
-		output = strings.TrimSpace(output)
-		if out != output {
+		got := strings.TrimSpace(out)
+		expect := strings.TrimSpace(output)
+		if got != expect {
 			t.Log(input)
-			t.Logf("expect: %s", output)
-			t.Errorf("got: %s", out)
+			t.Logf("expect: %s", expect)
+			t.Errorf("got: %s", got)
 		}
 	}
 
@@ -251,7 +251,7 @@ func TestSingleFile_good(t *testing.T) {
 		}`, "")
 }
 
-func TestSingleFile_bad(t *testing.T) {
+func TestSingleFileBad(t *testing.T) {
 	o := func(input string) {
 		_, es, _ := CompileSingle("main.g", input, false)
 		if es == nil {
@@ -291,7 +291,7 @@ func TestSingleFile_bad(t *testing.T) {
 	o("const c, d = d, t; func main() {}")
 }
 
-func TestSingleFile_panic(t *testing.T) {
+func TestSingleFilePanic(t *testing.T) {
 	// runtime errors
 
 	const N = 100000
