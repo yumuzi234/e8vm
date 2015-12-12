@@ -11,24 +11,24 @@ import (
 
 var errRunFailed = errors.New("test run failed")
 
-func singleTestRun(t *testing.T, input string, N int) (out string, e error) {
+func singleTestRun(t *testing.T, input string, N int) (string, error) {
 	bs, es, _ := CompileSingle("main.g", input, false)
 	if es != nil {
 		t.Log(input)
-		for _, e := range es {
-			t.Log(e)
+		for _, err := range es {
+			t.Log(err)
 		}
 		t.Error("compile failed")
 		return "", errRunFailed
 	}
 
-	ncycle, out, e := arch8.RunImageOutput(bs, N)
+	ncycle, out, err := arch8.RunImageOutput(bs, N)
 	if ncycle == N {
 		t.Log(input)
 		t.Error("running out of time")
 		return "", errRunFailed
 	}
-	return out, e
+	return out, err
 }
 
 func TestSingleFile_good(t *testing.T) {
