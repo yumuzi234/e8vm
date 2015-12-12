@@ -261,6 +261,7 @@ func (p *pkg) build(b *builder, pinfo *build8.PkgInfo) {
 		return
 	}
 
+	addInit(b)
 	addStart(b)
 	if p.testList != nil {
 		addTestStart(b, p.testList, len(p.testNames))

@@ -27,16 +27,20 @@ func findFunc(b *builder, name string, t types.T) *objFunc {
 	return f
 }
 
-func addStart(b *builder) {
-	mainFunc := findFunc(b, "main", types.VoidFunc)
-	if mainFunc == nil {
+func wrapFunc(b *builder, name, wrapName string) {
+	f := findFunc(b, name, types.VoidFunc)
+	if f == nil {
 		return
 	}
 
-	b.f = b.p.NewFunc(startName, nil, ir.VoidFuncSig)
+	b.f = b.p.NewFunc(wrapName, nil, ir.VoidFuncSig)
 	b.b = b.f.NewBlock(nil)
-	b.b.Call(nil, mainFunc.IR(), ir.VoidFuncSig)
+	b.b.Call(nil, f.IR(), ir.VoidFuncSig)
 }
+
+func addStart(b *builder) { wrapFunc(b, "main", startName) }
+
+func addInit(b *builder) { wrapFunc(b, "init", initName) }
 
 var testMainFuncType = types.NewVoidFunc(types.VoidFunc)
 var testMainFuncSig = ir.NewFuncSig(

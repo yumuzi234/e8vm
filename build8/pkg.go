@@ -14,6 +14,7 @@ type pkg struct {
 	lang    Lang
 	files   []string
 	imports map[string]*Import
+	deps    []string
 
 	pkg *Package
 	err error
