@@ -188,6 +188,8 @@ func TestSingleFile_good(t *testing.T) {
 	o(` var ( a, b []int; v [3]int )
 		func main() { a=v[:]; b = v[:]; if a == b { printInt(33) } }`, "33")
 
+	o("func init() { printInt(33) }; func main() { printInt(44) }", "33\n44")
+
 	o(`	struct a { a int; b byte }
 		func main() { 
 			var x,y a; x.a=33; y.a=44; 
@@ -275,7 +277,7 @@ func TestSingleFile_bad(t *testing.T) {
 
 	o(`import(); import()`)
 	o("import() func main()")
-	// o(`struct A { func f(){} }; func main() { var a A; f := a.f; }`)
+	o(`struct A { func f(){} }; func main() { var a A; f := a.f; }`)
 
 	// Bugs found by the fuzzer in the past
 	o("func main() {}; func f() **o.o {}")
