@@ -76,8 +76,22 @@ func (b *Builder) prepare(p string) (*pkg, []*lex8.Error) {
 	return pkg, nil
 }
 
-func (b *Builder) link(out io.Writer, p, main string) error {
-	funcs := []*link8.PkgSym{{p, main}}
+func (b *Builder) link(out io.Writer, p *pkg, main string) error {
+	var funcs []*link8.PkgSym
+
+	addInit := func(p *pkg) {
+		name := p.pkg.Init
+		if name != "" && p.pkg.Lib.HasFunc(name) {
+			funcs = append(funcs, &link8.PkgSym{p.path, name})
+		}
+	}
+
+	for _, dep := range p.deps {
+		addInit(b.pkgs[dep])
+	}
+	addInit(p)
+	funcs = append(funcs, &link8.PkgSym{p.path, main})
+
 	job := link8.NewJob(b.linkPkgs, funcs)
 	job.InitPC = b.InitPC
 	return job.Link(out)
@@ -103,7 +117,7 @@ func (b *Builder) buildMain(p *pkg) []*lex8.Error {
 	log := lex8.NewErrorList()
 
 	fout := b.home.CreateBin(p.path)
-	lex8.LogError(log, b.link(fout, p.path, main))
+	lex8.LogError(log, b.link(fout, p, main))
 	lex8.LogError(log, fout.Close())
 
 	return log.Errs()
@@ -117,7 +131,7 @@ func (b *Builder) runTests(p *pkg) []*lex8.Error {
 		log := lex8.NewErrorList()
 		if len(tests) > 0 {
 			bs := new(bytes.Buffer)
-			lex8.LogError(log, b.link(bs, p.path, testMain))
+			lex8.LogError(log, b.link(bs, p, testMain))
 			fout := b.home.CreateTestBin(p.path)
 
 			img := bs.Bytes()
@@ -152,7 +166,6 @@ func (b *Builder) makePkgInfo(p *pkg) *PkgInfo {
 func (b *Builder) build(pkg *pkg) []*lex8.Error {
 	b.fillImports(pkg)
 
-	// compile
 	compiled, es := pkg.lang.Compile(b.makePkgInfo(pkg))
 	if es != nil {
 		return es
@@ -160,12 +173,10 @@ func (b *Builder) build(pkg *pkg) []*lex8.Error {
 	pkg.pkg = compiled
 	b.linkPkgs[pkg.path] = pkg.pkg.Lib // add for linking
 
-	// build main
 	if es := b.buildMain(pkg); es != nil {
 		return es
 	}
 
-	// run tests
 	if b.RunTests {
 		if es := b.runTests(pkg); es != nil {
 			return es

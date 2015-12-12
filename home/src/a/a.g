@@ -1,5 +1,3 @@
-struct A {
-	func P() {
-		printInt(333)
-	}
+func init() {
+	printInt(333)
 }

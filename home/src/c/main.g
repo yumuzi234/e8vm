@@ -3,5 +3,5 @@ import (
 )
 
 func main() {
-	b.A.P()
+	printInt(555)
 }
