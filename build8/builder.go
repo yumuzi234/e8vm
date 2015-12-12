@@ -149,37 +149,39 @@ func (b *Builder) makePkgInfo(p *pkg) *PkgInfo {
 	}
 }
 
-func (b *Builder) build(p string) (*pkg, []*lex8.Error) {
-	ret := b.pkgs[p]
-	if ret == nil {
-		panic("build without preparing")
-	}
-
-	b.fillImports(ret)
+func (b *Builder) build(pkg *pkg) []*lex8.Error {
+	b.fillImports(pkg)
 
 	// compile
-	pkg, es := ret.lang.Compile(b.makePkgInfo(ret))
+	compiled, es := pkg.lang.Compile(b.makePkgInfo(pkg))
 	if es != nil {
-		return nil, es
+		return es
 	}
-	ret.pkg = pkg
-	b.linkPkgs[p] = ret.pkg.Lib
+	pkg.pkg = compiled
+	b.linkPkgs[pkg.path] = pkg.pkg.Lib // add for linking
 
 	// build main
-	es = b.buildMain(ret)
-	if es != nil {
-		return nil, es
+	if es := b.buildMain(pkg); es != nil {
+		return es
 	}
 
 	// run tests
 	if b.RunTests {
-		es := b.runTests(ret)
-		if es != nil {
-			return nil, es
+		if es := b.runTests(pkg); es != nil {
+			return es
 		}
 	}
 
-	return ret, nil
+	return nil
+}
+
+func deps(node *dagvis.MapNode) []string {
+	depNodes := dagvis.AllInsSorted(node)
+	ret := make([]string, 0, len(depNodes))
+	for _, dep := range depNodes {
+		ret = append(ret, dep.Name)
+	}
+	return ret
 }
 
 // BuildPkgs builds a list of packages
@@ -205,7 +207,13 @@ func (b *Builder) BuildPkgs(pkgs []string) []*lex8.Error {
 			fmt.Println(node.Name)
 		}
 
-		if _, es := b.build(node.Name); es != nil {
+		pkg := b.pkgs[node.Name]
+		if pkg == nil {
+			panic("package not prepared")
+		}
+
+		pkg.deps = deps(node)
+		if es := b.build(pkg); es != nil {
 			return es
 		}
 	}
