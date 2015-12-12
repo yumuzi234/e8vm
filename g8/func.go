@@ -8,15 +8,33 @@ import (
 	"e8vm.io/e8vm/sym8"
 )
 
-func declareFunc(b *builder, f *ast.Func) *objFunc {
-	if f.Alias != nil {
-		b.Errorf(f.Alias.Eq.Pos, "function aliasing not implemented")
+func declareFuncAlias(b *builder, f *ast.Func) *objFunc {
+	alias := f.Alias
+	pkgRef := buildIdent(b, alias.Pkg)
+	if pkgRef == nil {
 		return nil
 	}
 
+	pkg, ok := pkgRef.Type().(*types.Pkg)
+	if !ok {
+		b.Errorf(alias.Pkg.Pos, "%q is not a package", alias.Pkg.Lit)
+		return nil
+	}
+
+	_ = pkg
+
+	b.Errorf(f.Alias.Eq.Pos, "function aliasing not implemented")
+	return nil
+}
+
+func declareFunc(b *builder, f *ast.Func) *objFunc {
 	t := buildFuncType(b, nil, f.FuncSig)
 	if t == nil {
 		return nil
+	}
+
+	if f.Alias != nil {
+		return declareFuncAlias(b, f)
 	}
 
 	// NewFunc() will create the variables required for the sigs
