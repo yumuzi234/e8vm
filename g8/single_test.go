@@ -62,12 +62,10 @@ func TestSingleFile(t *testing.T) {
 
 	o(` func r() int { return 7 }
 		func main() { printInt(r()) }`,
-		"7",
-	)
+		"7")
 	o(`	func p(i int) { printInt(i) }
 		func main() { p(33); p(44) }`,
-		"33\n44",
-	)
+		"33\n44")
 	o(`	func r() (int, int) { return 3, 4 }
 		func main() { a, b := r(); printInt(a); printInt(b) }`,
 		"3\n4")
@@ -77,34 +75,27 @@ func TestSingleFile(t *testing.T) {
 			return fabo(n-1) + fabo(n-2)
 		}
 		func main() { printInt(fabo(10)) }`,
-		"55",
-	)
+		"55")
 
 	o(`	func b() bool { printInt(4); return true }
 		func main() { if false || b() { printInt(3) } }`,
-		"4\n3",
-	)
+		"4\n3")
 	o(`	func b() bool { printInt(4); return true }
 		func main() { if true || b() { printInt(3) } }`,
-		"3",
-	)
+		"3")
 	o(`	func b() bool { printInt(4); return false }
 		func main() { if true && b() { printInt(3) } }`,
-		"4",
-	)
+		"4")
 	o(`	func b() bool { printInt(4); return true }
 		func main() { if false && b() { printInt(3) } }`,
-		"",
-	)
+		"")
 	o(`	func b() bool { printInt(4); return true }
 		func main() { if true && b() { printInt(3) } }`,
-		"4\n3",
-	)
+		"4\n3")
 	o(`func f(i int) { i=33; printInt(i) }; func main() { f(44) }`, "33")
 	o(`	func f(a []int) { printInt(a[3]) }
 		func main() { var a [8]int; a[4]=33; f(a[1:5]) }`,
-		"33",
-	)
+		"33")
 	o(`func main() { for true { printInt(33); break } }`, "33")
 	o(`func main() { for 0==0 { printInt(33); break } }`, "33")
 	o(`func main() { for true && true { printInt(33); break } }`, "33")
