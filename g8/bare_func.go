@@ -30,7 +30,6 @@ func buildBareFunc(b *builder, stmts []ast.Stmt) {
 	b.f = b.p.NewFunc(":start", nil, ir.VoidFuncSig)
 	b.fretNamed = false
 	b.fretRef = nil
-	b.f.SetAsMain()
 	b.b = b.f.NewBlock(nil)
 
 	b.scope.Push()

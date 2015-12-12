@@ -69,17 +69,6 @@ func layoutLocals(f *Func) {
 	f.frameSize = alignUp(f.frameSize, regSize)
 }
 
-func makeMainPrologue(f *Func) {
-	b := f.prologue
-	b.inst(asm.addi(_sp, _sp, -f.frameSize))
-}
-
-func makeMainEpilogue(f *Func) {
-	b := f.epilogue
-	b.inst(asm.addi(_sp, _sp, f.frameSize))
-	b.inst(asm.halt())
-}
-
 func makePrologue(g *gener, f *Func) {
 	b := f.prologue
 
@@ -126,13 +115,8 @@ func genFunc(g *gener, f *Func) {
 		return
 	}
 
-	if f.isMain {
-		makeMainPrologue(f)
-		makeMainEpilogue(f)
-	} else {
-		makePrologue(g, f)
-		makeEpilogue(g, f)
-	}
+	makePrologue(g, f)
+	makeEpilogue(g, f)
 
 	for b := f.prologue.next; b != f.epilogue; b = b.next {
 		genBlock(g, b)

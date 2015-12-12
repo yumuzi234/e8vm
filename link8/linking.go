@@ -41,31 +41,31 @@ func LinkSingle(out io.Writer, pkg *Pkg, start string) error {
 func (j *Job) Link(out io.Writer) error {
 	pkgs := j.Pkgs
 	used := traceUsed(pkgs, j.Funcs)
-	funcs, vars, zeros, err := layout(pkgs, used, j.InitPC)
+	main := wrapMain(j.Funcs)
+	funcs, vars, zeros, err := layout(pkgs, used, main, j.InitPC)
 	if err != nil {
 		return err
 	}
 
 	var secs []*e8.Section
-	if len(funcs) > 0 {
-		buf := new(bytes.Buffer)
-		w := newWriter(pkgs, buf)
-		for _, f := range funcs {
-			w.writeFunc(pkgFunc(pkgs, f))
-		}
-		if err := w.Err(); err != nil {
-			return err
-		}
+	buf := new(bytes.Buffer)
+	w := newWriter(pkgs, buf)
+	w.writeFunc(main)
+	for _, f := range funcs {
+		w.writeFunc(pkgFunc(pkgs, f))
+	}
+	if err := w.Err(); err != nil {
+		return err
+	}
 
-		if buf.Len() > 0 {
-			secs = append(secs, &e8.Section{
-				Header: &e8.Header{
-					Type: e8.Code,
-					Addr: j.InitPC,
-				},
-				Bytes: buf.Bytes(),
-			})
-		}
+	if buf.Len() > 0 {
+		secs = append(secs, &e8.Section{
+			Header: &e8.Header{
+				Type: e8.Code,
+				Addr: j.InitPC,
+			},
+			Bytes: buf.Bytes(),
+		})
 	}
 
 	if len(vars) > 0 {

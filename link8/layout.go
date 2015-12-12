@@ -4,11 +4,25 @@ import (
 	"fmt"
 )
 
-func layout(pkgs map[string]*Pkg, used []*PkgSym, initPC uint32) (
-	funcs, vars, zeros []*PkgSym, e error,
+func layout(pkgs map[string]*Pkg, used []*PkgSym, main *Func, initPC uint32) (
+	funcs, vars, zeros []*PkgSym, err error,
 ) {
 	pt := initPC
 	const codeMax uint32 = 0xffffffff
+
+	putFunc := func(f *Func) error {
+		f.addr = pt
+		size := f.Size()
+		if size > codeMax-pt {
+			return fmt.Errorf("code section too large")
+		}
+		pt += size
+		return nil
+	}
+
+	if err = putFunc(main); err != nil {
+		return
+	}
 
 	for _, ps := range used {
 		pkg := pkgs[ps.Pkg]
@@ -16,14 +30,10 @@ func layout(pkgs map[string]*Pkg, used []*PkgSym, initPC uint32) (
 		switch s.Type {
 		case SymFunc:
 			funcs = append(funcs, ps)
-
 			f := pkg.Func(ps.Sym)
-			f.addr = pt
-			size := f.Size()
-			if size > codeMax-pt {
-				return nil, nil, nil, fmt.Errorf("code section too large")
+			if err = putFunc(f); err != nil {
+				return
 			}
-			pt += size
 		case SymVar:
 			v := pkg.Var(ps.Sym)
 			if !v.IsZeros() {
@@ -61,16 +71,14 @@ func layout(pkgs map[string]*Pkg, used []*PkgSym, initPC uint32) (
 	}
 
 	for _, ps := range vars {
-		err := putVar(ps)
-		if err != nil {
-			return nil, nil, nil, err
+		if err = putVar(ps); err != nil {
+			return
 		}
 	}
 
 	for _, ps := range zeros {
-		err := putVar(ps)
-		if err != nil {
-			return nil, nil, nil, err
+		if err = putVar(ps); err != nil {
+			return
 		}
 	}
 
