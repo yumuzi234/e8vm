@@ -9,5 +9,5 @@ func callPanic(b *builder, msg string) {
 		panic("panic function missing")
 	}
 	// TODO: print a message
-	b.b.Call(nil, b.panicFunc, types.VoidFunc.Sig)
+	b.b.Call(nil, b.panicFunc, makeFuncSig(types.VoidFunc))
 }

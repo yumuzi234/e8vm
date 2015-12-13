@@ -54,7 +54,8 @@ func declareFunc(b *builder, f *ast.Func) *objFunc {
 		return nil
 	}
 
-	irFunc := b.p.NewFunc(b.anonyName(name), f.Name.Pos, t.Sig)
+	sig := makeFuncSig(t)
+	irFunc := b.p.NewFunc(b.anonyName(name), f.Name.Pos, sig)
 	ret.ref = newRef(t, irFunc)
 
 	return ret

@@ -183,15 +183,18 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) *ref {
 	}
 
 	// call the func in IR
+	// TODO: we are always making the func sig here on the fly.
+	// this is necessary only when the IR does not have sig in itself
+	// (i.e. calling a function pointer or equivalent).
 	if f.recv == nil {
 		irs := argsCasted.IRList()
-		b.b.Call(ret.IRList(), f.IR(), funcType.Sig, irs...)
+		b.b.Call(ret.IRList(), f.IR(), makeFuncSig(funcType), irs...)
 	} else {
 		var irs []ir.Ref
 		irs = append(irs, f.recv.IR())
 		irs = append(irs, argsCasted.IRList()...)
 
-		b.b.Call(ret.IRList(), f.IR(), f.recvFunc.Sig, irs...)
+		b.b.Call(ret.IRList(), f.IR(), makeFuncSig(f.recvFunc), irs...)
 	}
 
 	return ret
