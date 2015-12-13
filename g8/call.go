@@ -185,13 +185,13 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) *ref {
 	// call the func in IR
 	if f.recv == nil {
 		irs := argsCasted.IRList()
-		b.b.Call(ret.IRList(), f.IR(), funcType.Sig, irs...)
+		b.b.Call(ret.IRList(), f.IR(), irs...)
 	} else {
 		var irs []ir.Ref
 		irs = append(irs, f.recv.IR())
 		irs = append(irs, argsCasted.IRList()...)
 
-		b.b.Call(ret.IRList(), f.IR(), f.recvFunc.Sig, irs...)
+		b.b.Call(ret.IRList(), f.IR(), irs...)
 	}
 
 	return ret

@@ -2,6 +2,7 @@ package g8
 
 import (
 	"e8vm.io/e8vm/g8/types"
+	"e8vm.io/e8vm/g8/ir"
 )
 
 func callPanic(b *builder, msg string) {

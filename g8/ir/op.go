@@ -12,7 +12,6 @@ type arithOp struct {
 type callOp struct {
 	dest []Ref
 	f    Ref
-	sig  *FuncSig
 	args []Ref
 }
 

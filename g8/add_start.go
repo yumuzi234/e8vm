@@ -35,7 +35,7 @@ func wrapFunc(b *builder, name, wrapName string) {
 
 	b.f = b.p.NewFunc(wrapName, nil, ir.VoidFuncSig)
 	b.b = b.f.NewBlock(nil)
-	b.b.Call(nil, f.IR(), ir.VoidFuncSig)
+	b.b.Call(nil, f.IR())
 }
 
 func addStart(b *builder) { wrapFunc(b, "main", startName) }
@@ -43,15 +43,6 @@ func addStart(b *builder) { wrapFunc(b, "main", startName) }
 func addInit(b *builder) { wrapFunc(b, "init", initName) }
 
 var testMainFuncType = types.NewVoidFunc(types.VoidFunc)
-var testMainFuncSig = ir.NewFuncSig(
-	[]*ir.FuncArg{{
-		Name:         "f",
-		Size:         arch8.RegSize,
-		U8:           false,
-		RegSizeAlign: true,
-	}},
-	nil,
-)
 
 func addTestStart(b *builder, testList ir.Ref, n int) {
 	b.f = b.p.NewFunc(testStartName, nil, ir.VoidFuncSig)
@@ -74,8 +65,8 @@ func addTestStart(b *builder, testList ir.Ref, n int) {
 
 	testMain := findFunc(b, "testMain", testMainFuncType)
 	if testMain == nil {
-		b.b.Call(nil, f, ir.VoidFuncSig)
+		b.b.Call(nil, f)
 	} else {
-		b.b.Call(nil, testMain.ref.IR(), testMainFuncSig, f)
+		b.b.Call(nil, testMain.ref.IR(), f)
 	}
 }
