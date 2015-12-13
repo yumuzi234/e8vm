@@ -185,14 +185,25 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) *ref {
 	// call the func in IR
 	if f.recv == nil {
 		irs := argsCasted.IRList()
-		b.b.Call(ret.IRList(), f.IR(), irs...)
+		fref := wrapFuncPtr(f.IR(), funcType)
+		b.b.Call(ret.IRList(), fref, irs...)
 	} else {
 		var irs []ir.Ref
 		irs = append(irs, f.recv.IR())
 		irs = append(irs, argsCasted.IRList()...)
-
-		b.b.Call(ret.IRList(), f.IR(), irs...)
+		fref := wrapFuncPtr(f.IR(), f.recvFunc)
+		b.b.Call(ret.IRList(), fref, irs...)
 	}
 
 	return ret
+}
+
+func wrapFuncPtr(f ir.Ref, t *types.Func) ir.Ref {
+	switch f := f.(type) {
+	case *ir.FuncSym:
+		return f
+	case *ir.Func:
+		return f
+	}
+	return ir.NewFuncPtr(makeFuncSig(t), f)
 }

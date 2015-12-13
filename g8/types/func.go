@@ -6,7 +6,6 @@ import (
 
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/fmt8"
-	"e8vm.io/e8vm/g8/ir"
 )
 
 // Arg is a function argument or return value
@@ -30,7 +29,6 @@ type Func struct {
 	Args     []*Arg
 	Rets     []*Arg
 	RetTypes []T
-	Sig      *ir.FuncSig // the signature for IR
 
 	// The method function signature.
 	MethodFunc *Func
@@ -49,7 +47,6 @@ func NewFunc(this *Arg, args []*Arg, rets []*Arg) *Func {
 	ret.Args = append(ret.Args, args...)
 	ret.Rets = rets
 
-	ret.Sig = makeFuncSig(ret)
 	ret.RetTypes = argTypes(ret.Rets)
 
 	if this != nil {
@@ -81,7 +78,6 @@ func NewFuncUnamed(args []T, rets []T) *Func {
 		f.Rets = append(f.Rets, &Arg{T: ret})
 	}
 
-	f.Sig = makeFuncSig(f)
 	f.RetTypes = rets
 	return f
 }
@@ -124,35 +120,6 @@ func (t *Func) Size() int32 { return arch8.RegSize }
 
 // RegSizeAlign returns true. Function pointer is always word aligned.
 func (t *Func) RegSizeAlign() bool { return true }
-
-func makeArg(t *Arg) *ir.FuncArg {
-	return &ir.FuncArg{
-		Name:         t.Name,
-		Size:         t.Size(),
-		U8:           IsBasic(t.T, Uint8),
-		RegSizeAlign: t.RegSizeAlign(),
-	}
-}
-
-// converts a langauge function signature into a IR function signature
-func makeFuncSig(f *Func) *ir.FuncSig {
-	narg := len(f.Args)
-	args := make([]*ir.FuncArg, 0, narg)
-
-	for _, t := range f.Args {
-		if t.T == nil {
-			panic("type missing")
-		}
-		args = append(args, makeArg(t))
-	}
-
-	rets := make([]*ir.FuncArg, len(f.Rets))
-	for i, t := range f.Rets {
-		rets[i] = makeArg(t)
-	}
-
-	return ir.NewFuncSig(args, rets)
-}
 
 // IsFuncPointer checks if the function is a simple function pointer
 // that does not have a bond this pointer.

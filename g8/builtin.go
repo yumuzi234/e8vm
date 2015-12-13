@@ -21,7 +21,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 		return
 	}
 
-	o := func(name string, as string, t *types.Func) ir.Ref {
+	o := func(name, as string, t *types.Func) ir.Ref {
 		sym := builtin.SymbolByName(name)
 		if sym == nil {
 			b.Errorf(nil, "builtin symbol %s missing", name)
@@ -31,7 +31,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 			return nil
 		}
 
-		ref := ir.NewFuncSym(path, name, nil)
+		ref := ir.NewFuncSym(path, name, makeFuncSig(t))
 		obj := &objFunc{as, newRef(t, ref), nil, false}
 		pre := b.scope.Declare(sym8.Make(b.symPkg, as, symFunc, obj, nil))
 		if pre != nil {
@@ -57,13 +57,13 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 	))
 
 	// TODO: these are just hacks for context switch
-	oe := func(name string, as string, t *types.Func) {
+	oe := func(name, as string, t *types.Func) {
 		sym := builtin.SymbolByName(name)
 		if sym == nil {
 			return
 		}
 
-		ref := ir.NewFuncSym(path, name, nil)
+		ref := ir.NewFuncSym(path, name, makeFuncSig(t))
 		obj := &objFunc{as, newRef(t, ref), nil, false}
 		pre := b.scope.Declare(sym8.Make(b.symPkg, as, symFunc, obj, nil))
 		if pre != nil {
@@ -75,7 +75,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 	oe("SysEnter", "_sysenter", types.NewVoidFunc())
 	oe("Ustart", "ustart", types.NewVoidFunc(types.Uint, types.Uint))
 
-	ov := func(name string, as string, t types.T) {
+	ov := func(name, as string, t types.T) {
 		sym := builtin.SymbolByName(name)
 		if sym == nil {
 			return

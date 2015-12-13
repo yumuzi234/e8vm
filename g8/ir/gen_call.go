@@ -1,6 +1,8 @@
 package ir
 
 import (
+	"fmt"
+
 	"e8vm.io/e8vm/link8"
 )
 
@@ -13,7 +15,7 @@ func callSig(op *callOp) *FuncSig {
 	case *FuncPtr:
 		return f.sig
 	default:
-		panic("non-callable")
+		panic(fmt.Errorf("non-callable: %T", f))
 	}
 }
 

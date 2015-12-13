@@ -61,7 +61,10 @@ func addTestStart(b *builder, testList ir.Ref, n int) {
 	b.b.Arith(addr, index, "*", ir.Num(arch8.RegSize))
 	b.b.Arith(addr, base, "+", addr)
 
-	f := ir.NewAddrRef(addr, arch8.RegSize, 0, false, true)
+	f := ir.NewFuncPtr(
+		ir.VoidFuncSig,
+		ir.NewAddrRef(addr, arch8.RegSize, 0, false, true),
+	)
 
 	testMain := findFunc(b, "testMain", testMainFuncType)
 	if testMain == nil {
