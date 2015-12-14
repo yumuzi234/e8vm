@@ -41,8 +41,9 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 		return ref
 	}
 
-	// TODO: export these as generic function pointer symbols, and convert them
-	// into G functions in g files, rather than inside here in the compiler.
+	// TODO: export these as generic function pointer symbols, and convert
+	// them into G functions in g files, rather than inside here in the
+	// compiler.
 	o("PrintInt32", "printInt", types.NewVoidFunc(types.Int))
 	o("PrintUint32", "printUint", types.NewVoidFunc(types.Uint))
 	o("PrintChar", "printChar", types.NewVoidFunc(types.Int8))
