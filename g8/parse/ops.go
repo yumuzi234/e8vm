@@ -12,7 +12,7 @@ func parseUnaryExpr(p *parser) ast.Expr {
 	} else if p.SeeOp("*") {
 		star := p.Shift()
 		expr := parseUnaryExpr(p)
-		return &ast.StarExpr{star, expr}
+		return &ast.StarExpr{star, expr, nil}
 	}
 
 	return parsePrimaryExpr(p)

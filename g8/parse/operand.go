@@ -7,9 +7,9 @@ import (
 func parseOperand(p *parser) ast.Expr {
 	if p.See(Ident) || p.See(Int) || p.See(Float) ||
 		p.See(String) || p.See(Char) {
-		return &ast.Operand{p.Shift()}
+		return &ast.Operand{p.Shift(), nil}
 	} else if p.SeeKeyword("this") {
-		return &ast.Operand{p.Shift()}
+		return &ast.Operand{p.Shift(), nil}
 	} else if p.SeeOp("(") {
 		lp := p.Shift()
 		expr := p.parseExpr()

@@ -57,7 +57,7 @@ func buildAnonyParaList(b *builder, lst *ast.ParaList) []*types.Arg {
 		var t types.T
 		expr := para.Type
 		if expr == nil {
-			expr = &ast.Operand{para.Ident}
+			expr = &ast.Operand{para.Ident, nil}
 		}
 
 		t = b.buildType(expr)
