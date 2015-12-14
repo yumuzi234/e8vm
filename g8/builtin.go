@@ -47,33 +47,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 	o("PrintInt32", "printInt", types.NewVoidFunc(types.Int))
 	o("PrintUint32", "printUint", types.NewVoidFunc(types.Uint))
 	o("PrintChar", "printChar", types.NewVoidFunc(types.Int8))
-	o("Vtable", "vtable", types.NewVoidFunc(types.Uint))
 	b.panicFunc = o("Panic", "panic", types.VoidFunc)
-	o("Halt", "halt", types.VoidFunc)
-
-	o("Syscall", "syscall", types.NewFuncUnamed(
-		[]types.T{types.Uint, types.Uint, types.Uint},
-		[]types.T{types.Uint, types.Uint, types.Uint},
-	))
-
-	// TODO: these are just hacks for context switch
-	oe := func(name, as string, t *types.Func) {
-		sym := builtin.SymbolByName(name)
-		if sym == nil {
-			return
-		}
-
-		ref := ir.NewFuncSym(path, name, makeFuncSig(t))
-		obj := &objFunc{as, newRef(t, ref), nil, false}
-		pre := b.scope.Declare(sym8.Make(b.path, as, symFunc, obj, nil))
-		if pre != nil {
-			b.Errorf(nil, "builtin symbol %s declare failed", name)
-			return
-		}
-	}
-	oe("Ienter", "_ienter", types.NewVoidFunc())
-	oe("SysEnter", "_sysenter", types.NewVoidFunc())
-	oe("Ustart", "ustart", types.NewVoidFunc(types.Uint, types.Uint))
 
 	ov := func(name, as string, t types.T) {
 		sym := builtin.SymbolByName(name)

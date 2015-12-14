@@ -57,11 +57,12 @@ func declareFuncAlias(b *builder, f *ast.Func, t *types.Func) *objFunc {
 		return nil
 	}
 
-	ret := declareFuncSym(b, f)
+	obj := declareFuncSym(b, f)
 	sig := makeFuncSig(t)
 	fsym := ir.NewFuncSym(sym.Pkg(), alias.Name.Lit, sig)
-	ret.ref = newRef(t, fsym)
-	return ret
+	obj.ref = newRef(t, fsym)
+
+	return nil
 }
 
 func declareFunc(b *builder, f *ast.Func) *objFunc {
