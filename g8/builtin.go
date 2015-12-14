@@ -49,22 +49,6 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 	o("PrintChar", "printChar", types.NewVoidFunc(types.Int8))
 	b.panicFunc = o("Panic", "panic", types.VoidFunc)
 
-	ov := func(name, as string, t types.T) {
-		sym := builtin.SymbolByName(name)
-		if sym == nil {
-			return
-		}
-		ref := ir.NewHeapSym(path, name, t.Size(), false, true)
-		obj := &objVar{name: name, ref: newAddressableRef(t, ref)}
-		pre := b.scope.Declare(sym8.Make(b.path, as, symVar, obj, nil))
-		if pre != nil {
-			b.Errorf(nil, "builtin symbol %s declare failed", name)
-			return
-		}
-	}
-	ov("Ientry", "_ientry", types.Uint)
-	ov("SysEntry", "_sysentry", types.Uint)
-
 	bi := func(name string) {
 		obj := &objFunc{name, newRef(types.NewBuiltInFunc(name), nil),
 			nil, false,
