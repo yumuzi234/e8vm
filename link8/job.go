@@ -13,6 +13,8 @@ type Job struct {
 	Pkgs   map[string]*Pkg
 	Funcs  []*PkgSym
 	InitPC uint32
+
+	FuncDebug func(pkg, name string, addr, size uint32)
 }
 
 // NewJob creates a new linking job which init pc is the default one.
@@ -50,8 +52,12 @@ func (j *Job) Link() ([]*e8.Section, error) {
 	buf := new(bytes.Buffer)
 	w := newWriter(pkgs, buf)
 	w.writeFunc(main)
-	for _, f := range funcs {
-		w.writeFunc(pkgFunc(pkgs, f))
+	for _, ps := range funcs {
+		f := pkgFunc(pkgs, ps)
+		if j.FuncDebug != nil {
+			j.FuncDebug(ps.Pkg, ps.Sym, f.addr, f.Size())
+		}
+		w.writeFunc(f)
 	}
 	if err := w.Err(); err != nil {
 		return nil, err
