@@ -3,7 +3,6 @@ package link8
 import (
 	"bytes"
 	"fmt"
-	"io"
 
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/e8"
@@ -26,25 +25,25 @@ func NewJob(pkgs map[string]*Pkg, funcs []*PkgSym) *Job {
 }
 
 // LinkMain is a short hand for NewJob(pkgs, path, start).Link(out)
-func LinkMain(out io.Writer, pkgs map[string]*Pkg, funcs []*PkgSym) error {
-	return NewJob(pkgs, funcs).Link(out)
+func LinkMain(pkgs map[string]*Pkg, funcs []*PkgSym) ([]*e8.Section, error) {
+	return NewJob(pkgs, funcs).Link()
 }
 
-// LinkSingle call LinkMain with only one single package.
-func LinkSingle(out io.Writer, pkg *Pkg, start string) error {
+// LinkSinglePkg call LinkMain with only one single package.
+func LinkSinglePkg(pkg *Pkg, start string) ([]*e8.Section, error) {
 	path := pkg.Path()
 	pkgs := map[string]*Pkg{path: pkg}
-	return LinkMain(out, pkgs, []*PkgSym{{path, start}})
+	return LinkMain(pkgs, []*PkgSym{{path, start}})
 }
 
 // Link performs the linking job and writes the output to out.
-func (j *Job) Link(out io.Writer) error {
+func (j *Job) Link() ([]*e8.Section, error) {
 	pkgs := j.Pkgs
 	used := traceUsed(pkgs, j.Funcs)
 	main := wrapMain(j.Funcs)
 	funcs, vars, zeros, err := layout(pkgs, used, main, j.InitPC)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	var secs []*e8.Section
@@ -55,7 +54,7 @@ func (j *Job) Link(out io.Writer) error {
 		w.writeFunc(pkgFunc(pkgs, f))
 	}
 	if err := w.Err(); err != nil {
-		return err
+		return nil, err
 	}
 
 	if buf.Len() > 0 {
@@ -75,7 +74,7 @@ func (j *Job) Link(out io.Writer) error {
 			w.writeVar(pkgVar(pkgs, v))
 		}
 		if err := w.Err(); err != nil {
-			return err
+			return nil, err
 		}
 
 		if buf.Len() > 0 {
@@ -102,7 +101,7 @@ func (j *Job) Link(out io.Writer) error {
 		})
 	}
 
-	return e8.Write(out, secs)
+	return secs, nil
 }
 
 // LinkBareFunc produces a image of a single function that has no links.

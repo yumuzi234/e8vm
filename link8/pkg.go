@@ -14,15 +14,18 @@ type Pkg struct {
 
 	funcs map[string]*Func
 	vars  map[string]*Var
+
+	funcMetas map[string]*FuncMeta
 }
 
 // NewPkg creates a new package for path p.
 func NewPkg(p string) *Pkg {
 	ret := &Pkg{
-		path:    p,
-		symbols: make(map[string]*Symbol),
-		funcs:   make(map[string]*Func),
-		vars:    make(map[string]*Var),
+		path:      p,
+		symbols:   make(map[string]*Symbol),
+		funcs:     make(map[string]*Func),
+		vars:      make(map[string]*Var),
+		funcMetas: make(map[string]*FuncMeta),
 	}
 
 	return ret

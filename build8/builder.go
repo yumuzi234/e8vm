@@ -7,6 +7,7 @@ import (
 
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/dagvis"
+	"e8vm.io/e8vm/e8"
 	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/link8"
 )
@@ -94,7 +95,11 @@ func (b *Builder) link(out io.Writer, p *pkg, main string) error {
 
 	job := link8.NewJob(b.linkPkgs, funcs)
 	job.InitPC = b.InitPC
-	return job.Link(out)
+	secs, err := job.Link()
+	if err != nil {
+		return err
+	}
+	return e8.Write(out, secs)
 }
 
 func (b *Builder) fillImports(p *pkg) {

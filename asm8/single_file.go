@@ -5,6 +5,7 @@ import (
 	"io"
 
 	"e8vm.io/e8vm/build8"
+	"e8vm.io/e8vm/e8"
 	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/link8"
 )
@@ -20,11 +21,14 @@ func BuildSingleFile(f string, rc io.ReadCloser) ([]byte, []*lex8.Error) {
 		return nil, errs
 	}
 
-	buf := new(bytes.Buffer)
-	err := link8.LinkSingle(buf, pkg.Lib, pkg.Main)
+	secs, err := link8.LinkSinglePkg(pkg.Lib, pkg.Main)
 	if err != nil {
 		return nil, lex8.SingleErr(err)
 	}
 
+	buf := new(bytes.Buffer)
+	if err := e8.Write(buf, secs); err != nil {
+		return nil, lex8.SingleErr(err)
+	}
 	return buf.Bytes(), nil
 }

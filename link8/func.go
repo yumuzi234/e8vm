@@ -2,12 +2,17 @@ package link8
 
 import (
 	"math"
+
+	"e8vm.io/e8vm/lex8"
 )
 
 // Func is a relocatable code section
 type Func struct {
 	insts []uint32
 	links []*link
+
+	pos       *lex8.Pos
+	frameSize uint32
 
 	// filled when linking
 	// TODO: this should not be here.
