@@ -19,7 +19,7 @@ func seeType(p *parser) bool {
 
 func parseType(p *parser) ast.Expr {
 	if p.See(Ident) {
-		ret := &ast.Operand{p.Shift(), nil}
+		ret := &ast.Operand{p.Shift()}
 		if p.SeeOp(".") {
 			return parseMemberExpr(p, ret)
 		}
