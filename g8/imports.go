@@ -100,19 +100,23 @@ func declareImports(b *builder, f *ast.File, pinfo *build8.PkgInfo) {
 		}
 
 		p := imported.Package
-		if p.Lang != "g8" {
-			// TODO(h8liu): issue #24, import assembly
-			b.Errorf(d.Path.Pos, "not a G language package")
+
+		if p.Lang == "asm8" || p.Lang == "g8" {
+			pos := importPos(d)
+			ref := newRef(&types.Pkg{as, p.Lang, p.Symbols}, nil)
+			obj := &objImport{ref}
+			sym := sym8.Make(b.symPkg, as, symImport, obj, pos)
+			pre := b.scope.Declare(sym)
+			if pre != nil {
+				b.Errorf(pos, "%s already declared", as)
+				continue
+			}
+		} else {
+			b.Errorf(importPos(d), "cannot import %q package %q",
+				p.Lang, as,
+			)
 			continue
 		}
 
-		pos := importPos(d)
-		ref := newRef(&types.Pkg{as, p.Symbols}, nil)
-		obj := &objImport{ref}
-		pre := b.scope.Declare(sym8.Make(b.symPkg, as, symImport, obj, pos))
-		if pre != nil {
-			b.Errorf(pos, "%s already declared", as)
-			continue
-		}
 	}
 }

@@ -27,6 +27,11 @@ func findPackageSym(
 }
 
 func buildPackageSym(b *builder, m *ast.MemberExpr, pkg *types.Pkg) *ref {
+	if pkg.Lang == "asm8" {
+		b.Errorf(m.Sub.Pos, "reference asm package symbol in expression")
+		return nil
+	}
+
 	sym := findPackageSym(b, m.Sub, pkg)
 	if sym == nil {
 		return nil

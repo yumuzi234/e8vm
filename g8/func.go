@@ -1,6 +1,7 @@
 package g8
 
 import (
+	"e8vm.io/e8vm/asm8"
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/ir"
 	"e8vm.io/e8vm/g8/types"
@@ -21,7 +22,20 @@ func declareFuncAlias(b *builder, f *ast.Func) *objFunc {
 		return nil
 	}
 
-	_ = pkg
+	if pkg.Lang != "asm8" {
+		b.Errorf(alias.Pkg.Pos, "can only alias functions in asm packages")
+		return nil
+	}
+
+	sym := findPackageSym(b, alias.Name, pkg)
+	if sym == nil {
+		return nil
+	}
+
+	if sym.Type != asm8.SymFunc {
+		b.Errorf(alias.Name.Pos, "the symbol is not a function")
+		return nil
+	}
 
 	b.Errorf(f.Alias.Eq.Pos, "function aliasing not implemented")
 	return nil
