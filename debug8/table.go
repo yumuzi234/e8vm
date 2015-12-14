@@ -18,6 +18,16 @@ func NewTable() *Table {
 	}
 }
 
+// UnmarshalTable unmarshals a debug table.
+func UnmarshalTable(bs []byte) (*Table, error) {
+	t := NewTable()
+	err := json.Unmarshal(bs, t)
+	if err != nil {
+		return nil, err
+	}
+	return t, nil
+}
+
 // Marshal marshals the debug table out.
 func (t *Table) Marshal() []byte {
 	bs, err := json.Marshal(t)
