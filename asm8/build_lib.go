@@ -19,7 +19,7 @@ func declareFile(b *builder, pkg *pkg, file *file) {
 	// declare functions
 	for _, fn := range file.funcs {
 		t := fn.Name
-		sym := sym8.Make(b.symPkg, t.Lit, SymFunc, fn, t.Pos)
+		sym := sym8.Make(b.path, t.Lit, SymFunc, fn, t.Pos)
 		if !declareSymbol(b, sym) {
 			continue
 		}
@@ -31,7 +31,7 @@ func declareFile(b *builder, pkg *pkg, file *file) {
 	// declare variables
 	for _, v := range file.vars {
 		t := v.Name
-		sym := sym8.Make(b.symPkg, t.Lit, SymVar, v, t.Pos)
+		sym := sym8.Make(b.path, t.Lit, SymVar, v, t.Pos)
 		if !declareSymbol(b, sym) {
 			continue
 		}
@@ -44,7 +44,7 @@ func declareFile(b *builder, pkg *pkg, file *file) {
 func buildPkgScope(b *builder, pkg *pkg) {
 	if pkg.imports != nil {
 		for as, stmt := range pkg.imports.stmts {
-			sym := sym8.Make(b.symPkg, as, SymImport, stmt, stmt.Path.Pos)
+			sym := sym8.Make(b.path, as, SymImport, stmt, stmt.Path.Pos)
 			if !declareSymbol(b, sym) {
 				continue
 			}

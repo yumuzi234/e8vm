@@ -31,7 +31,7 @@ func declareLabels(b *builder, f *funcDecl) {
 
 		lab := stmt.label
 		op := stmt.Ops[0]
-		sym := sym8.Make(b.symPkg, lab, SymLabel, stmt, op.Pos)
+		sym := sym8.Make(b.path, lab, SymLabel, stmt, op.Pos)
 		decl := b.scope.Declare(sym)
 		if decl != nil {
 			b.Errorf(op.Pos, "%q already declared", lab)

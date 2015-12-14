@@ -62,7 +62,7 @@ func (lang) Compile(pinfo *build8.PkgInfo) (*build8.Package, []*lex8.Error) {
 	}
 
 	// library building
-	b := newBuilder()
+	b := newBuilder(pinfo.Path)
 	lib := buildLib(b, pkg)
 	if es := b.Errs(); es != nil {
 		return nil, es

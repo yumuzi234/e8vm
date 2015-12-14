@@ -18,7 +18,7 @@ func findPackageSym(
 		return nil
 	}
 	name := sym.Name()
-	if !sym8.IsPublic(name) && sym.Pkg() != b.symPkg {
+	if !sym8.IsPublic(name) && sym.Pkg() != b.path {
 		b.Errorf(sub.Pos, "symbol %s is not public", name)
 		return nil
 	}
@@ -143,7 +143,7 @@ func buildMember(b *builder, m *ast.MemberExpr) *ref {
 			tstruct, m.Sub.Lit,
 		)
 		return nil
-	} else if !sym8.IsPublic(name) && sym.Pkg() != b.symPkg {
+	} else if !sym8.IsPublic(name) && sym.Pkg() != b.path {
 		b.Errorf(m.Sub.Pos, "symbol %s is not public", name)
 		return nil
 	}

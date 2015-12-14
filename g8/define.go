@@ -33,7 +33,7 @@ func allocVars(b *builder, toks []*lex8.Token, ts []types.T) *ref {
 func declareVar(b *builder, tok *lex8.Token) *objVar {
 	name := tok.Lit
 	v := &objVar{name: name}
-	s := sym8.Make(b.symPkg, name, symVar, v, tok.Pos)
+	s := sym8.Make(b.path, name, symVar, v, tok.Pos)
 	conflict := b.scope.Declare(s)
 	if conflict != nil {
 		b.Errorf(tok.Pos, "%q already declared as a %s",

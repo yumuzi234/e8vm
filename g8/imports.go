@@ -105,7 +105,7 @@ func declareImports(b *builder, f *ast.File, pinfo *build8.PkgInfo) {
 			pos := importPos(d)
 			ref := newRef(&types.Pkg{as, p.Lang, p.Symbols}, nil)
 			obj := &objImport{ref}
-			sym := sym8.Make(b.symPkg, as, symImport, obj, pos)
+			sym := sym8.Make(b.path, as, symImport, obj, pos)
 			pre := b.scope.Declare(sym)
 			if pre != nil {
 				b.Errorf(pos, "%s already declared", as)

@@ -9,8 +9,8 @@ import (
 // Builder manipulates an AST, checks its syntax, and builds the assembly
 type builder struct {
 	*lex8.ErrorList
-	scope  *sym8.Scope
-	symPkg *sym8.Pkg
+	scope *sym8.Scope
+	path  string
 
 	curPkg *lib
 
@@ -19,11 +19,11 @@ type builder struct {
 	inits   []*build8.PkgSym
 }
 
-func newBuilder() *builder {
+func newBuilder(path string) *builder {
 	return &builder{
 		ErrorList: lex8.NewErrorList(),
 		scope:     sym8.NewScope(),
-		symPkg:    new(sym8.Pkg),
+		path:      path,
 		imports:   make(map[string]string),
 		pkgUsed:   make(map[string]struct{}),
 	}
