@@ -2,6 +2,7 @@ package arch8
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"math/rand"
 
@@ -150,10 +151,15 @@ func (m *Machine) RandSeed(s int64) {
 func (m *Machine) loadSections(secs []*e8.Section) error {
 	for _, s := range secs {
 		var buf io.Reader
-		if s.Type == e8.Zeros {
+		switch s.Type {
+		case e8.Zeros:
 			buf = &zeroReader{s.Header.Size}
-		} else {
+		case e8.Code, e8.Data:
 			buf = bytes.NewReader(s.Bytes)
+		case e8.None, e8.Debug, e8.Comment:
+			continue
+		default:
+			return fmt.Errorf("unknown section type: %d", s.Type)
 		}
 
 		if err := m.WriteBytes(buf, s.Addr); err != nil {

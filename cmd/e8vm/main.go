@@ -10,10 +10,13 @@ import (
 
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/dasm8"
+	"e8vm.io/e8vm/debug8"
+	"e8vm.io/e8vm/e8"
 )
 
 var (
 	doDasm      = flag.Bool("d", false, "do dump")
+	printDebug  = flag.Bool("debug", false, "print debug symbols")
 	ncycle      = flag.Int("n", 100000, "max cycles to execute")
 	memSize     = flag.Int("m", 0, "memory size; 0 for full 4GB")
 	printStatus = flag.Bool("s", false, "print status after execution")
@@ -71,6 +74,27 @@ func main() {
 		err = dasm8.DumpImage(f, os.Stdout)
 		if err != nil {
 			log.Fatal(err)
+		}
+	} else if *printDebug {
+		f, err := os.Open(fname)
+		defer f.Close()
+
+		secs, err := e8.Read(f)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		for _, sec := range secs {
+			if sec.Type != e8.Debug {
+				continue
+			}
+
+			tab, err := debug8.UnmarshalTable(sec.Bytes)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			tab.PrintTo(os.Stdout)
 		}
 	} else {
 		bs, err := ioutil.ReadFile(fname)

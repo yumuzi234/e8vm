@@ -7,7 +7,6 @@ const (
 	Code
 	Data
 	Zeros // a.k.a. BSS
-	Symbols
-	DebugInfo
+	Debug
 	Comment
 )

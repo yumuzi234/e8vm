@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"math"
 
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/dagvis"
+	"e8vm.io/e8vm/debug8"
 	"e8vm.io/e8vm/e8"
 	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/link8"
@@ -18,7 +20,8 @@ type Builder struct {
 	pkgs map[string]*pkg
 	deps map[string][]string
 
-	linkPkgs map[string]*link8.Pkg
+	linkPkgs   map[string]*link8.Pkg
+	debugFuncs *debug8.Funcs
 
 	Verbose  bool
 	InitPC   uint32
@@ -28,11 +31,12 @@ type Builder struct {
 // NewBuilder creates a new builder with a particular home directory
 func NewBuilder(home Home) *Builder {
 	return &Builder{
-		home:     home,
-		pkgs:     make(map[string]*pkg),
-		deps:     make(map[string][]string),
-		linkPkgs: make(map[string]*link8.Pkg),
-		InitPC:   arch8.InitPC,
+		home:       home,
+		pkgs:       make(map[string]*pkg),
+		deps:       make(map[string][]string),
+		linkPkgs:   make(map[string]*link8.Pkg),
+		debugFuncs: debug8.NewFuncs(),
+		InitPC:     arch8.InitPC,
 	}
 }
 
@@ -77,6 +81,21 @@ func (b *Builder) prepare(p string) (*pkg, []*lex8.Error) {
 	return pkg, nil
 }
 
+func debugSection(tab *debug8.Table) (*e8.Section, error) {
+	bs := tab.Marshal()
+	if len(bs) > math.MaxUint32-1 {
+		return nil, fmt.Errorf("debug section too large")
+	}
+
+	return &e8.Section{
+		Header: &e8.Header{
+			Type: e8.Debug,
+			Size: uint32(len(bs)),
+		},
+		Bytes: bs,
+	}, nil
+}
+
 func (b *Builder) link(out io.Writer, p *pkg, main string) error {
 	var funcs []*link8.PkgSym
 
@@ -93,12 +112,22 @@ func (b *Builder) link(out io.Writer, p *pkg, main string) error {
 	addInit(p)
 	funcs = append(funcs, &link8.PkgSym{p.path, main})
 
+	debugTable := debug8.NewTable()
 	job := link8.NewJob(b.linkPkgs, funcs)
 	job.InitPC = b.InitPC
+	job.FuncDebug = func(pkg, name string, addr, size uint32) {
+		debugTable.LinkFunc(b.debugFuncs, pkg, name, addr, size)
+	}
 	secs, err := job.Link()
 	if err != nil {
 		return err
 	}
+
+	debugSec, err := debugSection(debugTable)
+	if err != nil {
+		return err
+	}
+	secs = append(secs, debugSec)
 	return e8.Write(out, secs)
 }
 
@@ -164,6 +193,9 @@ func (b *Builder) makePkgInfo(p *pkg) *PkgInfo {
 		Import: p.imports,
 		CreateLog: func(name string) io.WriteCloser {
 			return b.home.CreateLog(p.path, name)
+		},
+		AddFuncDebug: func(name string, pos *lex8.Pos, frameSize uint32) {
+			b.debugFuncs.Add(p.path, name, pos, frameSize)
 		},
 	}
 }

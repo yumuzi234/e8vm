@@ -65,7 +65,11 @@ type PkgInfo struct {
 
 	Inits []*PkgSym
 
+	// CreateLog creates the log file
 	CreateLog func(name string) io.WriteCloser
+
+	// AddFuncDebug adds debug information for a linking function.
+	AddFuncDebug func(name string, pos *lex8.Pos, frameSize uint32)
 }
 
 // Lang is a language compiler interface

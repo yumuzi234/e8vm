@@ -175,6 +175,9 @@ func (l *lang) Compile(pinfo *build8.PkgInfo) (
 		return nil, errs
 	}
 
+	// add debug symbols
+	ir.AddDebug(b.p, pinfo.AddFuncDebug)
+
 	// IR logging
 	if err := logIr(pinfo, b); err != nil {
 		return nil, lex8.SingleErr(err)

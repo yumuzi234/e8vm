@@ -1,9 +1,11 @@
 package debug8
 
 import (
-	"encoding/json"
+	"bytes"
+	"fmt"
+	"io"
 
-	"e8vm.io/e8vm/lex8"
+	"encoding/json"
 )
 
 // Table is a debug table that save symbol information.
@@ -13,9 +15,7 @@ type Table struct {
 
 // NewTable creates a new debug table.
 func NewTable() *Table {
-	return &Table{
-		Funcs: make(map[string]*Func),
-	}
+	return &Table{make(map[string]*Func)}
 }
 
 // UnmarshalTable unmarshals a debug table.
@@ -37,31 +37,35 @@ func (t *Table) Marshal() []byte {
 	return bs
 }
 
-func symKey(pkg, name string) string {
-	return pkg + "." + name
-}
-
-// Func returns the function entry of a particular symbol.
-func (t *Table) Func(pkg, name string) *Func {
+// LinkFunc saves the function linking debug information.
+func (t *Table) LinkFunc(fs *Funcs, pkg, name string, addr, size uint32) {
 	key := symKey(pkg, name)
-	f, found := t.Funcs[key]
+	f, found := fs.funcs[key]
 	if !found {
 		f = new(Func)
-		t.Funcs[key] = f
 	}
-	return f
-}
 
-// LinkFunc saves the function linking debug information.
-func (t *Table) LinkFunc(pkg, name string, addr, size uint32) {
-	f := t.Func(pkg, name)
+	t.Funcs[key] = f
 	f.Start = addr
 	f.Size = size
 }
 
-// GenFunc saves the function generation debug information.
-func (t *Table) GenFunc(pkg, name string, pos *lex8.Pos, frameSize uint32) {
-	f := t.Func(pkg, name)
-	f.Frame = frameSize
-	f.Pos = pos
+// PrintTo prints the table to an output stream.
+func (t *Table) PrintTo(w io.Writer) error {
+	for name, f := range t.Funcs {
+		buf := new(bytes.Buffer)
+		fmt.Fprintf(buf, "%8x +%4d: ", f.Start, f.Size)
+		if f.Frame > 0 {
+			fmt.Fprintf(buf, "frame=%d - ", f.Frame)
+		}
+		fmt.Fprintf(buf, "%s", name)
+		if f.Pos != nil {
+			fmt.Fprintf(buf, " // %s", f.Pos)
+		}
+		_, err := fmt.Fprintln(w, buf.String())
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
