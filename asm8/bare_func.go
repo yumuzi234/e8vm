@@ -23,7 +23,7 @@ func BuildBareFunc(f string, rc io.ReadCloser) ([]byte, []*lex8.Error) {
 	}
 
 	// building pass
-	b := newBuilder()
+	b := newBuilder("main")
 	fobj := buildFunc(b, rfunc)
 	if es := b.Errs(); es != nil {
 		return nil, es

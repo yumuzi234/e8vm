@@ -31,11 +31,11 @@ func declareLabels(b *builder, f *funcDecl) {
 
 		lab := stmt.label
 		op := stmt.Ops[0]
-		sym := sym8.Make(b.symPkg, lab, SymLabel, stmt, op.Pos)
+		sym := sym8.Make(b.path, lab, SymLabel, stmt, op.Pos)
 		decl := b.scope.Declare(sym)
 		if decl != nil {
 			b.Errorf(op.Pos, "%q already declared", lab)
-			b.Errorf(decl.Pos, "  here as a %s", symStr(decl.Type))
+			b.Errorf(decl.Pos, "  here as a %s", SymStr(decl.Type))
 			continue
 		}
 	}
@@ -108,7 +108,7 @@ func findImport(b *builder, t *lex8.Token, pkg string) *importStmt {
 		b.Errorf(t.Pos, "package %q not found", pkg)
 		return nil
 	} else if sym.Type != SymImport {
-		b.Errorf(t.Pos, "%q is a %s, not a package", t.Lit, symStr(sym.Type))
+		b.Errorf(t.Pos, "%q is a %s, not a package", t.Lit, SymStr(sym.Type))
 		return nil
 	}
 	return sym.Item.(*importStmt)
@@ -175,7 +175,7 @@ func resolveSymbol(b *builder, s *funcStmt) (typ int, pkg, name string) {
 		b.Errorf(t.Pos, "const symbol filling not implemented yet")
 		typ = SymNone // report as error
 	case SymImport, SymLabel:
-		b.Errorf(t.Pos, "cannot link %s %q", symStr(typ), t.Lit)
+		b.Errorf(t.Pos, "cannot link %s %q", SymStr(typ), t.Lit)
 		typ = SymNone // report as error
 	}
 
@@ -195,7 +195,7 @@ func linkSymbol(b *builder, s *funcStmt, f *link8.Func) {
 	}
 
 	if s.fill == fillLink && typ != SymFunc {
-		b.Errorf(t.Pos, "%s %q is not a function", symStr(typ), t.Lit)
+		b.Errorf(t.Pos, "%s %q is not a function", SymStr(typ), t.Lit)
 		return
 	} else if pkg != b.curPkg.Path() && !sym8.IsPublic(s.sym) {
 		// for imported package, check if it is public

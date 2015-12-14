@@ -9,6 +9,7 @@ import (
 // Pkg represents a package import.
 type Pkg struct {
 	As   string
+	Lang string
 	Syms *sym8.Table
 }
 

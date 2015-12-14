@@ -28,7 +28,6 @@ type builder struct {
 
 	b            *ir.Block
 	scope        *sym8.Scope
-	symPkg       *sym8.Pkg
 	structFields map[*types.Struct]*sym8.Table
 
 	continues *blockStack
@@ -69,7 +68,6 @@ func newBuilder(path string, golike bool) *builder {
 		path:      path,
 		p:         ir.NewPkg(path),
 		scope:     sym8.NewScope(), // package scope
-		symPkg:    &sym8.Pkg{path},
 		golike:    golike,
 
 		continues:    newBlockStack(),
@@ -90,7 +88,7 @@ func (b *builder) refSym(sym *sym8.Symbol, pos *lex8.Pos) {
 	if symPos == nil {
 		return // builtin
 	}
-	if sym.Pkg() != b.symPkg {
+	if sym.Pkg() != b.path {
 		return // cross package reference
 	}
 	if pos.File == symPos.File {

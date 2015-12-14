@@ -25,3 +25,4 @@ func PrintInt(i int) {
 	}
 }
 
+func PrintUint(i uint) = builtin.PrintUint32

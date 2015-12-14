@@ -6,7 +6,7 @@ import (
 
 // Symbol is a data structure for saving a symbol.
 type Symbol struct {
-	pkg  *Pkg
+	pkg  string
 	name string
 
 	Type int
@@ -19,7 +19,7 @@ type Symbol struct {
 func (s *Symbol) Name() string { return s.name }
 
 // Pkg returns the package token of the symbol.
-func (s *Symbol) Pkg() *Pkg { return s.pkg }
+func (s *Symbol) Pkg() string { return s.pkg }
 
 // Clone returns a clone of the symbol which item is the given one.
 func (s *Symbol) Clone(item interface{}) *Symbol {
@@ -30,7 +30,7 @@ func (s *Symbol) Clone(item interface{}) *Symbol {
 
 // Make creates a new symbol
 func Make(
-	pkg *Pkg,
+	pkg string,
 	name string,
 	t int,
 	item interface{},

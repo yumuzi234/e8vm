@@ -6,6 +6,7 @@ import (
 
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/sym8"
 )
 
 type lang struct{}
@@ -26,6 +27,16 @@ func (lang) Prepare(
 		return nil
 	}
 	return listImport(f.Path, f, imp)
+}
+
+func buildSymTable(p *lib) *sym8.Table {
+	t := sym8.NewTable()
+	for _, sym := range p.symbols {
+		if sym.Type == SymFunc || sym.Type == SymVar {
+			t.Declare(sym)
+		}
+	}
+	return t
 }
 
 func (lang) Compile(pinfo *build8.PkgInfo) (*build8.Package, []*lex8.Error) {
@@ -62,16 +73,17 @@ func (lang) Compile(pinfo *build8.PkgInfo) (*build8.Package, []*lex8.Error) {
 	}
 
 	// library building
-	b := newBuilder()
+	b := newBuilder(pinfo.Path)
 	lib := buildLib(b, pkg)
 	if es := b.Errs(); es != nil {
 		return nil, es
 	}
 
 	ret := &build8.Package{
-		Lang: "asm8",
-		Lib:  lib.Pkg,
-		Main: "main",
+		Lang:    "asm8",
+		Lib:     lib.Pkg,
+		Main:    "main",
+		Symbols: buildSymTable(lib),
 	}
 	return ret, nil
 }

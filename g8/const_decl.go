@@ -37,7 +37,7 @@ func buildConstExprList(b *builder, list *ast.ExprList) *ref {
 func declareConst(b *builder, tok *lex8.Token) *objConst {
 	name := tok.Lit
 	v := &objConst{name: name}
-	s := sym8.Make(b.symPkg, name, symConst, v, tok.Pos)
+	s := sym8.Make(b.path, name, symConst, v, tok.Pos)
 	conflict := b.scope.Declare(s)
 	if conflict != nil {
 		b.Errorf(tok.Pos, "%q already declared as a %s",

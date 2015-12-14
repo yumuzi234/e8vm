@@ -1,6 +1,7 @@
 package g8
 
 import (
+	"e8vm.io/e8vm/asm8"
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/ir"
 	"e8vm.io/e8vm/g8/types"
@@ -8,7 +9,27 @@ import (
 	"e8vm.io/e8vm/sym8"
 )
 
-func declareFuncAlias(b *builder, f *ast.Func) *objFunc {
+func declareFuncSym(b *builder, f *ast.Func) *objFunc {
+	// NewFunc() will create the variables required for the sigs
+	name := f.Name.Lit
+	ret := new(objFunc)
+	ret.name = name
+	ret.f = f
+
+	// add this item to the top scope
+	s := sym8.Make(b.path, name, symFunc, ret, f.Name.Pos)
+	conflict := b.scope.Declare(s) // lets declare the function
+	if conflict != nil {
+		b.Errorf(f.Name.Pos, "%q already declared as a %s",
+			name, symStr(conflict.Type),
+		)
+		b.Errorf(conflict.Pos, "previously declared here")
+		return nil
+	}
+	return ret
+}
+
+func declareFuncAlias(b *builder, f *ast.Func, t *types.Func) *objFunc {
 	alias := f.Alias
 	pkgRef := buildIdent(b, alias.Pkg)
 	if pkgRef == nil {
@@ -21,9 +42,26 @@ func declareFuncAlias(b *builder, f *ast.Func) *objFunc {
 		return nil
 	}
 
-	_ = pkg
+	if pkg.Lang != "asm8" {
+		b.Errorf(alias.Pkg.Pos, "can only alias functions in asm packages")
+		return nil
+	}
 
-	b.Errorf(f.Alias.Eq.Pos, "function aliasing not implemented")
+	sym := findPackageSym(b, alias.Name, pkg)
+	if sym == nil {
+		return nil
+	}
+
+	if sym.Type != asm8.SymFunc {
+		b.Errorf(alias.Name.Pos, "the symbol is not a function")
+		return nil
+	}
+
+	obj := declareFuncSym(b, f)
+	sig := makeFuncSig(t)
+	fsym := ir.NewFuncSym(sym.Pkg(), alias.Name.Lit, sig)
+	obj.ref = newRef(t, fsym)
+
 	return nil
 }
 
@@ -34,28 +72,12 @@ func declareFunc(b *builder, f *ast.Func) *objFunc {
 	}
 
 	if f.Alias != nil {
-		return declareFuncAlias(b, f)
+		return declareFuncAlias(b, f, t)
 	}
 
-	// NewFunc() will create the variables required for the sigs
-	name := f.Name.Lit
-	ret := new(objFunc)
-	ret.name = name
-	ret.f = f
-
-	// add this item to the top scope
-	s := sym8.Make(b.symPkg, name, symFunc, ret, f.Name.Pos)
-	conflict := b.scope.Declare(s) // lets declare the function
-	if conflict != nil {
-		b.Errorf(f.Name.Pos, "%q already declared as a %s",
-			name, symStr(conflict.Type),
-		)
-		b.Errorf(conflict.Pos, "previously declared here")
-		return nil
-	}
-
+	ret := declareFuncSym(b, f)
 	sig := makeFuncSig(t)
-	irFunc := b.p.NewFunc(b.anonyName(name), f.Name.Pos, sig)
+	irFunc := b.p.NewFunc(b.anonyName(f.Name.Lit), f.Name.Pos, sig)
 	ret.ref = newRef(t, irFunc)
 
 	return ret

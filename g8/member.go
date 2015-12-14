@@ -1,7 +1,9 @@
 package g8
 
 import (
+	"e8vm.io/e8vm/asm8"
 	"e8vm.io/e8vm/g8/ast"
+	"e8vm.io/e8vm/g8/ir"
 	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/sym8"
@@ -18,7 +20,7 @@ func findPackageSym(
 		return nil
 	}
 	name := sym.Name()
-	if !sym8.IsPublic(name) && sym.Pkg() != b.symPkg {
+	if !sym8.IsPublic(name) && sym.Pkg() != b.path {
 		b.Errorf(sub.Pos, "symbol %s is not public", name)
 		return nil
 	}
@@ -29,6 +31,26 @@ func findPackageSym(
 func buildPackageSym(b *builder, m *ast.MemberExpr, pkg *types.Pkg) *ref {
 	sym := findPackageSym(b, m.Sub, pkg)
 	if sym == nil {
+		return nil
+	}
+
+	if pkg.Lang == "asm8" {
+		switch sym.Type {
+		case asm8.SymVar:
+			ptr := b.newTemp(types.Uint)
+			s := ir.NewHeapSym(sym.Pkg(), sym.Name(), 0, false, false)
+			b.b.Arith(ptr.IR(), nil, "&", s)
+			return ptr
+		case asm8.SymFunc:
+			return newRef(
+				types.VoidFunc,
+				ir.NewFuncSym(sym.Pkg(), sym.Name(), ir.VoidFuncSig),
+			)
+		}
+
+		b.Errorf(m.Sub.Pos, "invalid symbol %s in %s: %s",
+			m.Sub.Lit, pkg, asm8.SymStr(sym.Type),
+		)
 		return nil
 	}
 
@@ -138,7 +160,7 @@ func buildMember(b *builder, m *ast.MemberExpr) *ref {
 			tstruct, m.Sub.Lit,
 		)
 		return nil
-	} else if !sym8.IsPublic(name) && sym.Pkg() != b.symPkg {
+	} else if !sym8.IsPublic(name) && sym.Pkg() != b.path {
 		b.Errorf(m.Sub.Pos, "symbol %s is not public", name)
 		return nil
 	}
