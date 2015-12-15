@@ -1,7 +1,6 @@
 package debug8
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 
@@ -48,19 +47,6 @@ func (t *Table) LinkFunc(fs *Funcs, pkg, name string, addr, size uint32) {
 	t.Funcs[key] = f
 	f.Start = addr
 	f.Size = size
-}
-
-func funcString(name string, f *Func) string {
-	buf := new(bytes.Buffer)
-	fmt.Fprintf(buf, "%8x +%4d: ", f.Start, f.Size)
-	if f.Frame > 0 {
-		fmt.Fprintf(buf, "frame=%d - ", f.Frame)
-	}
-	fmt.Fprintf(buf, "%s", name)
-	if f.Pos != nil {
-		fmt.Fprintf(buf, " // %s", f.Pos)
-	}
-	return buf.String()
 }
 
 // PrintTo prints the table to an output stream.

@@ -76,7 +76,10 @@ func (c *multiCore) readWord(core byte, virtAddr uint32) (uint32, error) {
 	}
 
 	v, exp := c.cores[core].virtMem.ReadWord(virtAddr, 0)
-	return v, exp
+	if exp != nil {
+		return 0, exp
+	}
+	return v, nil
 }
 
 func (c *multiCore) dumpRegs(core byte) []uint32 {
