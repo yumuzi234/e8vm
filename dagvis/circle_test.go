@@ -1,4 +1,4 @@
-package main
+package dagvis
 
 import "fmt"
 import "testing"
