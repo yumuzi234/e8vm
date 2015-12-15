@@ -82,6 +82,16 @@ func (m *Machine) WriteWord(phyAddr uint32, v uint32) error {
 	return exp
 }
 
+// ReadWord reads the word at particular virtual address of a particular core.
+func (m *Machine) ReadWord(core byte, virtAddr uint32) (uint32, error) {
+	return m.cores.readWord(core, virtAddr)
+}
+
+// DumpRegs returns the values of the current registers of a core.
+func (m *Machine) DumpRegs(core byte) []uint32 {
+	return m.cores.dumpRegs(core)
+}
+
 // SetOutput sets the output writer of the machine's serial
 // console.
 func (m *Machine) SetOutput(w io.Writer) {
