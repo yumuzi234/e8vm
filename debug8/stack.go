@@ -43,7 +43,7 @@ func FprintStack(w io.Writer, m *arch8.Machine, core byte, t *Table) error {
 			return err
 		}
 
-		if f.Size <= 4 { // cannot be a normal function
+		if f.Size <= 4 || f.Frame == 0 { // cannot be a normal function
 			if level != 1 {
 				// calling in a non-normal function
 				// return
