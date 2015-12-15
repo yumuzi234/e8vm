@@ -85,7 +85,7 @@ func run(bs []byte) (int, error) {
 		m.PrintCoreStatus()
 	}
 
-	if exp != nil {
+	if !arch8.IsHalt(exp) {
 		printStackTrace(m, exp, debugSection(secs))
 	}
 
