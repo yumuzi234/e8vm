@@ -50,19 +50,23 @@ func (t *Table) LinkFunc(fs *Funcs, pkg, name string, addr, size uint32) {
 	f.Size = size
 }
 
+func funcString(name string, f *Func) string {
+	buf := new(bytes.Buffer)
+	fmt.Fprintf(buf, "%8x +%4d: ", f.Start, f.Size)
+	if f.Frame > 0 {
+		fmt.Fprintf(buf, "frame=%d - ", f.Frame)
+	}
+	fmt.Fprintf(buf, "%s", name)
+	if f.Pos != nil {
+		fmt.Fprintf(buf, " // %s", f.Pos)
+	}
+	return buf.String()
+}
+
 // PrintTo prints the table to an output stream.
 func (t *Table) PrintTo(w io.Writer) error {
 	for name, f := range t.Funcs {
-		buf := new(bytes.Buffer)
-		fmt.Fprintf(buf, "%8x +%4d: ", f.Start, f.Size)
-		if f.Frame > 0 {
-			fmt.Fprintf(buf, "frame=%d - ", f.Frame)
-		}
-		fmt.Fprintf(buf, "%s", name)
-		if f.Pos != nil {
-			fmt.Fprintf(buf, " // %s", f.Pos)
-		}
-		_, err := fmt.Fprintln(w, buf.String())
+		_, err := fmt.Fprintln(w, funcString(name, f))
 		if err != nil {
 			return err
 		}

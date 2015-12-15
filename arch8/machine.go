@@ -158,7 +158,8 @@ func (m *Machine) RandSeed(s int64) {
 	m.ticker.Rand = rand.New(rand.NewSource(s))
 }
 
-func (m *Machine) loadSections(secs []*e8.Section) error {
+// LoadSections loads a list of sections into the machine.
+func (m *Machine) LoadSections(secs []*e8.Section) error {
 	for _, s := range secs {
 		var buf io.Reader
 		switch s.Type {
@@ -175,6 +176,10 @@ func (m *Machine) loadSections(secs []*e8.Section) error {
 		if err := m.WriteBytes(buf, s.Addr); err != nil {
 			return err
 		}
+	}
+
+	if pc, found := findCodeStart(secs); found {
+		m.SetPC(pc)
 	}
 	return nil
 }
@@ -208,14 +213,7 @@ func (m *Machine) LoadImage(r io.ReadSeeker) error {
 	if err != nil {
 		return err
 	}
-	if err := m.loadSections(secs); err != nil {
-		return err
-	}
-
-	if pc, found := findCodeStart(secs); found {
-		m.SetPC(pc)
-	}
-	return nil
+	return m.LoadSections(secs)
 }
 
 // LoadImageBytes loads an e8 image in bytes into the machine.
