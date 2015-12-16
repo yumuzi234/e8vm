@@ -65,10 +65,10 @@ func (b *Block) Zero(dest Ref) {
 }
 
 // Call appends a function call operation to the basic block
-func (b *Block) Call(dests []Ref, f Ref, sig *FuncSig, args ...Ref) {
+func (b *Block) Call(dests []Ref, f Ref, args ...Ref) {
 	argsCopy := make([]Ref, len(args))
 	copy(argsCopy, args)
-	b.addOp(&callOp{dests, f, sig, argsCopy})
+	b.addOp(&callOp{dests, f, argsCopy})
 }
 
 // Jump sets the block always jump to the dest block at its end

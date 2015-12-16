@@ -35,3 +35,6 @@ doc:
 
 lint:
 	golint ./...
+
+fmtchk:
+	gofmt -d -l .

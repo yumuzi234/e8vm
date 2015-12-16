@@ -13,12 +13,16 @@ type Var struct {
 	align uint32
 	buf   *bytes.Buffer
 
-	addr   uint32
-	prePad uint32
-
 	zeros uint32
 
 	links []*link // symbols
+
+	// filled when linking
+	//
+	// TODO: these are mutable each time linking
+	// so they should not be here.
+	addr   uint32
+	prePad uint32
 }
 
 // NewVar creates a new relocatable data section.
@@ -79,8 +83,7 @@ func (v *Var) WriteLink(pkg, sym string) error {
 
 	lnk := &link{
 		offset: uint32(v.buf.Len()),
-		pkg:    pkg,
-		sym:    sym,
+		PkgSym: &PkgSym{pkg, sym},
 	}
 	v.links = append(v.links, lnk)
 	v.Pad(arch8.RegSize) // symbol has a size of a register

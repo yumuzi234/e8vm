@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"e8vm.io/e8vm/lex8"
-	"e8vm.io/e8vm/link8"
 )
 
 type pkg struct {
@@ -12,14 +11,12 @@ type pkg struct {
 	path string
 	src  string
 
-	lang         Lang
-	files        []string
-	imports      map[string]*Import
-	buildStarted bool
+	lang    Lang
+	files   []string
+	imports map[string]*Import
+	deps    []string
 
-	compiled Linkable
-	lib      *link8.Pkg
-
+	pkg *Package
 	err error
 }
 
@@ -30,18 +27,19 @@ func newPkg(h Home, p string) *pkg {
 		return newErrPkg(fmt.Errorf("invalid path: %q", p))
 	}
 
-	ret := new(pkg)
-	ret.lang = h.Lang(p)
-	if ret.lang == nil {
+	lang := h.Lang(p)
+	if lang == nil {
 		return newErrPkg(fmt.Errorf("invalid pacakge: %q", p))
 	} else if h.Src(p) == nil {
 		return newErrPkg(fmt.Errorf("package not found: %q", p))
 	}
 
-	ret.home = h
-	ret.path = p
-	ret.imports = make(map[string]*Import)
-	return ret
+	return &pkg{
+		lang:    lang,
+		home:    h,
+		path:    p,
+		imports: make(map[string]*Import),
+	}
 }
 
 func (p *pkg) srcMap() map[string]*File { return p.home.Src(p.path) }

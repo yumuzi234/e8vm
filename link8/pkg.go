@@ -10,41 +10,29 @@ import (
 type Pkg struct {
 	path string
 
-	imported map[string]*Pkg    // all the packages that requires for building
-	symbols  map[string]*Symbol // all the symbol objects
+	symbols map[string]*Symbol // all the symbol objects
 
 	funcs map[string]*Func
 	vars  map[string]*Var
+
+	funcMetas map[string]*FuncMeta
 }
 
 // NewPkg creates a new package for path p.
 func NewPkg(p string) *Pkg {
 	ret := &Pkg{
-		path:     p,
-		imported: make(map[string]*Pkg),
-		symbols:  make(map[string]*Symbol),
-		funcs:    make(map[string]*Func),
-		vars:     make(map[string]*Var),
+		path:      p,
+		symbols:   make(map[string]*Symbol),
+		funcs:     make(map[string]*Func),
+		vars:      make(map[string]*Var),
+		funcMetas: make(map[string]*FuncMeta),
 	}
-	ret.Import(ret) // import self
 
 	return ret
 }
 
 // Path returns the package's path string.
 func (p *Pkg) Path() string { return p.path }
-
-// Import marks a package as a dependency.
-func (p *Pkg) Import(imp *Pkg) {
-	if old, found := p.imported[imp.path]; found {
-		if old != imp {
-			panic("package name conflict")
-		}
-		return
-	}
-
-	p.imported[imp.path] = imp
-}
 
 // Declare declares a symbol and assigns a symbol index.
 // If s.Name is empty string, then the symbol is anonymous.
@@ -133,4 +121,16 @@ func (p *Pkg) PrintSymbols(out io.Writer) {
 			index, symStr(sym.Type), sym.Name,
 		)
 	}
+}
+
+func pkgVar(pkgs map[string]*Pkg, ps *PkgSym) *Var {
+	return pkgs[ps.Pkg].Var(ps.Sym)
+}
+
+func pkgFunc(pkgs map[string]*Pkg, ps *PkgSym) *Func {
+	return pkgs[ps.Pkg].Func(ps.Sym)
+}
+
+func pkgSym(pkgs map[string]*Pkg, ps *PkgSym) *Symbol {
+	return pkgs[ps.Pkg].SymbolByName(ps.Sym)
 }

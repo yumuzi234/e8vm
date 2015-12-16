@@ -2,7 +2,7 @@ package ir
 
 import (
 	A "e8vm.io/e8vm/arch8"
-	S "e8vm.io/e8vm/asm8"
+	S "e8vm.io/e8vm/asm8/inst"
 )
 
 // go lint (stupidly) forbids import with .
@@ -24,7 +24,7 @@ type _s struct{}
 var asm _s
 
 func (_s) ims(op, d, s uint32, im int32) uint32 {
-	return S.InstImm(op, d, s, uint32(im))
+	return S.Imm(op, d, s, uint32(im))
 }
 func (_s) lw(d, s uint32, im int32) uint32 {
 	return asm.ims(A.LW, d, s, im)
@@ -45,13 +45,13 @@ func (_s) addi(d, s uint32, im int32) uint32 {
 	return asm.ims(A.ADDI, d, s, im)
 }
 
-func (_s) lui(d, im uint32) uint32     { return S.InstImm(A.LUI, d, 0, im) }
-func (_s) ori(d, s, im uint32) uint32  { return S.InstImm(A.ORI, d, s, im) }
-func (_s) xori(d, s, im uint32) uint32 { return S.InstImm(A.XORI, d, s, im) }
-func (_s) andi(d, s, im uint32) uint32 { return S.InstImm(A.ANDI, d, s, im) }
+func (_s) lui(d, im uint32) uint32     { return S.Imm(A.LUI, d, 0, im) }
+func (_s) ori(d, s, im uint32) uint32  { return S.Imm(A.ORI, d, s, im) }
+func (_s) xori(d, s, im uint32) uint32 { return S.Imm(A.XORI, d, s, im) }
+func (_s) andi(d, s, im uint32) uint32 { return S.Imm(A.ANDI, d, s, im) }
 
 func (_s) reg(op, d, s1, s2 uint32) uint32 {
-	return S.InstReg(op, d, s1, s2, 0, 0)
+	return S.Reg(op, d, s1, s2, 0, 0)
 }
 
 func (_s) add(d, s1, s2 uint32) uint32  { return asm.reg(A.ADD, d, s1, s2) }
@@ -70,17 +70,17 @@ func (_s) srla(d, s1, s2 uint32) uint32 { return asm.reg(A.SRLA, d, s1, s2) }
 func (_s) srlv(d, s1, s2 uint32) uint32 { return asm.reg(A.SRLV, d, s1, s2) }
 
 func (_s) srl(d, s1, v uint32) uint32 {
-	return S.InstReg(A.SRL, d, s1, 0, v, 0)
+	return S.Reg(A.SRL, d, s1, 0, v, 0)
 }
 
 func (_s) beq(s1, s2 uint32, im int32) uint32 {
-	return S.InstBr(A.BEQ, s1, s2, im)
+	return S.Br(A.BEQ, s1, s2, im)
 }
 func (_s) bne(s1, s2 uint32, im int32) uint32 {
-	return S.InstBr(A.BNE, s1, s2, im)
+	return S.Br(A.BNE, s1, s2, im)
 }
 
-func (_s) jal(im int32) uint32 { return S.InstJmp(A.JAL, im) }
-func (_s) j(im int32) uint32   { return S.InstJmp(A.J, im) }
+func (_s) jal(im int32) uint32 { return S.Jmp(A.JAL, im) }
+func (_s) j(im int32) uint32   { return S.Jmp(A.J, im) }
 
-func (_s) halt() uint32 { return S.InstSys(A.HALT, 0) }
+func (_s) halt() uint32 { return S.Sys(A.HALT, 0) }

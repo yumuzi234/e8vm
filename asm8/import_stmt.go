@@ -7,7 +7,6 @@ import (
 	"e8vm.io/e8vm/asm8/ast"
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/lex8"
-	"e8vm.io/e8vm/link8"
 )
 
 type importStmt struct {
@@ -16,8 +15,7 @@ type importStmt struct {
 	as   string
 	path string
 
-	linkable build8.Linkable
-	lib      *link8.Pkg
+	pkg *build8.Package
 }
 
 func importPos(i *ast.ImportStmt) *lex8.Pos {

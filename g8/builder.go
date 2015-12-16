@@ -28,7 +28,6 @@ type builder struct {
 
 	b            *ir.Block
 	scope        *sym8.Scope
-	symPkg       *sym8.Pkg
 	structFields map[*types.Struct]*sym8.Table
 
 	continues *blockStack
@@ -64,21 +63,19 @@ func newRand() *rand.Rand {
 }
 
 func newBuilder(path string, golike bool) *builder {
-	ret := new(builder)
-	ret.ErrorList = lex8.NewErrorList()
-	ret.path = path
-	ret.p = ir.NewPkg(path)
-	ret.scope = sym8.NewScope() // package scope
-	ret.symPkg = &sym8.Pkg{path}
-	ret.golike = golike
+	return &builder{
+		ErrorList: lex8.NewErrorList(),
+		path:      path,
+		p:         ir.NewPkg(path),
+		scope:     sym8.NewScope(), // package scope
+		golike:    golike,
 
-	ret.continues = newBlockStack()
-	ret.breaks = newBlockStack()
-	ret.structFields = make(map[*types.Struct]*sym8.Table)
+		continues:    newBlockStack(),
+		breaks:       newBlockStack(),
+		structFields: make(map[*types.Struct]*sym8.Table),
 
-	ret.rand = newRand()
-
-	return ret
+		rand: newRand(),
+	}
 }
 
 func (b *builder) refSym(sym *sym8.Symbol, pos *lex8.Pos) {
@@ -91,7 +88,7 @@ func (b *builder) refSym(sym *sym8.Symbol, pos *lex8.Pos) {
 	if symPos == nil {
 		return // builtin
 	}
-	if sym.Pkg() != b.symPkg {
+	if sym.Pkg() != b.path {
 		return // cross package reference
 	}
 	if pos.File == symPos.File {

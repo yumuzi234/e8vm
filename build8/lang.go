@@ -17,33 +17,44 @@ type File struct {
 
 // Import is an import identity
 type Import struct {
-	Path     string
-	Pos      *lex8.Pos
-	Compiled Linkable
+	Path string
+	Pos  *lex8.Pos
+	*Package
 }
 
-// Linkable is an interface for a linkable package
-type Linkable interface {
-	// Main is the entry point for linking. It will
-	// be placed at the entry address of the image.
-	Main() string
+// Package is an interface for a linkable package
+type Package struct {
+	// Lang is the language name this package used
+	Lang string
 
-	// Tests are function symbols that should be preserved,
-	// and sent into the image as an argument for running
-	// testing.
-	Tests() (tests map[string]uint32, main string)
+	// Init is the init function of this package.
+	// It is always a function that has no paramters.
+	Init string
 
-	// Lib is the linkable object file.
-	Lib() *link8.Pkg
+	// Main is the main entrance of this package, if any.
+	Main string
 
-	// Symbols returns all the top-level symbols in this package.
-	// This is used for other packages to import and use this package.
-	Symbols() (lang string, table *sym8.Table)
+	// TestMain is the main entrance for testing of this package, if any.
+	TestMain string
+
+	// Tests is the list of test cases, mapping from names to test ids.
+	Tests map[string]uint32
+
+	// Lib is the linkable library.
+	Lib *link8.Pkg
+
+	// Symbols stores all the symbols of this package.
+	Symbols *sym8.Table
 }
 
 // Importer is an interface for importing required packages for compiling
 type Importer interface {
 	Import(name, path string, pos *lex8.Pos) // imports a package
+}
+
+// PkgSym is a pointer to a symbol in a package.
+type PkgSym struct {
+	Pkg, Sym string
 }
 
 // PkgInfo contains the information for compiling a package
@@ -52,7 +63,13 @@ type PkgInfo struct {
 	Src    map[string]*File
 	Import map[string]*Import
 
+	Inits []*PkgSym
+
+	// CreateLog creates the log file
 	CreateLog func(name string) io.WriteCloser
+
+	// AddFuncDebug adds debug information for a linking function.
+	AddFuncDebug func(name string, pos *lex8.Pos, frameSize uint32)
 }
 
 // Lang is a language compiler interface
@@ -64,5 +81,5 @@ type Lang interface {
 	Prepare(src map[string]*File, importer Importer) []*lex8.Error
 
 	// Compile compiles a list of source files into a compiled linkable
-	Compile(pinfo *PkgInfo) (Linkable, []*lex8.Error)
+	Compile(pinfo *PkgInfo) (*Package, []*lex8.Error)
 }

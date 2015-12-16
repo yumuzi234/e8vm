@@ -75,19 +75,19 @@ func (w *writer) writeVar(v *Var) {
 }
 
 func (w *writer) symAddr(lnk *link) uint32 {
-	pkg := w.pkgs[lnk.pkg]
-	s := pkg.symbols[lnk.sym]
+	ps := lnk.PkgSym
+	s := pkgSym(w.pkgs, lnk.PkgSym)
 	switch s.Type {
 	case SymFunc:
-		return pkg.Func(lnk.sym).addr
+		return pkgFunc(w.pkgs, ps).addr
 	case SymVar:
-		return pkg.Var(lnk.sym).addr
+		return pkgVar(w.pkgs, ps).addr
 	}
 	panic("bug")
 }
 
 func (w *writer) funcAddr(lnk *link) uint32 {
-	return w.pkgs[lnk.pkg].Func(lnk.sym).addr
+	return pkgFunc(w.pkgs, lnk.PkgSym).addr
 }
 
 func (w *writer) writeFunc(f *Func) {

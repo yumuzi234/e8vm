@@ -40,19 +40,21 @@ func parseStmt(p *parser) ast.Stmt {
 	return parseSimpleStmt(p)
 }
 
-func makeParser(f string, r io.Reader, golike bool) *parser {
-	p, _ := newParser(f, r, golike)
+func makeParser(f string, r io.Reader, golike bool) (
+	*parser, *lex8.Recorder,
+) {
+	p, rec := newParser(f, r, golike)
 	p.exprFunc = parseExpr
 	p.stmtFunc = parseStmt
 	p.typeFunc = parseType
 	p.seeTypeFunc = seeType
-	return p
+	return p, rec
 }
 
 // Stmts parses a file input stream as a list of statements,
 // like a bare function body.
 func Stmts(f string, r io.Reader) ([]ast.Stmt, []*lex8.Error) {
-	p := makeParser(f, r, false)
+	p, _ := makeParser(f, r, false)
 
 	var ret []ast.Stmt
 	for !p.See(lex8.EOF) {

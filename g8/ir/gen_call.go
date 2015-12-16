@@ -1,11 +1,26 @@
 package ir
 
 import (
+	"fmt"
+
 	"e8vm.io/e8vm/link8"
 )
 
+func callSig(op *callOp) *FuncSig {
+	switch f := op.f.(type) {
+	case *FuncSym:
+		return f.sig
+	case *Func:
+		return f.sig
+	case *FuncPtr:
+		return f.sig
+	default:
+		panic(fmt.Errorf("non-callable: %T", f))
+	}
+}
+
 func genCallOp(g *gener, b *Block, op *callOp) {
-	sig := op.sig
+	sig := callSig(op)
 
 	// load the args
 	// first copy the ones that send in on the stack
@@ -22,17 +37,20 @@ func genCallOp(g *gener, b *Block, op *callOp) {
 	}
 
 	// do the function call
-	if s, ok := op.f.(*FuncSym); ok {
-		jal := b.inst(asm.jal(0))
-		jal.sym = &linkSym{link8.FillLink, s.pkg, s.name}
-	} else if f, ok := op.f.(*Func); ok {
+	switch f := op.f.(type) {
+	case *FuncSym:
 		jal := b.inst(asm.jal(0))
 		jal.sym = &linkSym{link8.FillLink, f.pkg, f.name}
-	} else {
+	case *Func:
+		jal := b.inst(asm.jal(0))
+		jal.sym = &linkSym{link8.FillLink, f.pkg, f.name}
+	case *FuncPtr:
 		// function pointer, set PC manually
-		loadRef(b, _4, op.f)
+		loadRef(b, _4, f.Ref)
 		b.inst(asm.addi(_ret, _pc, 4))
 		b.inst(asm.ori(_pc, _4, 0))
+	default:
+		panic("bug")
 	}
 
 	// save the returns

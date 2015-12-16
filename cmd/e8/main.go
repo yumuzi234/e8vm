@@ -15,9 +15,9 @@ import (
 )
 
 var (
-	golike = flag.Bool("golike", false, "uses go-like syntax")
-	doTest = flag.Bool("test", true, "also run tests")
-	initPC = flag.Uint("initpc", arch8.InitPC,
+	golike   = flag.Bool("golike", false, "uses go-like syntax")
+	runTests = flag.Bool("test", true, "also run tests")
+	initPC   = flag.Uint("initpc", arch8.InitPC,
 		"the starting address of the image",
 	)
 	cpuProfile = flag.String("profile", "", "cpu profile output")
@@ -61,8 +61,9 @@ func main() {
 	b := build8.NewBuilder(home)
 	b.Verbose = true
 	b.InitPC = uint32(*initPC)
+	b.RunTests = *runTests
 
-	es := b.BuildAll(*doTest)
+	es := b.BuildAll()
 	if es != nil {
 		for _, e := range es {
 			fmt.Println(e)

@@ -107,7 +107,7 @@ func buildType(b *builder, expr ast.Expr) types.T {
 			b.Errorf(expr.Sub.Pos, "symbol %s not found", name)
 			return nil
 		}
-		if !sym8.IsPublic(name) && s.Pkg() != b.symPkg {
+		if !sym8.IsPublic(name) && s.Pkg() != b.path {
 			b.Errorf(expr.Sub.Pos, "symbol %s is not public", name)
 			return nil
 		}

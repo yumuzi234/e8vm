@@ -4,97 +4,94 @@ import (
 	"fmt"
 	"io"
 
-	"e8vm.io/e8vm/fmt8"
 	"e8vm.io/e8vm/g8/ast"
 )
 
-func printStmt(p *fmt8.Printer, stmt ast.Stmt) {
+func printStmt(f *formatter, stmt ast.Stmt) {
 	switch stmt := stmt.(type) {
 	case *ast.EmptyStmt:
-		fmt.Fprint(p, "; // empty")
+		f.printStr("; // empty")
 	case *ast.Block:
 		if len(stmt.Stmts) > 0 {
-			fmt.Fprintln(p, "{")
-			p.Tab()
-			printStmt(p, stmt.Stmts)
-			p.ShiftTab()
-			fmt.Fprint(p, "}")
+			f.printToken(stmt.Lbrace)
+			f.printEndl()
+			f.Tab()
+			printStmt(f, stmt.Stmts)
+			f.ShiftTab()
+			f.printToken(stmt.Rbrace)
 		} else {
-			fmt.Fprint(p, "{}")
+			printExprs(f, stmt.Lbrace, stmt.Rbrace)
 		}
 	case *ast.BlockStmt:
-		printStmt(p, stmt.Block)
+		printStmt(f, stmt.Block)
 	case []ast.Stmt:
 		for _, s := range stmt {
-			printStmt(p, s)
-			fmt.Fprintln(p)
+			printStmt(f, s)
+			f.printEndl()
 		}
 	case *ast.IfStmt:
-		printExprs(p, "if ", stmt.Expr, " ")
-		printStmt(p, stmt.Body)
+		printExprs(f, stmt.If, " ", stmt.Expr, " ")
+		printStmt(f, stmt.Body)
 		if stmt.Else != nil {
-			printStmt(p, stmt.Else)
+			printStmt(f, stmt.Else)
 		}
 	case *ast.ElseStmt:
+		printExprs(f, " ", stmt.Else, " ")
 		if stmt.If == nil {
-			printExprs(p, " else ")
-			printStmt(p, stmt.Body)
+			printStmt(f, stmt.Body)
 		} else {
-			printExprs(p, " else if ", stmt.Expr, " ")
-			printStmt(p, stmt.Body)
+			printExprs(f, stmt.If, " ", stmt.Expr, " ")
+			printStmt(f, stmt.Body)
 			if stmt.Next != nil {
-				printStmt(p, stmt.Next)
+				printStmt(f, stmt.Next)
 			}
 		}
 	case *ast.ForStmt:
-		fmt.Fprint(p, "for ")
+		printExprs(f, stmt.Kw, " ")
 		if stmt.ThreeFold {
 			if stmt.Init != nil {
-				printStmt(p, stmt.Init)
+				printStmt(f, stmt.Init)
 			}
-			fmt.Fprint(p, "; ")
+			f.printStr("; ")
 			if stmt.Cond != nil {
-				printExprs(p, stmt.Cond)
+				printExpr(f, stmt.Cond)
 			}
-			fmt.Fprint(p, "; ")
-			printStmt(p, stmt.Iter)
-			fmt.Fprint(p, " ")
+			f.printStr("; ")
+			printStmt(f, stmt.Iter)
+			f.printSpace()
 		} else if stmt.Cond != nil {
-			printExprs(p, stmt.Cond, " ")
+			printExprs(f, stmt.Cond, " ")
 		}
-		printStmt(p, stmt.Body)
+		printStmt(f, stmt.Body)
 	case *ast.AssignStmt:
-		printExprs(p, stmt.Left, " = ", stmt.Right)
+		printExprs(f, stmt.Left, " ", stmt.Assign, " ", stmt.Right)
 	case *ast.DefineStmt:
-		printExprs(p, stmt.Left, " := ", stmt.Right)
+		printExprs(f, stmt.Left, " ", stmt.Define, " ", stmt.Right)
 	case *ast.ExprStmt:
-		printExprs(p, stmt.Expr)
+		printExpr(f, stmt.Expr)
 	case *ast.IncStmt:
-		printExprs(p, stmt.Expr, stmt.Op.Lit)
+		printExprs(f, stmt.Expr, stmt.Op)
 	case *ast.ReturnStmt:
+		f.printToken(stmt.Kw)
 		if stmt.Exprs != nil {
-			printExprs(p, "return ", stmt.Exprs)
-		} else {
-			printExprs(p, "return")
+			printExprs(f, " ", stmt.Exprs)
 		}
 	case *ast.ContinueStmt:
-		if stmt.Label == nil {
-			printExprs(p, "continue")
-		} else {
-			printExprs(p, "continue ", stmt.Label.Lit)
+		f.printToken(stmt.Kw)
+		if stmt.Label != nil {
+			printExprs(f, " ", stmt.Label)
 		}
 	case *ast.BreakStmt:
-		if stmt.Label == nil {
-			printExprs(p, "break")
-		} else {
-			printExprs(p, "break ", stmt.Label.Lit)
+		f.printToken(stmt.Kw)
+		if stmt.Label != nil {
+			printExprs(f, " ", stmt.Label)
 		}
 	//case *FallthroughStmt:
 	// fmt.Fprint(p, "fallthrough")
 	case *ast.VarDecls:
-		printVarDecls(p, stmt)
+		printVarDecls(f, stmt)
 	case *ast.ConstDecls:
-		printConstDecls(p, stmt)
+		printConstDecls(f, stmt)
 	default:
 		panic(fmt.Errorf("invalid statement type: %T", stmt))
 	}
@@ -102,6 +99,6 @@ func printStmt(p *fmt8.Printer, stmt ast.Stmt) {
 
 // FprintStmts prints the statements out to a writer
 func FprintStmts(out io.Writer, stmts []ast.Stmt) {
-	p := fmt8.NewPrinter(out)
-	printStmt(p, stmts)
+	f := newFormatter(out, nil)
+	printStmt(f, stmts)
 }

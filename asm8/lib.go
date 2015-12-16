@@ -10,15 +10,7 @@ import (
 // and also the symbols for importing
 type lib struct {
 	*link8.Pkg
-
 	symbols map[string]*sym8.Symbol
-}
-
-func (p *lib) Main() string { return "main" }
-
-func (p *lib) Tests() (map[string]uint32, string) {
-	// Assembly now does not have tests.
-	return nil, ""
 }
 
 // NewPkgObj creates a new package compile object
@@ -29,33 +21,30 @@ func newLib(p string) *lib {
 	return ret
 }
 
-// Link returns the link8.Package for linking.
-func (p *lib) Link() *link8.Pkg { return p.Pkg }
-
-func (p *lib) Declare(s *sym8.Symbol) {
-	_, found := p.symbols[s.Name()]
+func (lib *lib) declare(s *sym8.Symbol) {
+	_, found := lib.symbols[s.Name()]
 	if found {
 		panic("redeclare")
 	}
-	p.symbols[s.Name()] = s
+	lib.symbols[s.Name()] = s
 
 	switch s.Type {
 	case SymConst:
 		panic("todo")
 	case SymFunc:
-		p.Pkg.DeclareFunc(s.Name())
+		lib.Pkg.DeclareFunc(s.Name())
 	case SymVar:
-		p.Pkg.DeclareVar(s.Name())
+		lib.Pkg.DeclareVar(s.Name())
 	default:
 		panic("declare with invalid sym type")
 	}
 }
 
-// Query returns the symbol declared by name and its symbol index
+// query returns the symbol declared by name and its symbol index
 // if the symbol is a function or variable. It returns nil, 0 when
 // the symbol of name is not found.
-func (p *lib) query(name string) *sym8.Symbol {
-	ret, found := p.symbols[name]
+func (lib *lib) query(name string) *sym8.Symbol {
+	ret, found := lib.symbols[name]
 	if !found {
 		return nil
 	}
@@ -64,7 +53,7 @@ func (p *lib) query(name string) *sym8.Symbol {
 	case SymConst:
 		return ret
 	case SymFunc, SymVar:
-		s := p.Pkg.SymbolByName(name)
+		s := lib.Pkg.SymbolByName(name)
 		if s == nil {
 			panic("symbol missing")
 		}
@@ -73,10 +62,3 @@ func (p *lib) query(name string) *sym8.Symbol {
 		panic("bug")
 	}
 }
-
-// Lib retunrs the linkable lib.
-func (p *lib) Lib() *link8.Pkg { return p.Pkg }
-
-// Symbols returns "asm8", nil. Linking with assembly should directly look
-// into the lib.
-func (p *lib) Symbols() (string, *sym8.Table) { return "asm8", nil }

@@ -68,14 +68,9 @@ func (p *Pkg) NewTestList(name string, funcs []*Func) Ref {
 	return ret
 }
 
-// Import imports a linkable package.
-func (p *Pkg) Import(pkg *link8.Pkg) { p.lib.Import(pkg) }
-
-// ImportBuiltin imports the builtin package that provides neccessary
-// builtin functions.
-func (p *Pkg) ImportBuiltin(pkg *link8.Pkg) error {
-	p.Import(pkg)
-
+// HookBuiltin uses the builtin package that provides neccessary
+// builtin functions for IR generation
+func (p *Pkg) HookBuiltin(pkg *link8.Pkg) error {
 	var err error
 	se := func(e error) {
 		if err != nil {

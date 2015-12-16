@@ -41,7 +41,7 @@ func importPathAs(d *ast.ImportDecl) (p, as string, err error) {
 func listImport(
 	f string, rc io.ReadCloser, imp build8.Importer, golike bool,
 ) []*lex8.Error {
-	ast, es := parse.File(f, rc, golike)
+	ast, _, es := parse.File(f, rc, golike)
 	if es != nil {
 		return es
 	}
@@ -99,23 +99,24 @@ func declareImports(b *builder, f *ast.File, pinfo *build8.PkgInfo) {
 			continue
 		}
 
-		compiled := imported.Compiled
-		lib := compiled.Lib()
-		b.p.Import(lib)
-		lang, syms := compiled.Symbols()
-		if lang != "g8" {
-			// TODO: import assembly
-			b.Errorf(d.Path.Pos, "not a G language package")
+		p := imported.Package
+
+		if p.Lang == "asm8" || p.Lang == "g8" {
+			pos := importPos(d)
+			ref := newRef(&types.Pkg{as, p.Lang, p.Symbols}, nil)
+			obj := &objImport{ref}
+			sym := sym8.Make(b.path, as, symImport, obj, pos)
+			pre := b.scope.Declare(sym)
+			if pre != nil {
+				b.Errorf(pos, "%s already declared", as)
+				continue
+			}
+		} else {
+			b.Errorf(importPos(d), "cannot import %q package %q",
+				p.Lang, as,
+			)
 			continue
 		}
 
-		pos := importPos(d)
-		ref := newRef(&types.Pkg{as, syms}, nil)
-		obj := &objImport{ref}
-		pre := b.scope.Declare(sym8.Make(b.symPkg, as, symImport, obj, pos))
-		if pre != nil {
-			b.Errorf(pos, "%s already declared", as)
-			continue
-		}
 	}
 }

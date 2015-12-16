@@ -9,23 +9,21 @@ import (
 	"e8vm.io/e8vm/lex8"
 )
 
-func buildSingle(fname, s string, lang build8.Lang) (
-	image []byte, es []*lex8.Error, log []byte,
-) {
+func makeMemHome(lang build8.Lang) *build8.MemHome {
 	home := build8.NewMemHome(lang)
 	home.AddLang("asm", asm8.Lang())
-
-	pkg := home.NewPkg("main")
-	name := filepath.Base(fname)
-	pkg.AddFile(fname, name, s)
-
 	builtin := home.NewPkg("asm/builtin")
 	builtin.AddFile("", "builtin.s", builtInSrc)
 
+	return home
+}
+
+func buildMainPkg(home *build8.MemHome) (
+	image []byte, errs []*lex8.Error, log []byte,
+) {
 	b := build8.NewBuilder(home)
-	es = b.BuildAll(false)
-	if es != nil {
-		return nil, es, nil
+	if errs := b.BuildAll(); errs != nil {
+		return nil, errs, nil
 	}
 
 	image = home.Bin("main")
@@ -36,6 +34,18 @@ func buildSingle(fname, s string, lang build8.Lang) (
 	}
 
 	return image, nil, log
+}
+
+func buildSingle(fname, s string, lang build8.Lang) (
+	image []byte, errs []*lex8.Error, log []byte,
+) {
+	home := makeMemHome(lang)
+
+	pkg := home.NewPkg("main")
+	name := filepath.Base(fname)
+	pkg.AddFile(fname, name, s)
+
+	return buildMainPkg(home)
 }
 
 // CompileSingle compiles a file into a bare-metal E8 image

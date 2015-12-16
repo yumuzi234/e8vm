@@ -76,21 +76,23 @@ const (
 )
 
 // File parses a file.
-func File(f string, r io.Reader, golike bool) (*ast.File, []*lex8.Error) {
+func File(f string, r io.Reader, golike bool) (
+	*ast.File, *lex8.Recorder, []*lex8.Error,
+) {
 	bs, err := ioutil.ReadAll(r)
 	if err != nil {
-		return nil, lex8.SingleErr(err)
+		return nil, nil, lex8.SingleErr(err)
 	}
 
 	es := textbox.CheckRect(f, bytes.NewReader(bs), MaxLine, MaxCol)
 	if es != nil {
-		return nil, es
+		return nil, nil, es
 	}
 
-	p := makeParser(f, bytes.NewReader(bs), golike)
+	p, rec := makeParser(f, bytes.NewReader(bs), golike)
 	ret := parseFile(p)
 	if es := p.Errs(); es != nil {
-		return nil, es
+		return nil, nil, es
 	}
-	return ret, nil
+	return ret, rec, nil
 }

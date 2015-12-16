@@ -1,4 +1,4 @@
-[![BuildStatus](https://travis-ci.org/e8vm/e8vm.png?branch=master)](https://travis-ci.org/h8liu/e8vm)
+[![BuildStatus](https://travis-ci.org/e8vm/e8vm.png?branch=master)](https://travis-ci.org/e8vm/e8vm)
 
 ```
 go get -u e8vm.io/e8vm/...
@@ -37,5 +37,5 @@ go get -u github.com/jstemmer/gotags
 
 ## Copyright and License
 
-The project developers own the copyright; my empolyer (Google) does
+The project developers own the copyright; my employer (Google) does
 not own the copyright. Apache is the License.

@@ -21,61 +21,56 @@ func newTracer(pkgs map[string]*Pkg) *tracer {
 	return ret
 }
 
-func (t *tracer) hit(pkg *Pkg, sym string) bool {
-	p, found := t.hits[pkg.path]
+func (t *tracer) hit(sym *PkgSym) bool {
+	p, found := t.hits[sym.Pkg]
 	if !found {
 		panic("path not found")
 	}
-	ret := p[sym]
-	p[sym] = true
+	ret := p[sym.Sym]
+	p[sym.Sym] = true
 	return ret
 }
 
 // traceUsed traces symbols/objects that are used.
 // only these objects need to be linked into the final result.
-func traceUsed(pkgs map[string]*Pkg, p *Pkg, roots []string) []pkgSym {
+func traceUsed(pkgs map[string]*Pkg, roots []*PkgSym) []*PkgSym {
 	t := newTracer(pkgs)
+	cur := roots
 
-	var cur []pkgSym
-	for _, name := range roots {
-		cur = append(cur, pkgSym{p, name})
-	}
+	var next []*PkgSym
+	var ret []*PkgSym
 
-	var next []pkgSym
-	var ret []pkgSym
-
-	addLink := func(ps pkgSym, link *link) {
-		pkg := pkgs[link.pkg]
-		if pkg == nil {
+	addLink := func(link *link) {
+		if pkgs[link.Pkg] == nil {
 			panic(fmt.Errorf(
-				"package %q missing in %q", link.pkg, ps.pkg.path,
+				"package %q missing", link.Pkg,
 			))
 		}
 
-		if t.hit(pkg, link.sym) {
+		if t.hit(link.PkgSym) {
 			return
 		}
 
-		item := pkgSym{pkg, link.sym}
-		next = append(next, item)
+		next = append(next, link.PkgSym)
 	}
 
 	// BFS traverse all the symbols used by the symbol
 	for len(cur) > 0 {
+		ret = append(ret, cur...)
 		for _, ps := range cur {
-			ret = append(ret, ps)
 
-			typ := ps.Type()
-			switch typ {
+			pkg := pkgs[ps.Pkg]
+			s := pkg.SymbolByName(ps.Sym)
+			switch s.Type {
 			case SymFunc:
-				f := ps.Func()
+				f := pkg.Func(ps.Sym)
 				for _, link := range f.links {
-					addLink(ps, link)
+					addLink(link)
 				}
 			case SymVar:
-				v := ps.Var()
+				v := pkg.Var(ps.Sym)
 				for _, link := range v.links {
-					addLink(ps, link)
+					addLink(link)
 				}
 			}
 		}

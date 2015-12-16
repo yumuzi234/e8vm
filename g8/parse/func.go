@@ -40,6 +40,23 @@ func parseFunc(p *parser) *ast.Func {
 		return nil
 	}
 
+	// function aliasing only works in non go-like syntax
+	if !p.golike && p.SeeOp("=") {
+		alias := new(ast.FuncAlias)
+		alias.Eq = p.Shift()
+		alias.Pkg = p.Expect(Ident)
+		alias.Dot = p.ExpectOp(".")
+		alias.Name = p.Expect(Ident)
+
+		ret.Alias = alias
+		ret.Semi = p.ExpectSemi()
+		if p.InError() {
+			return nil
+		}
+
+		return ret
+	}
+
 	ret.Body = parseBlock(p)
 	ret.Semi = p.ExpectSemi()
 	return ret

@@ -11,48 +11,48 @@ import (
 
 var errRunFailed = errors.New("test run failed")
 
-func singleTestRun(t *testing.T, input string, N int) (out string, e error) {
+func singleTestRun(t *testing.T, input string, N int) (string, error) {
 	bs, es, _ := CompileSingle("main.g", input, false)
 	if es != nil {
 		t.Log(input)
-		for _, e := range es {
-			t.Log(e)
+		for _, err := range es {
+			t.Log(err)
 		}
 		t.Error("compile failed")
 		return "", errRunFailed
 	}
 
-	ncycle, out, e := arch8.RunImageOutput(bs, N)
+	ncycle, out, err := arch8.RunImageOutput(bs, N)
 	if ncycle == N {
 		t.Log(input)
 		t.Error("running out of time")
 		return "", errRunFailed
 	}
-	return out, e
+	return out, err
 }
 
-func TestSingleFile_good(t *testing.T) {
+func TestSingleFile(t *testing.T) {
 	const N = 100000
 
 	o := func(input, output string) {
-		out, e := singleTestRun(t, input, N)
-		if e == errRunFailed {
-			t.Error(e)
+		out, err := singleTestRun(t, input, N)
+		if err == errRunFailed {
+			t.Error(err)
 			return
 		}
-		if !arch8.IsHalt(e) {
+		if !arch8.IsHalt(err) {
 			t.Log(input)
-			t.Log(e)
+			t.Log(err)
 			t.Error("did not halt gracefully")
 			return
 		}
 
-		out = strings.TrimSpace(out)
-		output = strings.TrimSpace(output)
-		if out != output {
+		got := strings.TrimSpace(out)
+		expect := strings.TrimSpace(output)
+		if got != expect {
 			t.Log(input)
-			t.Logf("expect: %s", output)
-			t.Errorf("got: %s", out)
+			t.Logf("expect: %s", expect)
+			t.Errorf("got: %s", got)
 		}
 	}
 
@@ -62,12 +62,10 @@ func TestSingleFile_good(t *testing.T) {
 
 	o(` func r() int { return 7 }
 		func main() { printInt(r()) }`,
-		"7",
-	)
+		"7")
 	o(`	func p(i int) { printInt(i) }
 		func main() { p(33); p(44) }`,
-		"33\n44",
-	)
+		"33\n44")
 	o(`	func r() (int, int) { return 3, 4 }
 		func main() { a, b := r(); printInt(a); printInt(b) }`,
 		"3\n4")
@@ -77,34 +75,27 @@ func TestSingleFile_good(t *testing.T) {
 			return fabo(n-1) + fabo(n-2)
 		}
 		func main() { printInt(fabo(10)) }`,
-		"55",
-	)
+		"55")
 
 	o(`	func b() bool { printInt(4); return true }
 		func main() { if false || b() { printInt(3) } }`,
-		"4\n3",
-	)
+		"4\n3")
 	o(`	func b() bool { printInt(4); return true }
 		func main() { if true || b() { printInt(3) } }`,
-		"3",
-	)
+		"3")
 	o(`	func b() bool { printInt(4); return false }
 		func main() { if true && b() { printInt(3) } }`,
-		"4",
-	)
+		"4")
 	o(`	func b() bool { printInt(4); return true }
 		func main() { if false && b() { printInt(3) } }`,
-		"",
-	)
+		"")
 	o(`	func b() bool { printInt(4); return true }
 		func main() { if true && b() { printInt(3) } }`,
-		"4\n3",
-	)
+		"4\n3")
 	o(`func f(i int) { i=33; printInt(i) }; func main() { f(44) }`, "33")
 	o(`	func f(a []int) { printInt(a[3]) }
 		func main() { var a [8]int; a[4]=33; f(a[1:5]) }`,
-		"33",
-	)
+		"33")
 	o(`func main() { for true { printInt(33); break } }`, "33")
 	o(`func main() { for 0==0 { printInt(33); break } }`, "33")
 	o(`func main() { for true && true { printInt(33); break } }`, "33")
@@ -188,6 +179,8 @@ func TestSingleFile_good(t *testing.T) {
 	o(` var ( a, b []int; v [3]int )
 		func main() { a=v[:]; b = v[:]; if a == b { printInt(33) } }`, "33")
 
+	o("func init() { printInt(33) }; func main() { printInt(44) }", "33\n44")
+
 	o(`	struct a { a int; b byte }
 		func main() { 
 			var x,y a; x.a=33; y.a=44; 
@@ -249,7 +242,7 @@ func TestSingleFile_good(t *testing.T) {
 		}`, "")
 }
 
-func TestSingleFile_bad(t *testing.T) {
+func TestSingleFileBad(t *testing.T) {
 	o := func(input string) {
 		_, es, _ := CompileSingle("main.g", input, false)
 		if es == nil {
@@ -275,7 +268,7 @@ func TestSingleFile_bad(t *testing.T) {
 
 	o(`import(); import()`)
 	o("import() func main()")
-	// o(`struct A { func f(){} }; func main() { var a A; f := a.f; }`)
+	o(`struct A { func f(){} }; func main() { var a A; f := a.f; }`)
 
 	// Bugs found by the fuzzer in the past
 	o("func main() {}; func f() **o.o {}")
@@ -289,7 +282,7 @@ func TestSingleFile_bad(t *testing.T) {
 	o("const c, d = d, t; func main() {}")
 }
 
-func TestSingleFile_panic(t *testing.T) {
+func TestSingleFilePanic(t *testing.T) {
 	// runtime errors
 
 	const N = 100000

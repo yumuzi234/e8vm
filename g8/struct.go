@@ -13,7 +13,7 @@ func declareStruct(b *builder, d *ast.Struct) *structInfo {
 	name := info.Name()
 	pos := info.name.Pos
 	obj := &objType{name, newTypeRef(info.t)}
-	pre := b.scope.Declare(sym8.Make(b.symPkg, name, symStruct, obj, pos))
+	pre := b.scope.Declare(sym8.Make(b.path, name, symStruct, obj, pos))
 	if pre != nil {
 		b.Errorf(pos, "%s already declared", name)
 		b.Errorf(pre.Pos, "previously declared here as a %s",
@@ -43,7 +43,7 @@ func defineStructFields(b *builder, info *structInfo) {
 			field.T = ft
 
 			obj := &objField{name, field}
-			sym := sym8.Make(b.symPkg, name, symField, obj, id.Pos)
+			sym := sym8.Make(b.path, name, symField, obj, id.Pos)
 			pre := t.Syms.Declare(sym)
 			if pre != nil {
 				b.Errorf(id.Pos, "field %s already defined", id.Lit)
@@ -74,7 +74,7 @@ func declareMethod(b *builder, info *structInfo, f *ast.Func) *objFunc {
 	name := f.Name.Lit
 	ret := &objFunc{name, nil, f, true}
 
-	sym := sym8.Make(b.symPkg, name, symFunc, ret, f.Name.Pos)
+	sym := sym8.Make(b.path, name, symFunc, ret, f.Name.Pos)
 	pre := info.t.Syms.Declare(sym)
 	if pre != nil {
 		b.Errorf(f.Name.Pos, "member %s already defined", name)
@@ -83,7 +83,7 @@ func declareMethod(b *builder, info *structInfo, f *ast.Func) *objFunc {
 	}
 
 	fullName := fmt.Sprintf("%s:%s", info.name.Lit, name)
-	irFunc := b.p.NewFunc(fullName, f.Name.Pos, t.Sig)
+	irFunc := b.p.NewFunc(fullName, f.Name.Pos, makeFuncSig(t))
 	ret.ref = newRef(t, irFunc)
 
 	return ret

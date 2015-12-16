@@ -1,6 +1,7 @@
 package g8
 
 import (
+	"e8vm.io/e8vm/asm8"
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/ir"
 	"e8vm.io/e8vm/g8/types"
@@ -8,12 +9,7 @@ import (
 	"e8vm.io/e8vm/sym8"
 )
 
-func declareFunc(b *builder, f *ast.Func) *objFunc {
-	t := buildFuncType(b, nil, f.FuncSig)
-	if t == nil {
-		return nil
-	}
-
+func declareFuncSym(b *builder, f *ast.Func) *objFunc {
 	// NewFunc() will create the variables required for the sigs
 	name := f.Name.Lit
 	ret := new(objFunc)
@@ -21,7 +17,7 @@ func declareFunc(b *builder, f *ast.Func) *objFunc {
 	ret.f = f
 
 	// add this item to the top scope
-	s := sym8.Make(b.symPkg, name, symFunc, ret, f.Name.Pos)
+	s := sym8.Make(b.path, name, symFunc, ret, f.Name.Pos)
 	conflict := b.scope.Declare(s) // lets declare the function
 	if conflict != nil {
 		b.Errorf(f.Name.Pos, "%q already declared as a %s",
@@ -30,8 +26,58 @@ func declareFunc(b *builder, f *ast.Func) *objFunc {
 		b.Errorf(conflict.Pos, "previously declared here")
 		return nil
 	}
+	return ret
+}
 
-	irFunc := b.p.NewFunc(b.anonyName(name), f.Name.Pos, t.Sig)
+func declareFuncAlias(b *builder, f *ast.Func, t *types.Func) *objFunc {
+	alias := f.Alias
+	pkgRef := buildIdent(b, alias.Pkg)
+	if pkgRef == nil {
+		return nil
+	}
+
+	pkg, ok := pkgRef.Type().(*types.Pkg)
+	if !ok {
+		b.Errorf(alias.Pkg.Pos, "%q is not a package", alias.Pkg.Lit)
+		return nil
+	}
+
+	if pkg.Lang != "asm8" {
+		b.Errorf(alias.Pkg.Pos, "can only alias functions in asm packages")
+		return nil
+	}
+
+	sym := findPackageSym(b, alias.Name, pkg)
+	if sym == nil {
+		return nil
+	}
+
+	if sym.Type != asm8.SymFunc {
+		b.Errorf(alias.Name.Pos, "the symbol is not a function")
+		return nil
+	}
+
+	obj := declareFuncSym(b, f)
+	sig := makeFuncSig(t)
+	fsym := ir.NewFuncSym(sym.Pkg(), alias.Name.Lit, sig)
+	obj.ref = newRef(t, fsym)
+
+	return nil
+}
+
+func declareFunc(b *builder, f *ast.Func) *objFunc {
+	t := buildFuncType(b, nil, f.FuncSig)
+	if t == nil {
+		return nil
+	}
+
+	if f.Alias != nil {
+		return declareFuncAlias(b, f, t)
+	}
+
+	ret := declareFuncSym(b, f)
+	sig := makeFuncSig(t)
+	irFunc := b.p.NewFunc(b.anonyName(f.Name.Lit), f.Name.Pos, sig)
 	ret.ref = newRef(t, irFunc)
 
 	return ret

@@ -107,6 +107,8 @@ func saveRef(b *Block, reg uint32, r Ref, tmpReg uint32) {
 		} else {
 			panic("invalid heapSym to save via register")
 		}
+	case *FuncPtr:
+		saveRef(b, reg, r.Ref, tmpReg)
 	case *number, *byt:
 		panic("constant references are read only")
 	default:
@@ -143,6 +145,8 @@ func loadRef(b *Block, reg uint32, r Ref) {
 		loadSym(b, reg, r.pkg, r.name)
 	case *FuncSym:
 		loadSym(b, reg, r.pkg, r.name)
+	case *FuncPtr:
+		loadRef(b, reg, r.Ref)
 	case *addrRef:
 		if r.size == 0 {
 			return

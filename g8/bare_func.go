@@ -30,7 +30,6 @@ func buildBareFunc(b *builder, stmts []ast.Stmt) {
 	b.f = b.p.NewFunc(":start", nil, ir.VoidFuncSig)
 	b.fretNamed = false
 	b.fretRef = nil
-	b.f.SetAsMain()
 	b.b = b.f.NewBlock(nil)
 
 	b.scope.Push()
@@ -52,7 +51,7 @@ func findTheFile(pinfo *build8.PkgInfo) (*build8.File, error) {
 }
 
 func (bare bareFunc) Compile(pinfo *build8.PkgInfo) (
-	compiled build8.Linkable, es []*lex8.Error,
+	pkg *build8.Package, es []*lex8.Error,
 ) {
 	// parsing
 	theFile, e := findTheFile(pinfo)
@@ -85,7 +84,12 @@ func (bare bareFunc) Compile(pinfo *build8.PkgInfo) (
 		return nil, errs
 	}
 
-	return &builtPkg{isBare: true, lib: lib}, nil
+	ret := &build8.Package{
+		Lang: "g8-barefunc",
+		Main: startName,
+		Lib:  lib,
+	}
+	return ret, nil
 }
 
 // CompileBareFunc compiles a bare function into a bare-metal E8 image

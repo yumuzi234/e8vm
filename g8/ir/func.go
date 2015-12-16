@@ -25,8 +25,6 @@ type Func struct {
 
 	nvar      int
 	frameSize int32
-
-	isMain bool
 }
 
 func newFunc(pkg, name string, pos *lex8.Pos, sig *FuncSig) *Func {
@@ -113,10 +111,6 @@ func (f *Func) NewBlock(after *Block) *Block {
 	ret := f.newBlock(after)
 	return ret
 }
-
-// SetAsMain marks the function as main function
-// and this function will have a bare metal prologue and epilogue.
-func (f *Func) SetAsMain() { f.isMain = true }
 
 func (f *Func) String() string { return f.name }
 

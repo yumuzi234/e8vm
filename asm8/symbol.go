@@ -25,7 +25,8 @@ func init() {
 	as(SymVar == link8.SymVar)
 }
 
-func symStr(s int) string {
+// SymStr describes the symbol type in a string.
+func SymStr(s int) string {
 	switch s {
 	case SymImport:
 		return "import"

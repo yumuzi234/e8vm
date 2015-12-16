@@ -2,4 +2,7 @@ import (
 	"a"
 )
 
-var A a.A
+func init() {
+	printInt(444)
+}
+

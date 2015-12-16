@@ -63,7 +63,7 @@ func initBuilder(b *builder, imp map[string]*build8.Import) {
 		return
 	}
 
-	declareBuiltin(b, builtin.Compiled.Lib())
+	declareBuiltin(b, builtin.Lib)
 }
 
 // parse all files
@@ -77,7 +77,7 @@ func (l *lang) parsePkg(pinfo *build8.PkgInfo) (
 			panic("basename in path is different from the file name")
 		}
 
-		f, es := parse.File(src.Path, src, l.golike)
+		f, _, es := parse.File(src.Path, src, l.golike)
 		if es != nil {
 			parseErrs = append(parseErrs, es...)
 		}
@@ -123,7 +123,7 @@ func logDepMap(pinfo *build8.PkgInfo, deps []byte) error {
 }
 
 func (l *lang) Compile(pinfo *build8.PkgInfo) (
-	compiled build8.Linkable, es []*lex8.Error,
+	*build8.Package, []*lex8.Error,
 ) {
 	// parsing
 	asts, es := l.parsePkg(pinfo)
@@ -175,10 +175,28 @@ func (l *lang) Compile(pinfo *build8.PkgInfo) (
 		return nil, errs
 	}
 
+	// add debug symbols
+	ir.AddDebug(b.p, pinfo.AddFuncDebug)
+
 	// IR logging
 	if err := logIr(pinfo, b); err != nil {
 		return nil, lex8.SingleErr(err)
 	}
 
-	return &builtPkg{p: p, lib: lib}, nil
+	tests := make(map[string]uint32)
+	for i, name := range p.testNames {
+		tests[name] = uint32(i)
+	}
+
+	ret := &build8.Package{
+		Lang:     "g8",
+		Init:     initName,
+		Main:     startName,
+		TestMain: testStartName,
+		Tests:    tests,
+		Lib:      lib,
+		Symbols:  p.tops,
+	}
+
+	return ret, nil
 }

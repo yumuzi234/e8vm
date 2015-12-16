@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"e8vm.io/e8vm/arch8"
+	asminst "e8vm.io/e8vm/asm8/inst"
 	"e8vm.io/e8vm/lex8"
 )
 
@@ -66,20 +67,8 @@ func parseShift(p lex8.Logger, op *lex8.Token) uint32 {
 	return uint32(ret)
 }
 
-// InstReg composes a register based instruction
-func InstReg(fn, d, s1, s2, sh, isFloat uint32) uint32 {
-	ret := uint32(0)
-	ret |= (d & 0x7) << 21
-	ret |= (s1 & 0x7) << 18
-	ret |= (s2 & 0x7) << 15
-	ret |= (sh & 0x1f) << 10
-	ret |= (isFloat & 0x1) << 8
-	ret |= fn & 0xff
-	return ret
-}
-
 func makeInstReg(fn, d, s1, s2, sh, isFloat uint32) *inst {
-	ret := InstReg(fn, d, s1, s2, sh, isFloat)
+	ret := asminst.Reg(fn, d, s1, s2, sh, isFloat)
 	return &inst{inst: ret}
 }
 

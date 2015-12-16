@@ -3,57 +3,59 @@ package gfmt
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/fmt8"
 	"e8vm.io/e8vm/g8/ast"
+	"e8vm.io/e8vm/lex8"
 )
 
-func printExprs(p *fmt8.Printer, args ...interface{}) {
+func printExprs(f *formatter, args ...interface{}) {
 	for _, arg := range args {
-		printExpr(p, arg)
+		printExpr(f, arg)
 	}
 }
 
-func printExpr(p *fmt8.Printer, expr ast.Expr) {
+func printExpr(f *formatter, expr ast.Expr) {
 	switch expr := expr.(type) {
 	case string:
-		fmt.Fprintf(p, expr)
+		f.printStr(expr)
+	case *lex8.Token:
+		f.printToken(expr)
 	case *ast.Operand:
-		fmt.Fprintf(p, expr.Token.Lit)
+		f.printToken(expr.Token)
 	case *ast.OpExpr:
 		if expr.A == nil {
-			printExprs(p, expr.Op.Lit, expr.B)
+			printExprs(f, expr.Op, expr.B)
 		} else {
-			printExprs(p, expr.A, " ", expr.Op.Lit, " ", expr.B)
+			printExprs(f, expr.A, " ", expr.Op, " ", expr.B)
 		}
 	case *ast.StarExpr:
-		printExprs(p, "*", expr.Expr)
+		printExprs(f, expr.Star, expr.Expr)
 	case *ast.ParenExpr:
-		printExprs(p, "(", expr.Expr, ")")
+		printExprs(f, expr.Lparen, expr.Expr, expr.Rparen)
 	case *ast.ExprList:
 		for i, e := range expr.Exprs {
 			if i != 0 {
-				printExprs(p, ", ")
+				printExprs(f, expr.Commas[i-1], " ")
 			}
-			printExprs(p, e)
+			printExpr(f, e)
 		}
 	case *ast.CallExpr:
 		if expr.Args != nil {
-			printExprs(p, expr.Func, "(", expr.Args, ")")
+			printExprs(f, expr.Func, expr.Lparen, expr.Args, expr.Rparen)
 		} else {
-			printExprs(p, expr.Func, "()")
+			printExprs(f, expr.Func, expr.Lparen, expr.Rparen)
 		}
 	case *ast.IndexExpr:
-		printExprs(p, expr.Array, "[", expr.Index, "]")
+		printExprs(f, expr.Array, expr.Lbrack, expr.Index, expr.Rbrack)
 	case *ast.ArrayTypeExpr:
 		if expr.Len == nil {
-			printExprs(p, "[]", expr.Type)
+			printExprs(f, expr.Lbrack, expr.Rbrack, expr.Type)
 		} else {
-			printExprs(p, "[", expr.Len, "]", expr.Type)
+			printExprs(f, expr.Lbrack, expr.Len, expr.Rbrack, expr.Type)
 		}
 	case *ast.FuncTypeExpr:
-		printExprs(p, "func")
+		f.printToken(expr.Kw)
 	case *ast.MemberExpr:
-		printExprs(p, expr.Expr, ".", expr.Sub.Lit)
+		printExprs(f, expr.Expr, expr.Dot, expr.Sub)
 	default:
 		panic(fmt.Errorf("invalid expression type: %T", expr))
 	}

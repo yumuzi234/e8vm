@@ -2,6 +2,7 @@ package arch8
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"math/rand"
 
@@ -81,6 +82,16 @@ func (m *Machine) WriteWord(phyAddr uint32, v uint32) error {
 	return exp
 }
 
+// ReadWord reads the word at particular virtual address of a particular core.
+func (m *Machine) ReadWord(core byte, virtAddr uint32) (uint32, error) {
+	return m.cores.readWord(core, virtAddr)
+}
+
+// DumpRegs returns the values of the current registers of a core.
+func (m *Machine) DumpRegs(core byte) []uint32 {
+	return m.cores.dumpRegs(core)
+}
+
 // SetOutput sets the output writer of the machine's serial
 // console.
 func (m *Machine) SetOutput(w io.Writer) {
@@ -147,18 +158,28 @@ func (m *Machine) RandSeed(s int64) {
 	m.ticker.Rand = rand.New(rand.NewSource(s))
 }
 
-func (m *Machine) loadSections(secs []*e8.Section) error {
+// LoadSections loads a list of sections into the machine.
+func (m *Machine) LoadSections(secs []*e8.Section) error {
 	for _, s := range secs {
 		var buf io.Reader
-		if s.Type == e8.Zeros {
+		switch s.Type {
+		case e8.Zeros:
 			buf = &zeroReader{s.Header.Size}
-		} else {
+		case e8.Code, e8.Data:
 			buf = bytes.NewReader(s.Bytes)
+		case e8.None, e8.Debug, e8.Comment:
+			continue
+		default:
+			return fmt.Errorf("unknown section type: %d", s.Type)
 		}
 
 		if err := m.WriteBytes(buf, s.Addr); err != nil {
 			return err
 		}
+	}
+
+	if pc, found := findCodeStart(secs); found {
+		m.SetPC(pc)
 	}
 	return nil
 }
@@ -192,14 +213,7 @@ func (m *Machine) LoadImage(r io.ReadSeeker) error {
 	if err != nil {
 		return err
 	}
-	if err := m.loadSections(secs); err != nil {
-		return err
-	}
-
-	if pc, found := findCodeStart(secs); found {
-		m.SetPC(pc)
-	}
-	return nil
+	return m.LoadSections(secs)
 }
 
 // LoadImageBytes loads an e8 image in bytes into the machine.

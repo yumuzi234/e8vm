@@ -4,27 +4,38 @@ import (
 	"fmt"
 )
 
-func layout(used []pkgSym, initPC uint32) (
-	funcs, vars, zeros []pkgSym, e error,
+func layout(pkgs map[string]*Pkg, used []*PkgSym, main *Func, initPC uint32) (
+	funcs, vars, zeros []*PkgSym, err error,
 ) {
 	pt := initPC
 	const codeMax uint32 = 0xffffffff
 
+	putFunc := func(f *Func) error {
+		f.addr = pt
+		size := f.Size()
+		if size > codeMax-pt {
+			return fmt.Errorf("code section too large")
+		}
+		pt += size
+		return nil
+	}
+
+	if err = putFunc(main); err != nil {
+		return
+	}
+
 	for _, ps := range used {
-		typ := ps.Type()
-		switch typ {
+		pkg := pkgs[ps.Pkg]
+		s := pkg.SymbolByName(ps.Sym)
+		switch s.Type {
 		case SymFunc:
 			funcs = append(funcs, ps)
-
-			f := ps.Func()
-			f.addr = pt
-			size := f.Size()
-			if size > codeMax-pt {
-				return nil, nil, nil, fmt.Errorf("code section too large")
+			f := pkg.Func(ps.Sym)
+			if err = putFunc(f); err != nil {
+				return
 			}
-			pt += size
 		case SymVar:
-			v := ps.Var()
+			v := pkg.Var(ps.Sym)
 			if !v.IsZeros() {
 				vars = append(vars, ps)
 			} else {
@@ -37,10 +48,13 @@ func layout(used []pkgSym, initPC uint32) (
 
 	const dataMax uint32 = 0xffffffff
 
-	putVar := func(v *Var) error {
+	putVar := func(ps *PkgSym) error {
+		v := pkgVar(pkgs, ps)
 		if v.align > 1 && pt%v.align != 0 {
 			v.prePad = v.align - pt%v.align
 			pt += v.prePad
+		} else {
+			v.prePad = 0
 		}
 		if v.align > 1 && pt%v.align != 0 {
 			panic("bug")
@@ -57,16 +71,14 @@ func layout(used []pkgSym, initPC uint32) (
 	}
 
 	for _, ps := range vars {
-		err := putVar(ps.Var())
-		if err != nil {
-			return nil, nil, nil, err
+		if err = putVar(ps); err != nil {
+			return
 		}
 	}
 
 	for _, ps := range zeros {
-		err := putVar(ps.Var())
-		if err != nil {
-			return nil, nil, nil, err
+		if err = putVar(ps); err != nil {
+			return
 		}
 	}
 

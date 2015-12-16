@@ -2,6 +2,7 @@ package asm8
 
 import (
 	"e8vm.io/e8vm/arch8"
+	asminst "e8vm.io/e8vm/asm8/inst"
 	"e8vm.io/e8vm/lex8"
 )
 
@@ -12,13 +13,6 @@ var opJmpMap = map[string]uint32{
 
 func isValidSymbol(sym string) bool {
 	return true
-}
-
-// InstJmp makes a jump instruction
-func InstJmp(op uint32, im int32) uint32 {
-	ret := (op & 0x3) << 30
-	ret |= uint32(im) & 0x3fffffff
-	return ret
 }
 
 func resolveInstJmp(p lex8.Logger, ops []*lex8.Token) (*inst, bool) {
@@ -52,7 +46,7 @@ func resolveInstJmp(p lex8.Logger, ops []*lex8.Token) (*inst, bool) {
 	}
 
 	ret := new(inst)
-	ret.inst = InstJmp(op, 0)
+	ret.inst = asminst.Jmp(op, 0)
 	ret.pkg = pack
 	ret.sym = sym
 	ret.fill = fill

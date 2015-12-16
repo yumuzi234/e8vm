@@ -70,6 +70,28 @@ func (c *multiCore) PrintStatus() {
 	}
 }
 
+func (c *multiCore) readWord(core byte, virtAddr uint32) (uint32, error) {
+	if int(core) >= len(c.cores) {
+		panic("out of cores")
+	}
+
+	v, exp := c.cores[core].virtMem.ReadWord(virtAddr, 0)
+	if exp != nil {
+		return 0, exp
+	}
+	return v, nil
+}
+
+func (c *multiCore) dumpRegs(core byte) []uint32 {
+	if int(core) >= len(c.cores) {
+		panic("out of cores")
+	}
+
+	ret := make([]uint32, Nreg)
+	copy(ret, c.cores[core].regs)
+	return ret
+}
+
 func printCPUStatus(c *cpu) {
 	p := func(name string, reg int) {
 		fmt.Printf(" %3s = 0x%08x %-11d\n",

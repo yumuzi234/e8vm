@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -10,10 +11,13 @@ import (
 
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/dasm8"
+	"e8vm.io/e8vm/debug8"
+	"e8vm.io/e8vm/e8"
 )
 
 var (
 	doDasm      = flag.Bool("d", false, "do dump")
+	printDebug  = flag.Bool("debug", false, "print debug symbols")
 	ncycle      = flag.Int("n", 100000, "max cycles to execute")
 	memSize     = flag.Int("m", 0, "memory size; 0 for full 4GB")
 	printStatus = flag.Bool("s", false, "print status after execution")
@@ -22,10 +26,43 @@ var (
 	randSeed    = flag.Int64("seed", 0, "random seed, 0 for using the time")
 )
 
+func debugSection(secs []*e8.Section) *e8.Section {
+	for _, sec := range secs {
+		if sec.Type == e8.Debug {
+			return sec
+		}
+	}
+	return nil
+}
+
+func printStackTrace(m *arch8.Machine, exp error, sec *e8.Section) {
+	if sec == nil {
+		return
+	}
+
+	coreExp, ok := exp.(*arch8.CoreExcep)
+	if !ok {
+		return
+	}
+
+	tab, err := debug8.UnmarshalTable(sec.Bytes)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	debug8.FprintStack(os.Stdout, m, byte(coreExp.Core), tab)
+}
+
 func run(bs []byte) (int, error) {
 	// create a single core machine
 	m := arch8.NewMachine(uint32(*memSize), 1)
-	if err := m.LoadImageBytes(bs); err != nil {
+	secs, err := e8.Read(bytes.NewReader(bs))
+	if err != nil {
+		return 0, err
+	}
+
+	if err := m.LoadSections(secs); err != nil {
 		return 0, err
 	}
 
@@ -46,6 +83,10 @@ func run(bs []byte) (int, error) {
 	ret, exp := m.Run(*ncycle)
 	if *printStatus {
 		m.PrintCoreStatus()
+	}
+
+	if !arch8.IsHalt(exp) {
+		printStackTrace(m, exp, debugSection(secs))
 	}
 
 	if exp == nil {
@@ -71,6 +112,27 @@ func main() {
 		err = dasm8.DumpImage(f, os.Stdout)
 		if err != nil {
 			log.Fatal(err)
+		}
+	} else if *printDebug {
+		f, err := os.Open(fname)
+		defer f.Close()
+
+		secs, err := e8.Read(f)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		for _, sec := range secs {
+			if sec.Type != e8.Debug {
+				continue
+			}
+
+			tab, err := debug8.UnmarshalTable(sec.Bytes)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			tab.PrintTo(os.Stdout)
 		}
 	} else {
 		bs, err := ioutil.ReadFile(fname)

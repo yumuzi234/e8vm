@@ -34,6 +34,8 @@ func DumpImage(r io.ReadSeeker, out io.Writer) error {
 			fmt.Fprintf(out, "[zeros of %d bytes at %08x]\n",
 				sec.Size, sec.Addr,
 			)
+		case e8.Debug:
+			fmt.Fprintf(out, "[debug of %d bytes]\n", sec.Size)
 		}
 	}
 

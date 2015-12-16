@@ -2,6 +2,7 @@ package asm8
 
 import (
 	"e8vm.io/e8vm/arch8"
+	asminst "e8vm.io/e8vm/asm8/inst"
 	"e8vm.io/e8vm/lex8"
 )
 
@@ -13,17 +14,8 @@ var (
 	}
 )
 
-// InstBr compose a branch instruction
-func InstBr(op, s1, s2 uint32, im int32) uint32 {
-	ret := (op & 0xff) << 24
-	ret |= (s1 & 0x7) << 21
-	ret |= (s2 & 0x7) << 18
-	ret |= uint32(im) & 0x3ffff
-	return ret
-}
-
 func makeInstBr(op, s1, s2 uint32) *inst {
-	ret := InstBr(op, s1, s2, 0)
+	ret := asminst.Br(op, s1, s2, 0)
 	return &inst{inst: ret}
 }
 

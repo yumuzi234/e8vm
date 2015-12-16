@@ -50,7 +50,7 @@ func snapNearBy(n *MapNode, tak map[int]bool) {
 }
 
 func layout(m *Map) {
-	layers := m.sortedLayers()
+	layers := m.SortedLayers()
 	slotTaken := make([]map[int]bool, m.Nlayer)
 	for i := range slotTaken {
 		slotTaken[i] = make(map[int]bool)

@@ -8,6 +8,10 @@ go:
 
 install:
     - go get ./...
+    - go get -u e8vm.io/tools/cmd/e8chk
+    - go get -u github.com/golang/lint/golint
 
 script:
     - go test ./...
+    - e8chk -path="e8vm.io/e8vm"
+    - golint ./...

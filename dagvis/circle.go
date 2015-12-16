@@ -26,7 +26,7 @@ func shortestCircle(nodes map[string]*MapNode) []*MapNode {
 
 	var shortestNode *MapNode
 	var shortestDist int
-	shortestDist = 2*len(nodes)
+	shortestDist = 2 * len(nodes)
 
 	for _, via := range nodes {
 		for _, from := range nodes {
@@ -46,18 +46,20 @@ func shortestCircle(nodes map[string]*MapNode) []*MapNode {
 				}
 
 				d2, d2Inf := dist(via, to)
+
 				// infinit edge
 				if d2Inf || d2 >= shortestDist {
 					continue
 				}
 
 				d, inf := dist(from, to)
-				if inf || (d1+d2 < d) {
+				if inf || d1+d2 < d {
 					dists[from][to] = d1 + d2
 					nexts[from][to] = nexts[from][via]
 				}
 
 				if from == to {
+
 					// check circle of two nodes 
 					if d1 == 1 && d2 == 1 {
 						var ret []*MapNode

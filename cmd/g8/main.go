@@ -68,9 +68,9 @@ func main() {
 		}
 	} else {
 		if *parseAST {
-			f, es := parse.File(fname, bytes.NewBuffer(input), true)
+			f, rec, es := parse.File(fname, bytes.NewBuffer(input), true)
 			printErrs(es)
-			gfmt.FprintFile(os.Stdout, f)
+			gfmt.FprintFile(os.Stdout, f, rec)
 		} else {
 			bs, es, irLog := g8.CompileSingle(fname, string(input), *golike)
 			printErrs(es)
