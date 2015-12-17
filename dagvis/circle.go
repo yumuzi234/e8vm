@@ -60,7 +60,7 @@ func shortestCircle(nodes map[string]*MapNode) []*MapNode {
 
 				if from == to {
 
-					// check circle of two nodes 
+					// check circle of two nodes
 					if d1 == 1 && d2 == 1 {
 						var ret []*MapNode
 						ret = append(ret, from)
