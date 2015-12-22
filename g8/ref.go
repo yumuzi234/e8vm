@@ -11,10 +11,11 @@ type ref struct {
 	lst []*ref
 
 	typ         types.T
-	ir          ir.Ref
 	addressable bool
 	recv        *ref        // receiver, if any
 	recvFunc    *types.Func // the actual func type
+
+	ir ir.Ref
 }
 
 func newRef(t types.T, r ir.Ref) *ref { return &ref{typ: t, ir: r} }

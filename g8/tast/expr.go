@@ -9,25 +9,25 @@ import (
 
 // This is the this pointer.
 type This struct {
-	T *types.Struct
+	*Ref
 }
 
 // Const is a constant.
 type Const struct {
-	T types.T
+	*Ref
 }
 
 // Ident is an identifier.
 type Ident struct {
 	*lex8.Token
-	T types.T
+	*Ref
 }
 
 // MemberExpr is an expression of "a.b"
 type MemberExpr struct {
 	Expr Expr
 	Sub  *lex8.Token
-	T    types.T
+	*Ref
 }
 
 // OpExpr is an expression likfe "a+b"
@@ -35,20 +35,20 @@ type OpExpr struct {
 	A  Expr
 	Op *lex8.Token
 	B  Expr
-	T  types.T
+	*Ref
 }
 
 // StarExpr is an expression like "*a"
 type StarExpr struct {
 	Expr Expr
-	T    types.T
+	*Ref
 }
 
 // CallExpr is an expression like "f(x)"
 type CallExpr struct {
 	Func Expr
 	Args *ExprList
-	T    types.T
+	*Ref
 }
 
 // IndexExpr is an expression like "a[b:c]"
@@ -57,7 +57,7 @@ type IndexExpr struct {
 	Array    Expr
 	Index    Expr
 	IndexEnd Expr
-	T        types.T
+	*Ref
 }
 
 // ArrayTypeExpr is an expresion like "[x]b".
@@ -65,20 +65,20 @@ type IndexExpr struct {
 type ArrayTypeExpr struct {
 	Len  Expr
 	Type Expr
-	T    types.T
+	*Ref
 }
 
 // Para is a function parameter.
 type Para struct {
 	Ident *lex8.Token
-	T     types.T
+	*Ref
 }
 
 // FuncTypeExpr is an expression like "func f(t a)".
 type FuncTypeExpr struct {
 	Args []*Para
 	Rets []*Para
-	T    types.T
+	*Ref
 }
 
 // ExprList is a list of expressions

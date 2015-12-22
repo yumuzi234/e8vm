@@ -2,5 +2,8 @@
 // Compiling it should contain no semantic errors.
 package tast
 
-// Expr is a generic interface for expression.
+// Expr is a generic interface for an expression.
 type Expr interface{}
+
+// Stmt is a generic interface for a statement.
+type Stmt interface{}
