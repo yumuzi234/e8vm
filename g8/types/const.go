@@ -13,6 +13,11 @@ type Const struct {
 // NewConst creates a new constant.
 func NewConst(v int64, t T) *Const { return &Const{Value: v, Type: t} }
 
+// NewConstString creates a new string constant.
+func NewConstString(s string) *Const {
+	return &Const{Value: s, Type: String}
+}
+
 // NewNumber creates a new constant number.
 func NewNumber(v int64) *Const {
 	return &Const{Value: v, Type: Number{}}

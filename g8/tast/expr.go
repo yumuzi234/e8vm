@@ -7,8 +7,18 @@ import (
 	"e8vm.io/e8vm/lex8"
 )
 
-// Operand is an operand expression
-type Operand struct {
+// This is the this pointer.
+type This struct {
+	T *types.Struct
+}
+
+// Const is a constant.
+type Const struct {
+	T types.T
+}
+
+// Ident is an identifier.
+type Ident struct {
 	*lex8.Token
 	T types.T
 }
@@ -79,7 +89,7 @@ type ExprList struct {
 // ExprType returns the type of an expression node.
 func ExprType(expr Expr) types.T {
 	switch expr := expr.(type) {
-	case *Operand:
+	case *This:
 		return expr.T
 	case *MemberExpr:
 		return expr.T
