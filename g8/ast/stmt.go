@@ -57,7 +57,7 @@ type ElseStmt struct {
 	If   *lex8.Token // optional
 	Expr Expr        // optional for else if
 	Body *Block
-	Next *ElseStmt // next else statment
+	Next *ElseStmt // next else statement
 }
 
 // ForStmt is a loop statement
