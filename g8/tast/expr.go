@@ -3,7 +3,6 @@ package tast
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/lex8"
 )
 
@@ -81,32 +80,35 @@ type FuncTypeExpr struct {
 	*Ref
 }
 
-// ExprList is a list of expressions
+// ExprList is a list of expressions.
 type ExprList struct {
 	Exprs []Expr
+	*Ref
 }
 
-// ExprType returns the type of an expression node.
-func ExprType(expr Expr) types.T {
+// ExprRef returns the reference of the expression.
+func ExprRef(expr Expr) *Ref {
 	switch expr := expr.(type) {
 	case *This:
-		return expr.T
+		return expr.Ref
 	case *MemberExpr:
-		return expr.T
+		return expr.Ref
 	case *OpExpr:
-		return expr.T
+		return expr.Ref
 	case *StarExpr:
-		return expr.T
+		return expr.Ref
 	case *CallExpr:
-		return expr.T
+		return expr.Ref
 	case *IndexExpr:
-		return expr.T
+		return expr.Ref
 	case *ArrayTypeExpr:
-		return expr.T
+		return expr.Ref
 	case *Para:
-		return expr.T
+		return expr.Ref
 	case *FuncTypeExpr:
-		return expr.T
+		return expr.Ref
+	case *ExprList:
+		return expr.Ref
 	default:
 		panic(fmt.Errorf("invalid tast expr node: %T", expr))
 	}

@@ -17,3 +17,7 @@ type builder struct {
 	exprFunc func(b *builder, expr ast.Expr) tast.Expr
 	stmtFunc func(b *builder, stmt ast.Stmt) tast.Stmt
 }
+
+func (b *builder) buildExpr(expr ast.Expr) tast.Expr {
+	return b.exprFunc(b, expr)
+}

@@ -18,6 +18,9 @@ type Ref struct {
 	// RecvFunc is the actual func type, which takes the receiver as the
 	// first argument.
 	RecvFunc *types.Func
+
+	// List saves the ref for an expression list.
+	List []*Ref
 }
 
 // NewRef returns a new reference node.
