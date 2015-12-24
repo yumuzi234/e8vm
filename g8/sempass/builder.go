@@ -18,6 +18,18 @@ type builder struct {
 	stmtFunc func(b *builder, stmt ast.Stmt) tast.Stmt
 }
 
+func newBuilder(path string) *builder {
+	return &builder{
+		ErrorList: lex8.NewErrorList(),
+		path:      path,
+		scope:     sym8.NewScope(),
+	}
+}
+
 func (b *builder) buildExpr(expr ast.Expr) tast.Expr {
 	return b.exprFunc(b, expr)
+}
+
+func (b *builder) BuildExpr(expr ast.Expr) tast.Expr {
+	return b.buildExpr(expr)
 }

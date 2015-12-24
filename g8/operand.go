@@ -1,32 +1,36 @@
 package g8
 
 import (
-	"math"
 	"strconv"
 
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/ir"
 	"e8vm.io/e8vm/g8/parse"
+	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/lex8"
 )
 
+func sempassOperand(b *builder, op *lex8.Token) tast.Expr {
+	return b.spass.BuildExpr(&ast.Operand{op})
+}
+
+func genExpr(b *builder, expr tast.Expr) *ref {
+	if expr == nil {
+		return nil
+	}
+
+	switch expr := expr.(type) {
+	case *tast.Const:
+		return newRef(expr.T, nil)
+	default:
+		b.Errorf(nil, "genExpr not implemented for %T", expr)
+		return nil
+	}
+}
+
 func buildInt(b *builder, op *lex8.Token) *ref {
-	ret, e := strconv.ParseInt(op.Lit, 0, 64)
-	if e != nil {
-		b.Errorf(op.Pos, "invalid integer: %s", e)
-		return nil
-	}
-
-	if ret < math.MinInt32 {
-		b.Errorf(op.Pos, "integer too small to fit in 32-bit")
-		return nil
-	} else if ret > math.MaxUint32 {
-		b.Errorf(op.Pos, "integer too large to fit in 32-bit")
-		return nil
-	}
-
-	return newRef(types.NewNumber(ret), nil)
+	return genExpr(b, sempassOperand(b, op))
 }
 
 func buildChar(b *builder, op *lex8.Token) *ref {

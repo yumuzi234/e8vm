@@ -9,6 +9,7 @@ import (
 
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/ir"
+	"e8vm.io/e8vm/g8/sempass"
 	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/sym8"
@@ -50,6 +51,8 @@ type builder struct {
 	anonyCount int
 
 	rand *rand.Rand
+
+	spass sempass.Builder
 }
 
 func newRand() *rand.Rand {
@@ -75,6 +78,8 @@ func newBuilder(path string, golike bool) *builder {
 		structFields: make(map[*types.Struct]*sym8.Table),
 
 		rand: newRand(),
+
+		spass: sempass.NewBuilder(path),
 	}
 }
 
