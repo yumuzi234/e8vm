@@ -45,14 +45,11 @@ type builder struct {
 	// this pointer, only valid when building a method.
 	this *ref
 
-	// file level dependency, for checking circular dependencies.
-	deps deps
-
 	anonyCount int
 
 	rand *rand.Rand
 
-	spass sempass.Builder
+	spass *sempass.Builder
 }
 
 func newRand() *rand.Rand {
@@ -82,26 +79,6 @@ func newBuilder(path string, golike bool) *builder {
 
 		spass: sempass.NewBuilder(path, s),
 	}
-}
-
-func (b *builder) refSym(sym *sym8.Symbol, pos *lex8.Pos) {
-	// track file dependencies inside a package
-	if b.deps == nil {
-		return // no need to track deps
-	}
-
-	symPos := sym.Pos
-	if symPos == nil {
-		return // builtin
-	}
-	if sym.Pkg() != b.path {
-		return // cross package reference
-	}
-	if pos.File == symPos.File {
-		return
-	}
-
-	b.deps.add(pos.File, symPos.File)
 }
 
 func (b *builder) anonyName(name string) string {

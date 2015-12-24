@@ -165,7 +165,7 @@ func buildMember(b *builder, m *ast.MemberExpr) *ref {
 		return nil
 	}
 
-	b.refSym(sym, m.Sub.Pos)
+	b.spass.RefSym(sym, m.Sub.Pos)
 
 	if sym.Type == symField {
 		return buildField(b, addr, sym.Obj.(*objField).Field)

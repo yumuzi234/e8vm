@@ -75,7 +75,7 @@ func buildConstIdent(b *builder, ident *lex8.Token) *ref {
 		return nil
 	}
 
-	b.refSym(s, ident.Pos)
+	b.spass.RefSym(s, ident.Pos)
 	switch s.Type {
 	case symType, symStruct:
 		return s.Obj.(*objType).ref
@@ -98,7 +98,7 @@ func buildIdent(b *builder, ident *lex8.Token) *ref {
 		return nil
 	}
 
-	b.refSym(s, ident.Pos)
+	b.spass.RefSym(s, ident.Pos)
 
 	switch s.Type {
 	case symVar:

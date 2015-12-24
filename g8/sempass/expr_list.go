@@ -19,7 +19,7 @@ func appendRef(base, toAdd *tast.Ref) *tast.Ref {
 	return base
 }
 
-func buildExprList(b *builder, list *ast.ExprList) *tast.ExprList {
+func buildExprList(b *Builder, list *ast.ExprList) *tast.ExprList {
 	ret := new(tast.ExprList)
 	if list == nil {
 		return ret
@@ -30,7 +30,7 @@ func buildExprList(b *builder, list *ast.ExprList) *tast.ExprList {
 	}
 
 	for _, expr := range list.Exprs {
-		ex := b.buildExpr(expr)
+		ex := b.BuildExpr(expr)
 		if ex == nil {
 			return nil
 		}

@@ -5,7 +5,7 @@ import (
 	"e8vm.io/e8vm/g8/tast"
 )
 
-func buildExpr(b *builder, expr ast.Expr) tast.Expr {
+func buildExpr(b *Builder, expr ast.Expr) tast.Expr {
 	if expr == nil {
 		panic("bug")
 	}

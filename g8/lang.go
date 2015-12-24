@@ -138,7 +138,7 @@ func (l *lang) Compile(pinfo *build8.PkgInfo) (
 	}
 
 	p := newPkg(asts)
-	b.deps = newDeps(asts) // dependency map init
+	b.spass.InitDeps(asts)
 
 	p.build(b, pinfo)
 	if es = b.Errs(); es != nil {
@@ -146,7 +146,7 @@ func (l *lang) Compile(pinfo *build8.PkgInfo) (
 	}
 
 	// circular dep check
-	g := b.deps.graph()
+	g := b.spass.DepGraph()
 	g, err := g.Rename(func(name string) (string, error) {
 		if strings.HasSuffix(name, ".g") {
 			return strings.TrimSuffix(name, ".g"), nil
