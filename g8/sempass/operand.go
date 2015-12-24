@@ -64,14 +64,17 @@ func buildIdent(b *Builder, ident *lex8.Token) tast.Expr {
 
 	t := s.ObjType.(types.T)
 	switch s.Type {
-	case tast.SymVar:
+	case tast.SymVar, tast.SymField:
 		ref := tast.NewAddressableRef(t)
 		return &tast.Ident{ident, ref, s}
-	case tast.SymFunc:
-
+	case tast.SymFunc, tast.SymConst,
+		tast.SymStruct, tast.SymType, tast.SymImport:
+		ref := tast.NewRef(t)
+		return &tast.Ident{ident, ref, s}
+	default:
+		b.Errorf(ident.Pos, "todo: token type: %s", tast.SymStr(s.Type))
+		return nil
 	}
-
-	panic("todo")
 }
 
 func buildOperand(b *Builder, op *ast.Operand) tast.Expr {

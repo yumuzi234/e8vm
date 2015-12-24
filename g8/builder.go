@@ -145,3 +145,10 @@ func (b *builder) buildStmts(stmts []ast.Stmt) {
 }
 
 func (b *builder) buildStmt(stmt ast.Stmt) { b.stmtFunc(b, stmt) }
+
+func (b *builder) Errs() []*lex8.Error {
+	if errs := b.spass.Errs(); errs != nil {
+		return errs
+	}
+	return b.ErrorList.Errs()
+}

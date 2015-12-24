@@ -39,10 +39,41 @@ func genConst(b *builder, c *tast.Const) *ref {
 	panic("other const types not supported")
 }
 
+func genIdent(b *builder, id *tast.Ident) *ref {
+	s := id.Symbol
+	switch s.Type {
+	case tast.SymVar:
+		return s.Obj.(*objVar).ref
+	case tast.SymFunc:
+		v := s.Obj.(*objFunc)
+		if !v.isMethod {
+			return v.ref
+		}
+		if b.this == nil {
+			panic("this missing")
+		}
+		return newRecvRef(v.Type().(*types.Func), b.this, v.IR())
+	case tast.SymConst:
+		return s.Obj.(*objConst).ref
+	case tast.SymType, tast.SymStruct:
+		return s.Obj.(*objType).ref
+	case tast.SymField:
+		v := s.Obj.(*objField)
+		return buildField(b, b.this.IR(), v.Field)
+	case tast.SymImport:
+		return s.Obj.(*objImport).ref
+	default:
+		b.Errorf(id.Token.Pos, "todo: token type: %s", tast.SymStr(s.Type))
+		return nil
+	}
+}
+
 func genExpr(b *builder, expr tast.Expr) *ref {
 	switch expr := expr.(type) {
 	case *tast.Const:
 		return genConst(b, expr)
+	case *tast.Ident:
+		return genIdent(b, expr)
 	}
 
 	panic(fmt.Errorf("genExpr not implemented for %T", expr))
@@ -137,10 +168,8 @@ func buildOperand(b *builder, op *ast.Operand) *ref {
 	}
 
 	switch op.Token.Type {
-	case parse.Int, parse.Char, parse.String:
+	case parse.Int, parse.Char, parse.String, parse.Ident:
 		return buildOperand2(b, op.Token)
-	case parse.Ident:
-		return buildIdent(b, op.Token)
 	default:
 		b.Errorf(op.Token.Pos, "invalid or not implemented: %d",
 			op.Token.Type,
