@@ -68,6 +68,23 @@ func genIdent(b *builder, id *tast.Ident) *ref {
 	}
 }
 
+func genConstIdent(b *builder, id *tast.Ident) *ref {
+	s := id.Symbol
+	switch s.Type {
+	case tast.SymConst:
+		return s.Obj.(*objConst).ref
+	case tast.SymType, tast.SymStruct:
+		return s.Obj.(*objType).ref
+	case tast.SymImport:
+		return s.Obj.(*objImport).ref
+	default:
+		b.Errorf(id.Token.Pos, "%s is a %s, not a const",
+			id.Token.Lit, tast.SymStr(s.Type),
+		)
+		return nil
+	}
+}
+
 func genExpr(b *builder, expr tast.Expr) *ref {
 	switch expr := expr.(type) {
 	case *tast.Const:
@@ -75,8 +92,17 @@ func genExpr(b *builder, expr tast.Expr) *ref {
 	case *tast.Ident:
 		return genIdent(b, expr)
 	}
-
 	panic(fmt.Errorf("genExpr not implemented for %T", expr))
+}
+
+func genConstExpr(b *builder, expr tast.Expr) *ref {
+	switch expr := expr.(type) {
+	case *tast.Const:
+		return genConst(b, expr)
+	case *tast.Ident:
+		return genConstIdent(b, expr)
+	}
+	panic("bug")
 }
 
 func buildOperand2(b *builder, op *lex8.Token) *ref {
@@ -84,8 +110,15 @@ func buildOperand2(b *builder, op *lex8.Token) *ref {
 	if expr == nil {
 		return nil
 	}
-
 	return genExpr(b, expr)
+}
+
+func buildConstOperand2(b *builder, op *lex8.Token) *ref {
+	expr := b.spass.BuildExpr(&ast.Operand{op})
+	if expr == nil {
+		return nil
+	}
+	return genConstExpr(b, expr)
 }
 
 func buildField(b *builder, this ir.Ref, field *types.Field) *ref {
@@ -143,13 +176,9 @@ func buildOperand(b *builder, op *ast.Operand) *ref {
 }
 
 func buildConstOperand(b *builder, op *ast.Operand) *ref {
-	switch op.Token.Type {
-	case parse.Int:
-		return buildOperand2(b, op.Token)
-	case parse.Ident:
-		return buildConstIdent(b, op.Token)
-	default:
-		b.Errorf(op.Token.Pos, "not a const")
+	expr := b.spass.BuildExpr(&ast.Operand{op.Token})
+	if expr == nil {
 		return nil
 	}
+	return genConstExpr(b, expr)
 }
