@@ -85,7 +85,7 @@ func buildGlobalVarDecl(b *builder, d *ast.VarDecl) {
 	}
 
 	for _, ident := range d.Idents.Idents {
-		obj := declareVar(b, ident)
+		obj := declareVar(b, ident, t)
 		if obj != nil {
 			obj.ref = newAddressableRef(t, b.newGlobalVar(t, ident.Lit))
 		}

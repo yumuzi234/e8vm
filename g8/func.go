@@ -9,7 +9,7 @@ import (
 	"e8vm.io/e8vm/sym8"
 )
 
-func declareFuncSym(b *builder, f *ast.Func) *objFunc {
+func declareFuncSym(b *builder, f *ast.Func, t types.T) *objFunc {
 	// NewFunc() will create the variables required for the sigs
 	name := f.Name.Lit
 	ret := new(objFunc)
@@ -17,7 +17,7 @@ func declareFuncSym(b *builder, f *ast.Func) *objFunc {
 	ret.f = f
 
 	// add this item to the top scope
-	s := sym8.Make(b.path, name, symFunc, ret, f.Name.Pos)
+	s := sym8.Make(b.path, name, symFunc, ret, t, f.Name.Pos)
 	conflict := b.scope.Declare(s) // lets declare the function
 	if conflict != nil {
 		b.Errorf(f.Name.Pos, "%q already declared as a %s",
@@ -57,7 +57,7 @@ func declareFuncAlias(b *builder, f *ast.Func, t *types.Func) *objFunc {
 		return nil
 	}
 
-	obj := declareFuncSym(b, f)
+	obj := declareFuncSym(b, f, t)
 	sig := makeFuncSig(t)
 	fsym := ir.NewFuncSym(sym.Pkg(), alias.Name.Lit, sig)
 	obj.ref = newRef(t, fsym)
@@ -75,7 +75,7 @@ func declareFunc(b *builder, f *ast.Func) *objFunc {
 		return declareFuncAlias(b, f, t)
 	}
 
-	ret := declareFuncSym(b, f)
+	ret := declareFuncSym(b, f, t)
 	sig := makeFuncSig(t)
 	irFunc := b.p.NewFunc(b.anonyName(f.Name.Lit), f.Name.Pos, sig)
 	ret.ref = newRef(t, irFunc)

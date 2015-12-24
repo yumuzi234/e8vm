@@ -119,7 +119,7 @@ func buildType(b *builder, expr ast.Expr) types.T {
 			return nil
 		}
 
-		return s.Object.(*objType).ref.TypeType()
+		return s.Obj.(*objType).ref.TypeType()
 	}
 
 	b.Errorf(ast.ExprPos(expr), "expect a type")

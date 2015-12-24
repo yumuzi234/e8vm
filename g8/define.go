@@ -30,10 +30,10 @@ func allocVars(b *builder, toks []*lex8.Token, ts []types.T) *ref {
 	return ret
 }
 
-func declareVar(b *builder, tok *lex8.Token) *objVar {
+func declareVar(b *builder, tok *lex8.Token, t types.T) *objVar {
 	name := tok.Lit
 	v := &objVar{name: name}
-	s := sym8.Make(b.path, name, symVar, v, tok.Pos)
+	s := sym8.Make(b.path, name, symVar, v, t, tok.Pos)
 	conflict := b.scope.Declare(s)
 	if conflict != nil {
 		b.Errorf(tok.Pos, "%q already declared as a %s",
@@ -45,7 +45,7 @@ func declareVar(b *builder, tok *lex8.Token) *objVar {
 }
 
 func declareVarRef(b *builder, tok *lex8.Token, r *ref) {
-	obj := declareVar(b, tok)
+	obj := declareVar(b, tok, r.Type())
 	if obj != nil {
 		obj.ref = r
 	}

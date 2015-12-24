@@ -31,7 +31,7 @@ func declareLabels(b *builder, f *funcDecl) {
 
 		lab := stmt.label
 		op := stmt.Ops[0]
-		sym := sym8.Make(b.path, lab, SymLabel, stmt, op.Pos)
+		sym := sym8.Make(b.path, lab, SymLabel, stmt, nil, op.Pos)
 		decl := b.scope.Declare(sym)
 		if decl != nil {
 			b.Errorf(op.Pos, "%q already declared", lab)
@@ -96,7 +96,7 @@ func fillLabels(b *builder, f *funcDecl) {
 			panic("not a label")
 		}
 
-		lab := sym.Object.(*funcStmt)
+		lab := sym.Obj.(*funcStmt)
 		delta := uint32(int32(lab.offset-s.offset-4) >> 2)
 		fillDelta(b, t, &s.inst.inst, delta)
 	}
@@ -111,7 +111,7 @@ func findImport(b *builder, t *lex8.Token, pkg string) *importStmt {
 		b.Errorf(t.Pos, "%q is a %s, not a package", t.Lit, SymStr(sym.Type))
 		return nil
 	}
-	return sym.Object.(*importStmt)
+	return sym.Obj.(*importStmt)
 }
 
 func init() {

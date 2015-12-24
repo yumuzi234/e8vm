@@ -17,7 +17,7 @@ func findFunc(b *builder, name string, t types.T) *objFunc {
 	if s == nil {
 		return nil
 	}
-	f, isFunc := s.Object.(*objFunc)
+	f, isFunc := s.Obj.(*objFunc)
 	if !isFunc {
 		return nil
 	}

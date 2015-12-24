@@ -34,10 +34,10 @@ func buildConstExprList(b *builder, list *ast.ExprList) *ref {
 	return ret
 }
 
-func declareConst(b *builder, tok *lex8.Token) *objConst {
+func declareConst(b *builder, tok *lex8.Token, t types.T) *objConst {
 	name := tok.Lit
 	v := &objConst{name: name}
-	s := sym8.Make(b.path, name, symConst, v, tok.Pos)
+	s := sym8.Make(b.path, name, symConst, v, t, tok.Pos)
 	conflict := b.scope.Declare(s)
 	if conflict != nil {
 		b.Errorf(tok.Pos, "%q already declared as a %s",
@@ -70,7 +70,7 @@ func buildGlobalConstDecl(b *builder, info *constInfo) {
 		return
 	}
 
-	obj := declareConst(b, info.name)
+	obj := declareConst(b, info.name, t)
 	if obj == nil {
 		return
 	}
@@ -107,7 +107,7 @@ func buildConstDecl(b *builder, d *ast.ConstDecl) {
 			return
 		}
 
-		obj := declareConst(b, ident)
+		obj := declareConst(b, ident, t)
 		if obj == nil {
 			return
 		}

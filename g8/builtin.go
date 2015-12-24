@@ -33,7 +33,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 
 		ref := ir.NewFuncSym(path, name, makeFuncSig(t))
 		obj := &objFunc{as, newRef(t, ref), nil, false}
-		pre := b.scope.Declare(sym8.Make(b.path, as, symFunc, obj, nil))
+		pre := b.scope.Declare(sym8.Make(b.path, as, symFunc, obj, t, nil))
 		if pre != nil {
 			b.Errorf(nil, "builtin symbol %s declare failed", name)
 			return nil
@@ -50,10 +50,11 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 	b.panicFunc = o("Panic", "panic", types.VoidFunc)
 
 	bi := func(name string) {
-		obj := &objFunc{name, newRef(types.NewBuiltInFunc(name), nil),
+		t := types.NewBuiltInFunc(name)
+		obj := &objFunc{name, newRef(t, nil),
 			nil, false,
 		}
-		s := sym8.Make(b.path, name, symFunc, obj, nil)
+		s := sym8.Make(b.path, name, symFunc, obj, t, nil)
 		pre := b.scope.Declare(s)
 		if pre != nil {
 			b.Errorf(nil, "builtin symbol %s declare failed", name)
@@ -66,7 +67,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 	c := func(name string, r *ref) {
 		// TODO: declare these as typed consts
 		obj := &objConst{name, r}
-		s := sym8.Make(b.path, name, symConst, obj, nil)
+		s := sym8.Make(b.path, name, symConst, obj, r.Type(), nil)
 		pre := b.scope.Declare(s)
 		if pre != nil {
 			b.Errorf(nil, "builtin symbol %s declare failed", name)
@@ -79,7 +80,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 
 	t := func(name string, t types.T) {
 		obj := &objType{name, newTypeRef(t)}
-		s := sym8.Make(b.path, name, symType, obj, nil)
+		s := sym8.Make(b.path, name, symType, obj, &types.Type{t}, nil)
 		pre := b.scope.Declare(s)
 		if pre != nil {
 			b.Errorf(nil, "builtin symbol %s declare failed", name)
