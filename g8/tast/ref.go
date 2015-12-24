@@ -9,6 +9,9 @@ type Ref struct {
 	// T is the type of the reference
 	T types.T
 
+	// ConstValue is not nil when the reference already has a value.
+	ConstValue interface{}
+
 	// Addressable tells if the reference is addressable
 	Addressable bool
 
@@ -26,6 +29,11 @@ type Ref struct {
 // NewRef returns a new reference node.
 func NewRef(t types.T) *Ref {
 	return &Ref{T: t}
+}
+
+// NewConstRef returns a new reference node with a constant value.
+func NewConstRef(t types.T, v interface{}) *Ref {
+	return &Ref{T: t, ConstValue: v}
 }
 
 // NewAddressableRef returns a new addressable node.

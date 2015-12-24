@@ -1,6 +1,7 @@
 package g8
 
 import (
+	"fmt"
 	"strconv"
 
 	"e8vm.io/e8vm/g8/ast"
@@ -15,6 +16,26 @@ func sempassOperand(b *builder, op *lex8.Token) tast.Expr {
 	return b.spass.BuildExpr(&ast.Operand{op})
 }
 
+func genConst(b *builder, c *tast.Const) *ref {
+	if _, ok := types.NumConst(c.T); ok {
+		return newRef(c.T, nil)
+	}
+
+	if t, ok := c.T.(types.Basic); ok {
+		v := c.ConstValue.(int64)
+		switch t {
+		case types.Int, types.Uint:
+			return newRef(c.T, ir.Num(uint32(v)))
+		case types.Int8, types.Uint8, types.Bool:
+			return newRef(c.T, ir.Byt(uint8(v)))
+		default:
+			panic("other basic types not supported yet")
+		}
+	}
+
+	panic("other const types not supported")
+}
+
 func genExpr(b *builder, expr tast.Expr) *ref {
 	if expr == nil {
 		return nil
@@ -22,11 +43,10 @@ func genExpr(b *builder, expr tast.Expr) *ref {
 
 	switch expr := expr.(type) {
 	case *tast.Const:
-		return newRef(expr.T, nil)
-	default:
-		b.Errorf(nil, "genExpr not implemented for %T", expr)
-		return nil
+		return genConst(b, expr)
 	}
+
+	panic(fmt.Errorf("genExpr not implemented for %T", expr))
 }
 
 func buildInt(b *builder, op *lex8.Token) *ref {
@@ -34,16 +54,7 @@ func buildInt(b *builder, op *lex8.Token) *ref {
 }
 
 func buildChar(b *builder, op *lex8.Token) *ref {
-	v, e := strconv.Unquote(op.Lit)
-	if e != nil {
-		b.Errorf(op.Pos, "invalid char: %s", e)
-		return nil
-	} else if len(v) != 1 {
-		b.Errorf(op.Pos, "invalid char in quote: %q", v)
-		return nil
-	}
-	// return newRef(types.Int8, ir.Byt(v[0]))
-	return newRef(types.NewConst(int64(v[0]), types.Int8), nil)
+	return genExpr(b, sempassOperand(b, op))
 }
 
 func buildString(b *builder, op *lex8.Token) *ref {

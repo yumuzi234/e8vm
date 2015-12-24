@@ -59,7 +59,6 @@ func (b *Block) Commentf(s string, args ...interface{}) {
 
 // Arith append an arithmetic operation to the basic block
 func (b *Block) Arith(dest Ref, x Ref, op string, y Ref) {
-	checkRefs(x, y)
 	b.addOp(&arithOp{dest, x, op, y})
 }
 
@@ -71,7 +70,7 @@ func (b *Block) Assign(dest Ref, src Ref) {
 // Zero appends zeroing operation to the basic block
 func (b *Block) Zero(dest Ref) {
 	checkRefs(dest)
-	b.addOp(&arithOp{dest, nil, "0", nil})
+	b.Arith(dest, nil, "0", nil)
 }
 
 // Call appends a function call operation to the basic block

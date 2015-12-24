@@ -26,7 +26,7 @@ func buildInt(b *builder, op *lex8.Token) tast.Expr {
 		return nil
 	}
 
-	ref := tast.NewRef(types.NewNumber(ret))
+	ref := tast.NewConstRef(types.NewNumber(ret), ret)
 	return &tast.Const{ref}
 }
 
@@ -39,7 +39,7 @@ func buildChar(b *builder, op *lex8.Token) tast.Expr {
 		b.Errorf(op.Pos, "invalid char in quote: %q", v)
 		return nil
 	}
-	ref := tast.NewRef(types.NewConst(int64(v[0]), types.Int8))
+	ref := tast.NewConstRef(types.Int8, int64(v[0]))
 	return &tast.Const{ref}
 }
 
@@ -49,7 +49,7 @@ func buildString(b *builder, op *lex8.Token) tast.Expr {
 		b.Errorf(op.Pos, "invalid string: %s", e)
 		return nil
 	}
-	ref := tast.NewRef(types.NewConstString(v))
+	ref := tast.NewConstRef(types.String, v)
 	return &tast.Const{ref}
 }
 
