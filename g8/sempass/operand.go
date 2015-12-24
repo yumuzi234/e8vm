@@ -53,6 +53,16 @@ func buildString(b *builder, op *lex8.Token) tast.Expr {
 	return &tast.Const{ref}
 }
 
+func buildIdent(b *builder, ident *lex8.Token) tast.Expr {
+	s := b.scope.Query(ident.Lit)
+	if s == nil {
+		b.Errorf(ident.Pos, "undefined identifier %s", ident.Lit)
+		return nil
+	}
+
+	panic("todo")
+}
+
 func buildOperand(b *builder, op *ast.Operand) tast.Expr {
 	if op.Token.Type == parse.Keyword && op.Token.Lit == "this" {
 		if b.this == nil {
@@ -70,7 +80,7 @@ func buildOperand(b *builder, op *ast.Operand) tast.Expr {
 	case parse.String:
 		return buildString(b, op.Token)
 	case parse.Ident:
-		panic("todo")
+		return buildIdent(b, op.Token)
 	default:
 		b.Errorf(op.Token.Pos, "invalid or not implemented: %d",
 			op.Token.Type,

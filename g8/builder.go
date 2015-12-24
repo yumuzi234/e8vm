@@ -66,11 +66,12 @@ func newRand() *rand.Rand {
 }
 
 func newBuilder(path string, golike bool) *builder {
+	s := sym8.NewScope()
 	return &builder{
 		ErrorList: lex8.NewErrorList(),
 		path:      path,
 		p:         ir.NewPkg(path),
-		scope:     sym8.NewScope(), // package scope
+		scope:     s, // package scope
 		golike:    golike,
 
 		continues:    newBlockStack(),
@@ -79,7 +80,7 @@ func newBuilder(path string, golike bool) *builder {
 
 		rand: newRand(),
 
-		spass: sempass.NewBuilder(path),
+		spass: sempass.NewBuilder(path, s),
 	}
 }
 

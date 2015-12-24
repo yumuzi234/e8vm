@@ -13,6 +13,7 @@ import (
 
 func genConst(b *builder, c *tast.Const) *ref {
 	if _, ok := types.NumConst(c.T); ok {
+		// untyped consts are just types.
 		return newRef(c.T, nil)
 	}
 

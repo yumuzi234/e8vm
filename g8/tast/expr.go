@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/sym8"
 )
 
 // This is the this pointer.
@@ -20,6 +21,7 @@ type Const struct {
 type Ident struct {
 	*lex8.Token
 	*Ref
+	Symbol *sym8.Symbol
 }
 
 // MemberExpr is an expression of "a.b"

@@ -1,5 +1,6 @@
 ## Static analysis
 
+- the typed ast does not need to look into the scope table.
 - what we want is the type of each identifier.
 - because of type infering, this means the type of each expression.
 
