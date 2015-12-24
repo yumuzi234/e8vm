@@ -122,42 +122,6 @@ func buildConstIdent(b *builder, ident *lex8.Token) *ref {
 	}
 }
 
-func buildIdent(b *builder, ident *lex8.Token) *ref {
-	s := b.scope.Query(ident.Lit)
-	if s == nil {
-		b.Errorf(ident.Pos, "undefined identifer %s", ident.Lit)
-		return nil
-	}
-
-	b.spass.RefSym(s, ident.Pos)
-
-	switch s.Type {
-	case tast.SymVar:
-		return s.Obj.(*objVar).ref
-	case tast.SymFunc:
-		v := s.Obj.(*objFunc)
-		if !v.isMethod {
-			return v.ref
-		}
-		if b.this == nil {
-			panic("this missing")
-		}
-		return newRecvRef(v.Type().(*types.Func), b.this, v.IR())
-	case tast.SymConst:
-		return s.Obj.(*objConst).ref
-	case tast.SymType, tast.SymStruct:
-		return s.Obj.(*objType).ref
-	case tast.SymField:
-		v := s.Obj.(*objField)
-		return buildField(b, b.this.IR(), v.Field)
-	case tast.SymImport:
-		return s.Obj.(*objImport).ref
-	default:
-		b.Errorf(ident.Pos, "todo: token type: %s", tast.SymStr(s.Type))
-		return nil
-	}
-}
-
 func buildOperand(b *builder, op *ast.Operand) *ref {
 	if op.Token.Type == parse.Keyword && op.Token.Lit == "this" {
 		if b.this == nil {

@@ -32,7 +32,8 @@ func declareFuncSym(b *builder, f *ast.Func, t types.T) *objFunc {
 
 func declareFuncAlias(b *builder, f *ast.Func, t *types.Func) *objFunc {
 	alias := f.Alias
-	pkgRef := buildIdent(b, alias.Pkg)
+
+	pkgRef := buildConstIdent(b, alias.Pkg)
 	if pkgRef == nil {
 		return nil
 	}
