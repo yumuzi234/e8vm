@@ -4,6 +4,7 @@ import (
 	"e8vm.io/e8vm/asm8"
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/ir"
+	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/sym8"
@@ -55,18 +56,18 @@ func buildPackageSym(b *builder, m *ast.MemberExpr, pkg *types.Pkg) *ref {
 	}
 
 	switch sym.Type {
-	case symConst:
+	case tast.SymConst:
 		return sym.Obj.(*objConst).ref
-	case symVar:
+	case tast.SymVar:
 		return sym.Obj.(*objVar).ref
-	case symStruct:
+	case tast.SymStruct:
 		return sym.Obj.(*objType).ref
-	case symFunc:
+	case tast.SymFunc:
 		return sym.Obj.(*objFunc).ref
 	}
 
 	b.Errorf(m.Sub.Pos, "bug: invalid symbol %s in %s: %s",
-		m.Sub.Lit, pkg, symStr(sym.Type),
+		m.Sub.Lit, pkg, tast.SymStr(sym.Type),
 	)
 	return nil
 }
@@ -87,9 +88,9 @@ func buildConstMember(b *builder, m *ast.MemberExpr) *ref {
 			return nil
 		}
 		switch s.Type {
-		case symConst:
+		case tast.SymConst:
 			return s.Obj.(*objConst).ref
-		case symStruct:
+		case tast.SymStruct:
 			return s.Obj.(*objType).ref
 		}
 
@@ -167,15 +168,15 @@ func buildMember(b *builder, m *ast.MemberExpr) *ref {
 
 	b.spass.RefSym(sym, m.Sub.Pos)
 
-	if sym.Type == symField {
+	if sym.Type == tast.SymField {
 		return buildField(b, addr, sym.Obj.(*objField).Field)
-	} else if sym.Type == symFunc {
+	} else if sym.Type == tast.SymFunc {
 		recv := newRef(types.NewPointer(tstruct), addr)
 		method := sym.Obj.(*objFunc)
 		ft := method.Type().(*types.Func)
 		return newRecvRef(ft, recv, method.IR())
 	}
 
-	b.Errorf(m.Sub.Pos, "invalid sym type", symStr(sym.Type))
+	b.Errorf(m.Sub.Pos, "invalid sym type", tast.SymStr(sym.Type))
 	return nil
 }

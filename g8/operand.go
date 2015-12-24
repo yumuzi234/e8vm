@@ -77,15 +77,15 @@ func buildConstIdent(b *builder, ident *lex8.Token) *ref {
 
 	b.spass.RefSym(s, ident.Pos)
 	switch s.Type {
-	case symType, symStruct:
+	case tast.SymType, tast.SymStruct:
 		return s.Obj.(*objType).ref
-	case symConst:
+	case tast.SymConst:
 		return s.Obj.(*objConst).ref
-	case symImport:
+	case tast.SymImport:
 		return s.Obj.(*objImport).ref
 	default:
 		b.Errorf(ident.Pos, "%s is a %s, not a const",
-			ident.Lit, symStr(s.Type),
+			ident.Lit, tast.SymStr(s.Type),
 		)
 		return nil
 	}
@@ -101,9 +101,9 @@ func buildIdent(b *builder, ident *lex8.Token) *ref {
 	b.spass.RefSym(s, ident.Pos)
 
 	switch s.Type {
-	case symVar:
+	case tast.SymVar:
 		return s.Obj.(*objVar).ref
-	case symFunc:
+	case tast.SymFunc:
 		v := s.Obj.(*objFunc)
 		if !v.isMethod {
 			return v.ref
@@ -112,17 +112,17 @@ func buildIdent(b *builder, ident *lex8.Token) *ref {
 			panic("this missing")
 		}
 		return newRecvRef(v.Type().(*types.Func), b.this, v.IR())
-	case symConst:
+	case tast.SymConst:
 		return s.Obj.(*objConst).ref
-	case symType, symStruct:
+	case tast.SymType, tast.SymStruct:
 		return s.Obj.(*objType).ref
-	case symField:
+	case tast.SymField:
 		v := s.Obj.(*objField)
 		return buildField(b, b.this.IR(), v.Field)
-	case symImport:
+	case tast.SymImport:
 		return s.Obj.(*objImport).ref
 	default:
-		b.Errorf(ident.Pos, "todo: token type: %s", symStr(s.Type))
+		b.Errorf(ident.Pos, "todo: token type: %s", tast.SymStr(s.Type))
 		return nil
 	}
 }

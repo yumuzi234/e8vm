@@ -3,6 +3,7 @@ package g8
 import (
 	"strings"
 
+	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/sym8"
 )
@@ -26,7 +27,7 @@ func listTests(tops *sym8.Table) []*objFunc {
 
 	syms := tops.List()
 	for _, s := range syms {
-		if s.Type != symFunc {
+		if s.Type != tast.SymFunc {
 			continue
 		}
 		f := s.Obj.(*objFunc)

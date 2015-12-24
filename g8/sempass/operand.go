@@ -60,6 +60,17 @@ func buildIdent(b *Builder, ident *lex8.Token) tast.Expr {
 		return nil
 	}
 
+	b.RefSym(s, ident.Pos)
+
+	t := s.ObjType.(types.T)
+	switch s.Type {
+	case tast.SymVar:
+		ref := tast.NewAddressableRef(t)
+		return &tast.Ident{ident, ref, s}
+	case tast.SymFunc:
+
+	}
+
 	panic("todo")
 }
 

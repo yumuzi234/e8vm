@@ -2,6 +2,7 @@ package g8
 
 import (
 	"e8vm.io/e8vm/g8/ast"
+	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/sym8"
 )
@@ -112,9 +113,9 @@ func buildType(b *builder, expr ast.Expr) types.T {
 			return nil
 		}
 
-		if s.Type != symStruct {
+		if s.Type != tast.SymStruct {
 			b.Errorf(expr.Sub.Pos, "symbol %s is a %s, not a struct",
-				name, symStr(s.Type),
+				name, tast.SymStr(s.Type),
 			)
 			return nil
 		}

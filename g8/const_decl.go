@@ -2,6 +2,7 @@ package g8
 
 import (
 	"e8vm.io/e8vm/g8/ast"
+	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/sym8"
@@ -37,11 +38,11 @@ func buildConstExprList(b *builder, list *ast.ExprList) *ref {
 func declareConst(b *builder, tok *lex8.Token, t types.T) *objConst {
 	name := tok.Lit
 	v := &objConst{name: name}
-	s := sym8.Make(b.path, name, symConst, v, t, tok.Pos)
+	s := sym8.Make(b.path, name, tast.SymConst, v, t, tok.Pos)
 	conflict := b.scope.Declare(s)
 	if conflict != nil {
 		b.Errorf(tok.Pos, "%q already declared as a %s",
-			name, symStr(conflict.Type),
+			name, tast.SymStr(conflict.Type),
 		)
 		return nil
 	}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"e8vm.io/e8vm/g8/ast"
+	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/sym8"
 )
@@ -13,12 +14,13 @@ func declareStruct(b *builder, d *ast.Struct) *structInfo {
 	name := info.Name()
 	pos := info.name.Pos
 	obj := &objType{name, newTypeRef(info.t)}
-	sym := sym8.Make(b.path, name, symStruct, obj, &types.Type{info.t}, pos)
+	t := &types.Type{info.t}
+	sym := sym8.Make(b.path, name, tast.SymStruct, obj, t, pos)
 	pre := b.scope.Declare(sym)
 	if pre != nil {
 		b.Errorf(pos, "%s already declared", name)
 		b.Errorf(pre.Pos, "previously declared here as a %s",
-			symStr(pre.Type),
+			tast.SymStr(pre.Type),
 		)
 		return nil
 	}
@@ -44,7 +46,7 @@ func defineStructFields(b *builder, info *structInfo) {
 			field.T = ft
 
 			obj := &objField{name, field}
-			sym := sym8.Make(b.path, name, symField, obj, ft, id.Pos)
+			sym := sym8.Make(b.path, name, tast.SymField, obj, ft, id.Pos)
 			pre := t.Syms.Declare(sym)
 			if pre != nil {
 				b.Errorf(id.Pos, "field %s already defined", id.Lit)
@@ -75,7 +77,7 @@ func declareMethod(b *builder, info *structInfo, f *ast.Func) *objFunc {
 	name := f.Name.Lit
 	ret := &objFunc{name, nil, f, true}
 
-	sym := sym8.Make(b.path, name, symFunc, ret, t, f.Name.Pos)
+	sym := sym8.Make(b.path, name, tast.SymFunc, ret, t, f.Name.Pos)
 	pre := info.t.Syms.Declare(sym)
 	if pre != nil {
 		b.Errorf(f.Name.Pos, "member %s already defined", name)

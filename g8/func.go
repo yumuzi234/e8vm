@@ -4,6 +4,7 @@ import (
 	"e8vm.io/e8vm/asm8"
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/ir"
+	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/sym8"
@@ -17,11 +18,11 @@ func declareFuncSym(b *builder, f *ast.Func, t types.T) *objFunc {
 	ret.f = f
 
 	// add this item to the top scope
-	s := sym8.Make(b.path, name, symFunc, ret, t, f.Name.Pos)
+	s := sym8.Make(b.path, name, tast.SymFunc, ret, t, f.Name.Pos)
 	conflict := b.scope.Declare(s) // lets declare the function
 	if conflict != nil {
 		b.Errorf(f.Name.Pos, "%q already declared as a %s",
-			name, symStr(conflict.Type),
+			name, tast.SymStr(conflict.Type),
 		)
 		b.Errorf(conflict.Pos, "previously declared here")
 		return nil
