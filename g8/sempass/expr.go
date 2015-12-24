@@ -13,6 +13,8 @@ func buildExpr(b *builder, expr ast.Expr) tast.Expr {
 	switch expr := expr.(type) {
 	case *ast.Operand:
 		return buildOperand(b, expr)
+	case *ast.ParenExpr:
+		return buildExpr(b, expr.Expr)
 	default:
 		b.Errorf(ast.ExprPos(expr), "invalid or not implemented: %T", expr)
 		return nil
