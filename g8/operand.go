@@ -11,10 +11,6 @@ import (
 	"e8vm.io/e8vm/lex8"
 )
 
-func sempassOperand(b *builder, op *lex8.Token) tast.Expr {
-	return b.spass.BuildExpr(&ast.Operand{op})
-}
-
 func genConst(b *builder, c *tast.Const) *ref {
 	if _, ok := types.NumConst(c.T); ok {
 		return newRef(c.T, nil)
@@ -43,10 +39,6 @@ func genConst(b *builder, c *tast.Const) *ref {
 }
 
 func genExpr(b *builder, expr tast.Expr) *ref {
-	if expr == nil {
-		return nil
-	}
-
 	switch expr := expr.(type) {
 	case *tast.Const:
 		return genConst(b, expr)
@@ -55,8 +47,13 @@ func genExpr(b *builder, expr tast.Expr) *ref {
 	panic(fmt.Errorf("genExpr not implemented for %T", expr))
 }
 
-func genOperand(b *builder, op *lex8.Token) *ref {
-	return genExpr(b, sempassOperand(b, op))
+func buildOperand2(b *builder, op *lex8.Token) *ref {
+	expr := b.spass.BuildExpr(&ast.Operand{op})
+	if expr == nil {
+		return nil
+	}
+
+	return genExpr(b, expr)
 }
 
 func buildField(b *builder, this ir.Ref, field *types.Field) *ref {
@@ -140,7 +137,7 @@ func buildOperand(b *builder, op *ast.Operand) *ref {
 
 	switch op.Token.Type {
 	case parse.Int, parse.Char, parse.String:
-		return genOperand(b, op.Token)
+		return buildOperand2(b, op.Token)
 	case parse.Ident:
 		return buildIdent(b, op.Token)
 	default:
@@ -154,7 +151,7 @@ func buildOperand(b *builder, op *ast.Operand) *ref {
 func buildConstOperand(b *builder, op *ast.Operand) *ref {
 	switch op.Token.Type {
 	case parse.Int:
-		return genOperand(b, op.Token)
+		return buildOperand2(b, op.Token)
 	case parse.Ident:
 		return buildConstIdent(b, op.Token)
 	default:
