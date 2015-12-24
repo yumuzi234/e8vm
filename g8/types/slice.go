@@ -28,5 +28,6 @@ func SliceOf(t T) T {
 // RegSizeAlign returns true. A slice is always word aligned.
 func (t *Slice) RegSizeAlign() bool { return true }
 
-// String is a slice of int8's
+// String is a slice of int8's. All string constants must use
+// this variable as its type.
 var String T = &Slice{Int8}

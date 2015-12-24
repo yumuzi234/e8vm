@@ -2,7 +2,6 @@ package g8
 
 import (
 	"fmt"
-	"strconv"
 
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/ir"
@@ -33,6 +32,13 @@ func genConst(b *builder, c *tast.Const) *ref {
 		}
 	}
 
+	if c.T == types.String {
+		s := c.ConstValue.(string)
+		ret := b.newTemp(c.T)
+		b.b.Arith(ret.IR(), nil, "makeStr", b.p.NewString(s))
+		return ret
+	}
+
 	panic("other const types not supported")
 }
 
@@ -49,24 +55,8 @@ func genExpr(b *builder, expr tast.Expr) *ref {
 	panic(fmt.Errorf("genExpr not implemented for %T", expr))
 }
 
-func buildInt(b *builder, op *lex8.Token) *ref {
+func genOperand(b *builder, op *lex8.Token) *ref {
 	return genExpr(b, sempassOperand(b, op))
-}
-
-func buildChar(b *builder, op *lex8.Token) *ref {
-	return genExpr(b, sempassOperand(b, op))
-}
-
-func buildString(b *builder, op *lex8.Token) *ref {
-	v, e := strconv.Unquote(op.Lit)
-	if e != nil {
-		b.Errorf(op.Pos, "invalid string: %s", e)
-		return nil
-	}
-
-	ret := b.newTemp(types.String) // make a temp slice
-	b.b.Arith(ret.IR(), nil, "makeStr", b.p.NewString(v))
-	return ret
 }
 
 func buildField(b *builder, this ir.Ref, field *types.Field) *ref {
@@ -149,12 +139,8 @@ func buildOperand(b *builder, op *ast.Operand) *ref {
 	}
 
 	switch op.Token.Type {
-	case parse.Int:
-		return buildInt(b, op.Token)
-	case parse.Char:
-		return buildChar(b, op.Token)
-	case parse.String:
-		return buildString(b, op.Token)
+	case parse.Int, parse.Char, parse.String:
+		return genOperand(b, op.Token)
 	case parse.Ident:
 		return buildIdent(b, op.Token)
 	default:
@@ -168,7 +154,7 @@ func buildOperand(b *builder, op *ast.Operand) *ref {
 func buildConstOperand(b *builder, op *ast.Operand) *ref {
 	switch op.Token.Type {
 	case parse.Int:
-		return buildInt(b, op.Token)
+		return genOperand(b, op.Token)
 	case parse.Ident:
 		return buildConstIdent(b, op.Token)
 	default:
