@@ -10,7 +10,7 @@ type Const struct {
 	Value interface{}
 }
 
-// NewConst creates a new constant.
+// NewConst creates a new constant for a specific type.
 func NewConst(v int64, t T) *Const { return &Const{Value: v, Type: t} }
 
 // NewConstString creates a new string constant.
@@ -36,6 +36,8 @@ func (c *Const) String() string {
 		return fmt.Sprintf("%d", v)
 	case bool:
 		return fmt.Sprintf("%t", v)
+	case string:
+		return fmt.Sprintf("%q", v)
 	default:
 		return fmt.Sprintf("%s", v)
 	}

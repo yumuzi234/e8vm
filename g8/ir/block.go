@@ -35,6 +35,14 @@ type Block struct {
 	instEnd   int32
 }
 
+func checkRefs(refs ...Ref) {
+	for _, ref := range refs {
+		if ref == nil {
+			panic("nil ref")
+		}
+	}
+}
+
 func (b *Block) String() string { return fmt.Sprintf("B%d", b.id) }
 
 func (b *Block) addOp(op op) { b.ops = append(b.ops, op) }
@@ -51,6 +59,7 @@ func (b *Block) Commentf(s string, args ...interface{}) {
 
 // Arith append an arithmetic operation to the basic block
 func (b *Block) Arith(dest Ref, x Ref, op string, y Ref) {
+	checkRefs(x, y)
 	b.addOp(&arithOp{dest, x, op, y})
 }
 
@@ -61,11 +70,16 @@ func (b *Block) Assign(dest Ref, src Ref) {
 
 // Zero appends zeroing operation to the basic block
 func (b *Block) Zero(dest Ref) {
+	checkRefs(dest)
 	b.addOp(&arithOp{dest, nil, "0", nil})
 }
 
 // Call appends a function call operation to the basic block
 func (b *Block) Call(dests []Ref, f Ref, args ...Ref) {
+	checkRefs(dests...)
+	checkRefs(f)
+	checkRefs(args...)
+
 	argsCopy := make([]Ref, len(args))
 	copy(argsCopy, args)
 	b.addOp(&callOp{dests, f, argsCopy})

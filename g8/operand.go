@@ -42,7 +42,8 @@ func buildChar(b *builder, op *lex8.Token) *ref {
 		b.Errorf(op.Pos, "invalid char in quote: %q", v)
 		return nil
 	}
-	return newRef(types.Int8, ir.Byt(v[0]))
+	// return newRef(types.Int8, ir.Byt(v[0]))
+	return newRef(types.NewConst(int64(v[0]), types.Int8), nil)
 }
 
 func buildString(b *builder, op *lex8.Token) *ref {
