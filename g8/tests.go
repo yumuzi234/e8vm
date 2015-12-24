@@ -29,7 +29,7 @@ func listTests(tops *sym8.Table) []*objFunc {
 		if s.Type != symFunc {
 			continue
 		}
-		f := s.Item.(*objFunc)
+		f := s.Object.(*objFunc)
 		if f.isMethod {
 			panic("bug") // a top level function should never be a method
 		}

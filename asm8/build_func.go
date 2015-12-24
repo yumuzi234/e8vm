@@ -96,7 +96,7 @@ func fillLabels(b *builder, f *funcDecl) {
 			panic("not a label")
 		}
 
-		lab := sym.Item.(*funcStmt)
+		lab := sym.Object.(*funcStmt)
 		delta := uint32(int32(lab.offset-s.offset-4) >> 2)
 		fillDelta(b, t, &s.inst.inst, delta)
 	}
@@ -111,7 +111,7 @@ func findImport(b *builder, t *lex8.Token, pkg string) *importStmt {
 		b.Errorf(t.Pos, "%q is a %s, not a package", t.Lit, SymStr(sym.Type))
 		return nil
 	}
-	return sym.Item.(*importStmt)
+	return sym.Object.(*importStmt)
 }
 
 func init() {

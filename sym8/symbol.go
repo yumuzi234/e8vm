@@ -9,9 +9,9 @@ type Symbol struct {
 	pkg  string
 	name string
 
-	Type int
-	Item interface{}
-	Pos  *lex8.Pos
+	Type   int
+	Object interface{}
+	Pos    *lex8.Pos
 }
 
 // Name returns the symbol name.
@@ -24,7 +24,7 @@ func (s *Symbol) Pkg() string { return s.pkg }
 // Clone returns a clone of the symbol which item is the given one.
 func (s *Symbol) Clone(item interface{}) *Symbol {
 	ret := *s
-	ret.Item = item
+	ret.Object = item
 	return &ret
 }
 

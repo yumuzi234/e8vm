@@ -56,13 +56,13 @@ func buildPackageSym(b *builder, m *ast.MemberExpr, pkg *types.Pkg) *ref {
 
 	switch sym.Type {
 	case symConst:
-		return sym.Item.(*objConst).ref
+		return sym.Object.(*objConst).ref
 	case symVar:
-		return sym.Item.(*objVar).ref
+		return sym.Object.(*objVar).ref
 	case symStruct:
-		return sym.Item.(*objType).ref
+		return sym.Object.(*objType).ref
 	case symFunc:
-		return sym.Item.(*objFunc).ref
+		return sym.Object.(*objFunc).ref
 	}
 
 	b.Errorf(m.Sub.Pos, "bug: invalid symbol %s in %s: %s",
@@ -88,9 +88,9 @@ func buildConstMember(b *builder, m *ast.MemberExpr) *ref {
 		}
 		switch s.Type {
 		case symConst:
-			return s.Item.(*objConst).ref
+			return s.Object.(*objConst).ref
 		case symStruct:
-			return s.Item.(*objType).ref
+			return s.Object.(*objType).ref
 		}
 
 		b.Errorf(m.Sub.Pos, "%s.%s is not a const", pkg, m.Sub.Lit)
@@ -168,10 +168,10 @@ func buildMember(b *builder, m *ast.MemberExpr) *ref {
 	b.refSym(sym, m.Sub.Pos)
 
 	if sym.Type == symField {
-		return buildField(b, addr, sym.Item.(*objField).Field)
+		return buildField(b, addr, sym.Object.(*objField).Field)
 	} else if sym.Type == symFunc {
 		recv := newRef(types.NewPointer(tstruct), addr)
-		method := sym.Item.(*objFunc)
+		method := sym.Object.(*objFunc)
 		ft := method.Type().(*types.Func)
 		return newRecvRef(ft, recv, method.IR())
 	}
