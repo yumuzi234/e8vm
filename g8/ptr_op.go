@@ -95,10 +95,8 @@ func binaryOpSlice(b *builder, opTok *lex8.Token, A, B *ref) *ref {
 }
 
 func refAddress(b *builder, opTok *lex8.Token, B *ref) *ref {
-	ret := b.newTemp(&types.Pointer{B.Type()})
 	op := opTok.Lit
 	opPos := opTok.Pos
-
 	if B.IsType() || !B.IsSingle() {
 		b.Errorf(opPos, "invalid operation: %q on %s", op, B)
 		return nil
@@ -106,6 +104,8 @@ func refAddress(b *builder, opTok *lex8.Token, B *ref) *ref {
 		b.Errorf(opPos, "reading address of non-addressable")
 		return nil
 	}
+
+	ret := b.newTemp(&types.Pointer{B.Type()})
 	b.b.Arith(ret.IR(), nil, op, B.IR())
 	return ret
 }

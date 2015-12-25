@@ -94,3 +94,17 @@ func binaryOpConst(b *Builder, opTok *lex8.Token, A, B tast.Expr) tast.Expr {
 	b.Errorf(opTok.Pos, "%q on consts", op)
 	return nil
 }
+
+func unaryOpInt(b *Builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
+	op := opTok.Lit
+	switch op {
+	case "+":
+		return B
+	case "-", "^":
+		t := tast.ExprRef(B).T
+		return &tast.OpExpr{nil, opTok, B, tast.NewRef(t)}
+	}
+
+	b.Errorf(opTok.Pos, "invalid operation: %q on %s", op, B)
+	return nil
+}

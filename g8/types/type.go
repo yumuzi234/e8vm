@@ -19,3 +19,9 @@ func (*Type) RegSizeAlign() bool { panic("bug") }
 func (t *Type) String() string {
 	return fmt.Sprintf("%s(type)", t.T.String())
 }
+
+// IsType checks if a type is a type type.
+func IsType(t T) bool {
+	_, ok := t.(*Type)
+	return ok
+}
