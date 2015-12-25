@@ -26,12 +26,17 @@ type Ref struct {
 	List []*Ref
 }
 
-// NewRef returns a new reference node.
+// NewRef creates a new reference node.
 func NewRef(t types.T) *Ref {
 	return &Ref{T: t}
 }
 
-// NewConstRef returns a new reference node with a constant value.
+// NewTypeRef creates a new reference node for a type expression.
+func NewTypeRef(t types.T) *Ref {
+	return NewRef(&types.Type{t})
+}
+
+// NewConstRef creates a new reference node with a constant value.
 func NewConstRef(t types.T, v interface{}) *Ref {
 	return &Ref{T: t, ConstValue: v}
 }

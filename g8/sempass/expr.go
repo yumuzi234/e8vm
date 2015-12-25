@@ -3,7 +3,6 @@ package sempass
 import (
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/tast"
-	"e8vm.io/e8vm/g8/types"
 )
 
 func buildExpr(b *Builder, expr ast.Expr) tast.Expr {
@@ -28,10 +27,16 @@ func buildExpr(b *Builder, expr ast.Expr) tast.Expr {
 		panic("todo")
 	case *ast.ArrayTypeExpr:
 		t := b.BuildType(expr)
-		return &tast.Type{tast.NewRef(&types.Type{t})}
+		if t == nil {
+			return nil
+		}
+		return tast.NewType(t)
 	case *ast.FuncTypeExpr:
 		t := b.BuildType(expr)
-		return &tast.Type{tast.NewRef(&types.Type{t})}
+		if t == nil {
+			return nil
+		}
+		return tast.NewType(t)
 	}
 
 	b.Errorf(ast.ExprPos(expr), "invalid or not implemented: %T", expr)

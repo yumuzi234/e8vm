@@ -12,7 +12,6 @@ func constCast(
 	if types.IsInteger(to) && types.InRange(v, to) {
 		return &tast.Cast{from, tast.NewRef(to)}
 	}
-
 	b.Errorf(pos, "cannot cast %d to %s", v, to)
 	return nil
 }

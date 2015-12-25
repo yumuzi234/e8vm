@@ -117,6 +117,9 @@ func buildSlicing(b *builder, expr *ast.IndexExpr, array *ref) *ref {
 		addr = baseAddr
 	} else {
 		indexStart = buildArrayIndex(b, expr.Index, expr.Lbrack.Pos)
+		if indexStart == nil {
+			return nil
+		}
 		checkInRange(b, indexStart, n, "u<=")
 
 		offset = b.newPtr()
@@ -130,6 +133,9 @@ func buildSlicing(b *builder, expr *ast.IndexExpr, array *ref) *ref {
 		indexEnd = n
 	} else {
 		indexEnd = buildArrayIndex(b, expr.IndexEnd, expr.Colon.Pos)
+		if indexEnd == nil {
+			return nil
+		}
 		checkInRange(b, indexEnd, n, "u<=")
 		checkInRange(b, indexStart, indexEnd, "u<=")
 	}

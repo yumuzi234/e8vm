@@ -1,6 +1,7 @@
 package tast
 
 import (
+	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/sym8"
 )
@@ -13,6 +14,11 @@ type Const struct{ *Ref }
 
 // Type is a type expression
 type Type struct{ *Ref }
+
+// NewType creates a new type expression of a particular type.
+func NewType(t types.T) *Type {
+	return &Type{NewTypeRef(t)}
+}
 
 // Cast cast from one type of reference to another
 type Cast struct {
@@ -60,6 +66,7 @@ type CallExpr struct {
 // Both b and c are optional.
 type IndexExpr struct {
 	Array, Index, IndexEnd Expr
+	HasColon               bool
 	*Ref
 }
 

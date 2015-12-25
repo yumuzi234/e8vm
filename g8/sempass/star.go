@@ -20,8 +20,7 @@ func buildStarExpr(b *Builder, expr *ast.StarExpr) tast.Expr {
 		return nil
 	}
 	if t, ok := addrRef.T.(*types.Type); ok {
-		r := tast.NewRef(&types.Type{&types.Pointer{t}})
-		return &tast.Type{r}
+		return tast.NewType(&types.Pointer{t})
 	}
 
 	t, ok := addrRef.T.(*types.Pointer)
