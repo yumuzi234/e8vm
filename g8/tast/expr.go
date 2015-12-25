@@ -64,7 +64,7 @@ type IndexExpr struct {
 // ArrayTypeExpr is an expresion like "[x]b".
 // x is optional.
 type ArrayTypeExpr struct {
-	Len  Expr
+	Len  Expr // optional
 	Type Expr
 	*Ref
 }
