@@ -30,7 +30,6 @@ func binaryOpInt(b *builder, opTok *lex8.Token, A, B *ref, t types.T) *ref {
 		ret := b.newTemp(t)
 		buildBasicArith(b, ret, A, B, op)
 		return ret
-		return ret
 	case "==", "!=", ">", "<", ">=", "<=":
 		ret := b.newTemp(types.Bool)
 		b.b.Arith(ret.IR(), A.IR(), op, B.IR())
@@ -58,7 +57,7 @@ func binaryOpUint(b *builder, opTok *lex8.Token, A, B *ref, t types.T) *ref {
 		return ret
 	}
 
-	b.Errorf(opTok.Pos, "%q on ints", op)
+	b.Errorf(opTok.Pos, "%q on unsigned ints", op)
 	return nil
 }
 

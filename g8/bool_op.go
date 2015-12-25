@@ -15,7 +15,7 @@ func binaryOpBool(b *builder, opTok *lex8.Token, A, B *ref) *ref {
 		return ret
 	}
 
-	b.Errorf(opTok.Pos, "%q on ints", op)
+	b.Errorf(opTok.Pos, "%q on bools", op)
 	return nil
 }
 

@@ -16,7 +16,7 @@ func binaryOpNil(b *builder, opTok *lex8.Token, A, B *ref) *ref {
 		return refFalse
 	}
 
-	b.Errorf(opTok.Pos, "%q on pointers", op)
+	b.Errorf(opTok.Pos, "%q on nils", op)
 	return nil
 }
 

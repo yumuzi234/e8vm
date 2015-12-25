@@ -16,6 +16,12 @@ type Const struct{ *Ref }
 // Type is a type expression
 type Type struct{ *Ref }
 
+// Cast cast from one type of reference to another
+type Cast struct {
+	From Expr
+	*Ref
+}
+
 // Ident is an identifier.
 type Ident struct {
 	*lex8.Token
@@ -73,6 +79,8 @@ func ExprRef(expr Expr) *Ref {
 	case *Ident:
 		return expr.Ref
 	case *Type:
+		return expr.Ref
+	case *Cast:
 		return expr.Ref
 	case *Const:
 		return expr.Ref

@@ -75,3 +75,105 @@ func buildUnaryOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
 	b.Errorf(opPos, "invalid unary operator %q", op)
 	return nil
 }
+
+func buildBinaryOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
+	opTok := expr.Op
+	op := opTok.Lit
+	opPos := opTok.Pos
+
+	A := b.BuildExpr(expr.A)
+	if A == nil {
+		return nil
+	}
+	aref := tast.ExprRef(A)
+	if aref.List != nil {
+		b.Errorf(opPos, "%q on expression list", op)
+		return nil
+	}
+	atyp := aref.T
+
+	B := b.BuildExpr(expr.B)
+	if B == nil {
+		return nil
+	}
+	bref := tast.ExprRef(B)
+	if bref.List != nil {
+		b.Errorf(opPos, "%q on expression list", op)
+		return nil
+	}
+	btyp := bref.T
+
+	if types.IsConst(atyp) && types.IsConst(btyp) {
+		return binaryOpConst(b, opTok, A, B)
+	}
+
+	if op == ">>" || op == "<<" {
+		if v, ok := types.NumConst(btyp); ok {
+			B = constCast(b, opPos, v, B, types.Uint)
+			if B == nil {
+				return nil
+			}
+			btyp = types.Uint
+		}
+
+		if v, ok := types.NumConst(atyp); ok {
+			A = constCast(b, opPos, v, A, types.Int)
+			if A == nil {
+				return nil
+			}
+			atyp = types.Int
+		}
+
+		if !canShift(b, atyp, btyp, opPos, op) {
+			return nil
+		}
+
+		r := tast.NewRef(atyp)
+		return &tast.OpExpr{A, opTok, B, r}
+	}
+
+	if v, ok := types.NumConst(atyp); ok {
+		A = constCast(b, opPos, v, A, btyp)
+		if A == nil {
+			return nil
+		}
+		atyp = btyp
+	} else if c, ok := atyp.(*types.Const); ok {
+		atyp = c.Type
+	}
+
+	if v, ok := types.NumConst(btyp); ok {
+		B = constCast(b, opPos, v, B, atyp)
+		if B == nil {
+			return nil
+		}
+		btyp = atyp
+	} else if c, ok := btyp.(*types.Const); ok {
+		btyp = c.Type
+	}
+
+	if ok, t := types.SameBasic(atyp, btyp); ok {
+		switch t {
+		case types.Int, types.Int8, types.Uint, types.Uint8:
+			return binaryOpInt(b, opTok, A, B, t)
+		case types.Bool:
+			return binaryOpBool(b, opTok, A, B)
+		case types.Float32:
+			b.Errorf(opPos, "floating point operations not implemented")
+			return nil
+		}
+	}
+
+	if types.IsNil(atyp) && types.IsNil(btyp) {
+		return binaryOpNil(b, opTok, A, B)
+	} else if types.BothPointer(atyp, btyp) {
+		return binaryOpPtr(b, opTok, A, B)
+	} else if types.BothFuncPointer(atyp, btyp) {
+		return binaryOpPtr(b, opTok, A, B)
+	} else if types.BothSlice(atyp, btyp) {
+		return binaryOpSlice(b, opTok, A, B)
+	}
+
+	b.Errorf(opPos, "invalid %q", op)
+	return nil
+}

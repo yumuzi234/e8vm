@@ -108,3 +108,20 @@ func unaryOpInt(b *Builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
 	b.Errorf(opTok.Pos, "invalid operation: %q on %s", op, B)
 	return nil
 }
+
+func binaryOpInt(
+	b *Builder, opTok *lex8.Token, A, B tast.Expr, t types.T,
+) tast.Expr {
+	op := opTok.Lit
+	switch op {
+	case "+", "-", "*", "&", "|", "^", "%", "/":
+		r := tast.NewRef(t)
+		return &tast.OpExpr{A, opTok, B, r}
+	case "==", "!=", ">", "<", ">=", "<=":
+		r := tast.NewRef(types.Bool)
+		return &tast.OpExpr{A, opTok, B, r}
+	}
+
+	b.Errorf(opTok.Pos, "%q on ints", op)
+	return nil
+}

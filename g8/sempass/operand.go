@@ -88,7 +88,10 @@ func buildConstIdent(b *Builder, ident *lex8.Token) tast.Expr {
 
 	t := s.ObjType.(types.T)
 	switch s.Type {
-	case tast.SymConst, tast.SymStruct, tast.SymType, tast.SymImport:
+	case tast.SymConst:
+		ref := tast.NewRef(t)
+		return &tast.Const{ref}
+	case tast.SymStruct, tast.SymType, tast.SymImport:
 		ref := tast.NewRef(t)
 		return &tast.Ident{ident, ref, s}
 	}
