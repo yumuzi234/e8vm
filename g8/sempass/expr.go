@@ -15,6 +15,8 @@ func buildExpr(b *Builder, expr ast.Expr) tast.Expr {
 		return buildOperand(b, expr)
 	case *ast.ParenExpr:
 		return buildExpr(b, expr.Expr)
+	case *ast.MemberExpr:
+		return buildMember(b, expr)
 	}
 
 	b.Errorf(ast.ExprPos(expr), "invalid or not implemented: %T", expr)

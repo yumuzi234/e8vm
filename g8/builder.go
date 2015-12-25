@@ -27,9 +27,8 @@ type builder struct {
 
 	golike bool
 
-	b            *ir.Block
-	scope        *sym8.Scope
-	structFields map[*types.Struct]*sym8.Table
+	b     *ir.Block
+	scope *sym8.Scope
 
 	continues *blockStack
 	breaks    *blockStack
@@ -70,9 +69,8 @@ func newBuilder(path string, golike bool) *builder {
 		scope:     s, // package scope
 		golike:    golike,
 
-		continues:    newBlockStack(),
-		breaks:       newBlockStack(),
-		structFields: make(map[*types.Struct]*sym8.Table),
+		continues: newBlockStack(),
+		breaks:    newBlockStack(),
 
 		rand: newRand(),
 

@@ -8,14 +8,13 @@ import (
 )
 
 // This is the this pointer.
-type This struct {
-	*Ref
-}
+type This struct{ *Ref }
 
 // Const is a constant.
-type Const struct {
-	*Ref
-}
+type Const struct{ *Ref }
+
+// Type is a type expression
+type Type struct{ *Ref }
 
 // Ident is an identifier.
 type Ident struct {
@@ -55,34 +54,9 @@ type CallExpr struct {
 // IndexExpr is an expression like "a[b:c]"
 // Both b and c are optional.
 type IndexExpr struct {
-	Array    Expr
-	Index    Expr
-	IndexEnd Expr
+	Array, Index, IndexEnd Expr
 	*Ref
 }
-
-/*
-// ArrayTypeExpr is an expresion like "[x]b".
-// x is optional.
-type ArrayTypeExpr struct {
-	Len  Expr // optional
-	Type Expr
-	*Ref
-}
-
-// Para is a function parameter.
-type Para struct {
-	Ident *lex8.Token
-	*Ref
-}
-
-// FuncTypeExpr is an expression like "func f(t a)".
-type FuncTypeExpr struct {
-	Args []*Para
-	Rets []*Para
-	*Ref
-}
-*/
 
 // ExprList is a list of expressions.
 type ExprList struct {
@@ -96,6 +70,8 @@ func ExprRef(expr Expr) *Ref {
 	case *This:
 		return expr.Ref
 	case *Ident:
+		return expr.Ref
+	case *Type:
 		return expr.Ref
 	case *Const:
 		return expr.Ref

@@ -113,11 +113,10 @@ func buildMember(b *builder, m *ast.MemberExpr) *ref {
 		return nil
 	}
 
-	if pkg, ok := obj.Type().(*types.Pkg); ok {
+	t := obj.Type()
+	if pkg, ok := t.(*types.Pkg); ok {
 		return buildPackageSym(b, m, pkg)
 	}
-
-	t := obj.Type()
 	pt := types.PointerOf(t)
 
 	var tstruct *types.Struct
@@ -147,18 +146,12 @@ func buildMember(b *builder, m *ast.MemberExpr) *ref {
 		b.b.Arith(addr, nil, "&", obj.IR()) // load address
 	}
 
-	// TODO: the use of structFields here is more like a hack. It should not
-	// be the way to judge if a struct belongs to another package or not.
-	symTable := b.structFields[tstruct]
-	if symTable == nil {
-		// in this package.
-		symTable = tstruct.Syms
-	}
+	symTable := tstruct.Syms
 	name := m.Sub.Lit
 	sym := symTable.Query(name)
 	if sym == nil {
 		b.Errorf(m.Sub.Pos, "struct %s has no member named %s",
-			tstruct, m.Sub.Lit,
+			tstruct, name,
 		)
 		return nil
 	} else if !sym8.IsPublic(name) && sym.Pkg() != b.path {
@@ -177,6 +170,6 @@ func buildMember(b *builder, m *ast.MemberExpr) *ref {
 		return newRecvRef(ft, recv, method.IR())
 	}
 
-	b.Errorf(m.Sub.Pos, "invalid sym type", tast.SymStr(sym.Type))
+	b.Errorf(m.Sub.Pos, "invalid sym type: %s", tast.SymStr(sym.Type))
 	return nil
 }
