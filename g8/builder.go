@@ -128,10 +128,7 @@ func (b *builder) buildConstExpr(expr ast.Expr) *ref {
 }
 
 func (b *builder) buildType(expr ast.Expr) types.T {
-	if b.typeFunc != nil {
-		return b.typeFunc(b, expr)
-	}
-	return nil
+	return b.spass.BuildType(expr)
 }
 
 func (b *builder) buildStmts(stmts []ast.Stmt) {

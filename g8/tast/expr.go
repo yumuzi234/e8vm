@@ -61,6 +61,7 @@ type IndexExpr struct {
 	*Ref
 }
 
+/*
 // ArrayTypeExpr is an expresion like "[x]b".
 // x is optional.
 type ArrayTypeExpr struct {
@@ -81,6 +82,7 @@ type FuncTypeExpr struct {
 	Rets []*Para
 	*Ref
 }
+*/
 
 // ExprList is a list of expressions.
 type ExprList struct {
@@ -93,6 +95,10 @@ func ExprRef(expr Expr) *Ref {
 	switch expr := expr.(type) {
 	case *This:
 		return expr.Ref
+	case *Ident:
+		return expr.Ref
+	case *Const:
+		return expr.Ref
 	case *MemberExpr:
 		return expr.Ref
 	case *OpExpr:
@@ -102,12 +108,6 @@ func ExprRef(expr Expr) *Ref {
 	case *CallExpr:
 		return expr.Ref
 	case *IndexExpr:
-		return expr.Ref
-	case *ArrayTypeExpr:
-		return expr.Ref
-	case *Para:
-		return expr.Ref
-	case *FuncTypeExpr:
 		return expr.Ref
 	case *ExprList:
 		return expr.Ref
