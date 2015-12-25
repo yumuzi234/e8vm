@@ -11,7 +11,7 @@ import (
 	"e8vm.io/e8vm/lex8"
 )
 
-func genConst(b *builder, c *tast.Const) *ref {
+func buildConst(b *builder, c *tast.Const) *ref {
 	if _, ok := types.NumConst(c.T); ok {
 		// untyped consts are just types.
 		return newRef(c.T, nil)
@@ -50,7 +50,7 @@ func buildField(b *builder, this ir.Ref, field *types.Field) *ref {
 	return newAddressableRef(field.T, retIR)
 }
 
-func genIdent(b *builder, id *tast.Ident) *ref {
+func buildIdent(b *builder, id *tast.Ident) *ref {
 	s := id.Symbol
 	switch s.Type {
 	case tast.SymVar:
@@ -79,7 +79,7 @@ func genIdent(b *builder, id *tast.Ident) *ref {
 	}
 }
 
-func genConstIdent(b *builder, id *tast.Ident) *ref {
+func buildConstIdent(b *builder, id *tast.Ident) *ref {
 	s := id.Symbol
 	switch s.Type {
 	case tast.SymConst:
@@ -99,9 +99,9 @@ func genConstIdent(b *builder, id *tast.Ident) *ref {
 func genExpr(b *builder, expr tast.Expr) *ref {
 	switch expr := expr.(type) {
 	case *tast.Const:
-		return genConst(b, expr)
+		return buildConst(b, expr)
 	case *tast.Ident:
-		return genIdent(b, expr)
+		return buildIdent(b, expr)
 	}
 	panic(fmt.Errorf("genExpr not implemented for %T", expr))
 }
@@ -109,9 +109,9 @@ func genExpr(b *builder, expr tast.Expr) *ref {
 func genConstExpr(b *builder, expr tast.Expr) *ref {
 	switch expr := expr.(type) {
 	case *tast.Const:
-		return genConst(b, expr)
+		return buildConst(b, expr)
 	case *tast.Ident:
-		return genConstIdent(b, expr)
+		return buildConstIdent(b, expr)
 	}
 	panic("bug")
 }
