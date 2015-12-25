@@ -8,7 +8,6 @@ import (
 	"e8vm.io/e8vm/g8/parse"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
-	"e8vm.io/e8vm/lex8"
 )
 
 func buildConst(b *builder, c *tast.Const) *ref {
@@ -116,14 +115,6 @@ func genConstExpr(b *builder, expr tast.Expr) *ref {
 	panic("bug")
 }
 
-func buildOperand2(b *builder, op *lex8.Token) *ref {
-	expr := b.spass.BuildExpr(&ast.Operand{op})
-	if expr == nil {
-		return nil
-	}
-	return genExpr(b, expr)
-}
-
 func buildOperand(b *builder, op *ast.Operand) *ref {
 	if op.Token.Type == parse.Keyword && op.Token.Lit == "this" {
 		if b.this == nil {
@@ -133,15 +124,11 @@ func buildOperand(b *builder, op *ast.Operand) *ref {
 		return b.this
 	}
 
-	switch op.Token.Type {
-	case parse.Int, parse.Char, parse.String, parse.Ident:
-		return buildOperand2(b, op.Token)
-	default:
-		b.Errorf(op.Token.Pos, "invalid or not implemented: %d",
-			op.Token.Type,
-		)
+	expr := b.spass.BuildExpr(op)
+	if expr == nil {
 		return nil
 	}
+	return genExpr(b, expr)
 }
 
 func buildConstOperand(b *builder, op *ast.Operand) *ref {
