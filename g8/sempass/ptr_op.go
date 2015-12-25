@@ -10,7 +10,7 @@ func refAddress(b *Builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
 	op := opTok.Lit
 	opPos := opTok.Pos
 
-	bref := tast.ExprRef(B)
+	bref := B.R()
 	if types.IsType(bref.T) {
 		b.Errorf(opPos, "%q on %s", op, bref.T)
 		return nil
@@ -39,8 +39,8 @@ func binaryOpNil(b *Builder, opTok *lex8.Token, A, B tast.Expr) tast.Expr {
 
 func binaryOpPtr(b *Builder, opTok *lex8.Token, A, B tast.Expr) tast.Expr {
 	op := opTok.Lit
-	atyp := tast.ExprRef(A).T
-	btyp := tast.ExprRef(B).T
+	atyp := A.R().T
+	btyp := B.R().T
 
 	switch op {
 	case "==", "!=":

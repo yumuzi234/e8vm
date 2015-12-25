@@ -3,7 +3,9 @@
 package tast
 
 // Expr is a generic interface for an expression.
-type Expr interface{}
+type Expr interface {
+	R() *Ref
+}
 
 // Stmt is a generic interface for a statement.
 type Stmt interface{}

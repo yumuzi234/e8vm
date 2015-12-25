@@ -35,7 +35,7 @@ func buildExprList(b *Builder, list *ast.ExprList) *tast.ExprList {
 			return nil
 		}
 
-		ref := tast.ExprRef(ex)
+		ref := ex.R()
 		if ref.List != nil {
 			b.Errorf(ast.ExprPos(expr), "cannot composite list in a list")
 			return nil

@@ -34,7 +34,7 @@ func buildConstMember(b *Builder, m *ast.MemberExpr) tast.Expr {
 		return nil
 	}
 
-	ref := tast.ExprRef(obj)
+	ref := obj.R()
 	if ref.List != nil {
 		b.Errorf(m.Dot.Pos, "expression list does not have any member")
 		return nil
@@ -97,7 +97,7 @@ func buildMember(b *Builder, m *ast.MemberExpr) tast.Expr {
 		return nil
 	}
 
-	ref := tast.ExprRef(obj)
+	ref := obj.R()
 	if ref.List != nil {
 		b.Errorf(m.Dot.Pos, "expression list does not have any member")
 		return nil

@@ -49,7 +49,7 @@ func buildArrayType(b *Builder, expr *ast.ArrayTypeExpr) types.T {
 		return nil
 	}
 
-	ntype := tast.ExprRef(n).T
+	ntype := n.R().T
 	c, ok := ntype.(*types.Const)
 	if !ok {
 		// might be true, false, or other builtin consts
@@ -102,7 +102,7 @@ func buildType(b *Builder, expr ast.Expr) types.T {
 		if ret == nil {
 			return nil
 		}
-		ref := tast.ExprRef(ret)
+		ref := ret.R()
 		t, ok := ref.T.(*types.Type)
 		if !ok {
 			b.Errorf(ast.ExprPos(expr), "expect a type, got %s", ref.T)

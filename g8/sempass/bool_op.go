@@ -9,7 +9,7 @@ import (
 func unaryOpBool(b *Builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
 	op := opTok.Lit
 	if op == "!" {
-		t := tast.ExprRef(B).T
+		t := B.R().T
 		return &tast.OpExpr{nil, opTok, B, tast.NewRef(t)}
 	}
 

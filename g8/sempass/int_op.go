@@ -8,7 +8,7 @@ import (
 
 func unaryOpConst(b *Builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
 	op := opTok.Lit
-	bref := tast.ExprRef(B)
+	bref := B.R()
 	if bref.List != nil {
 		b.Errorf(opTok.Pos, "invalid operation: %q on %s", op, bref.T)
 		return nil
@@ -34,8 +34,8 @@ func unaryOpConst(b *Builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
 
 func binaryOpConst(b *Builder, opTok *lex8.Token, A, B tast.Expr) tast.Expr {
 	op := opTok.Lit
-	aref := tast.ExprRef(A)
-	bref := tast.ExprRef(B)
+	aref := A.R()
+	bref := B.R()
 	if aref.List != nil || bref.List != nil {
 		b.Errorf(opTok.Pos, "invalid %s %q %s", aref.T, op, bref.T)
 		return nil
@@ -101,7 +101,7 @@ func unaryOpInt(b *Builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
 	case "+":
 		return B
 	case "-", "^":
-		t := tast.ExprRef(B).T
+		t := B.R().T
 		return &tast.OpExpr{nil, opTok, B, tast.NewRef(t)}
 	}
 

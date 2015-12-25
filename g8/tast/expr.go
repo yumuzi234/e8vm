@@ -1,8 +1,6 @@
 package tast
 
 import (
-	"fmt"
-
 	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/sym8"
 )
@@ -69,34 +67,4 @@ type IndexExpr struct {
 type ExprList struct {
 	Exprs []Expr
 	*Ref
-}
-
-// ExprRef returns the reference of the expression.
-func ExprRef(expr Expr) *Ref {
-	switch expr := expr.(type) {
-	case *This:
-		return expr.Ref
-	case *Ident:
-		return expr.Ref
-	case *Type:
-		return expr.Ref
-	case *Cast:
-		return expr.Ref
-	case *Const:
-		return expr.Ref
-	case *MemberExpr:
-		return expr.Ref
-	case *OpExpr:
-		return expr.Ref
-	case *StarExpr:
-		return expr.Ref
-	case *CallExpr:
-		return expr.Ref
-	case *IndexExpr:
-		return expr.Ref
-	case *ExprList:
-		return expr.Ref
-	default:
-		panic(fmt.Errorf("invalid tast expr node: %T", expr))
-	}
 }

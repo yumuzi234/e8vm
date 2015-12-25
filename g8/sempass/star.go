@@ -14,7 +14,7 @@ func buildStarExpr(b *Builder, expr *ast.StarExpr) tast.Expr {
 		return nil
 	}
 
-	addrRef := tast.ExprRef(addr)
+	addrRef := addr.R()
 	if addrRef.List != nil {
 		b.Errorf(opPos, "* on expression list")
 		return nil

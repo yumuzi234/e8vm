@@ -54,7 +54,7 @@ func buildUnaryOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
 	if B == nil {
 		return nil
 	}
-	bref := tast.ExprRef(B)
+	bref := B.R()
 	if bref.List != nil {
 		b.Errorf(opPos, "%q on expression list", bref.T)
 		return nil
@@ -84,7 +84,7 @@ func buildBinaryOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
 	if A == nil {
 		return nil
 	}
-	aref := tast.ExprRef(A)
+	aref := A.R()
 	if aref.List != nil {
 		b.Errorf(opPos, "%q on expression list", op)
 		return nil
@@ -95,7 +95,7 @@ func buildBinaryOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
 	if B == nil {
 		return nil
 	}
-	bref := tast.ExprRef(B)
+	bref := B.R()
 	if bref.List != nil {
 		b.Errorf(opPos, "%q on expression list", op)
 		return nil

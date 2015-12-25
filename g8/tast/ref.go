@@ -40,3 +40,8 @@ func NewConstRef(t types.T, v interface{}) *Ref {
 func NewAddressableRef(t types.T) *Ref {
 	return &Ref{T: t, Addressable: false}
 }
+
+// R returns itself.
+func (r *Ref) R() *Ref {
+	return r
+}
