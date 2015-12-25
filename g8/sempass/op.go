@@ -42,8 +42,7 @@ func buildOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
 	if expr.A == nil {
 		return buildUnaryOpExpr(b, expr)
 	}
-	panic("todo")
-	// return buildBinaryOpExpr(b, expr)
+	return buildBinaryOpExpr(b, expr)
 }
 
 func buildUnaryOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
