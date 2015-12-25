@@ -72,10 +72,8 @@ func buildIdent(b *builder, id *tast.Ident) *ref {
 		return buildField(b, b.this.IR(), v.Field)
 	case tast.SymImport:
 		return s.Obj.(*objImport).ref
-	default:
-		b.Errorf(id.Token.Pos, "todo: token type: %s", tast.SymStr(s.Type))
-		return nil
 	}
+	panic(fmt.Errorf("unhandled token type: %s", tast.SymStr(s.Type)))
 }
 
 func buildConstIdent(b *builder, id *tast.Ident) *ref {
@@ -87,12 +85,8 @@ func buildConstIdent(b *builder, id *tast.Ident) *ref {
 		return s.Obj.(*objType).ref
 	case tast.SymImport:
 		return s.Obj.(*objImport).ref
-	default:
-		b.Errorf(id.Token.Pos, "%s is a %s, not a const",
-			id.Token.Lit, tast.SymStr(s.Type),
-		)
-		return nil
 	}
+	panic(fmt.Errorf("not a const: %s", tast.SymStr(s.Type)))
 }
 
 func genExpr(b *builder, expr tast.Expr) *ref {
@@ -105,6 +99,7 @@ func genExpr(b *builder, expr tast.Expr) *ref {
 	panic(fmt.Errorf("genExpr not implemented for %T", expr))
 }
 
+// to replace buildConstExpr in the future
 func genConstExpr(b *builder, expr tast.Expr) *ref {
 	switch expr := expr.(type) {
 	case *tast.Const:
