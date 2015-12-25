@@ -7,17 +7,6 @@ import (
 	"e8vm.io/e8vm/g8/tast"
 )
 
-// to replace buildConstExpr in the future
-func buildConstExpr2(b *builder, expr tast.Expr) *ref {
-	switch expr := expr.(type) {
-	case *tast.Const:
-		return buildConst(b, expr)
-	case *tast.Ident:
-		return buildConstIdent(b, expr)
-	}
-	panic("bug")
-}
-
 // to replace buildExpr in the future
 func buildExpr2(b *builder, expr tast.Expr) *ref {
 	switch expr := expr.(type) {
@@ -35,21 +24,19 @@ func buildConstExpr(b *builder, expr ast.Expr) *ref {
 	if expr == nil {
 		panic("bug")
 	}
-
-	switch expr := expr.(type) {
-	case *ast.MemberExpr:
-		return buildConstMember(b, expr)
-	case *ast.OpExpr:
-		return buildConstOpExpr(b, expr)
-	case *ast.ParenExpr:
-		return buildConstExpr(b, expr.Expr)
-	}
-
 	e := b.spass.BuildConstExpr(expr)
 	if e == nil {
 		return nil
 	}
-	return buildConstExpr2(b, e)
+
+	switch e := e.(type) {
+	case *tast.Const:
+		return buildConst(b, e)
+	case *tast.Ident:
+		// TODO: why return ident here?
+		return buildConstIdent(b, e)
+	}
+	panic("bug")
 }
 
 func buildExpr(b *builder, expr ast.Expr) *ref {
