@@ -140,10 +140,14 @@ func (p *pkg) declareVars(b *builder) {
 
 func (p *pkg) buildFuncs(b *builder) {
 	b.this = nil
+	b.spass.SetThis(nil)
 	for _, f := range p.funcObjs {
 		buildFunc(b, f)
 	}
 	for _, s := range p.structOrder {
+		b.this = nil // set to nil for safety
+		b.spass.SetThis(nil)
+
 		buildMethods(b, s)
 	}
 }

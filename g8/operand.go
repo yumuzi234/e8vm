@@ -5,7 +5,6 @@ import (
 
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/ir"
-	"e8vm.io/e8vm/g8/parse"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 )
@@ -89,12 +88,15 @@ func buildConstIdent(b *builder, id *tast.Ident) *ref {
 	panic(fmt.Errorf("not a const: %s", tast.SymStr(s.Type)))
 }
 
+// to replace buildExpr in the future
 func genExpr(b *builder, expr tast.Expr) *ref {
 	switch expr := expr.(type) {
 	case *tast.Const:
 		return buildConst(b, expr)
 	case *tast.Ident:
 		return buildIdent(b, expr)
+	case *tast.This:
+		return b.this
 	}
 	panic(fmt.Errorf("genExpr not implemented for %T", expr))
 }
@@ -111,14 +113,6 @@ func genConstExpr(b *builder, expr tast.Expr) *ref {
 }
 
 func buildOperand(b *builder, op *ast.Operand) *ref {
-	if op.Token.Type == parse.Keyword && op.Token.Lit == "this" {
-		if b.this == nil {
-			b.Errorf(op.Token.Pos, "using this out of a method function")
-			return nil
-		}
-		return b.this
-	}
-
 	expr := b.spass.BuildExpr(op)
 	if expr == nil {
 		return nil

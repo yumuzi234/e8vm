@@ -177,8 +177,10 @@ func buildMethodFunc(b *builder, s *structInfo, f *objFunc) {
 
 	if !b.golike {
 		b.this = newRef(s.pt, ir.ThisRef())
+		b.spass.SetThis(tast.NewRef(s.pt))
 	} else {
 		b.this = newAddressableRef(s.pt, ir.ThisRef())
+		b.spass.SetThis(tast.NewAddressableRef(s.pt))
 	}
 	buildFunc(b, f)
 }

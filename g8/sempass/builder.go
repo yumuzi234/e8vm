@@ -68,5 +68,10 @@ func (b *Builder) InitDeps(asts map[string]*ast.File) {
 	b.deps = newDeps(asts)
 }
 
+// SetThis sets the reference for this keyword.
+func (b *Builder) SetThis(ref *tast.Ref) {
+	b.this = ref
+}
+
 // DepGraph returns the dependency graph.
 func (b *Builder) DepGraph() *dagvis.Graph { return b.deps.graph() }

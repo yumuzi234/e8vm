@@ -154,6 +154,12 @@ func TestSingleFile(t *testing.T) {
 		func main() { var a A; a.s(33); a.p() }`, "33")
 	o(` struct A { 
 			a int;
+			func s(a int) { (*this).a = a }
+			func p() { printInt(a) }
+		}
+		func main() { var a A; a.s(33); a.p() }`, "33")
+	o(` struct A { 
+			a int;
 			func p() { printInt(a) }
 			func q(a int) { printInt(a) }
 		}
