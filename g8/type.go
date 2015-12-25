@@ -4,6 +4,7 @@ import (
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
+	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/sym8"
 )
 
@@ -52,22 +53,20 @@ func buildArrayType(b *builder, expr *ast.ArrayTypeExpr) types.T {
 	return nil
 }
 
-func buildPkgRef(b *builder, expr ast.Expr) *types.Pkg {
-	switch expr := expr.(type) {
-	case *ast.Operand:
-		ret := buildOperand(b, expr)
-		if ret == nil {
-			return nil
-		}
-		if !ret.IsPkg() {
-			b.Errorf(ast.ExprPos(expr), "expect a package, got %s", ret)
-			return nil
-		}
-		return ret.Type().(*types.Pkg)
+func buildPkgRef(b *builder, ident *lex8.Token) *types.Pkg {
+	s := b.scope.Query(ident.Lit)
+	if s == nil {
+		b.Errorf(ident.Pos, "undefined identifier %s", ident.Lit)
+		return nil
 	}
 
-	b.Errorf(ast.ExprPos(expr), "expect an imported package")
-	return nil
+	b.spass.RefSym(s, ident.Pos)
+	if s.Type != tast.SymImport {
+		b.Errorf(ident.Pos, "%s is not an imported package", ident.Lit)
+		return nil
+	}
+
+	return s.Obj.(*objImport).ref.Type().(*types.Pkg)
 }
 
 func buildType(b *builder, expr ast.Expr) types.T {
@@ -77,7 +76,7 @@ func buildType(b *builder, expr ast.Expr) types.T {
 
 	switch expr := expr.(type) {
 	case *ast.Operand:
-		ret := buildOperand(b, expr)
+		ret := b.buildExpr(expr)
 		if ret == nil {
 			return nil
 		} else if !ret.IsType() {
@@ -98,7 +97,12 @@ func buildType(b *builder, expr ast.Expr) types.T {
 	case *ast.FuncTypeExpr:
 		return buildFuncType(b, nil, expr.FuncSig)
 	case *ast.MemberExpr:
-		pkg := buildPkgRef(b, expr.Expr)
+		op, ok := expr.Expr.(*ast.Operand)
+		if !ok {
+			b.Errorf(ast.ExprPos(expr.Expr), "expect a package")
+			return nil
+		}
+		pkg := buildPkgRef(b, op.Token)
 		if pkg == nil {
 			return nil
 		}

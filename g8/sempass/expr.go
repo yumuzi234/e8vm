@@ -15,12 +15,10 @@ func buildExpr(b *Builder, expr ast.Expr) tast.Expr {
 		return buildOperand(b, expr)
 	case *ast.ParenExpr:
 		return buildExpr(b, expr.Expr)
-	default:
-		b.Errorf(ast.ExprPos(expr), "invalid or not implemented: %T", expr)
-		return nil
 	}
 
-	panic("todo")
+	b.Errorf(ast.ExprPos(expr), "invalid or not implemented: %T", expr)
+	return nil
 }
 
 func buildConstExpr(b *Builder, expr ast.Expr) tast.Expr {
@@ -36,7 +34,7 @@ func buildConstExpr(b *Builder, expr ast.Expr) tast.Expr {
 	case *ast.OpExpr:
 		panic("todo")
 	case *ast.ParenExpr:
-		return buildExpr(b, expr.Expr)
+		return buildConstExpr(b, expr.Expr)
 	}
 
 	b.Errorf(ast.ExprPos(expr), "expect a const expression")

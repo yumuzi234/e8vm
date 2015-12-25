@@ -3,7 +3,6 @@ package g8
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/ir"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
@@ -86,44 +85,4 @@ func buildConstIdent(b *builder, id *tast.Ident) *ref {
 		return s.Obj.(*objImport).ref
 	}
 	panic(fmt.Errorf("not a const: %s", tast.SymStr(s.Type)))
-}
-
-// to replace buildExpr in the future
-func genExpr(b *builder, expr tast.Expr) *ref {
-	switch expr := expr.(type) {
-	case *tast.Const:
-		return buildConst(b, expr)
-	case *tast.Ident:
-		return buildIdent(b, expr)
-	case *tast.This:
-		return b.this
-	}
-	panic(fmt.Errorf("genExpr not implemented for %T", expr))
-}
-
-// to replace buildConstExpr in the future
-func genConstExpr(b *builder, expr tast.Expr) *ref {
-	switch expr := expr.(type) {
-	case *tast.Const:
-		return buildConst(b, expr)
-	case *tast.Ident:
-		return buildConstIdent(b, expr)
-	}
-	panic("bug")
-}
-
-func buildOperand(b *builder, op *ast.Operand) *ref {
-	expr := b.spass.BuildExpr(op)
-	if expr == nil {
-		return nil
-	}
-	return genExpr(b, expr)
-}
-
-func buildConstOperand(b *builder, op *ast.Operand) *ref {
-	expr := b.spass.BuildConstExpr(&ast.Operand{op.Token})
-	if expr == nil {
-		return nil
-	}
-	return genConstExpr(b, expr)
 }

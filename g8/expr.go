@@ -1,8 +1,35 @@
 package g8
 
 import (
+	"fmt"
+
 	"e8vm.io/e8vm/g8/ast"
+	"e8vm.io/e8vm/g8/tast"
 )
+
+// to replace buildConstExpr in the future
+func buildConstExpr2(b *builder, expr tast.Expr) *ref {
+	switch expr := expr.(type) {
+	case *tast.Const:
+		return buildConst(b, expr)
+	case *tast.Ident:
+		return buildConstIdent(b, expr)
+	}
+	panic("bug")
+}
+
+// to replace buildExpr in the future
+func buildExpr2(b *builder, expr tast.Expr) *ref {
+	switch expr := expr.(type) {
+	case *tast.Const:
+		return buildConst(b, expr)
+	case *tast.Ident:
+		return buildIdent(b, expr)
+	case *tast.This:
+		return b.this
+	}
+	panic(fmt.Errorf("genExpr not implemented for %T", expr))
+}
 
 func buildConstExpr(b *builder, expr ast.Expr) *ref {
 	if expr == nil {
@@ -10,18 +37,19 @@ func buildConstExpr(b *builder, expr ast.Expr) *ref {
 	}
 
 	switch expr := expr.(type) {
-	case *ast.Operand:
-		return buildConstOperand(b, expr)
 	case *ast.MemberExpr:
 		return buildConstMember(b, expr)
 	case *ast.OpExpr:
 		return buildConstOpExpr(b, expr)
 	case *ast.ParenExpr:
 		return buildConstExpr(b, expr.Expr)
-	default:
-		b.Errorf(ast.ExprPos(expr), "expect a const expression")
+	}
+
+	e := b.spass.BuildConstExpr(expr)
+	if e == nil {
 		return nil
 	}
+	return buildConstExpr2(b, e)
 }
 
 func buildExpr(b *builder, expr ast.Expr) *ref {
@@ -30,8 +58,6 @@ func buildExpr(b *builder, expr ast.Expr) *ref {
 	}
 
 	switch expr := expr.(type) {
-	case *ast.Operand:
-		return buildOperand(b, expr)
 	case *ast.MemberExpr:
 		return buildMember(b, expr)
 	case *ast.ParenExpr:
@@ -56,10 +82,13 @@ func buildExpr(b *builder, expr ast.Expr) *ref {
 			return nil
 		}
 		return newTypeRef(t)
-	default:
-		b.Errorf(ast.ExprPos(expr), "invalid or not implemented: %T", expr)
+	}
+
+	e := b.spass.BuildExpr(expr)
+	if e == nil {
 		return nil
 	}
+	return buildExpr2(b, e)
 }
 
 func buildExprStmt(b *builder, expr ast.Expr) {
