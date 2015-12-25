@@ -28,6 +28,7 @@ type MemberExpr struct {
 	Expr Expr
 	Sub  *lex8.Token
 	*Ref
+	Symbol *sym8.Symbol
 }
 
 // OpExpr is an expression likfe "a+b"

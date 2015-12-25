@@ -1,6 +1,7 @@
 package sempass
 
 import (
+	"e8vm.io/e8vm/asm8"
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
@@ -55,8 +56,39 @@ func buildConstMember(b *Builder, m *ast.MemberExpr) tast.Expr {
 	return nil
 }
 
-func buildPkgSym(b *Builder, m *ast.MemberExpr, pkg *types.Pkg) tast.Expr {
-	panic("todo")
+func buildPkgSym(
+	b *Builder, m *ast.MemberExpr, pkg *types.Pkg,
+) (*tast.Ref, *sym8.Symbol) {
+	sym := findPackageSym(b, m.Sub, pkg)
+	if sym == nil {
+		return nil, nil
+	}
+
+	if pkg.Lang == "asm8" {
+		switch sym.Type {
+		case asm8.SymVar:
+			return tast.NewRef(types.Uint), sym
+		case asm8.SymFunc:
+			return tast.NewRef(types.VoidFunc), sym
+		}
+
+		b.Errorf(m.Sub.Pos, "invalid symbol %s in %s: %s",
+			m.Sub.Lit, pkg, asm8.SymStr(sym.Type),
+		)
+		return nil, nil
+	}
+	t := sym.ObjType.(types.T)
+	switch sym.Type {
+	case tast.SymConst, tast.SymStruct, tast.SymFunc:
+		return tast.NewRef(t), sym
+	case tast.SymVar:
+		return tast.NewAddressableRef(t), sym
+	}
+
+	b.Errorf(m.Sub.Pos, "bug: invalid symbol %s in %s: %s",
+		m.Sub.Lit, pkg, tast.SymStr(sym.Type),
+	)
+	return nil, nil
 }
 
 func buildMember(b *Builder, m *ast.MemberExpr) tast.Expr {
@@ -73,7 +105,11 @@ func buildMember(b *Builder, m *ast.MemberExpr) tast.Expr {
 
 	t := ref.T
 	if pkg, ok := t.(*types.Pkg); ok {
-		return buildPkgSym(b, m, pkg)
+		r, sym := buildPkgSym(b, m, pkg)
+		if r == nil {
+			return nil
+		}
+		return tast.MemberExpr{obj, m.Sub, r, sym}
 	}
 
 	pt := types.PointerOf(t)
@@ -108,13 +144,14 @@ func buildMember(b *Builder, m *ast.MemberExpr) tast.Expr {
 
 	if sym.Type == tast.SymField {
 		t := sym.ObjType.(types.T)
-		return &tast.MemberExpr{obj, m.Sub, tast.NewAddressableRef(t)}
+		r := tast.NewAddressableRef(t)
+		return &tast.MemberExpr{obj, m.Sub, r, sym}
 	} else if sym.Type == tast.SymFunc {
 		ft := sym.ObjType.(*types.Func)
 		r := tast.NewRef(ft.MethodFunc)
 		r.Recv = ref
 		r.RecvFunc = ft
-		return &tast.MemberExpr{obj, m.Sub, r}
+		return &tast.MemberExpr{obj, m.Sub, r, sym}
 	}
 
 	b.Errorf(m.Sub.Pos, "invalid sym type: %s", tast.SymStr(sym.Type))
