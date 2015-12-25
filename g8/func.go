@@ -30,10 +30,26 @@ func declareFuncSym(b *builder, f *ast.Func, t types.T) *objFunc {
 	return ret
 }
 
+func buildPkgIdent(b *builder, ident *lex8.Token) *ref {
+	s := b.scope.Query(ident.Lit)
+	if s == nil {
+		b.Errorf(ident.Pos, "undefined identifier %s", ident.Lit)
+		return nil
+	}
+
+	b.spass.RefSym(s, ident.Pos)
+	if s.Type != tast.SymImport {
+		b.Errorf(ident.Pos, "%s is not an imported package", ident.Lit)
+		return nil
+	}
+
+	return s.Obj.(*objImport).ref
+}
+
 func declareFuncAlias(b *builder, f *ast.Func, t *types.Func) *objFunc {
 	alias := f.Alias
 
-	pkgRef := buildConstIdent(b, alias.Pkg)
+	pkgRef := buildPkgIdent(b, alias.Pkg)
 	if pkgRef == nil {
 		return nil
 	}

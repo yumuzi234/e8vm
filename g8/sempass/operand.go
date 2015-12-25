@@ -77,6 +77,40 @@ func buildIdent(b *Builder, ident *lex8.Token) tast.Expr {
 	}
 }
 
+func buildConstIdent(b *Builder, ident *lex8.Token) tast.Expr {
+	s := b.scope.Query(ident.Lit)
+	if s == nil {
+		b.Errorf(ident.Pos, "undefined identifier %s", ident.Lit)
+		return nil
+	}
+
+	b.RefSym(s, ident.Pos)
+
+	t := s.ObjType.(types.T)
+	switch s.Type {
+	case tast.SymConst, tast.SymStruct, tast.SymType, tast.SymImport:
+		ref := tast.NewRef(t)
+		return &tast.Ident{ident, ref, s}
+	}
+
+	b.Errorf(ident.Pos, "%s is a %s; expect a const",
+		ident.Lit, tast.SymStr(s.Type),
+	)
+	return nil
+}
+
+func buildConstOperand(b *Builder, op *ast.Operand) tast.Expr {
+	switch op.Token.Type {
+	case parse.Int:
+		return buildInt(b, op.Token)
+	case parse.Ident:
+		return buildConstIdent(b, op.Token)
+	}
+
+	b.Errorf(op.Token.Pos, "expect a constant")
+	return nil
+}
+
 func buildOperand(b *Builder, op *ast.Operand) tast.Expr {
 	if op.Token.Type == parse.Keyword && op.Token.Lit == "this" {
 		if b.this == nil {

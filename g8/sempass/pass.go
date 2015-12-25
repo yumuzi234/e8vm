@@ -8,6 +8,7 @@ import (
 func NewBuilder(path string, scope *sym8.Scope) *Builder {
 	ret := newBuilder(path)
 	ret.exprFunc = buildExpr
+	ret.constFunc = buildConstExpr
 	ret.scope = scope // TODO: remove this
 
 	return ret

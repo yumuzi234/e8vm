@@ -39,6 +39,17 @@ func genConst(b *builder, c *tast.Const) *ref {
 	panic("other const types not supported")
 }
 
+func buildField(b *builder, this ir.Ref, field *types.Field) *ref {
+	retIR := ir.NewAddrRef(
+		this,
+		field.T.Size(),
+		field.Offset(),
+		types.IsByte(field.T),
+		true,
+	)
+	return newAddressableRef(field.T, retIR)
+}
+
 func genIdent(b *builder, id *tast.Ident) *ref {
 	s := id.Symbol
 	switch s.Type {
@@ -113,48 +124,6 @@ func buildOperand2(b *builder, op *lex8.Token) *ref {
 	return genExpr(b, expr)
 }
 
-func buildConstOperand2(b *builder, op *lex8.Token) *ref {
-	expr := b.spass.BuildExpr(&ast.Operand{op})
-	if expr == nil {
-		return nil
-	}
-	return genConstExpr(b, expr)
-}
-
-func buildField(b *builder, this ir.Ref, field *types.Field) *ref {
-	retIR := ir.NewAddrRef(
-		this,
-		field.T.Size(),
-		field.Offset(),
-		types.IsByte(field.T),
-		true,
-	)
-	return newAddressableRef(field.T, retIR)
-}
-
-func buildConstIdent(b *builder, ident *lex8.Token) *ref {
-	s := b.scope.Query(ident.Lit)
-	if s == nil {
-		b.Errorf(ident.Pos, "undefined identifier %s", ident.Lit)
-		return nil
-	}
-
-	b.spass.RefSym(s, ident.Pos)
-	switch s.Type {
-	case tast.SymType, tast.SymStruct:
-		return s.Obj.(*objType).ref
-	case tast.SymConst:
-		return s.Obj.(*objConst).ref
-	case tast.SymImport:
-		return s.Obj.(*objImport).ref
-	default:
-		b.Errorf(ident.Pos, "%s is a %s, not a const",
-			ident.Lit, tast.SymStr(s.Type),
-		)
-		return nil
-	}
-}
-
 func buildOperand(b *builder, op *ast.Operand) *ref {
 	if op.Token.Type == parse.Keyword && op.Token.Lit == "this" {
 		if b.this == nil {
@@ -176,7 +145,7 @@ func buildOperand(b *builder, op *ast.Operand) *ref {
 }
 
 func buildConstOperand(b *builder, op *ast.Operand) *ref {
-	expr := b.spass.BuildExpr(&ast.Operand{op.Token})
+	expr := b.spass.BuildConstExpr(&ast.Operand{op.Token})
 	if expr == nil {
 		return nil
 	}

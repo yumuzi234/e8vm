@@ -16,8 +16,9 @@ type Builder struct {
 	this  *tast.Ref
 	scope *sym8.Scope
 
-	exprFunc func(b *Builder, expr ast.Expr) tast.Expr
-	stmtFunc func(b *Builder, stmt ast.Stmt) tast.Stmt
+	exprFunc  func(b *Builder, expr ast.Expr) tast.Expr
+	constFunc func(b *Builder, expr ast.Expr) tast.Expr
+	stmtFunc  func(b *Builder, stmt ast.Stmt) tast.Stmt
 
 	// file level dependency, for checking circular dependencies.
 	deps deps
@@ -34,6 +35,11 @@ func newBuilder(path string) *Builder {
 // BuildExpr builds the expression.
 func (b *Builder) BuildExpr(expr ast.Expr) tast.Expr {
 	return b.exprFunc(b, expr)
+}
+
+// BuildConstExpr builds a constant expression.
+func (b *Builder) BuildConstExpr(expr ast.Expr) tast.Expr {
+	return b.constFunc(b, expr)
 }
 
 // RefSym references a symbol.
