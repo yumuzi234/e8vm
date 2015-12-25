@@ -71,13 +71,13 @@ func buildExpr(b *builder, expr ast.Expr) *ref {
 	case *ast.IndexExpr:
 		return buildIndexExpr(b, expr)
 	case *ast.ArrayTypeExpr:
-		t := buildArrayType(b, expr)
+		t := b.spass.BuildType(expr)
 		if t == nil {
 			return nil
 		}
 		return newTypeRef(t)
 	case *ast.FuncTypeExpr:
-		t := buildFuncType(b, nil, expr.FuncSig)
+		t := b.spass.BuildType(expr)
 		if t == nil {
 			return nil
 		}

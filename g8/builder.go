@@ -36,7 +36,6 @@ type builder struct {
 
 	exprFunc  func(b *builder, expr ast.Expr) *ref
 	stmtFunc  func(b *builder, stmt ast.Stmt)
-	typeFunc  func(b *builder, expr ast.Expr) types.T
 	constFunc func(b *builder, expr ast.Expr) *ref
 	irLog     io.WriteCloser
 
@@ -125,10 +124,6 @@ func (b *builder) buildConstExpr(expr ast.Expr) *ref {
 		return b.constFunc(b, expr)
 	}
 	return nil
-}
-
-func (b *builder) buildType(expr ast.Expr) types.T {
-	return b.spass.BuildType(expr)
 }
 
 func (b *builder) buildStmts(stmts []ast.Stmt) {

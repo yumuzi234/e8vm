@@ -106,6 +106,7 @@ func buildType(b *Builder, expr ast.Expr) types.T {
 		t, ok := ref.T.(*types.Type)
 		if !ok {
 			b.Errorf(ast.ExprPos(expr), "expect a type, got %s", ref.T)
+			return nil
 		}
 		return t.T
 	case *ast.StarExpr:

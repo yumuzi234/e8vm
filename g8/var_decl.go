@@ -29,7 +29,7 @@ func buildVarDecl(b *builder, d *ast.VarDecl) {
 			return
 		}
 		if d.Type != nil {
-			tdest := buildType(b, d.Type)
+			tdest := b.spass.BuildType(d.Type)
 			if tdest == nil {
 				return
 			}
@@ -52,7 +52,7 @@ func buildVarDecl(b *builder, d *ast.VarDecl) {
 		panic("type missing")
 	}
 
-	t := buildType(b, d.Type)
+	t := b.spass.BuildType(d.Type)
 	if t == nil {
 		return
 	}
@@ -79,7 +79,7 @@ func buildGlobalVarDecl(b *builder, d *ast.VarDecl) {
 		panic("type missing")
 	}
 
-	t := buildType(b, d.Type)
+	t := b.spass.BuildType(d.Type)
 	if t == nil {
 		return
 	}

@@ -34,7 +34,7 @@ func defineStructFields(b *builder, info *structInfo) {
 
 	// build fields
 	for _, f := range s.Fields {
-		ft := b.buildType(f.Type)
+		ft := b.spass.BuildType(f.Type)
 		if ft == nil {
 			return
 		}

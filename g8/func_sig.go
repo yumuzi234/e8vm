@@ -20,7 +20,7 @@ func buildFuncType(b *builder, s *structInfo, f *ast.FuncSig) *types.Func {
 	if f.RetType == nil {
 		rets = buildParaList(b, f.Rets)
 	} else {
-		retType := b.buildType(f.RetType)
+		retType := b.spass.BuildType(f.RetType)
 		if retType == nil {
 			return nil
 		}

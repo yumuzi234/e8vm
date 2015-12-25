@@ -30,7 +30,7 @@ func buildConstExpr(b *Builder, expr ast.Expr) tast.Expr {
 	case *ast.Operand:
 		return buildConstOperand(b, expr)
 	case *ast.MemberExpr:
-		panic("todo")
+		return buildConstMember(b, expr)
 	case *ast.OpExpr:
 		return buildConstOpExpr(b, expr)
 	case *ast.ParenExpr:
