@@ -155,35 +155,3 @@ func buildOpExpr(b *builder, expr *ast.OpExpr) *ref {
 	}
 	return buildBinaryOpExpr(b, expr)
 }
-
-func buildConstOpExpr(b *builder, expr *ast.OpExpr) *ref {
-	if expr.A == nil {
-		return buildConstUnaryOpExpr(b, expr)
-	}
-	return buildConstBinaryOpExpr(b, expr)
-}
-
-func buildConstUnaryOpExpr(b *builder, expr *ast.OpExpr) *ref {
-	opTok := expr.Op
-
-	B := b.buildConstExpr(expr.B)
-	if B == nil {
-		return nil
-	}
-	return unaryOpConst(b, opTok, B)
-}
-
-func buildConstBinaryOpExpr(b *builder, expr *ast.OpExpr) *ref {
-	opTok := expr.Op
-
-	A := b.buildConstExpr(expr.A)
-	if A == nil {
-		return nil
-	}
-
-	B := b.buildConstExpr(expr.B)
-	if B == nil {
-		return nil
-	}
-	return binaryOpConst(b, opTok, A, B)
-}

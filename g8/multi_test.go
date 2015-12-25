@@ -108,4 +108,11 @@ func TestMultiFile(t *testing.T) {
 			var array [a.A]int
 			func main() { printInt(len(array)) }`,
 	}, "33")
+	o(files{
+		"a/a.g": "const A=33+5-2",
+		"main/m.g": `
+			import ("a")
+			var array [a.A-3]int
+			func main() { printInt(len(array)) }`,
+	}, "33")
 }
