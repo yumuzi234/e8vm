@@ -26,7 +26,7 @@ func buildExprList(b *Builder, list *ast.ExprList) *tast.ExprList {
 			return nil
 		}
 
-		ret.Append(ref)
+		ret.Append(ex)
 	}
 	return ret
 }
