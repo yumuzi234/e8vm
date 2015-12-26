@@ -69,6 +69,14 @@ func TestSingleFile(t *testing.T) {
 	o(`	func r() (int, int) { return 3, 4 }
 		func main() { a, b := r(); printInt(a); printInt(b) }`,
 		"3\n4")
+	o(` func r() (int, int) { return 3, 4 }
+		func p(a, b int) { printInt(a); printInt(b) }
+		func main() { p(r()) }`,
+		"3\n4")
+	o(` func r() (int) { return 3 }
+		func p(a, b int) { printInt(a); printInt(b) }
+		func main() { p(r(), 4) }`,
+		"3\n4")
 	o(`	func fabo(n int) int {
 			if n == 0 return 0
 			if n == 1 return 1
@@ -275,6 +283,10 @@ func TestSingleFileBad(t *testing.T) {
 	o(`import(); import()`)
 	o("import() func main()")
 	o(`struct A { func f(){} }; func main() { var a A; f := a.f; }`)
+
+	o(` func r() (int, int) { return 3, 4 }
+		func p(a, b, c int) { }
+		func main() { p(r(), 5) }`)
 
 	// Bugs found by the fuzzer in the past
 	o("func main() {}; func f() **o.o {}")

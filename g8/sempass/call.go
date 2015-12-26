@@ -148,7 +148,7 @@ func buildCallExpr(b *Builder, expr *ast.CallExpr) tast.Expr {
 		return nil
 	}
 
-	// type check and perform casting on each argument
+	// type check on each argument
 	for i := 0; i < nargs; i++ {
 		argType := argsRef.At(i).Type()
 		expect := funcType.Args[i].T
@@ -161,9 +161,7 @@ func buildCallExpr(b *Builder, expr *ast.CallExpr) tast.Expr {
 		}
 	}
 
-	// if args is not a literal expression list,
-	// then none of the arguments needs casting.
-	// all types must match
+	// insert casting when it is a literal expression list.
 	callArgs, ok := tast.MakeExprList(args)
 	if ok {
 		castedArgs := tast.NewExprList()
