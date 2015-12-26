@@ -96,3 +96,18 @@ func (lst *ExprList) Append(expr Expr) {
 	lst.Ref = AppendRef(lst.Ref, expr.R())
 	lst.Exprs = append(lst.Exprs, expr)
 }
+
+// MakeExprList makes the expression an expression list if it not one
+// yet.
+func MakeExprList(expr Expr) (*ExprList, bool) {
+	ret, ok := expr.(*ExprList)
+	if ok {
+		return ret, true
+	}
+	if expr.R().Len() == 1 {
+		ret := NewExprList()
+		ret.Append(expr)
+		return ret, true
+	}
+	return nil, false
+}

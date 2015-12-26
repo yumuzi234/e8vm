@@ -43,15 +43,10 @@ func buildCallMake(b *Builder, expr *ast.CallExpr, f tast.Expr) tast.Expr {
 		return nil
 	}
 
-	argsList, ok := args.(*tast.ExprList)
+	argsList, ok := tast.MakeExprList(args)
 	if !ok {
-		if n == 1 {
-			argsList = tast.NewExprList()
-			argsList.Append(args)
-		} else {
-			b.Errorf(expr.Lparen.Pos, "make() only takes a literal list")
-			return nil
-		}
+		b.Errorf(expr.Lparen.Pos, "make() only takes a literal list")
+		return nil
 	}
 
 	arg0 := argsList.Exprs[0]
@@ -169,13 +164,7 @@ func buildCallExpr(b *Builder, expr *ast.CallExpr) tast.Expr {
 	// if args is not a literal expression list,
 	// then none of the arguments needs casting.
 	// all types must match
-	callArgs, ok := args.(*tast.ExprList)
-	if !ok && nargs == 1 {
-		callArgs = tast.NewExprList()
-		callArgs.Append(args)
-		ok = true
-	}
-
+	callArgs, ok := tast.MakeExprList(args)
 	if ok {
 		castedArgs := tast.NewExprList()
 		for i := 0; i < nargs; i++ {
