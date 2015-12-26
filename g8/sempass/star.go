@@ -29,6 +29,6 @@ func buildStarExpr(b *Builder, expr *ast.StarExpr) tast.Expr {
 		return nil
 	}
 
-	r := tast.NewAddressableRef(t)
+	r := tast.NewAddressableRef(t.T)
 	return &tast.StarExpr{addr, r}
 }

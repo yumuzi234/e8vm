@@ -88,7 +88,6 @@ func NewExprList() *ExprList {
 
 // Append appends an expression into the expression list.
 func (lst *ExprList) Append(expr Expr) {
-	ref := expr.R()
-	lst.Ref = AppendRef(lst.Ref, ref)
+	lst.Ref = AppendRef(lst.Ref, expr.R())
 	lst.Exprs = append(lst.Exprs, expr)
 }
