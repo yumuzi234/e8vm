@@ -29,7 +29,7 @@ func findPackageSym(
 }
 
 func buildConstMember(b *Builder, m *ast.MemberExpr) tast.Expr {
-	obj := b.BuildConstExpr(m.Expr)
+	obj := b.buildConstExpr(m.Expr)
 	if obj == nil {
 		return nil
 	}

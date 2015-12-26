@@ -24,19 +24,11 @@ func buildConstExpr(b *builder, expr ast.Expr) *ref {
 	if expr == nil {
 		panic("bug")
 	}
-	e := b.spass.BuildConstExpr(expr)
-	if e == nil {
+	c := b.spass.BuildConstExpr(expr)
+	if c == nil {
 		return nil
 	}
-
-	switch e := e.(type) {
-	case *tast.Const:
-		return buildConst(b, e)
-	case *tast.Ident:
-		// TODO: why return ident here?
-		return buildConstIdent(b, e)
-	}
-	panic("bug")
+	return buildConst(b, c)
 }
 
 func buildExpr(b *builder, expr ast.Expr) *ref {

@@ -44,7 +44,7 @@ func buildArrayType(b *Builder, expr *ast.ArrayTypeExpr) types.T {
 	}
 
 	// array
-	n := b.BuildConstExpr(expr.Len)
+	n := b.buildConstExpr(expr.Len)
 	if n == nil {
 		return nil
 	}

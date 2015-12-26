@@ -39,9 +39,18 @@ func (b *Builder) BuildExpr(expr ast.Expr) tast.Expr {
 	return b.exprFunc(b, expr)
 }
 
-// BuildConstExpr builds a constant expression.
-func (b *Builder) BuildConstExpr(expr ast.Expr) tast.Expr {
+func (b *Builder) buildConstExpr(expr ast.Expr) tast.Expr {
 	return b.constFunc(b, expr)
+}
+
+// BuildConstExpr builds a constant expression.
+func (b *Builder) BuildConstExpr(expr ast.Expr) *tast.Const {
+	ret, ok := b.buildConstExpr(expr).(*tast.Const)
+	if !ok {
+		b.Errorf(ast.ExprPos(expr), "expect a const")
+		return nil
+	}
+	return ret
 }
 
 // BuildType builds an expression that represents a type.

@@ -16,7 +16,7 @@ func buildConstOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
 func buildConstUnaryOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
 	opTok := expr.Op
 
-	B := b.BuildConstExpr(expr.B)
+	B := b.buildConstExpr(expr.B)
 	if B == nil {
 		return nil
 	}
@@ -26,12 +26,12 @@ func buildConstUnaryOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
 func buildConstBinaryOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
 	opTok := expr.Op
 
-	A := b.BuildConstExpr(expr.A)
+	A := b.buildConstExpr(expr.A)
 	if A == nil {
 		return nil
 	}
 
-	B := b.BuildConstExpr(expr.B)
+	B := b.buildConstExpr(expr.B)
 	if B == nil {
 		return nil
 	}
