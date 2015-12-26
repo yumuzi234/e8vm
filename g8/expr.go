@@ -30,7 +30,7 @@ func buildExpr2(b *builder, expr tast.Expr) *ref {
 	case *tast.StarExpr:
 		return buildStarExpr(b, expr)
 	case *tast.CallExpr:
-		return genCallExpr(b, expr)
+		return buildCallExpr(b, expr)
 	case *tast.IndexExpr:
 		return genIndexExpr(b, expr)
 	case *tast.ExprList:

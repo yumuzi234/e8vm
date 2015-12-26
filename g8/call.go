@@ -6,7 +6,7 @@ import (
 	"e8vm.io/e8vm/g8/types"
 )
 
-func genCallLen(b *builder, expr *tast.CallExpr) *ref {
+func buildCallLen(b *builder, expr *tast.CallExpr) *ref {
 	args := genExprList(b, expr.Args)
 	t := args.Type()
 	ret := b.newTemp(types.Int)
@@ -23,7 +23,7 @@ func genCallLen(b *builder, expr *tast.CallExpr) *ref {
 	panic("bug")
 }
 
-func genCallMake(b *builder, expr *tast.CallExpr) *ref {
+func buildCallMake(b *builder, expr *tast.CallExpr) *ref {
 	args := genExprList(b, expr.Args)
 	arg0 := args.At(0)
 	t := arg0.Type().(*types.Type).T.(*types.Slice)
@@ -32,15 +32,15 @@ func genCallMake(b *builder, expr *tast.CallExpr) *ref {
 	return newSlice(b, t.T, start, size)
 }
 
-func genCallExpr(b *builder, expr *tast.CallExpr) *ref {
+func buildCallExpr(b *builder, expr *tast.CallExpr) *ref {
 	f := b.buildExpr2(expr.Func)
 	builtin, ok := f.Type().(*types.BuiltInFunc)
 	if ok {
 		switch builtin.Name {
 		case "len":
-			return genCallLen(b, expr)
+			return buildCallLen(b, expr)
 		case "make":
-			return genCallMake(b, expr)
+			return buildCallMake(b, expr)
 		}
 		panic("bug")
 	}

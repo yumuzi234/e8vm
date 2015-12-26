@@ -102,6 +102,17 @@ func canShift(b *builder, atyp, btyp types.T, pos *lex8.Pos, op string) bool {
 	return true
 }
 
+func constCast(
+	b *builder, pos *lex8.Pos, v int64, to types.T,
+) *ref {
+	if types.IsInteger(to) && types.InRange(v, to) {
+		return newRef(to, constNumIr(v, to))
+	}
+
+	b.Errorf(pos, "cannot cast %d to %s", v, to)
+	return nil
+}
+
 func opAssign(b *builder, dest, src *ref, op *lex8.Token) {
 	if !dest.IsSingle() || !src.IsSingle() {
 		b.Errorf(op.Pos, "%s %s %s", dest, op.Lit, src)
