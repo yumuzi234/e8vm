@@ -92,7 +92,7 @@ func buildSlicing(
 	}
 
 	ref := tast.NewRef(&types.Slice{et})
-	return tast.IndexExpr{
+	return &tast.IndexExpr{
 		Array:    array,
 		Index:    indexStart,
 		IndexEnd: indexEnd,
@@ -117,7 +117,7 @@ func buildArrayGet(
 	}
 
 	ref := tast.NewAddressableRef(et)
-	return tast.IndexExpr{
+	return &tast.IndexExpr{
 		Array: array,
 		Index: index,
 		Ref:   ref,

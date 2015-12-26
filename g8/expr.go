@@ -36,7 +36,7 @@ func buildExpr2(b *builder, expr tast.Expr) *ref {
 	case *tast.ExprList:
 		return genExprList(b, expr)
 	}
-	panic(fmt.Errorf("genExpr not implemented for %T", expr))
+	panic(fmt.Errorf("buildExpr2 not implemented for %T", expr))
 }
 
 func buildConstExpr(b *builder, expr ast.Expr) *ref {
