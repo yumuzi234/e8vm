@@ -88,6 +88,20 @@ func opAssignInt(b *builder, opOp string, dest, src *ref) {
 	}
 }
 
+func canShift(b *builder, atyp, btyp types.T, pos *lex8.Pos, op string) bool {
+	if !types.IsInteger(atyp) {
+		b.Errorf(pos, "%q on %s", op, atyp)
+		return false
+	} else if !types.IsInteger(btyp) {
+		b.Errorf(pos, "%q with %s", op, btyp)
+		return false
+	} else if !types.IsUnsigned(btyp) {
+		b.Errorf(pos, "%q with %s; must be unsigned", op, btyp)
+		return false
+	}
+	return true
+}
+
 func opAssign(b *builder, dest, src *ref, op *lex8.Token) {
 	if !dest.IsSingle() || !src.IsSingle() {
 		b.Errorf(op.Pos, "%s %s %s", dest, op.Lit, src)

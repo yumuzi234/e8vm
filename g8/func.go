@@ -46,6 +46,25 @@ func buildPkgRef(b *builder, ident *lex8.Token) *types.Pkg {
 	return s.Obj.(*objImport).ref.Type().(*types.Pkg)
 }
 
+func findPackageSym(
+	b *builder, sub *lex8.Token, pkg *types.Pkg,
+) *sym8.Symbol {
+	sym := pkg.Syms.Query(sub.Lit)
+	if sym == nil {
+		b.Errorf(sub.Pos, "%s has no symbol named %s",
+			pkg, sub.Lit,
+		)
+		return nil
+	}
+	name := sym.Name()
+	if !sym8.IsPublic(name) && sym.Pkg() != b.path {
+		b.Errorf(sub.Pos, "symbol %s is not public", name)
+		return nil
+	}
+
+	return sym
+}
+
 func declareFuncAlias(b *builder, f *ast.Func, t *types.Func) *objFunc {
 	alias := f.Alias
 
