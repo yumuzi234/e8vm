@@ -67,10 +67,21 @@ func buildIdent(b *Builder, ident *lex8.Token) tast.Expr {
 	case tast.SymVar, tast.SymField:
 		ref := tast.NewAddressableRef(t)
 		return &tast.Ident{ident, ref, s}
-	case tast.SymFunc, tast.SymConst,
-		tast.SymStruct, tast.SymType, tast.SymImport:
+	case tast.SymConst, tast.SymStruct, tast.SymType, tast.SymImport:
 		ref := tast.NewRef(t)
 		return &tast.Ident{ident, ref, s}
+	case tast.SymFunc:
+		if t, ok := t.(*types.Func); ok {
+			if t.MethodFunc == nil {
+				return &tast.Ident{ident, tast.NewRef(t), s}
+			}
+			if b.this == nil {
+				panic("this missing")
+			}
+			ref := &tast.Ref{T: t.MethodFunc, Recv: b.this}
+			return &tast.Ident{ident, ref, s}
+		}
+		return &tast.Ident{ident, tast.NewRef(t), s}
 	default:
 		b.Errorf(ident.Pos, "todo: token type: %s", tast.SymStr(s.Type))
 		return nil
