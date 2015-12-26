@@ -6,7 +6,7 @@ import (
 	"e8vm.io/e8vm/g8/types"
 )
 
-func etSize(t types.T) int32 {
+func arrayElementSize(t types.T) int32 {
 	ret := t.Size()
 	if t.RegSizeAlign() {
 		return types.RegSizeAlignUp(ret)
@@ -41,12 +41,12 @@ func genIndexExpr(b *builder, expr *tast.IndexExpr) *ref {
 	array := b.buildExpr2(expr.Array)
 
 	if expr.HasColon {
-		return genSlicing(b, expr, array)
+		return buildSlicing(b, expr, array)
 	}
-	return genArrayGet(b, expr, array)
+	return buildArrayGet(b, expr, array)
 }
 
-func loadArray2(b *builder, array *ref) (addr, n ir.Ref, et types.T) {
+func loadArray(b *builder, array *ref) (addr, n ir.Ref, et types.T) {
 	base := b.newPtr()
 	t := array.Type()
 	switch t := t.(type) {
@@ -62,7 +62,7 @@ func loadArray2(b *builder, array *ref) (addr, n ir.Ref, et types.T) {
 	panic("bug")
 }
 
-func checkArrayIndex2(b *builder, index *ref) ir.Ref {
+func checkArrayIndex(b *builder, index *ref) ir.Ref {
 	t := index.Type()
 	if types.IsSigned(t) {
 		neg := b.newCond()
@@ -79,24 +79,24 @@ func checkArrayIndex2(b *builder, index *ref) ir.Ref {
 	return index.IR()
 }
 
-func genArrayIndex(b *builder, expr tast.Expr) ir.Ref {
+func buildArrayIndex(b *builder, expr tast.Expr) ir.Ref {
 	index := b.buildExpr2(expr)
-	return checkArrayIndex2(b, index)
+	return checkArrayIndex(b, index)
 }
 
-func genSlicing(b *builder, expr *tast.IndexExpr, array *ref) *ref {
-	baseAddr, n, et := loadArray2(b, array)
+func buildSlicing(b *builder, expr *tast.IndexExpr, array *ref) *ref {
+	baseAddr, n, et := loadArray(b, array)
 
 	var addr, indexStart, offset ir.Ref
 	if expr.Index == nil {
 		indexStart = ir.Num(0)
 		addr = baseAddr
 	} else {
-		indexStart = genArrayIndex(b, expr.Index)
+		indexStart = buildArrayIndex(b, expr.Index)
 		checkInRange(b, indexStart, n, "u<=")
 
 		offset = b.newPtr()
-		b.b.Arith(offset, indexStart, "*", ir.Snum(etSize(et)))
+		b.b.Arith(offset, indexStart, "*", ir.Snum(arrayElementSize(et)))
 		addr = b.newPtr()
 		b.b.Arith(addr, baseAddr, "+", offset)
 	}
@@ -105,7 +105,7 @@ func genSlicing(b *builder, expr *tast.IndexExpr, array *ref) *ref {
 	if expr.IndexEnd == nil {
 		indexEnd = n
 	} else {
-		indexEnd = genArrayIndex(b, expr.IndexEnd)
+		indexEnd = buildArrayIndex(b, expr.IndexEnd)
 		checkInRange(b, indexEnd, n, "u<=")
 		checkInRange(b, indexStart, indexEnd, "u<=")
 	}
@@ -115,13 +115,13 @@ func genSlicing(b *builder, expr *tast.IndexExpr, array *ref) *ref {
 	return newSlice(b, et, addr, size)
 }
 
-func genArrayGet(b *builder, expr *tast.IndexExpr, array *ref) *ref {
-	index := genArrayIndex(b, expr.Index)
-	base, n, et := loadArray2(b, array)
+func buildArrayGet(b *builder, expr *tast.IndexExpr, array *ref) *ref {
+	index := buildArrayIndex(b, expr.Index)
+	base, n, et := loadArray(b, array)
 	checkInRange(b, index, n, "u<")
 
 	addr := b.newPtr()
-	b.b.Arith(addr, index, "*", ir.Snum(etSize(et)))
+	b.b.Arith(addr, index, "*", ir.Snum(arrayElementSize(et)))
 	b.b.Arith(addr, base, "+", addr)
 	size := et.Size()
 

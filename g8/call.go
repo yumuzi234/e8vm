@@ -27,7 +27,7 @@ func genCallMake(b *builder, expr *tast.CallExpr) *ref {
 	args := genExprList(b, expr.Args)
 	arg0 := args.At(0)
 	t := arg0.Type().(*types.Type).T.(*types.Slice)
-	size := checkArrayIndex2(b, args.At(1))
+	size := checkArrayIndex(b, args.At(1))
 	start := args.At(2).IR()
 	return newSlice(b, t.T, start, size)
 }
