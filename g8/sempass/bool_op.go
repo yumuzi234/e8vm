@@ -20,7 +20,7 @@ func unaryOpBool(b *Builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
 func binaryOpBool(b *Builder, opTok *lex8.Token, A, B tast.Expr) tast.Expr {
 	op := opTok.Lit
 	switch op {
-	case "==", "!=":
+	case "==", "!=", "&&", "||":
 		r := tast.NewRef(types.Bool)
 		return &tast.OpExpr{A, opTok, B, r}
 	}

@@ -22,17 +22,15 @@ func buildExpr2(b *builder, expr tast.Expr) *ref {
 		return newRef(t, nil)
 	case *tast.Cast:
 		from := buildExpr2(b, expr.From)
-		_ = from
-		panic("todo")
+		return genCast(b, from, expr.T)
 	case *tast.MemberExpr:
 		return genMember(b, expr)
 	case *tast.OpExpr:
-		panic("todo")
+		return genOpExpr(b, expr)
 	case *tast.StarExpr:
 		return genStarExpr(b, expr)
-		panic("todo")
 	case *tast.CallExpr:
-		panic("todo")
+		return genCallExpr(b, expr)
 	case *tast.IndexExpr:
 		return genIndexExpr(b, expr)
 	case *tast.ExprList:
