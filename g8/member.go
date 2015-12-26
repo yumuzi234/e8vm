@@ -115,7 +115,7 @@ func genPackageSym(b *builder, m *tast.MemberExpr, pkg *types.Pkg) *ref {
 			b.b.Arith(ptr.IR(), nil, "&", s)
 			return ptr
 		case asm8.SymFunc:
-			if types.SameType(m.Type(), types.VoidFunc) {
+			if !types.SameType(m.Type(), types.VoidFunc) {
 				panic("bug")
 			}
 			return newRef(

@@ -119,6 +119,16 @@ func TestMultiFile(t *testing.T) {
 	o(files{
 		"asm/a/a.g": `
 			func F {
+				mov pc ret
+			}`,
+		"main/m.g": `
+			import ("asm/a")
+			func main() { a.F(); printInt(33) }`,
+	}, "33")
+
+	o(files{
+		"asm/a/a.g": `
+			func F {
 				addi r1 r0 33
 				mov pc ret
 			}`,
