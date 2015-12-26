@@ -10,7 +10,7 @@ func constCast(
 	b *Builder, pos *lex8.Pos, v int64, from tast.Expr, to types.T,
 ) tast.Expr {
 	if types.IsInteger(to) && types.InRange(v, to) {
-		return &tast.Cast{from, tast.NewRef(to)}
+		return tast.NewCast(from, to)
 	}
 	b.Errorf(pos, "cannot cast %d to %s", v, to)
 	return nil

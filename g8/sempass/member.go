@@ -109,7 +109,7 @@ func buildMember(b *Builder, m *ast.MemberExpr) tast.Expr {
 		if r == nil {
 			return nil
 		}
-		return tast.MemberExpr{obj, m.Sub, r, sym}
+		return &tast.MemberExpr{obj, m.Sub, r, sym}
 	}
 
 	pt := types.PointerOf(t)

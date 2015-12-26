@@ -163,9 +163,9 @@ func buildCallExpr(b *Builder, expr *ast.CallExpr) tast.Expr {
 
 		// insert auto casts
 		if types.IsNil(argType) {
-			callArgs.Append(&tast.Cast{argExpr, tast.NewTypeRef(expect)})
+			callArgs.Append(tast.NewCast(argExpr, expect))
 		} else if _, ok := types.NumConst(argType); ok {
-			callArgs.Append(&tast.Cast{argExpr, tast.NewTypeRef(expect)})
+			callArgs.Append(tast.NewCast(argExpr, expect))
 		} else {
 			callArgs.Append(argExpr)
 		}

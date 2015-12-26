@@ -42,9 +42,9 @@ func binaryOpPtr(b *Builder, opTok *lex8.Token, A, B tast.Expr) tast.Expr {
 	switch op {
 	case "==", "!=":
 		if types.IsNil(atyp) {
-			A = &tast.Cast{A, tast.NewRef(btyp)}
+			A = tast.NewCast(A, btyp)
 		} else if types.IsNil(btyp) {
-			B = &tast.Cast{B, tast.NewRef(atyp)}
+			B = tast.NewCast(B, atyp)
 		}
 
 		return &tast.OpExpr{A, opTok, B, tast.NewRef(types.Bool)}

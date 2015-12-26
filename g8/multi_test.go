@@ -115,4 +115,16 @@ func TestMultiFile(t *testing.T) {
 			var array [a.A-3]int
 			func main() { printInt(len(array)) }`,
 	}, "33")
+
+	o(files{
+		"asm/a/a.g": `
+			func F {
+				addi r1 r0 33
+				mov pc ret
+			}`,
+		"main/m.g": `
+			import ("asm/a")
+			func f() int = a.F
+			func main() { printInt(f()) }`,
+	}, "33")
 }

@@ -26,6 +26,11 @@ type Cast struct {
 	*Ref
 }
 
+// NewCast creates a new casting operation
+func NewCast(from Expr, to types.T) *Cast {
+	return &Cast{from, NewRef(to)}
+}
+
 // Ident is an identifier.
 type Ident struct {
 	Token *lex8.Token

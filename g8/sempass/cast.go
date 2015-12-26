@@ -46,10 +46,10 @@ func buildCast(b *Builder, expr *ast.CallExpr, t types.T) tast.Expr {
 	}
 
 	if types.IsInteger(t) && types.IsInteger(srcType) {
-		return &tast.Cast{args, tast.NewRef(t)}
+		return tast.NewCast(args, t)
 	}
 	if regSizeCastable(t, srcType) {
-		return &tast.Cast{args, tast.NewRef(t)}
+		return tast.NewCast(args, t)
 	}
 
 	b.Errorf(pos, "cannot convert from %s to %s", srcType, t)
