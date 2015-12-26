@@ -5,22 +5,8 @@ import (
 	"e8vm.io/e8vm/g8/tast"
 )
 
-func appendRef(base, toAdd *tast.Ref) *tast.Ref {
-	if base == nil {
-		return toAdd
-	}
-	if base.List == nil {
-		return &tast.Ref{
-			List: []*tast.Ref{base, toAdd},
-		}
-	}
-
-	base.List = append(base.List, toAdd)
-	return base
-}
-
 func buildExprList(b *Builder, list *ast.ExprList) *tast.ExprList {
-	ret := new(tast.ExprList)
+	ret := tast.NewExprList()
 	if list == nil {
 		return ret
 	}
@@ -28,7 +14,6 @@ func buildExprList(b *Builder, list *ast.ExprList) *tast.ExprList {
 	if n == 0 {
 		return ret
 	}
-
 	for _, expr := range list.Exprs {
 		ex := b.BuildExpr(expr)
 		if ex == nil {
@@ -36,12 +21,12 @@ func buildExprList(b *Builder, list *ast.ExprList) *tast.ExprList {
 		}
 
 		ref := ex.R()
-		if ref.List != nil {
-			b.Errorf(ast.ExprPos(expr), "cannot composite list in a list")
+		if !ref.IsSingle() {
+			b.Errorf(ast.ExprPos(expr), "cannot put %s in a list", ref)
 			return nil
 		}
-		ret.Ref = appendRef(ret.Ref, ref)
-		ret.Exprs = append(ret.Exprs, ex)
+
+		ret.Append(ref)
 	}
 	return ret
 }

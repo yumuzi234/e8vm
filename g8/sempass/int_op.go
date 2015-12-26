@@ -9,8 +9,8 @@ import (
 func unaryOpConst(b *Builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
 	op := opTok.Lit
 	bref := B.R()
-	if bref.List != nil {
-		b.Errorf(opTok.Pos, "invalid operation: %q on %s", op, bref.T)
+	if !bref.IsSingle() {
+		b.Errorf(opTok.Pos, "invalid operation: %q on %s", op, bref)
 		return nil
 	}
 

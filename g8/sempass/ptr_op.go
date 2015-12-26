@@ -11,11 +11,8 @@ func refAddress(b *Builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
 	opPos := opTok.Pos
 
 	bref := B.R()
-	if types.IsType(bref.T) {
-		b.Errorf(opPos, "%q on %s", op, bref.T)
-		return nil
-	} else if bref.List != nil {
-		b.Errorf(opPos, "%q on expression list", op)
+	if types.IsType(bref.T) || !bref.IsSingle() {
+		b.Errorf(opPos, "%q on %s", op, bref)
 		return nil
 	} else if !bref.Addressable {
 		b.Errorf(opPos, "reading address of non-addressable")

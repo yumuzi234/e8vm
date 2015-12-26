@@ -14,8 +14,8 @@ func buildIndexExpr(b *Builder, expr *ast.IndexExpr) tast.Expr {
 	}
 
 	ref := array.R()
-	if ref.List != nil {
-		b.Errorf(expr.Lbrack.Pos, "index on expression list")
+	if !ref.IsSingle() {
+		b.Errorf(expr.Lbrack.Pos, "index on %s", ref)
 		return nil
 	}
 
@@ -36,6 +36,22 @@ func elementType(t types.T) types.T {
 	return nil
 }
 
+func checkArrayIndex(b *Builder, index tast.Expr, pos *lex8.Pos) tast.Expr {
+	t := index.R().T
+	if v, ok := types.NumConst(t); ok {
+		if v < 0 {
+			b.Errorf(pos, "array index is negative: %d", v)
+			return nil
+		}
+		return constCastInt(b, pos, v, index)
+	}
+	if !types.IsInteger(t) {
+		b.Errorf(pos, "index must be an integer")
+		return nil
+	}
+	return index
+}
+
 func buildArrayIndex(b *Builder, expr ast.Expr, pos *lex8.Pos) tast.Expr {
 	ret := b.BuildExpr(expr)
 	if ret == nil {
@@ -43,27 +59,11 @@ func buildArrayIndex(b *Builder, expr ast.Expr, pos *lex8.Pos) tast.Expr {
 	}
 
 	ref := ret.R()
-	if ref.List != nil {
-		b.Errorf(pos, "index with expression list")
+	if !ref.IsSingle() {
+		b.Errorf(pos, "index with %s", ref)
 		return nil
 	}
-
-	t := ref.T
-	if v, ok := types.NumConst(t); ok {
-		if v < 0 {
-			b.Errorf(pos, "array index is negative: %d", v)
-			return nil
-		}
-
-		return constCastInt(b, pos, v, ret)
-	}
-
-	if !types.IsInteger(t) {
-		b.Errorf(pos, "index must be an integer")
-		return nil
-	}
-
-	return ret
+	return checkArrayIndex(b, ret, pos)
 }
 
 func buildSlicing(

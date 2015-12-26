@@ -15,8 +15,8 @@ func buildStarExpr(b *Builder, expr *ast.StarExpr) tast.Expr {
 	}
 
 	addrRef := addr.R()
-	if addrRef.List != nil {
-		b.Errorf(opPos, "* on expression list")
+	if !addrRef.IsSingle() {
+		b.Errorf(opPos, "* on %s", addrRef)
 		return nil
 	}
 	if t, ok := addrRef.T.(*types.Type); ok {

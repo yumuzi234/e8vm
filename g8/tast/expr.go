@@ -28,7 +28,7 @@ type Cast struct {
 
 // Ident is an identifier.
 type Ident struct {
-	*lex8.Token
+	Token *lex8.Token
 	*Ref
 	Symbol *sym8.Symbol
 }
@@ -74,4 +74,21 @@ type IndexExpr struct {
 type ExprList struct {
 	Exprs []Expr
 	*Ref
+}
+
+// Len returns the length of the expression list.
+func (lst *ExprList) Len() int {
+	return len(lst.Exprs)
+}
+
+// NewExprList creates a new expression list.
+func NewExprList() *ExprList {
+	return &ExprList{Ref: Void}
+}
+
+// Append appends an expression into the expression list.
+func (lst *ExprList) Append(expr Expr) {
+	ref := expr.R()
+	lst.Ref = AppendRef(lst.Ref, ref)
+	lst.Exprs = append(lst.Exprs, expr)
 }

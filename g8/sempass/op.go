@@ -55,8 +55,8 @@ func buildUnaryOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
 		return nil
 	}
 	bref := B.R()
-	if bref.List != nil {
-		b.Errorf(opPos, "%q on expression list", bref.T)
+	if !bref.IsSingle() {
+		b.Errorf(opPos, "%q on %s", op, bref)
 		return nil
 	}
 
@@ -85,8 +85,8 @@ func buildBinaryOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
 		return nil
 	}
 	aref := A.R()
-	if aref.List != nil {
-		b.Errorf(opPos, "%q on expression list", op)
+	if !aref.IsSingle() {
+		b.Errorf(opPos, "%q on %s", op, aref)
 		return nil
 	}
 	atyp := aref.T
@@ -96,8 +96,8 @@ func buildBinaryOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
 		return nil
 	}
 	bref := B.R()
-	if bref.List != nil {
-		b.Errorf(opPos, "%q on expression list", op)
+	if !bref.IsSingle() {
+		b.Errorf(opPos, "%q on %s", op, bref)
 		return nil
 	}
 	btyp := bref.T

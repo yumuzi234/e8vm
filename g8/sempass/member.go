@@ -35,8 +35,8 @@ func buildConstMember(b *Builder, m *ast.MemberExpr) tast.Expr {
 	}
 
 	ref := obj.R()
-	if ref.List != nil {
-		b.Errorf(m.Dot.Pos, "expression list does not have any member")
+	if !ref.IsSingle() {
+		b.Errorf(m.Dot.Pos, "%s does not have any member", ref)
 		return nil
 	}
 
@@ -98,8 +98,8 @@ func buildMember(b *Builder, m *ast.MemberExpr) tast.Expr {
 	}
 
 	ref := obj.R()
-	if ref.List != nil {
-		b.Errorf(m.Dot.Pos, "expression list does not have any member")
+	if !ref.IsSingle() {
+		b.Errorf(m.Dot.Pos, "%s does not have any member", ref)
 		return nil
 	}
 
@@ -150,7 +150,6 @@ func buildMember(b *Builder, m *ast.MemberExpr) tast.Expr {
 		ft := sym.ObjType.(*types.Func)
 		r := tast.NewRef(ft.MethodFunc)
 		r.Recv = ref
-		r.RecvFunc = ft
 		return &tast.MemberExpr{obj, m.Sub, r, sym}
 	}
 

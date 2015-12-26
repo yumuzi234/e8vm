@@ -21,7 +21,7 @@ func buildCallMake(b *builder, expr *ast.CallExpr) *ref {
 
 	arg0 := args.At(0)
 	if !arg0.IsType() {
-		b.Errorf(expr.Lparen.Pos, "make() expects a type as the 1st argument")
+		b.Errorf(expr.Lparen.Pos, "make() takes a type as the 1st argument")
 		return nil
 	}
 
@@ -123,7 +123,7 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) *ref {
 
 	nilFuncPointerPanic(b, f.IR())
 
-	funcType, ok := f.Type().(*types.Func) // the func sig in the builder
+	funcType, ok := f.Type().(*types.Func)
 	if !ok {
 		// not a function
 		b.Errorf(pos, "function call on non-callable: %s", f)
@@ -167,11 +167,11 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) *ref {
 		if types.IsNil(argType) {
 			tmp := b.newTemp(expect).IR()
 			b.b.Zero(tmp)
-			argsCasted = appendRef(argsCasted, newRef(argType, tmp))
+			argsCasted = appendRef(argsCasted, newRef(expect, tmp))
 		} else if v, ok := types.NumConst(argType); ok {
 			tmp := b.newTemp(expect).IR()
 			b.b.Assign(tmp, constNumIr(v, expect))
-			argsCasted = appendRef(argsCasted, newRef(argType, tmp))
+			argsCasted = appendRef(argsCasted, newRef(expect, tmp))
 		} else {
 			argsCasted = appendRef(argsCasted, argRef)
 		}

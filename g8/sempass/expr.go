@@ -24,7 +24,7 @@ func buildExpr(b *Builder, expr ast.Expr) tast.Expr {
 	case *ast.IndexExpr:
 		return buildIndexExpr(b, expr)
 	case *ast.CallExpr:
-		panic("todo")
+		return buildCallExpr(b, expr)
 	case *ast.ArrayTypeExpr:
 		t := b.BuildType(expr)
 		if t == nil {

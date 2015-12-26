@@ -1,7 +1,8 @@
-package g8
+package sempass
 
 import (
 	"e8vm.io/e8vm/g8/ast"
+	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 )
 
@@ -22,7 +23,7 @@ func regSizeCastable(to, from types.T) bool {
 	return false
 }
 
-func buildCast(b *builder, expr *ast.CallExpr, t types.T) *ref {
+func buildCast(b *Builder, expr *ast.CallExpr, t types.T) tast.Expr {
 	pos := expr.Lparen.Pos
 
 	args := buildExprList(b, expr.Args)
@@ -30,27 +31,25 @@ func buildCast(b *builder, expr *ast.CallExpr, t types.T) *ref {
 		return nil
 	}
 
-	if !args.IsSingle() {
-		b.Errorf(pos, "cannot convert %s to %s", args, t)
+	ref := args.R()
+	if !ref.IsSingle() {
+		b.Errorf(pos, "cannot convert %s to %s", ref, t)
 		return nil
 	}
 
-	srcType := args.Type()
-	ret := b.newTemp(t)
+	srcType := ref.T
 	if c, ok := srcType.(*types.Const); ok {
 		if v, ok := types.NumConst(srcType); ok && types.IsInteger(t) {
-			return constCast(b, pos, v, t)
+			return constCast(b, pos, v, ref, t)
 		}
 		srcType = c.Type // using the underlying type
 	}
 
 	if types.IsInteger(t) && types.IsInteger(srcType) {
-		b.b.Arith(ret.IR(), nil, "cast", args.IR())
-		return ret
+		return &tast.Cast{args, tast.NewRef(t)}
 	}
 	if regSizeCastable(t, srcType) {
-		b.b.Arith(ret.IR(), nil, "", args.IR())
-		return ret
+		return &tast.Cast{args, tast.NewRef(t)}
 	}
 
 	b.Errorf(pos, "cannot convert from %s to %s", srcType, t)
