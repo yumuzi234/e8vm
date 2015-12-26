@@ -40,9 +40,6 @@ func buildExpr2(b *builder, expr tast.Expr) *ref {
 }
 
 func buildConstExpr(b *builder, expr ast.Expr) *ref {
-	if expr == nil {
-		panic("bug")
-	}
 	c := b.spass.BuildConstExpr(expr)
 	if c == nil {
 		return nil
@@ -51,10 +48,6 @@ func buildConstExpr(b *builder, expr ast.Expr) *ref {
 }
 
 func buildExpr(b *builder, expr ast.Expr) *ref {
-	if expr == nil {
-		panic("bug")
-	}
-
 	e := b.spass.BuildExpr(expr)
 	if e == nil {
 		return nil
