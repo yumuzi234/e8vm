@@ -12,13 +12,13 @@ type ExprStmt struct {
 // AssignStmt is an assignment statement, like "a,b=x,y".
 type AssignStmt struct {
 	Left  *ExprList
-	Right *ExprList
+	Right Expr
 }
 
 // DefineStmt is a define statement, like "a,b:=x,y".
 type DefineStmt struct {
 	Left  *ExprList
-	Right *ExprList
+	Right Expr
 }
 
 // Block is a statement block; it is also a statement itself.
@@ -40,7 +40,7 @@ type BreakStmt struct{}
 
 // ReturnStmt is a statement like "return a,b"
 type ReturnStmt struct {
-	Exprs *ExprList
+	Exprs Expr
 }
 
 // IfStmt is an if statement.

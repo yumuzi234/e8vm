@@ -64,3 +64,16 @@ func buildConstExpr(b *Builder, expr ast.Expr) tast.Expr {
 	b.Errorf(ast.ExprPos(expr), "expect a const expression")
 	return nil
 }
+
+func buildExprStmt(b *Builder, expr ast.Expr) tast.Stmt {
+	if e, ok := expr.(*ast.CallExpr); ok {
+		ret := buildExpr(b, e)
+		if ret == nil {
+			return nil
+		}
+		return &tast.ExprStmt{ret}
+	}
+
+	b.Errorf(ast.ExprPos(expr), "invalid expression statement")
+	return nil
+}

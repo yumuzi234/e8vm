@@ -10,6 +10,7 @@ func NewBuilder(path string, scope *sym8.Scope) *Builder {
 	ret.exprFunc = buildExpr
 	ret.constFunc = buildConstExpr
 	ret.typeFunc = buildType
+	ret.stmtFunc = buildStmt
 
 	ret.scope = scope // TODO: remove this
 
