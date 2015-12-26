@@ -36,7 +36,7 @@ func binaryOpInt(b *builder, op string, A, B *ref, t types.T) *ref {
 	panic("bug")
 }
 
-func binaryOpUint2(b *builder, op string, A, B *ref, t types.T) *ref {
+func binaryOpUint(b *builder, op string, A, B *ref, t types.T) *ref {
 	switch op {
 	case "+", "-", "*", "&", "|", "^", "%", "/":
 		ret := b.newTemp(t)

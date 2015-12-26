@@ -61,7 +61,7 @@ func buildBinaryOpExpr(b *builder, expr *tast.OpExpr) *ref {
 		case types.Int, types.Int8:
 			return binaryOpInt(b, op, A, B, t)
 		case types.Uint, types.Uint8:
-			return binaryOpUint2(b, op, A, B, t)
+			return binaryOpUint(b, op, A, B, t)
 		case types.Bool:
 			return binaryOpBool(b, op, A, B)
 		}
