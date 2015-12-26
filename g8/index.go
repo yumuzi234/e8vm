@@ -37,7 +37,7 @@ func newSlice(b *builder, t types.T, addr, size ir.Ref) *ref {
 	return ret
 }
 
-func genIndexExpr(b *builder, expr *tast.IndexExpr) *ref {
+func buildIndexExpr(b *builder, expr *tast.IndexExpr) *ref {
 	array := b.buildExpr2(expr.Array)
 
 	if expr.HasColon {
