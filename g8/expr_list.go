@@ -8,32 +8,35 @@ import (
 )
 
 func buildExprList(b *builder, list *ast.ExprList) *ref {
-	ret := new(ref)
-	if list == nil {
-		return ret // empty ref, for void
-	}
-
-	n := list.Len()
-	if n == 0 {
-		return ret // empty ref
-	} else if n == 1 {
-		return b.buildExpr(list.Exprs[0])
-	}
-
-	for _, expr := range list.Exprs {
-		ref := b.buildExpr(expr)
-		if ref == nil {
-			return nil
-		}
-		if !ref.IsSingle() {
-			b.Errorf(ast.ExprPos(expr), "cannot composite list in a list")
-			return nil
+	return b.buildExpr(list)
+	/*
+		ret := new(ref)
+		if list == nil {
+			return ret // empty ref, for void
 		}
 
-		ret = appendRef(ret, ref)
-	}
+		n := list.Len()
+		if n == 0 {
+			return ret // empty ref
+		} else if n == 1 {
+			return b.buildExpr(list.Exprs[0])
+		}
 
-	return ret
+		for _, expr := range list.Exprs {
+			ref := b.buildExpr(expr)
+			if ref == nil {
+				return nil
+			}
+			if !ref.IsSingle() {
+				b.Errorf(ast.ExprPos(expr), "cannot composite list in a list")
+				return nil
+			}
+
+			ret = appendRef(ret, ref)
+		}
+
+		return ret
+	*/
 }
 
 func buildIdentExprList(b *builder, list *ast.ExprList) (
@@ -56,6 +59,9 @@ func buildIdentExprList(b *builder, list *ast.ExprList) (
 }
 
 func genExprList(b *builder, list *tast.ExprList) *ref {
+	if list == nil {
+		return new(ref)
+	}
 	n := list.Len()
 	if n == 0 {
 		return new(ref)

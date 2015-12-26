@@ -48,11 +48,19 @@ func NewAddressableRef(t types.T) *Ref {
 var Void = &Ref{Void: true}
 
 // R returns itself.
-func (r *Ref) R() *Ref {
-	if !r.IsSingle() {
-		panic("not single")
+func (r *Ref) R() *Ref { return r }
+
+// At returns the ref in the list.
+func (r *Ref) At(i int) *Ref {
+	n := r.Len()
+	if i < 0 || i >= n {
+		panic("overflow")
 	}
-	return r
+	if n == 1 {
+		return r
+	}
+
+	return r.List[i]
 }
 
 // Type returns the type of the ref.

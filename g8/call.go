@@ -7,7 +7,7 @@ import (
 )
 
 func buildCallLen(b *builder, expr *tast.CallExpr) *ref {
-	args := genExprList(b, expr.Args)
+	args := b.buildExpr2(expr.Args)
 	t := args.Type()
 	ret := b.newTemp(types.Int)
 	switch t := t.(type) {
@@ -24,7 +24,7 @@ func buildCallLen(b *builder, expr *tast.CallExpr) *ref {
 }
 
 func buildCallMake(b *builder, expr *tast.CallExpr) *ref {
-	args := genExprList(b, expr.Args)
+	args := b.buildExpr2(expr.Args)
 	arg0 := args.At(0)
 	t := arg0.Type().(*types.Type).T.(*types.Slice)
 	size := checkArrayIndex(b, args.At(1))
@@ -47,7 +47,7 @@ func buildCallExpr(b *builder, expr *tast.CallExpr) *ref {
 
 	nilFuncPointerPanic(b, f.IR())
 	funcType := f.Type().(*types.Func)
-	args := genExprList(b, expr.Args)
+	args := b.buildExpr2(expr.Args)
 
 	ret := new(ref)
 	for _, t := range funcType.RetTypes {

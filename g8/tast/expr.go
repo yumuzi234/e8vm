@@ -63,7 +63,7 @@ type StarExpr struct {
 // CallExpr is an expression like "f(x)"
 type CallExpr struct {
 	Func Expr
-	Args *ExprList
+	Args Expr
 	*Ref
 }
 

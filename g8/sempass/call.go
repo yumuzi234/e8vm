@@ -13,18 +13,13 @@ func buildCallLen(b *Builder, expr *ast.CallExpr, f tast.Expr) tast.Expr {
 		return nil
 	}
 
-	if args.Len() != 1 {
-		b.Errorf(expr.Lparen.Pos, "len() takes one argument")
-		return nil
-	}
-
 	ref := args.R()
 	if !ref.IsSingle() {
 		b.Errorf(expr.Lparen.Pos, "len() takes one argument")
 		return nil
 	}
 
-	t := args.T
+	t := ref.T
 	switch t.(type) {
 	case *types.Slice:
 		return &tast.CallExpr{f, args, tast.NewRef(types.Int)}
@@ -42,13 +37,24 @@ func buildCallMake(b *Builder, expr *ast.CallExpr, f tast.Expr) tast.Expr {
 		return nil
 	}
 
-	n := args.Len()
+	n := args.R().Len()
 	if n == 0 {
 		b.Errorf(expr.Lparen.Pos, "make() takes at least one argument")
 		return nil
 	}
 
-	arg0 := args.Exprs[0]
+	argsList, ok := args.(*tast.ExprList)
+	if !ok {
+		if n == 1 {
+			argsList = tast.NewExprList()
+			argsList.Append(args)
+		} else {
+			b.Errorf(expr.Lparen.Pos, "make() only takes a literal list")
+			return nil
+		}
+	}
+
+	arg0 := argsList.Exprs[0]
 	t, ok := arg0.R().T.(*types.Type)
 	if !ok {
 		b.Errorf(expr.Lparen.Pos, "make() takes a type as the 1st argument")
@@ -61,14 +67,14 @@ func buildCallMake(b *Builder, expr *ast.CallExpr, f tast.Expr) tast.Expr {
 			return nil
 		}
 
-		size := args.Exprs[1]
+		size := argsList.Exprs[1]
 		pos := ast.ExprPos(expr.Args.Exprs[1])
 		size = checkArrayIndex(b, size, pos)
 		if size == nil {
 			return nil
 		}
 
-		start := args.Exprs[2]
+		start := argsList.Exprs[2]
 		startType := start.R().T
 		startPos := ast.ExprPos(expr.Args.Exprs[2])
 		if v, ok := types.NumConst(startType); ok {
@@ -138,7 +144,8 @@ func buildCallExpr(b *Builder, expr *ast.CallExpr) tast.Expr {
 		return nil
 	}
 
-	nargs := args.Len()
+	argsRef := args.R()
+	nargs := argsRef.Len()
 	if nargs != len(funcType.Args) {
 		b.Errorf(ast.ExprPos(expr), "argument expects (%s), got (%s)",
 			fmt8.Join(funcType.Args, ","), args,
@@ -146,12 +153,9 @@ func buildCallExpr(b *Builder, expr *ast.CallExpr) tast.Expr {
 		return nil
 	}
 
-	callArgs := tast.NewExprList()
-
 	// type check and perform casting on each argument
 	for i := 0; i < nargs; i++ {
-		argExpr := args.Exprs[i]
-		argType := argExpr.Type()
+		argType := argsRef.At(i).Type()
 		expect := funcType.Args[i].T
 		if !types.CanAssign(expect, argType) {
 			pos := ast.ExprPos(expr.Args.Exprs[i])
@@ -160,15 +164,35 @@ func buildCallExpr(b *Builder, expr *ast.CallExpr) tast.Expr {
 			)
 			return nil
 		}
+	}
 
-		// insert auto casts
-		if types.IsNil(argType) {
-			callArgs.Append(tast.NewCast(argExpr, expect))
-		} else if _, ok := types.NumConst(argType); ok {
-			callArgs.Append(tast.NewCast(argExpr, expect))
-		} else {
-			callArgs.Append(argExpr)
+	// if args is not a literal expression list,
+	// then none of the arguments needs casting.
+	// all types must match
+	callArgs, ok := args.(*tast.ExprList)
+	if !ok && nargs == 1 {
+		callArgs = tast.NewExprList()
+		callArgs.Append(args)
+		ok = true
+	}
+
+	if ok {
+		castedArgs := tast.NewExprList()
+		for i := 0; i < nargs; i++ {
+			argExpr := callArgs.Exprs[i]
+			argType := argExpr.Type()
+			expect := funcType.Args[i].T
+
+			// insert auto casts for consts
+			if types.IsNil(argType) {
+				castedArgs.Append(tast.NewCast(argExpr, expect))
+			} else if _, ok := types.NumConst(argType); ok {
+				castedArgs.Append(tast.NewCast(argExpr, expect))
+			} else {
+				castedArgs.Append(argExpr)
+			}
 		}
+		args = castedArgs
 	}
 
 	retRef := tast.Void
@@ -176,5 +200,5 @@ func buildCallExpr(b *Builder, expr *ast.CallExpr) tast.Expr {
 		retRef = tast.AppendRef(retRef, tast.NewRef(t))
 	}
 
-	return &tast.CallExpr{f, callArgs, retRef}
+	return &tast.CallExpr{f, args, retRef}
 }

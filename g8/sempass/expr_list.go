@@ -5,7 +5,7 @@ import (
 	"e8vm.io/e8vm/g8/tast"
 )
 
-func buildExprList(b *Builder, list *ast.ExprList) *tast.ExprList {
+func buildExprList(b *Builder, list *ast.ExprList) tast.Expr {
 	ret := tast.NewExprList()
 	if list == nil {
 		return ret
@@ -14,6 +14,10 @@ func buildExprList(b *Builder, list *ast.ExprList) *tast.ExprList {
 	if n == 0 {
 		return ret
 	}
+	if n == 1 {
+		return b.BuildExpr(list.Exprs[0])
+	}
+
 	for _, expr := range list.Exprs {
 		ex := b.BuildExpr(expr)
 		if ex == nil {

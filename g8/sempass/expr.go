@@ -37,6 +37,8 @@ func buildExpr(b *Builder, expr ast.Expr) tast.Expr {
 			return nil
 		}
 		return tast.NewType(t)
+	case *ast.ExprList:
+		return buildExprList(b, expr)
 	}
 
 	b.Errorf(ast.ExprPos(expr), "invalid or not implemented: %T", expr)
