@@ -53,6 +53,7 @@ func makeBuilder(pinfo *build8.PkgInfo, golike bool) *builder {
 
 func initBuilder(b *builder, imp map[string]*build8.Import) {
 	b.exprFunc = buildExpr
+	b.exprFunc2 = buildExpr2
 	b.stmtFunc = buildStmt
 	b.constFunc = buildConstExpr
 

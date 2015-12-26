@@ -55,32 +55,34 @@ func buildExpr(b *builder, expr ast.Expr) *ref {
 		panic("bug")
 	}
 
-	switch expr := expr.(type) {
-	case *ast.MemberExpr:
-		return buildMember(b, expr)
-	case *ast.ParenExpr:
-		return buildExpr(b, expr.Expr)
-	case *ast.OpExpr:
-		return buildOpExpr(b, expr)
-	case *ast.StarExpr:
-		return buildStarExpr(b, expr)
-	case *ast.CallExpr:
-		return buildCallExpr(b, expr)
-	case *ast.IndexExpr:
-		return buildIndexExpr(b, expr)
-	case *ast.ArrayTypeExpr:
-		t := b.spass.BuildType(expr)
-		if t == nil {
-			return nil
+	/*
+		switch expr := expr.(type) {
+		case *ast.MemberExpr:
+			return buildMember(b, expr)
+		case *ast.ParenExpr:
+			return buildExpr(b, expr.Expr)
+		case *ast.OpExpr:
+			return buildOpExpr(b, expr)
+		case *ast.StarExpr:
+			return buildStarExpr(b, expr)
+		case *ast.CallExpr:
+			return buildCallExpr(b, expr)
+		case *ast.IndexExpr:
+			return buildIndexExpr(b, expr)
+		case *ast.ArrayTypeExpr:
+			t := b.spass.BuildType(expr)
+			if t == nil {
+				return nil
+			}
+			return newTypeRef(t)
+		case *ast.FuncTypeExpr:
+			t := b.spass.BuildType(expr)
+			if t == nil {
+				return nil
+			}
+			return newTypeRef(t)
 		}
-		return newTypeRef(t)
-	case *ast.FuncTypeExpr:
-		t := b.spass.BuildType(expr)
-		if t == nil {
-			return nil
-		}
-		return newTypeRef(t)
-	}
+	*/
 
 	e := b.spass.BuildExpr(expr)
 	if e == nil {

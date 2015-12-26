@@ -41,7 +41,7 @@ func NewConstRef(t types.T, v interface{}) *Ref {
 
 // NewAddressableRef creates a new addressable node.
 func NewAddressableRef(t types.T) *Ref {
-	return &Ref{T: t, Addressable: false}
+	return &Ref{T: t, Addressable: true}
 }
 
 // Void is a void ref.
