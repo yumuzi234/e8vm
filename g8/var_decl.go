@@ -24,7 +24,7 @@ func buildVarDecl(b *builder, d *ast.VarDecl) {
 	idents := d.Idents.Idents
 
 	if d.Eq != nil {
-		right := buildExprList(b, d.Exprs)
+		right := b.buildExpr(d.Exprs)
 		if right == nil {
 			return
 		}

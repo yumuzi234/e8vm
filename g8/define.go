@@ -86,7 +86,7 @@ func define(b *builder, idents []*lex8.Token, expr *ref, eq *lex8.Token) {
 }
 
 func buildDefineStmt(b *builder, stmt *ast.DefineStmt) {
-	right := buildExprList(b, stmt.Right)
+	right := b.buildExpr(stmt.Right)
 	if right == nil { // an error occured on the expression list
 		return
 	}

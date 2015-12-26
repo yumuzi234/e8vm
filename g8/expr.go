@@ -34,7 +34,7 @@ func buildExpr2(b *builder, expr tast.Expr) *ref {
 	case *tast.IndexExpr:
 		return genIndexExpr(b, expr)
 	case *tast.ExprList:
-		return genExprList(b, expr)
+		return buildExprList(b, expr)
 	}
 	panic(fmt.Errorf("buildExpr2 not implemented for %T", expr))
 }

@@ -25,7 +25,7 @@ func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) {
 			return
 		}
 
-		src := buildExprList(b, stmt.Exprs)
+		src := b.buildExpr(stmt.Exprs)
 		if src == nil {
 			return
 		}

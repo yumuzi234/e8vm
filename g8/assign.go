@@ -162,11 +162,11 @@ func opAssign(b *builder, dest, src *ref, op *lex8.Token) {
 }
 
 func buildAssignStmt(b *builder, stmt *ast.AssignStmt) {
-	left := buildExprList(b, stmt.Left)
+	left := b.buildExpr(stmt.Left)
 	if left == nil {
 		return
 	}
-	right := buildExprList(b, stmt.Right)
+	right := b.buildExpr(stmt.Right)
 	if right == nil {
 		return
 	}
