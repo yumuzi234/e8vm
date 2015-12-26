@@ -5,6 +5,7 @@ import (
 
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/tast"
+	"e8vm.io/e8vm/g8/types"
 )
 
 // to replace buildExpr in the future
@@ -16,6 +17,26 @@ func buildExpr2(b *builder, expr tast.Expr) *ref {
 		return buildIdent(b, expr)
 	case *tast.This:
 		return b.this
+	case *tast.Type:
+		t := expr.Ref.T.(*types.Type)
+		return newRef(t, nil)
+	case *tast.Cast:
+		from := buildExpr2(b, expr.From)
+		_ = from
+		panic("todo")
+	case *tast.MemberExpr:
+		return genMember(b, expr)
+	case *tast.OpExpr:
+		panic("todo")
+	case *tast.StarExpr:
+		return genStarExpr(b, expr)
+		panic("todo")
+	case *tast.CallExpr:
+		panic("todo")
+	case *tast.IndexExpr:
+		return genIndexExpr(b, expr)
+	case *tast.ExprList:
+		return genExprList(b, expr)
 	}
 	panic(fmt.Errorf("genExpr not implemented for %T", expr))
 }

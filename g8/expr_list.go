@@ -3,6 +3,7 @@ package g8
 import (
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/parse"
+	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/lex8"
 )
 
@@ -20,9 +21,7 @@ func buildExprList(b *builder, list *ast.ExprList) *ref {
 	}
 
 	for _, expr := range list.Exprs {
-		var ref *ref
-		ref = b.buildExpr(expr)
-
+		ref := b.buildExpr(expr)
 		if ref == nil {
 			return nil
 		}
@@ -54,4 +53,19 @@ func buildIdentExprList(b *builder, list *ast.ExprList) (
 	}
 
 	return ret, nil
+}
+
+func genExprList(b *builder, list *tast.ExprList) *ref {
+	n := list.Len()
+	if n == 0 {
+		return new(ref)
+	} else if n == 1 {
+		return b.buildExpr(list.Exprs[0])
+	}
+
+	ret := new(ref)
+	for _, expr := range list.Exprs {
+		ret = appendRef(ret, b.buildExpr(expr))
+	}
+	return ret
 }

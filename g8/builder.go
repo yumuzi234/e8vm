@@ -10,6 +10,7 @@ import (
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/ir"
 	"e8vm.io/e8vm/g8/sempass"
+	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/sym8"
@@ -34,6 +35,7 @@ type builder struct {
 	breaks    *blockStack
 
 	exprFunc  func(b *builder, expr ast.Expr) *ref
+	exprFunc2 func(b *builder, expr tast.Expr) *ref
 	stmtFunc  func(b *builder, stmt ast.Stmt)
 	constFunc func(b *builder, expr ast.Expr) *ref
 	irLog     io.WriteCloser
@@ -115,6 +117,13 @@ func (b *builder) buildExpr(expr ast.Expr) *ref {
 		return b.exprFunc(b, expr)
 	}
 	return nil
+}
+
+func (b *builder) buildExpr2(expr tast.Expr) *ref {
+	if b.exprFunc2 == nil {
+		panic("exprFunc2 function not assigned")
+	}
+	return b.exprFunc2(b, expr)
 }
 
 func (b *builder) buildConstExpr(expr ast.Expr) *ref {

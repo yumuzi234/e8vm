@@ -29,7 +29,7 @@ func buildCallMake(b *builder, expr *ast.CallExpr) *ref {
 	switch t := t.(type) {
 	case *types.Slice:
 		if n != 3 {
-			b.Errorf(expr.Lparen.Pos, "make() slice expects 3 arguments")
+			b.Errorf(expr.Lparen.Pos, "make() slice takes 3 arguments")
 			return nil
 		}
 
