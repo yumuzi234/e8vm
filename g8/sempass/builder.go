@@ -23,7 +23,8 @@ type Builder struct {
 	typeFunc  func(b *Builder, expr ast.Expr) types.T
 
 	// file level dependency, for checking circular dependencies.
-	deps deps
+	deps  deps
+	nloop int
 }
 
 func newBuilder(path string) *Builder {

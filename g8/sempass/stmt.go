@@ -28,11 +28,9 @@ func buildStmt(b *Builder, stmt ast.Stmt) tast.Stmt {
 	case *ast.ReturnStmt:
 		panic("todo")
 	case *ast.ContinueStmt:
-		// TODO: check if in a loop
-		return &tast.ContinueStmt{}
+		return buildContinueStmt(b, stmt)
 	case *ast.BreakStmt:
-		// TODO: check if in a loop
-		return &tast.BreakStmt{}
+		return buildBreakStmt(b, stmt)
 	}
 
 	b.Errorf(nil, "invalid or not implemented: %T", stmt)

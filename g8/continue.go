@@ -17,6 +17,12 @@ func buildContinueStmt(b *builder, stmt *ast.ContinueStmt) {
 	}
 
 	after := b.f.NewBlock(b.b)
+	b.b.Jump(next)
+	b.b = after
+}
+
+func genContinueStmt(b *builder) {
+	after := b.f.NewBlock(b.b)
 	b.b.Jump(b.continues.top())
 	b.b = after
 }

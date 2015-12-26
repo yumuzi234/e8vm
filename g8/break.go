@@ -15,8 +15,13 @@ func buildBreakStmt(b *builder, stmt *ast.BreakStmt) {
 		b.Errorf(stmt.Kw.Pos, "break is not in a for or switch block")
 		return
 	}
-
 	after := b.f.NewBlock(b.b)
 	b.b.Jump(next)
+	b.b = after
+}
+
+func genBreakStmt(b *builder) {
+	after := b.f.NewBlock(b.b)
+	b.b.Jump(b.breaks.top())
 	b.b = after
 }
