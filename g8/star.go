@@ -6,7 +6,7 @@ import (
 	"e8vm.io/e8vm/g8/types"
 )
 
-func genStarExpr(b *builder, expr *tast.StarExpr) *ref {
+func buildStarExpr(b *builder, expr *tast.StarExpr) *ref {
 	addr := b.buildExpr2(expr.Expr)
 	nilPointerPanic(b, addr.IR())
 	t := addr.Type().(*types.Pointer).T

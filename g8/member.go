@@ -7,7 +7,7 @@ import (
 	"e8vm.io/e8vm/g8/types"
 )
 
-func genPackageSym(b *builder, m *tast.MemberExpr, pkg *types.Pkg) *ref {
+func buildPkgSym(b *builder, m *tast.MemberExpr, pkg *types.Pkg) *ref {
 	sym := m.Symbol
 	if pkg.Lang == "asm8" {
 		switch sym.Type {
@@ -45,7 +45,7 @@ func genPackageSym(b *builder, m *tast.MemberExpr, pkg *types.Pkg) *ref {
 	panic("bug")
 }
 
-func genMember(b *builder, m *tast.MemberExpr) *ref {
+func buildMember(b *builder, m *tast.MemberExpr) *ref {
 	obj := b.buildExpr2(m.Expr)
 	if !obj.IsSingle() {
 		panic("not single")
@@ -53,7 +53,7 @@ func genMember(b *builder, m *tast.MemberExpr) *ref {
 
 	t := obj.Type()
 	if pkg, ok := t.(*types.Pkg); ok {
-		return genPackageSym(b, m, pkg)
+		return buildPkgSym(b, m, pkg)
 	}
 
 	pt := types.PointerOf(t)

@@ -5,7 +5,7 @@ import (
 	"e8vm.io/e8vm/g8/types"
 )
 
-func binaryOpBool2(b *builder, op string, A, B *ref) *ref {
+func binaryOpBool(b *builder, op string, A, B *ref) *ref {
 	switch op {
 	case "==", "!=":
 		ret := b.newTemp(types.Bool)
@@ -15,7 +15,7 @@ func binaryOpBool2(b *builder, op string, A, B *ref) *ref {
 	panic("bug")
 }
 
-func genLogicAnd(b *builder, A *ref, B tast.Expr) *ref {
+func buildLogicAnd(b *builder, A *ref, B tast.Expr) *ref {
 	blockB := b.f.NewBlock(b.b)
 	retFalse := b.f.NewBlock(blockB)
 	after := b.f.NewBlock(retFalse)
@@ -38,7 +38,7 @@ func genLogicAnd(b *builder, A *ref, B tast.Expr) *ref {
 	return ret
 }
 
-func genLogicOr(b *builder, A *ref, B tast.Expr) *ref {
+func buildLogicOr(b *builder, A *ref, B tast.Expr) *ref {
 	blockB := b.f.NewBlock(b.b)
 	retTrue := b.f.NewBlock(blockB)
 	after := b.f.NewBlock(retTrue)
@@ -60,7 +60,7 @@ func genLogicOr(b *builder, A *ref, B tast.Expr) *ref {
 	return ret
 }
 
-func unaryOpBool2(b *builder, op string, B *ref) *ref {
+func unaryOpBool(b *builder, op string, B *ref) *ref {
 	if op != "!" {
 		panic("bug")
 	}

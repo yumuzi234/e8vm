@@ -23,7 +23,7 @@ func regSizeCastable(to, from types.T) bool {
 	return false
 }
 
-func genCast(b *builder, from *ref, t types.T) *ref {
+func buildCast(b *builder, from *ref, t types.T) *ref {
 	srcType := from.Type()
 	ret := b.newTemp(t)
 

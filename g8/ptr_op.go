@@ -5,7 +5,7 @@ import (
 	"e8vm.io/e8vm/g8/types"
 )
 
-func binaryOpNil2(b *builder, op string, A, B *ref) *ref {
+func binaryOpNil(b *builder, op string, A, B *ref) *ref {
 	switch op {
 	case "==":
 		return refTrue
@@ -15,7 +15,7 @@ func binaryOpNil2(b *builder, op string, A, B *ref) *ref {
 	panic("bug")
 }
 
-func binaryOpPtr2(b *builder, op string, A, B *ref) *ref {
+func binaryOpPtr(b *builder, op string, A, B *ref) *ref {
 	atyp := A.Type()
 	btyp := B.Type()
 
@@ -46,7 +46,7 @@ func testNilSlice(b *builder, r *ref, neg bool) *ref {
 	return newRef(types.Bool, isNil)
 }
 
-func binaryOpSlice2(b *builder, op string, A, B *ref) *ref {
+func binaryOpSlice(b *builder, op string, A, B *ref) *ref {
 	atyp := A.Type()
 	btyp := B.Type()
 

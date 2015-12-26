@@ -22,13 +22,13 @@ func buildExpr2(b *builder, expr tast.Expr) *ref {
 		return newRef(t, nil)
 	case *tast.Cast:
 		from := buildExpr2(b, expr.From)
-		return genCast(b, from, expr.T)
+		return buildCast(b, from, expr.T)
 	case *tast.MemberExpr:
-		return genMember(b, expr)
+		return buildMember(b, expr)
 	case *tast.OpExpr:
-		return genOpExpr(b, expr)
+		return buildOpExpr(b, expr)
 	case *tast.StarExpr:
-		return genStarExpr(b, expr)
+		return buildStarExpr(b, expr)
 	case *tast.CallExpr:
 		return genCallExpr(b, expr)
 	case *tast.IndexExpr:

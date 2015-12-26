@@ -22,7 +22,7 @@ func buildBasicArith(b *builder, ret, A, B *ref, op string) {
 	b.b.Arith(ret.IR(), A.IR(), op, B.IR())
 }
 
-func binaryOpInt2(b *builder, op string, A, B *ref, t types.T) *ref {
+func binaryOpInt(b *builder, op string, A, B *ref, t types.T) *ref {
 	switch op {
 	case "+", "-", "*", "&", "|", "^", "%", "/":
 		ret := b.newTemp(t)
@@ -54,7 +54,7 @@ func binaryOpUint2(b *builder, op string, A, B *ref, t types.T) *ref {
 	panic("bug")
 }
 
-func binaryOpConst2(b *builder, op string, A, B *ref) *ref {
+func binaryOpConst(b *builder, op string, A, B *ref) *ref {
 	va, _ := types.NumConst(A.Type())
 	vb, _ := types.NumConst(B.Type())
 
@@ -81,7 +81,7 @@ func binaryOpConst2(b *builder, op string, A, B *ref) *ref {
 	panic("bug")
 }
 
-func unaryOpInt2(b *builder, op string, B *ref) *ref {
+func unaryOpInt(b *builder, op string, B *ref) *ref {
 	switch op {
 	case "+":
 		return B
