@@ -62,28 +62,6 @@ func declareVars(b *builder, toks []*lex8.Token, r *ref) {
 	}
 }
 
-func define(b *builder, idents []*lex8.Token, expr *ref, eq *lex8.Token) {
-	// check count matching
-	nleft := len(idents)
-	nright := expr.Len()
-	if nleft != nright {
-		b.Errorf(eq.Pos,
-			"defined %d identifers with %d expressions",
-			nleft, nright,
-		)
-		return
-	}
-
-	left := allocVars(b, idents, expr.TypeList())
-	if left == nil {
-		return
-	}
-
-	if assign(b, left, expr, eq) {
-		declareVars(b, idents, left)
-	}
-}
-
 func genDefine(b *builder, d *tast.Define) {
 	dest := new(ref)
 	for _, sym := range d.Left {
