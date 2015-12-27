@@ -35,7 +35,6 @@ func allocPrepare(
 		}
 		ret.Append(e)
 	}
-
 	return ret
 }
 
@@ -54,7 +53,7 @@ func declareVar(b *Builder, tok *lex8.Token, t types.T) *sym8.Symbol {
 
 func define(
 	b *Builder, ids []*lex8.Token, expr tast.Expr, eq *lex8.Token,
-) tast.Stmt {
+) *tast.DefineStmt {
 	// check count matching
 	r := expr.R()
 	nleft := len(ids)
@@ -100,7 +99,6 @@ func buildIdentExprList(b *Builder, list *ast.ExprList) (
 		if op.Token.Type != parse.Ident {
 			return nil, expr
 		}
-
 		ret = append(ret, op.Token)
 	}
 
@@ -118,7 +116,9 @@ func buildDefineStmt(b *Builder, stmt *ast.DefineStmt) tast.Stmt {
 		b.Errorf(ast.ExprPos(err), "left side of := must be identifier")
 		return nil
 	}
-
-	define(b, idents, right, stmt.Define)
-	return nil
+	ret := define(b, idents, right, stmt.Define)
+	if ret == nil {
+		return nil
+	}
+	return ret
 }

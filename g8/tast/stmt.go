@@ -19,7 +19,7 @@ type AssignStmt struct {
 // DefineStmt is a define statement, like "a,b:=x,y".
 type DefineStmt struct {
 	Left  []*sym8.Symbol
-	Right Expr
+	Right Expr // zero out Left if Right==nil
 }
 
 // Block is a statement block; it is also a statement itself.
