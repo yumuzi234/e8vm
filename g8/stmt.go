@@ -7,7 +7,7 @@ import (
 	"e8vm.io/e8vm/g8/tast"
 )
 
-func genStmt(b *builder, s tast.Stmt) {
+func buildStmt2(b *builder, s tast.Stmt) {
 	switch stmt := s.(type) {
 	case nil:
 		return // empty statement
@@ -34,7 +34,7 @@ func genStmt(b *builder, s tast.Stmt) {
 	case *tast.ReturnStmt:
 		buildReturnStmt(b, stmt)
 	case *tast.Block:
-		genBlock(b, stmt)
+		buildBlock(b, stmt)
 	case *tast.ForStmt:
 		buildForStmt(b, stmt)
 	case *tast.IfStmt:
@@ -44,14 +44,10 @@ func genStmt(b *builder, s tast.Stmt) {
 	}
 }
 
-func buildStmt2(b *builder, stmt ast.Stmt) {
+func buildStmt(b *builder, stmt ast.Stmt) {
 	s := b.spass.BuildStmt(stmt)
 	if s == nil {
 		return
 	}
-	genStmt(b, s)
-}
-
-func buildStmt(b *builder, stmt ast.Stmt) {
-	buildStmt2(b, stmt)
+	buildStmt2(b, s)
 }
