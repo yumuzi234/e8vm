@@ -7,12 +7,7 @@ import (
 	"e8vm.io/e8vm/g8/tast"
 )
 
-func buildStmt2(b *builder, stmt ast.Stmt) {
-	s := b.spass.BuildStmt(stmt)
-	if s == nil {
-		return
-	}
-
+func genStmt(b *builder, s tast.Stmt) {
 	switch stmt := s.(type) {
 	case nil:
 		return // empty statement
@@ -37,44 +32,26 @@ func buildStmt2(b *builder, stmt ast.Stmt) {
 	case *tast.AssignStmt:
 		buildAssignStmt(b, stmt)
 	case *tast.ReturnStmt:
-		genReturnStmt(b, stmt)
+		buildReturnStmt(b, stmt)
+	case *tast.Block:
+		genBlock(b, stmt)
+	case *tast.ForStmt:
+		genForStmt(b, stmt)
+	case *tast.IfStmt:
+		genIfStmt(b, stmt)
 	default:
 		panic(fmt.Errorf("unimplemented: %T", stmt))
 	}
 }
 
-func buildStmt(b *builder, stmt ast.Stmt) {
-	switch stmt := stmt.(type) {
-	case *ast.EmptyStmt:
-		buildStmt2(b, stmt)
-	case *ast.ExprStmt:
-		buildStmt2(b, stmt)
-	case *ast.IncStmt:
-		buildStmt2(b, stmt)
-
-	case *ast.DefineStmt:
-		buildStmt2(b, stmt)
-	case *ast.VarDecls:
-		buildStmt2(b, stmt)
-	case *ast.ConstDecls:
-		buildStmt2(b, stmt)
-	case *ast.AssignStmt:
-		buildStmt2(b, stmt)
-	case *ast.ReturnStmt:
-		buildStmt2(b, stmt)
-
-	case *ast.ContinueStmt:
-		buildContinueStmt(b, stmt)
-	case *ast.BreakStmt:
-		buildBreakStmt(b, stmt)
-
-	case *ast.IfStmt:
-		buildIfStmt(b, stmt)
-	case *ast.ForStmt:
-		buildForStmt(b, stmt)
-	case *ast.BlockStmt:
-		buildBlock(b, stmt.Block)
-	default:
-		b.Errorf(nil, "invalid or not implemented: %T", stmt)
+func buildStmt2(b *builder, stmt ast.Stmt) {
+	s := b.spass.BuildStmt(stmt)
+	if s == nil {
+		return
 	}
+	genStmt(b, s)
+}
+
+func buildStmt(b *builder, stmt ast.Stmt) {
+	buildStmt2(b, stmt)
 }

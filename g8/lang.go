@@ -55,6 +55,7 @@ func initBuilder(b *builder, imp map[string]*build8.Import) {
 	b.exprFunc = buildExpr
 	b.exprFunc2 = buildExpr2
 	b.stmtFunc = buildStmt
+	b.stmtFunc2 = genStmt
 	b.constFunc = buildConstExpr
 
 	builtin, ok := imp["$"]

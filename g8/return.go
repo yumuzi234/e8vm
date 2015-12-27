@@ -4,7 +4,7 @@ import (
 	"e8vm.io/e8vm/g8/tast"
 )
 
-func genReturnStmt(b *builder, stmt *tast.ReturnStmt) {
+func buildReturnStmt(b *builder, stmt *tast.ReturnStmt) {
 	if stmt.Exprs != nil {
 		exprs := b.buildExpr2(stmt.Exprs)
 		assign(b, b.fretRef, exprs)

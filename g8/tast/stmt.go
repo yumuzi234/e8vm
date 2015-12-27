@@ -49,14 +49,7 @@ type ReturnStmt struct {
 type IfStmt struct {
 	Expr Expr
 	Body Stmt
-	Else *ElseStmt
-}
-
-// ElseStmt the else stmt that follows an if statement.
-type ElseStmt struct {
-	Expr Expr // optional for else if
-	Body *Block
-	Next *ElseStmt // next else statement
+	Else Stmt
 }
 
 // ForStmt is a for loop statement.
@@ -65,5 +58,5 @@ type ForStmt struct {
 	Init      Stmt
 	Cond      Expr
 	Iter      Stmt
-	Body      *Block
+	Body      Stmt
 }

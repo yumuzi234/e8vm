@@ -37,6 +37,7 @@ type builder struct {
 	exprFunc  func(b *builder, expr ast.Expr) *ref
 	exprFunc2 func(b *builder, expr tast.Expr) *ref
 	stmtFunc  func(b *builder, stmt ast.Stmt)
+	stmtFunc2 func(b *builder, stmt tast.Stmt)
 	constFunc func(b *builder, expr ast.Expr) *ref
 	irLog     io.WriteCloser
 
@@ -144,6 +145,8 @@ func (b *builder) buildStmts(stmts []ast.Stmt) {
 }
 
 func (b *builder) buildStmt(stmt ast.Stmt) { b.stmtFunc(b, stmt) }
+
+func (b *builder) buildStmt2(stmt tast.Stmt) { b.stmtFunc2(b, stmt) }
 
 func (b *builder) Errs() []*lex8.Error {
 	if errs := b.spass.Errs(); errs != nil {

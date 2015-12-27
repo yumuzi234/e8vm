@@ -29,13 +29,12 @@ func buildStmt(b *Builder, stmt ast.Stmt) tast.Stmt {
 		return buildAssignStmt(b, stmt)
 	case *ast.ReturnStmt:
 		return buildReturnStmt(b, stmt)
-
-	case *ast.IfStmt:
-		panic("todo")
-	case *ast.ForStmt:
-		panic("todo")
 	case *ast.BlockStmt:
-		panic("todo")
+		return buildBlockStmt(b, stmt)
+	case *ast.IfStmt:
+		return buildIfStmt(b, stmt)
+	case *ast.ForStmt:
+		return buildForStmt(b, stmt)
 	}
 
 	b.Errorf(nil, "invalid or not implemented: %T", stmt)

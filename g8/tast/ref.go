@@ -98,6 +98,11 @@ func (r *Ref) Len() int {
 // IsSingle checks if the ref is a single ref.
 func (r *Ref) IsSingle() bool { return r.Len() == 1 }
 
+// IsBool checks if the ref is a single boolean ref.
+func (r *Ref) IsBool() bool {
+	return r.IsSingle() && types.IsBasic(r.Type(), types.Bool)
+}
+
 // TypeList returns the type list of the reference's type.
 func (r *Ref) TypeList() []types.T {
 	if r.Void {
