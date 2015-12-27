@@ -45,18 +45,19 @@ func buildStmt(b *builder, stmt ast.Stmt) {
 		buildDefineStmt(b, stmt)
 	case *ast.AssignStmt:
 		buildAssignStmt(b, stmt)
-	case *ast.IfStmt:
-		buildIfStmt(b, stmt)
-	case *ast.ForStmt:
-		buildForStmt(b, stmt)
-	case *ast.BlockStmt:
-		buildBlock(b, stmt.Block)
 	case *ast.VarDecls:
 		buildVarDecls(b, stmt)
 	case *ast.ConstDecls:
 		buildConstDecls(b, stmt)
 	case *ast.ReturnStmt:
 		buildReturnStmt(b, stmt)
+
+	case *ast.IfStmt:
+		buildIfStmt(b, stmt)
+	case *ast.ForStmt:
+		buildForStmt(b, stmt)
+	case *ast.BlockStmt:
+		buildBlock(b, stmt.Block)
 	default:
 		b.Errorf(nil, "invalid or not implemented: %T", stmt)
 	}

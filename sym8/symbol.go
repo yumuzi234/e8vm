@@ -31,8 +31,7 @@ func (s *Symbol) Clone(item interface{}) *Symbol {
 
 // Make creates a new symbol
 func Make(
-	pkg, name string,
-	t int,
+	pkg, name string, t int,
 	obj, objType interface{},
 	pos *lex8.Pos,
 ) *Symbol {

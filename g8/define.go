@@ -17,7 +17,7 @@ func allocVars(b *builder, toks []*lex8.Token, ts []types.T) *ref {
 			b.Errorf(tok.Pos, "cannot infer type from nil for %q", tok.Lit)
 			return nil
 		}
-		if types.IsConst(t) {
+		if _, ok := types.NumConst(t); ok {
 			t = types.Int
 		}
 		if !types.IsAllocable(t) {

@@ -14,7 +14,7 @@ func buildStmt(b *Builder, stmt ast.Stmt) tast.Stmt {
 	case *ast.IncStmt:
 		return buildIncStmt(b, stmt)
 	case *ast.DefineStmt:
-		panic("todo")
+		return buildDefineStmt(b, stmt)
 	case *ast.AssignStmt:
 		panic("todo")
 	case *ast.VarDecls:

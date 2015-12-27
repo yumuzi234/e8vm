@@ -13,7 +13,7 @@ type VarDecl struct {
 
 // VarDecls is a variable declaration group.
 type VarDecls struct {
-	Decls []*VarDecl
+	Decls []Stmt
 }
 
 // ConstDecl declares a set of constants.

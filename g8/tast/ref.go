@@ -98,6 +98,21 @@ func (r *Ref) Len() int {
 // IsSingle checks if the ref is a single ref.
 func (r *Ref) IsSingle() bool { return r.Len() == 1 }
 
+// TypeList returns the type list of the reference's type.
+func (r *Ref) TypeList() []types.T {
+	if r.Void {
+		return nil
+	}
+	if r.IsSingle() {
+		return []types.T{r.T}
+	}
+	var ret []types.T
+	for _, r := range r.List {
+		ret = append(ret, r.Type())
+	}
+	return ret
+}
+
 // AppendRef append a ref in a ref bundle.
 func AppendRef(base, toAdd *Ref) *Ref {
 	if base.Void {

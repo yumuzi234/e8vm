@@ -85,6 +85,7 @@ func TestBareFunc_good(t *testing.T) {
 	o("var a,b = 3,4; printInt(a); printInt(b)", "3\n4")
 	o("var a,b = 3,4; printInt(a); printInt(b)", "3\n4")
 	o("var a,b int = 3,4; printInt(a); printInt(b)", "3\n4")
+	o("var a,b uint = 3,4; printUint(a); printUint(b)", "3\n4")
 	o(` a,b:=3,4; { var a,b=b,a; printInt(a); printInt(b) }
 	   	printInt(a); printInt(b)
 	`, "4\n3\n3\n4")
