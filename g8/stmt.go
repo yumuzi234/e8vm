@@ -36,9 +36,9 @@ func genStmt(b *builder, s tast.Stmt) {
 	case *tast.Block:
 		genBlock(b, stmt)
 	case *tast.ForStmt:
-		genForStmt(b, stmt)
+		buildForStmt(b, stmt)
 	case *tast.IfStmt:
-		genIfStmt(b, stmt)
+		buildIfStmt(b, stmt)
 	default:
 		panic(fmt.Errorf("unimplemented: %T", stmt))
 	}

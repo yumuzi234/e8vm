@@ -4,7 +4,7 @@ import (
 	"e8vm.io/e8vm/g8/tast"
 )
 
-func genForStmt(b *builder, stmt *tast.ForStmt) {
+func buildForStmt(b *builder, stmt *tast.ForStmt) {
 	if stmt.Init != nil {
 		b.buildStmt2(stmt.Init)
 	}
