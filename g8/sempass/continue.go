@@ -5,7 +5,7 @@ import (
 	"e8vm.io/e8vm/g8/tast"
 )
 
-func buildContinueStmt(b *Builder, s *ast.ContinueStmt) *tast.ContinueStmt {
+func buildContinueStmt(b *Builder, s *ast.ContinueStmt) tast.Stmt {
 	if s.Label != nil {
 		b.Errorf(s.Label.Pos, "continue with label not implemented")
 		return nil

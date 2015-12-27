@@ -54,11 +54,3 @@ func buildExpr(b *builder, expr ast.Expr) *ref {
 	}
 	return buildExpr2(b, e)
 }
-
-func buildExprStmt(b *builder, expr ast.Expr) {
-	if e, ok := expr.(*ast.CallExpr); ok {
-		buildExpr(b, e)
-	} else {
-		b.Errorf(ast.ExprPos(expr), "invalid expression statement")
-	}
-}

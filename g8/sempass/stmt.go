@@ -10,9 +10,9 @@ func buildStmt(b *Builder, stmt ast.Stmt) tast.Stmt {
 	case *ast.EmptyStmt:
 		return nil
 	case *ast.ExprStmt:
-		return buildExprStmt(b, stmt)
+		return buildExprStmt(b, stmt.Expr)
 	case *ast.IncStmt:
-		panic("todo")
+		return buildIncStmt(b, stmt)
 	case *ast.DefineStmt:
 		panic("todo")
 	case *ast.AssignStmt:

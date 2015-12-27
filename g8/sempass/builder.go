@@ -59,6 +59,11 @@ func (b *Builder) BuildType(expr ast.Expr) types.T {
 	return b.typeFunc(b, expr)
 }
 
+// BuildStmt builds a statement.
+func (b *Builder) BuildStmt(stmt ast.Stmt) tast.Stmt {
+	return b.stmtFunc(b, stmt)
+}
+
 // RefSym references a symbol.
 func (b *Builder) RefSym(sym *sym8.Symbol, pos *lex8.Pos) {
 	// track file dependencies inside a package
