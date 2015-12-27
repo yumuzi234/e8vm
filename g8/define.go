@@ -62,7 +62,7 @@ func declareVars(b *builder, toks []*lex8.Token, r *ref) {
 	}
 }
 
-func genDefine(b *builder, d *tast.Define) {
+func buildDefine(b *builder, d *tast.Define) {
 	dest := new(ref)
 	for _, sym := range d.Left {
 		name := sym.Name()

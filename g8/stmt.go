@@ -23,10 +23,10 @@ func buildStmt2(b *builder, stmt ast.Stmt) {
 	case *tast.ExprStmt:
 		b.buildExpr2(stmt.Expr)
 	case *tast.Define:
-		genDefine(b, stmt)
+		buildDefine(b, stmt)
 	case *tast.VarDecls:
 		for _, d := range stmt.Decls {
-			genDefine(b, d)
+			buildDefine(b, d)
 		}
 	default:
 		panic("unimplemented")
