@@ -22,6 +22,8 @@ func buildStmt2(b *builder, stmt ast.Stmt) {
 		genIncStmt(b, stmt)
 	case *tast.ExprStmt:
 		b.buildExpr2(stmt.Expr)
+	case *tast.Define:
+		genDefine(b, stmt)
 	default:
 		panic("unimplemented")
 	}
@@ -42,7 +44,8 @@ func buildStmt(b *builder, stmt ast.Stmt) {
 		buildBreakStmt(b, stmt)
 
 	case *ast.DefineStmt:
-		buildDefineStmt(b, stmt)
+		buildStmt2(b, stmt)
+		// buildDefineStmt(b, stmt)
 	case *ast.VarDecls:
 		buildVarDecls(b, stmt)
 	case *ast.ConstDecls:

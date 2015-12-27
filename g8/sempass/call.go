@@ -55,7 +55,7 @@ func buildCallMake(b *Builder, expr *ast.CallExpr, f tast.Expr) tast.Expr {
 		b.Errorf(expr.Lparen.Pos, "make() takes a type as the 1st argument")
 		return nil
 	}
-	switch t := t.T.(type) {
+	switch st := t.T.(type) {
 	case *types.Slice:
 		if n != 3 {
 			b.Errorf(expr.Lparen.Pos, "make() slice takes 3 arguments")
@@ -79,7 +79,7 @@ func buildCallMake(b *Builder, expr *ast.CallExpr, f tast.Expr) tast.Expr {
 			}
 		} else if !types.IsBasic(startType, types.Uint) {
 			pt := types.PointerOf(startType)
-			if pt == nil || !types.SameType(pt, t.T) {
+			if pt == nil || !types.SameType(pt, st.T) {
 				b.Errorf(startPos,
 					"make() takes an uint or a typed pointer as the 3rd arg",
 				)
@@ -92,7 +92,7 @@ func buildCallMake(b *Builder, expr *ast.CallExpr, f tast.Expr) tast.Expr {
 		callArgs.Append(size)
 		callArgs.Append(start)
 
-		r := tast.NewAddressableRef(t.T)
+		r := tast.NewRef(st)
 		return &tast.CallExpr{f, callArgs, r}
 	}
 

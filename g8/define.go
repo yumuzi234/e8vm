@@ -85,6 +85,30 @@ func define(b *builder, idents []*lex8.Token, expr *ref, eq *lex8.Token) {
 	}
 }
 
+func genDefine(b *builder, d *tast.Define) {
+	dest := new(ref)
+	for _, sym := range d.Left {
+		name := sym.Name()
+		t := sym.ObjType.(types.T)
+		v := b.newLocal(t, name)
+		r := newAddressableRef(t, v)
+		sym.Obj = &objVar{name: name, ref: r}
+		dest = appendRef(dest, r)
+	}
+
+	n := dest.Len()
+	if d.Right == nil {
+		for i := 0; i < n; i++ {
+			b.b.Zero(dest.At(i).IR())
+		}
+	} else {
+		src := b.buildExpr2(d.Right)
+		for i := 0; i < n; i++ {
+			b.b.Assign(dest.At(i).IR(), src.At(i).IR())
+		}
+	}
+}
+
 func buildDefineStmt(b *builder, stmt *ast.DefineStmt) {
 	right := b.buildExpr(stmt.Right)
 	if right == nil { // an error occured on the expression list
