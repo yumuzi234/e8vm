@@ -53,7 +53,7 @@ func declareVar(b *Builder, tok *lex8.Token, t types.T) *sym8.Symbol {
 
 func define(
 	b *Builder, ids []*lex8.Token, expr tast.Expr, eq *lex8.Token,
-) *tast.DefineStmt {
+) *tast.Define {
 	// check count matching
 	r := expr.R()
 	nleft := len(ids)
@@ -84,7 +84,7 @@ func define(
 		syms = append(syms, s)
 	}
 
-	return &tast.DefineStmt{syms, expr}
+	return &tast.Define{syms, expr}
 }
 
 func buildIdentExprList(b *Builder, list *ast.ExprList) (

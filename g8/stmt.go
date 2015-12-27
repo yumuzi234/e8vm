@@ -43,12 +43,13 @@ func buildStmt(b *builder, stmt ast.Stmt) {
 
 	case *ast.DefineStmt:
 		buildDefineStmt(b, stmt)
-	case *ast.AssignStmt:
-		buildAssignStmt(b, stmt)
 	case *ast.VarDecls:
 		buildVarDecls(b, stmt)
 	case *ast.ConstDecls:
 		buildConstDecls(b, stmt)
+
+	case *ast.AssignStmt:
+		buildAssignStmt(b, stmt)
 	case *ast.ReturnStmt:
 		buildReturnStmt(b, stmt)
 

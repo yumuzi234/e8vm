@@ -16,8 +16,8 @@ type AssignStmt struct {
 	Right Expr
 }
 
-// DefineStmt is a define statement, like "a,b:=x,y".
-type DefineStmt struct {
+// Define is a define statement, like "a,b:=x,y".
+type Define struct {
 	Left  []*sym8.Symbol
 	Right Expr // zero out Left if Right==nil
 }

@@ -40,7 +40,7 @@ func declareVars(b *Builder, ids []*lex8.Token, t types.T) []*sym8.Symbol {
 	return syms
 }
 
-func buildVarDecl(b *Builder, d *ast.VarDecl) *tast.DefineStmt {
+func buildVarDecl(b *Builder, d *ast.VarDecl) *tast.Define {
 	ids := d.Idents.Idents
 
 	if d.Eq != nil {
@@ -90,7 +90,7 @@ func buildVarDecl(b *Builder, d *ast.VarDecl) *tast.DefineStmt {
 		if syms == nil {
 			return nil
 		}
-		return &tast.DefineStmt{syms, right}
+		return &tast.Define{syms, right}
 	}
 
 	if d.Type == nil {
@@ -106,7 +106,7 @@ func buildVarDecl(b *Builder, d *ast.VarDecl) *tast.DefineStmt {
 	if syms == nil {
 		return nil
 	}
-	return &tast.DefineStmt{syms, nil}
+	return &tast.Define{syms, nil}
 }
 
 func buildVarDecls(b *Builder, decls *ast.VarDecls) tast.Stmt {
@@ -114,13 +114,12 @@ func buildVarDecls(b *Builder, decls *ast.VarDecls) tast.Stmt {
 		return nil
 	}
 
-	var ret []*tast.DefineStmt
+	var ret []*tast.Define
 	for _, d := range decls.Decls {
 		d := buildVarDecl(b, d)
-		if d == nil {
-			return nil
+		if d != nil {
+			ret = append(ret, d)
 		}
-		ret = append(ret, d)
 	}
 	return &tast.VarDecls{ret}
 }
