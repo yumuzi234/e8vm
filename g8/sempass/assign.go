@@ -93,7 +93,24 @@ func opAssign(b *Builder, dest, src tast.Expr, op *lex8.Token) tast.Stmt {
 		return &tast.AssignStmt{dest, op, src}
 	}
 
-	panic("todo")
+	if v, ok := types.NumConst(srcType); ok {
+		src = constCast(b, op.Pos, v, src, destType)
+		if src == nil {
+			return nil
+		}
+		srcRef = src.R()
+		srcType = destType
+	}
+
+	if ok, t := types.SameBasic(destType, srcType); ok {
+		switch t {
+		case types.Int, types.Int8, types.Uint, types.Uint8:
+			return &tast.AssignStmt{dest, op, src}
+		}
+	}
+
+	b.Errorf(op.Pos, "invalid %s %s %s", destType, opLit, srcType)
+	return nil
 }
 
 func buildAssignStmt(b *Builder, stmt *ast.AssignStmt) tast.Stmt {

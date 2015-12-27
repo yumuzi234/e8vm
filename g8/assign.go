@@ -2,6 +2,7 @@ package g8
 
 import (
 	"e8vm.io/e8vm/g8/ast"
+	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/lex8"
 )
@@ -81,10 +82,12 @@ func parseAssignOp(op string) string {
 	return op[:opLen-1]
 }
 
-func opAssignInt(b *builder, opOp string, dest, src *ref) {
+func opAssignInt(b *builder, dest, src *ref, opOp string) {
 	switch opOp {
 	case "+", "-", "*", "&", "|", "^", "/", "%":
 		buildBasicArith(b, dest, dest, src, opOp)
+	default:
+		panic("bug")
 	}
 }
 
@@ -153,7 +156,7 @@ func opAssign(b *builder, dest, src *ref, op *lex8.Token) {
 	if ok, t := types.SameBasic(destType, srcType); ok {
 		switch t {
 		case types.Int, types.Int8, types.Uint, types.Uint8:
-			opAssignInt(b, opOp, dest, src)
+			opAssignInt(b, dest, src, opOp)
 			return
 		}
 	}
@@ -177,4 +180,43 @@ func buildAssignStmt(b *builder, stmt *ast.AssignStmt) {
 	}
 
 	opAssign(b, left, right, stmt.Assign)
+}
+
+func genAssignStmt(b *builder, stmt *tast.AssignStmt) {
+	left := b.buildExpr2(stmt.Left)
+	right := b.buildExpr2(stmt.Right)
+	if stmt.Op.Lit == "=" {
+		assign2(b, left, right)
+	}
+	opAssign2(b, left, right, stmt.Op.Lit)
+}
+
+func assign2(b *builder, dest, src *ref) {
+	n := dest.Len()
+	if n == 1 {
+		b.b.Assign(dest.IR(), src.IR())
+		return
+	}
+
+	temps := make([]*ref, n)
+	for i := 0; i < n; i++ {
+		s := src.At(i)
+		t := s.Type()
+		temps[i] = b.newTemp(t)
+		b.b.Assign(temps[i].IR(), s.IR())
+	}
+
+	for i := 0; i < n; i++ {
+		b.b.Assign(dest.At(i).IR(), temps[i].IR())
+	}
+}
+
+func opAssign2(b *builder, dest, src *ref, op string) {
+	opOp := op[:len(op)-1]
+	if opOp == ">>=" || opOp == "<<=" {
+		buildShift(b, dest, dest, src, opOp)
+		return
+	}
+
+	buildBasicArith(b, dest, dest, src, opOp)
 }
