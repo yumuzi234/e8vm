@@ -25,12 +25,12 @@ func buildStmt(b *Builder, stmt ast.Stmt) tast.Stmt {
 		return buildVarDecls(b, stmt)
 	case *ast.ConstDecls:
 		return buildConstDecls(b, stmt)
+	case *ast.AssignStmt:
+		return buildAssignStmt(b, stmt)
 
 	case *ast.ReturnStmt:
 		panic("todo")
 
-	case *ast.AssignStmt:
-		panic("todo")
 	case *ast.IfStmt:
 		panic("todo")
 	case *ast.ForStmt:
