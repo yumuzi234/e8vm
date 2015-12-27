@@ -8,31 +8,6 @@ import (
 	"e8vm.io/e8vm/sym8"
 )
 
-func buildConstExprList(b *Builder, list *ast.ExprList) tast.Expr {
-	n := list.Len()
-	if n == 0 {
-		b.Errorf(ast.ExprPos(list), "const expression list of zero length")
-		return nil
-	}
-	if n == 1 {
-		return b.BuildConstExpr(list.Exprs[0])
-	}
-
-	ret := tast.NewExprList()
-	for _, expr := range list.Exprs {
-		e := b.BuildConstExpr(expr)
-		if e == nil {
-			return nil
-		}
-		if e.R().IsSingle() {
-			b.Errorf(ast.ExprPos(expr), "cannot composite list in a list")
-			return nil
-		}
-		ret.Append(e)
-	}
-	return ret
-}
-
 func declareConst(b *Builder, tok *lex8.Token, t types.T) *sym8.Symbol {
 	name := tok.Lit
 	s := sym8.Make(b.path, name, tast.SymConst, nil, t, tok.Pos)
@@ -97,5 +72,5 @@ func buildConstDecls(b *Builder, decls *ast.ConstDecls) tast.Stmt {
 			ret = append(ret, d)
 		}
 	}
-	return ret
+	return &tast.ConstDecls{ret}
 }

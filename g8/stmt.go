@@ -1,6 +1,8 @@
 package g8
 
 import (
+	"fmt"
+
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/tast"
 )
@@ -28,8 +30,12 @@ func buildStmt2(b *builder, stmt ast.Stmt) {
 		for _, d := range stmt.Decls {
 			buildDefine(b, d)
 		}
+	case *tast.ConstDecls:
+		for _, d := range stmt.Decls {
+			buildConstDefine(b, d)
+		}
 	default:
-		panic("unimplemented")
+		panic(fmt.Errorf("unimplemented: %T", stmt))
 	}
 }
 
@@ -52,7 +58,7 @@ func buildStmt(b *builder, stmt ast.Stmt) {
 	case *ast.VarDecls:
 		buildStmt2(b, stmt)
 	case *ast.ConstDecls:
-		buildConstDecls(b, stmt)
+		buildStmt2(b, stmt)
 
 	case *ast.AssignStmt:
 		buildAssignStmt(b, stmt)

@@ -34,3 +34,29 @@ func buildExprList(b *Builder, list *ast.ExprList) tast.Expr {
 	}
 	return ret
 }
+
+func buildConstExprList(b *Builder, list *ast.ExprList) tast.Expr {
+	n := list.Len()
+	if n == 0 {
+		b.Errorf(ast.ExprPos(list), "const expression list of zero length")
+		return nil
+	}
+	if n == 1 {
+		return b.BuildConstExpr(list.Exprs[0])
+	}
+
+	ret := tast.NewExprList()
+	for _, expr := range list.Exprs {
+		ex := b.BuildConstExpr(expr)
+		if ex == nil {
+			return nil
+		}
+		ref := ex.R()
+		if !ref.IsSingle() {
+			b.Errorf(ast.ExprPos(expr), "cannot put %s in a list", ref)
+			return nil
+		}
+		ret.Append(ex)
+	}
+	return ret
+}
