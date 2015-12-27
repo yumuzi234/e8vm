@@ -35,7 +35,7 @@ func buildStmt2(b *builder, stmt ast.Stmt) {
 			buildConstDefine(b, d)
 		}
 	case *tast.AssignStmt:
-		genAssignStmt(b, stmt)
+		buildAssignStmt(b, stmt)
 	default:
 		panic(fmt.Errorf("unimplemented: %T", stmt))
 	}
