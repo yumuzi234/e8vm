@@ -12,9 +12,9 @@ func buildStmt2(b *builder, s tast.Stmt) {
 	case nil:
 		return // empty statement
 	case *tast.ContinueStmt:
-		genContinueStmt(b)
+		buildContinueStmt(b)
 	case *tast.BreakStmt:
-		genBreakStmt(b)
+		buildBreakStmt(b)
 	case *tast.IncStmt:
 		buildIncStmt(b, stmt)
 	case *tast.ExprStmt:
