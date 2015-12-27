@@ -19,7 +19,7 @@ func buildStmt2(b *builder, stmt ast.Stmt) {
 	case *tast.BreakStmt:
 		genBreakStmt(b)
 	case *tast.IncStmt:
-		genIncStmt(b, stmt)
+		buildIncStmt(b, stmt)
 	case *tast.ExprStmt:
 		b.buildExpr2(stmt.Expr)
 	case *tast.Define:

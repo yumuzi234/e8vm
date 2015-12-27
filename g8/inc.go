@@ -5,7 +5,7 @@ import (
 	"e8vm.io/e8vm/g8/tast"
 )
 
-func genIncStmt(b *builder, stmt *tast.IncStmt) {
+func buildIncStmt(b *builder, stmt *tast.IncStmt) {
 	expr := b.buildExpr2(stmt.Expr)
 	switch stmt.Op.Lit {
 	case "++":
