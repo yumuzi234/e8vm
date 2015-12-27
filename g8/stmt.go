@@ -48,17 +48,17 @@ func buildStmt(b *builder, stmt ast.Stmt) {
 	case *ast.IncStmt:
 		buildStmt2(b, stmt)
 
-	case *ast.ContinueStmt:
-		buildContinueStmt(b, stmt)
-	case *ast.BreakStmt:
-		buildBreakStmt(b, stmt)
-
 	case *ast.DefineStmt:
 		buildStmt2(b, stmt)
 	case *ast.VarDecls:
 		buildStmt2(b, stmt)
 	case *ast.ConstDecls:
 		buildStmt2(b, stmt)
+
+	case *ast.ContinueStmt:
+		buildContinueStmt(b, stmt)
+	case *ast.BreakStmt:
+		buildBreakStmt(b, stmt)
 
 	case *ast.AssignStmt:
 		buildAssignStmt(b, stmt)

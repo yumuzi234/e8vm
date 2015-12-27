@@ -8,33 +8,6 @@ import (
 	"e8vm.io/e8vm/sym8"
 )
 
-func buildConstExprList(b *builder, list *ast.ExprList) *ref {
-	n := list.Len()
-
-	ret := new(ref)
-	if n == 0 {
-		return ret
-	}
-	if n == 1 {
-		return b.buildConstExpr(list.Exprs[0])
-	}
-
-	for _, expr := range list.Exprs {
-		ref := b.buildConstExpr(expr)
-		if ref == nil {
-			return nil
-		}
-		if !ref.IsSingle() {
-			b.Errorf(ast.ExprPos(expr), "cannot composite list in a list")
-			return nil
-		}
-		ref.addressable = false
-		ret = appendRef(ret, ref)
-	}
-
-	return ret
-}
-
 func declareConst(b *builder, tok *lex8.Token, t types.T) *objConst {
 	name := tok.Lit
 	v := &objConst{name: name}
@@ -77,47 +50,4 @@ func buildGlobalConstDecl(b *builder, info *constInfo) {
 	}
 
 	obj.ref = right
-}
-
-func buildConstDecl(b *builder, d *ast.ConstDecl) {
-	if d.Type != nil {
-		b.Errorf(ast.ExprPos(d.Type), "typed const not implemented yet")
-		return
-	}
-
-	right := buildConstExprList(b, d.Exprs)
-	if right == nil {
-		return
-	}
-
-	nright := right.Len()
-	idents := d.Idents.Idents
-	nleft := len(idents)
-	if nleft != nright {
-		b.Errorf(d.Eq.Pos, "%d values for %d identifiers",
-			nright, nleft,
-		)
-		return
-	}
-
-	for i, ident := range idents {
-		rightRef := right.At(i)
-		t := rightRef.Type()
-		if !types.IsConst(t) {
-			b.Errorf(ast.ExprPos(d.Exprs.Exprs[i]), "not a const")
-			return
-		}
-
-		obj := declareConst(b, ident, t)
-		if obj == nil {
-			return
-		}
-		obj.ref = newRef(t, rightRef.IR())
-	}
-}
-
-func buildConstDecls(b *builder, decls *ast.ConstDecls) {
-	for _, d := range decls.Decls {
-		buildConstDecl(b, d)
-	}
 }
