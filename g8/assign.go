@@ -2,6 +2,7 @@ package g8
 
 import (
 	"e8vm.io/e8vm/g8/ast"
+	"e8vm.io/e8vm/g8/ir"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/lex8"
@@ -187,6 +188,7 @@ func genAssignStmt(b *builder, stmt *tast.AssignStmt) {
 	right := b.buildExpr2(stmt.Right)
 	if stmt.Op.Lit == "=" {
 		assign2(b, left, right)
+		return
 	}
 	opAssign2(b, left, right, stmt.Op.Lit)
 }
@@ -198,16 +200,16 @@ func assign2(b *builder, dest, src *ref) {
 		return
 	}
 
-	temps := make([]*ref, n)
+	temps := make([]ir.Ref, n)
 	for i := 0; i < n; i++ {
 		s := src.At(i)
 		t := s.Type()
-		temps[i] = b.newTemp(t)
-		b.b.Assign(temps[i].IR(), s.IR())
+		temps[i] = b.newTempIR(t)
+		b.b.Assign(temps[i], s.IR())
 	}
 
 	for i := 0; i < n; i++ {
-		b.b.Assign(dest.At(i).IR(), temps[i].IR())
+		b.b.Assign(dest.At(i).IR(), temps[i])
 	}
 }
 

@@ -48,7 +48,7 @@ func assign(b *Builder, dest, src tast.Expr, op *lex8.Token) tast.Stmt {
 			}
 			newList.Append(e)
 		}
-		src = srcList
+		src = newList
 	}
 
 	return &tast.AssignStmt{dest, op, src}
