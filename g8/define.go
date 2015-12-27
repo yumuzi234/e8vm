@@ -1,7 +1,6 @@
 package g8
 
 import (
-	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/lex8"
@@ -107,19 +106,4 @@ func genDefine(b *builder, d *tast.Define) {
 			b.b.Assign(dest.At(i).IR(), src.At(i).IR())
 		}
 	}
-}
-
-func buildDefineStmt(b *builder, stmt *ast.DefineStmt) {
-	right := b.buildExpr(stmt.Right)
-	if right == nil { // an error occured on the expression list
-		return
-	}
-
-	idents, err := buildIdentExprList(b, stmt.Left)
-	if err != nil {
-		b.Errorf(ast.ExprPos(err), "left side of := must be identifer")
-		return
-	}
-
-	define(b, idents, right, stmt.Define)
 }

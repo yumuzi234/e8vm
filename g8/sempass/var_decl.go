@@ -19,7 +19,7 @@ func varDeclPrepare(
 			e = tast.NewCast(e, t)
 		} else if v, ok := types.NumConst(etype); ok {
 			e = constCast(b, tok.Pos, v, e, t)
-			if e != nil {
+			if e == nil {
 				return nil
 			}
 		}
@@ -58,9 +58,10 @@ func buildVarDecl(b *Builder, d *ast.VarDecl) *tast.Define {
 		}
 
 		tdest := b.BuildType(d.Type)
-		if tdest != nil {
+		if tdest == nil {
 			return nil
 		}
+
 		if !types.IsAllocable(tdest) {
 			pos := ast.ExprPos(d.Type)
 			b.Errorf(pos, "%s is not allocatable", tdest)
