@@ -12,7 +12,7 @@ type ExprStmt struct {
 
 // AssignStmt is an assignment statement, like "a,b=x,y".
 type AssignStmt struct {
-	Left  *ExprList
+	Left  Expr
 	Right Expr
 }
 
