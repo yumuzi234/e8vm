@@ -13,6 +13,7 @@ type ExprStmt struct {
 // AssignStmt is an assignment statement, like "a,b=x,y".
 type AssignStmt struct {
 	Left  Expr
+	Op    *lex8.Token
 	Right Expr
 }
 

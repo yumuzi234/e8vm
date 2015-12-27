@@ -51,10 +51,48 @@ func assign(b *Builder, dest, src tast.Expr, op *lex8.Token) tast.Stmt {
 		src = srcList
 	}
 
-	return &tast.AssignStmt{dest, src}
+	return &tast.AssignStmt{dest, op, src}
+}
+
+func parseAssignOp(op string) string {
+	opLen := len(op)
+	if opLen == 0 {
+		panic("invalid assign op")
+	}
+	return op[:opLen-1]
 }
 
 func opAssign(b *Builder, dest, src tast.Expr, op *lex8.Token) tast.Stmt {
+	destRef := dest.R()
+	srcRef := src.R()
+	if !destRef.IsSingle() || !srcRef.IsSingle() {
+		b.Errorf(op.Pos, "%s %s %s", destRef, op.Lit, srcRef)
+		return nil
+	} else if !destRef.Addressable {
+		b.Errorf(op.Pos, "assign to non-addressable")
+		return nil
+	}
+
+	opLit := parseAssignOp(op.Lit)
+	destType := destRef.Type()
+	srcType := srcRef.Type()
+
+	if opLit == ">>" || opLit == "<<" {
+		if v, ok := types.NumConst(srcType); ok {
+			src = constCast(b, op.Pos, v, src, types.Uint)
+			if src == nil {
+				return nil
+			}
+			srcRef = src.R()
+			srcType = types.Uint
+		}
+
+		if !canShift(b, destType, srcType, op.Pos, opLit) {
+			return nil
+		}
+		return &tast.AssignStmt{dest, op, src}
+	}
+
 	panic("todo")
 }
 
