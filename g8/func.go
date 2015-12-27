@@ -175,9 +175,17 @@ func buildFunc(b *builder, f *objFunc) {
 	declareParas(b, f.f.Args, t.Args, irFunc.ArgRefs(), b.this != nil)
 	declareParas(b, f.f.Rets, t.Rets, retIRRefs, false)
 	b.fretRef = makeRetRef(t.Rets, retIRRefs)
+	if b.fretRef == nil {
+		b.spass.SetRetType(nil, b.fretNamed)
+	} else {
+		b.spass.SetRetType(b.fretRef.TypeList(), b.fretNamed)
+	}
 
 	b.b = b.f.NewBlock(nil)
 	b.buildStmts(f.f.Body.Stmts)
+
+	b.fretRef = nil
+	b.spass.SetRetType(nil, false)
 }
 
 func buildMethodFunc(b *builder, s *structInfo, f *objFunc) {

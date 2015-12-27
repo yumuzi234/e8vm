@@ -36,6 +36,8 @@ func buildStmt2(b *builder, stmt ast.Stmt) {
 		}
 	case *tast.AssignStmt:
 		buildAssignStmt(b, stmt)
+	case *tast.ReturnStmt:
+		genReturnStmt(b, stmt)
 	default:
 		panic(fmt.Errorf("unimplemented: %T", stmt))
 	}
@@ -58,14 +60,13 @@ func buildStmt(b *builder, stmt ast.Stmt) {
 		buildStmt2(b, stmt)
 	case *ast.AssignStmt:
 		buildStmt2(b, stmt)
+	case *ast.ReturnStmt:
+		buildStmt2(b, stmt)
 
 	case *ast.ContinueStmt:
 		buildContinueStmt(b, stmt)
 	case *ast.BreakStmt:
 		buildBreakStmt(b, stmt)
-
-	case *ast.ReturnStmt:
-		buildReturnStmt(b, stmt)
 
 	case *ast.IfStmt:
 		buildIfStmt(b, stmt)

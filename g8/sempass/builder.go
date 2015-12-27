@@ -14,7 +14,6 @@ type Builder struct {
 	*lex8.ErrorList
 	path string
 
-	this  *tast.Ref
 	scope *sym8.Scope
 
 	exprFunc  func(b *Builder, expr ast.Expr) tast.Expr
@@ -23,8 +22,12 @@ type Builder struct {
 	typeFunc  func(b *Builder, expr ast.Expr) types.T
 
 	// file level dependency, for checking circular dependencies.
-	deps  deps
-	nloop int
+	deps deps
+
+	nloop    int
+	this     *tast.Ref
+	retType  []types.T
+	retNamed bool
 }
 
 func newBuilder(path string) *Builder {
@@ -91,8 +94,12 @@ func (b *Builder) InitDeps(asts map[string]*ast.File) {
 }
 
 // SetThis sets the reference for this keyword.
-func (b *Builder) SetThis(ref *tast.Ref) {
-	b.this = ref
+func (b *Builder) SetThis(ref *tast.Ref) { b.this = ref }
+
+// SetRetType sets the return type of the current function.
+func (b *Builder) SetRetType(ts []types.T, named bool) {
+	b.retType = ts
+	b.retNamed = named
 }
 
 // DepGraph returns the dependency graph.

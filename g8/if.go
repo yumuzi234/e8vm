@@ -25,7 +25,7 @@ func buildIf(b *builder, cond ast.Expr, ifs ast.Stmt, elses *ast.ElseStmt) {
 		case *ast.Block:
 			buildBlock(b, ifs)
 		case *ast.ReturnStmt:
-			buildReturnStmt(b, ifs)
+			b.buildStmt(ifs)
 		case *ast.BreakStmt:
 			buildBreakStmt(b, ifs)
 		case *ast.ContinueStmt:
