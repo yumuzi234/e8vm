@@ -46,11 +46,3 @@ func buildConstExpr(b *builder, expr ast.Expr) *ref {
 	}
 	return buildConst(b, c)
 }
-
-func buildExpr(b *builder, expr ast.Expr) *ref {
-	e := b.spass.BuildExpr(expr)
-	if e == nil {
-		return nil
-	}
-	return buildExpr2(b, e)
-}
