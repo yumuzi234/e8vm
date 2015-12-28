@@ -11,9 +11,7 @@ type constInfo struct {
 	typ  ast.Expr
 	expr ast.Expr
 
-	deps    []string
-	queuing bool
-	queued  bool
+	deps []string
 }
 
 func newConstInfo(name *lex8.Token, typ, expr ast.Expr) *constInfo {
