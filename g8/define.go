@@ -79,7 +79,7 @@ func buildDefine(b *builder, d *tast.Define) {
 			b.b.Zero(refs[i].IR())
 		}
 	} else {
-		src := b.buildExpr2(d.Right)
+		src := b.buildExpr(d.Right)
 		for i := 0; i < n; i++ {
 			b.b.Assign(refs[i].IR(), src.At(i).IR())
 		}

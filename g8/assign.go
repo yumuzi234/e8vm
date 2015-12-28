@@ -6,8 +6,8 @@ import (
 )
 
 func buildAssignStmt(b *builder, stmt *tast.AssignStmt) {
-	left := b.buildExpr2(stmt.Left)
-	right := b.buildExpr2(stmt.Right)
+	left := b.buildExpr(stmt.Left)
+	right := b.buildExpr(stmt.Right)
 	if stmt.Op.Lit == "=" {
 		assign(b, left, right)
 		return

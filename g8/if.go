@@ -5,7 +5,7 @@ import (
 )
 
 func buildIfStmt(b *builder, stmt *tast.IfStmt) {
-	c := b.buildExpr2(stmt.Expr)
+	c := b.buildExpr(stmt.Expr)
 	if stmt.Else == nil {
 		body := b.f.NewBlock(b.b)
 		after := b.f.NewBlock(body)

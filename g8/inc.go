@@ -6,7 +6,7 @@ import (
 )
 
 func buildIncStmt(b *builder, stmt *tast.IncStmt) {
-	expr := b.buildExpr2(stmt.Expr)
+	expr := b.buildExpr(stmt.Expr)
 	switch stmt.Op.Lit {
 	case "++":
 		b.b.Arith(expr.IR(), expr.IR(), "+", ir.Num(1))

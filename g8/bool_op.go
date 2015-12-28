@@ -26,7 +26,7 @@ func buildLogicAnd(b *builder, A *ref, B tast.Expr) *ref {
 
 	// evaluate expression B
 	b.b = blockB
-	refB := b.buildExpr2(B)
+	refB := b.buildExpr(B)
 	b.b.Assign(ret.IR(), refB.IR()) // and save it as result
 
 	b.b.Jump(after)
@@ -49,7 +49,7 @@ func buildLogicOr(b *builder, A *ref, B tast.Expr) *ref {
 
 	// evaluate expression B
 	b.b = blockB
-	refB := b.buildExpr2(B)
+	refB := b.buildExpr(B)
 	b.b.Assign(ret.IR(), refB.IR()) // and save it as result
 	b.b.Jump(after)
 

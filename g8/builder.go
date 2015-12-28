@@ -34,7 +34,7 @@ type builder struct {
 	continues *blockStack
 	breaks    *blockStack
 
-	exprFunc2 func(b *builder, expr tast.Expr) *ref
+	exprFunc  func(b *builder, expr tast.Expr) *ref
 	stmtFunc  func(b *builder, stmt ast.Stmt)
 	stmtFunc2 func(b *builder, stmt tast.Stmt)
 	irLog     io.WriteCloser
@@ -111,11 +111,11 @@ func (b *builder) newGlobalVar(t types.T, name string) ir.Ref {
 	return b.p.NewGlobalVar(t.Size(), name, types.IsByte(t), t.RegSizeAlign())
 }
 
-func (b *builder) buildExpr2(expr tast.Expr) *ref {
-	if b.exprFunc2 == nil {
+func (b *builder) buildExpr(expr tast.Expr) *ref {
+	if b.exprFunc == nil {
 		panic("exprFunc2 function not assigned")
 	}
-	return b.exprFunc2(b, expr)
+	return b.exprFunc(b, expr)
 }
 
 func (b *builder) buildStmts(stmts []ast.Stmt) {

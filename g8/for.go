@@ -36,7 +36,7 @@ func buildForStmt(b *builder, stmt *tast.ForStmt) {
 	body.Jump(condBlock)
 
 	b.b = condBlock
-	c := b.buildExpr2(stmt.Cond)
+	c := b.buildExpr(stmt.Cond)
 	b.b.JumpIfNot(c.IR(), after)
 
 	b.b = body

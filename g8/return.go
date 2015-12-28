@@ -6,7 +6,7 @@ import (
 
 func buildReturnStmt(b *builder, stmt *tast.ReturnStmt) {
 	if stmt.Exprs != nil {
-		exprs := b.buildExpr2(stmt.Exprs)
+		exprs := b.buildExpr(stmt.Exprs)
 		assign(b, b.fretRef, exprs)
 	}
 

@@ -14,7 +14,7 @@ func buildOpExpr(b *builder, expr *tast.OpExpr) *ref {
 
 func buildUnaryOpExpr(b *builder, expr *tast.OpExpr) *ref {
 	op := expr.Op.Lit
-	B := b.buildExpr2(expr.B)
+	B := b.buildExpr(expr.B)
 	btyp := B.Type()
 	if op == "&" {
 		ret := b.newTemp(&types.Pointer{btyp})
@@ -32,7 +32,7 @@ func buildUnaryOpExpr(b *builder, expr *tast.OpExpr) *ref {
 
 func buildBinaryOpExpr(b *builder, expr *tast.OpExpr) *ref {
 	op := expr.Op.Lit
-	A := b.buildExpr2(expr.A)
+	A := b.buildExpr(expr.A)
 	atyp := A.Type()
 	if types.IsBasic(atyp, types.Bool) && (op == "&&" || op == "||") {
 		switch op {
@@ -44,7 +44,7 @@ func buildBinaryOpExpr(b *builder, expr *tast.OpExpr) *ref {
 		panic("unreachable")
 	}
 
-	B := b.buildExpr2(expr.B)
+	B := b.buildExpr(expr.B)
 	btyp := B.Type()
 	if types.IsConst(atyp) && types.IsConst(btyp) {
 		return binaryOpConst(b, op, A, B)

@@ -34,12 +34,12 @@ func buildExprList(b *builder, list *tast.ExprList) *ref {
 	if n == 0 {
 		return new(ref)
 	} else if n == 1 {
-		return b.buildExpr2(list.Exprs[0])
+		return b.buildExpr(list.Exprs[0])
 	}
 
 	ret := new(ref)
 	for _, expr := range list.Exprs {
-		ret = appendRef(ret, b.buildExpr2(expr))
+		ret = appendRef(ret, b.buildExpr(expr))
 	}
 	return ret
 }

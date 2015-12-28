@@ -46,7 +46,7 @@ func buildPkgSym(b *builder, m *tast.MemberExpr, pkg *types.Pkg) *ref {
 }
 
 func buildMember(b *builder, m *tast.MemberExpr) *ref {
-	obj := b.buildExpr2(m.Expr)
+	obj := b.buildExpr(m.Expr)
 	if !obj.IsSingle() {
 		panic("not single")
 	}

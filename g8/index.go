@@ -38,7 +38,7 @@ func newSlice(b *builder, t types.T, addr, size ir.Ref) *ref {
 }
 
 func buildIndexExpr(b *builder, expr *tast.IndexExpr) *ref {
-	array := b.buildExpr2(expr.Array)
+	array := b.buildExpr(expr.Array)
 
 	if expr.HasColon {
 		return buildSlicing(b, expr, array)
@@ -80,7 +80,7 @@ func checkArrayIndex(b *builder, index *ref) ir.Ref {
 }
 
 func buildArrayIndex(b *builder, expr tast.Expr) ir.Ref {
-	index := b.buildExpr2(expr)
+	index := b.buildExpr(expr)
 	return checkArrayIndex(b, index)
 }
 

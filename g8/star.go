@@ -7,7 +7,7 @@ import (
 )
 
 func buildStarExpr(b *builder, expr *tast.StarExpr) *ref {
-	addr := b.buildExpr2(expr.Expr)
+	addr := b.buildExpr(expr.Expr)
 	nilPointerPanic(b, addr.IR())
 	t := addr.Type().(*types.Pointer).T
 	retIR := ir.NewAddrRef(

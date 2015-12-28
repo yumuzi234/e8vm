@@ -18,7 +18,7 @@ func buildStmt2(b *builder, s tast.Stmt) {
 	case *tast.IncStmt:
 		buildIncStmt(b, stmt)
 	case *tast.ExprStmt:
-		b.buildExpr2(stmt.Expr)
+		b.buildExpr(stmt.Expr)
 	case *tast.Define:
 		buildDefine(b, stmt)
 	case *tast.VarDecls:
