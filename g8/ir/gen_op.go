@@ -86,7 +86,7 @@ func genArithOp(g *gener, b *Block, op *arithOp) {
 		s := op.b.(*strConst)
 		n := len(s.str)
 		if n > 0 {
-			if n > math.MaxUint32-1 {
+			if n > math.MaxInt32-1 {
 				panic("string too long")
 			}
 			loadSym(b, _4, s.pkg, s.name)
