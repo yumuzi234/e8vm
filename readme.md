@@ -6,6 +6,8 @@ go get -u e8vm.io/e8vm/...
 
 # E8VM
 
+[![Join the chat at https://gitter.im/e8vm/e8vm](https://badges.gitter.im/e8vm/e8vm.svg)](https://gitter.im/e8vm/e8vm?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Emul8ed Virtual Machine (E8VM) is a self-contained system that has its
 own instruction set -- `arch8`, its own assembly language and
 assembler -- `asm8`, its own system language -- `g8`, and its own
