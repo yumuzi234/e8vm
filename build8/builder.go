@@ -83,7 +83,7 @@ func (b *Builder) prepare(p string) (*pkg, []*lex8.Error) {
 
 func debugSection(tab *debug8.Table) (*e8.Section, error) {
 	bs := tab.Marshal()
-	if len(bs) > math.MaxUint32-1 {
+	if len(bs) > math.MaxInt32-1 {
 		return nil, fmt.Errorf("debug section too large")
 	}
 
