@@ -20,7 +20,7 @@ type cpu struct {
 	index byte
 }
 
-// NewCPU creates a CPU with memroy and instruction binding
+// newCPU creates a CPU with memroy and instruction binding
 func newCPU(mem *phyMemory, i inst, index byte) *cpu {
 	if index >= 32 {
 		panic("too many cores")
@@ -44,7 +44,7 @@ func newCPU(mem *phyMemory, i inst, index byte) *cpu {
 	return ret
 }
 
-// UserMode returns trun when the CPU is in user mode.
+// UserMode returns true when the CPU is in user mode.
 func (c *cpu) UserMode() bool {
 	return c.ring > 0
 }
