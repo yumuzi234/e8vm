@@ -18,7 +18,6 @@ type pkg struct {
 	structs []*ast.Struct
 	vars    []*ast.VarDecls
 
-	constMap    map[string]*constInfo
 	structMap   map[string]*structInfo
 	structOrder []*structInfo
 	funcObjs    []*objFunc
@@ -33,43 +32,13 @@ func newPkg(asts map[string]*ast.File) *pkg {
 	ret := new(pkg)
 	ret.files = asts
 	ret.structMap = make(map[string]*structInfo)
-	ret.constMap = make(map[string]*constInfo)
 
 	return ret
 }
 
-func (p *pkg) addConstInfo(b *builder, d *ast.ConstDecl) bool {
-	if d.Type != nil {
-		b.Errorf(ast.ExprPos(d.Type), "typed const not implemented")
-		return false
-	}
-
-	nident := len(d.Idents.Idents)
-	nexpr := len(d.Exprs.Exprs)
-
-	if nident != nexpr {
-		b.Errorf(d.Eq.Pos, "%d consts with %d expressions",
-			nident, nexpr,
-		)
-		return false
-	}
-
-	for i, ident := range d.Idents.Idents {
-		name := ident.Lit
-		if c, found := p.constMap[name]; found {
-			b.Errorf(ident.Pos, "const %s already defined", name)
-			b.Errorf(c.name.Pos, "previously defined here")
-			return false
-		}
-
-		p.constMap[name] = newConstInfo(ident, d.Type, d.Exprs.Exprs[i])
-	}
-
-	return true
-}
-
 func (p *pkg) declareConsts(b *builder) {
 	syms := sempass.BuildPkgConsts(b.spass, p.consts)
+
 	for _, sym := range syms {
 		name := sym.Name()
 		t := sym.ObjType.(types.T)
