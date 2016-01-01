@@ -243,26 +243,25 @@ func (p *pkg) build(b *builder, pinfo *build8.PkgInfo) {
 	b.scope.PushTable(p.tops) // package scope
 	defer b.scope.Pop()
 
-	o := func(f func(b *builder)) {
+	p.declareImports(b, pinfo)
+	if b.Errs() != nil {
+		return
+	}
+
+	for _, f := range []func(b *builder){
+		p.collectSymbols,
+		p.declareConsts,
+		p.declareStructs,
+		p.defineStructs,
+		p.declareFuncs,
+		p.declareVars,
+		p.buildFuncs,
+		p.buildTests,
+	} {
+		f(b)
 		if b.Errs() != nil {
 			return
 		}
-		f(b)
-	}
-
-	p.declareImports(b, pinfo)
-
-	o(p.collectSymbols)
-	o(p.declareConsts)
-	o(p.declareStructs)
-	o(p.defineStructs)
-	o(p.declareFuncs)
-	o(p.declareVars)
-	o(p.buildFuncs)
-	o(p.buildTests)
-
-	if b.Errs() != nil {
-		return
 	}
 
 	addInit(b)
