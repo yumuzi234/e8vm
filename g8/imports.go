@@ -82,7 +82,9 @@ func listImport(
 	return nil
 }
 
-func declareImports(b *builder, f *ast.File, pinfo *build8.PkgInfo) {
+func declareImports(
+	b *builder, f *ast.File, imports map[string]*build8.Package,
+) {
 	if f.Imports == nil {
 		return
 	}
@@ -94,13 +96,11 @@ func declareImports(b *builder, f *ast.File, pinfo *build8.PkgInfo) {
 			continue
 		}
 
-		imported := pinfo.Import[as]
-		if imported == nil {
+		p := imports[as]
+		if p == nil {
 			b.Errorf(d.Path.Pos, "package %s missing", as)
 			continue
 		}
-
-		p := imported.Package
 
 		if p.Lang == "asm8" || p.Lang == "g8" {
 			pos := importPos(d)

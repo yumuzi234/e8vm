@@ -17,6 +17,7 @@ func declareConst(b *builder, tok *lex8.Token, t types.T) *objConst {
 		b.Errorf(tok.Pos, "%q already declared as a %s",
 			name, tast.SymStr(conflict.Type),
 		)
+		b.Errorf(conflict.Pos, "previously defined here")
 		return nil
 	}
 	return v

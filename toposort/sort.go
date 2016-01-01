@@ -20,6 +20,7 @@ type Sorter struct {
 	typ   string
 	m     map[string]*node
 	order []string
+	err   bool
 }
 
 // NewSorter creates a new topo sorter
@@ -45,6 +46,7 @@ func (s *Sorter) push(log lex8.Logger, node *node) {
 			log.Errorf(node.tok.Pos, "%s %s depends on itself",
 				s.typ, name,
 			)
+			s.err = true
 			continue
 		}
 
@@ -58,6 +60,7 @@ func (s *Sorter) push(log lex8.Logger, node *node) {
 				"%s %s circular depends on %s %s",
 				s.typ, node.tok.Lit, s.typ, dep,
 			)
+			s.err = true
 			continue
 		}
 
@@ -72,6 +75,7 @@ func (s *Sorter) push(log lex8.Logger, node *node) {
 // Sort sorts the added nodes and returns the node order
 func (s *Sorter) Sort(log lex8.Logger) []string {
 	s.order = nil
+	s.err = false
 	for _, node := range s.m {
 		if !node.queued {
 			s.push(log, node)
@@ -79,5 +83,9 @@ func (s *Sorter) Sort(log lex8.Logger) []string {
 	}
 
 	s.m = make(map[string]*node) // clear the map
+
+	if s.err {
+		return nil
+	}
 	return s.order
 }

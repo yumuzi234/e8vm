@@ -13,9 +13,10 @@ func declareConst(b *Builder, tok *lex8.Token, t types.T) *sym8.Symbol {
 	s := sym8.Make(b.path, name, tast.SymConst, nil, t, tok.Pos)
 	conflict := b.scope.Declare(s)
 	if conflict != nil {
-		b.Errorf(tok.Pos, "%q already decalred as a %s",
+		b.Errorf(tok.Pos, "%q already declared as a %s",
 			name, tast.SymStr(conflict.Type),
 		)
+		b.Errorf(conflict.Pos, "previously defined here")
 		return nil
 	}
 	return s

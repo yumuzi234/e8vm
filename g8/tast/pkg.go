@@ -11,9 +11,7 @@ type Import struct {
 
 // Pkg is a package of imports, consts, structs, vars and funcs.
 type Pkg struct {
-	Imports []*Import
-	Consts  []*ConstDecls
-	Structs []*Define
 	Vars    []*VarDecls
 	Funcs   []*Func
+	Methods []*Func
 }

@@ -4,6 +4,8 @@ import (
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/ir"
+	"e8vm.io/e8vm/g8/sempass"
+	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/sym8"
 )
 
@@ -67,17 +69,12 @@ func (p *pkg) addConstInfo(b *builder, d *ast.ConstDecl) bool {
 }
 
 func (p *pkg) declareConsts(b *builder) {
-	for _, decls := range p.consts {
-		for _, d := range decls.Decls {
-			if !p.addConstInfo(b, d) {
-				return
-			}
-		}
-	}
-
-	order := sortConsts(b, p.constMap)
-	for _, info := range order {
-		buildGlobalConstDecl(b, info)
+	syms := sempass.BuildPkgConsts(b.spass, p.consts)
+	for _, sym := range syms {
+		name := sym.Name()
+		t := sym.ObjType.(types.T)
+		r := newRef(t, nil)
+		sym.Obj = &objConst{name: name, ref: r}
 	}
 }
 
@@ -186,9 +183,9 @@ func (p *pkg) onlyFile() *ast.File {
 	panic("unrechable")
 }
 
-func (p *pkg) declareImports(b *builder, pinfo *build8.PkgInfo) {
+func (p *pkg) declareImports(b *builder, imports map[string]*build8.Package) {
 	if f := p.onlyFile(); f != nil {
-		declareImports(b, f, pinfo)
+		declareImports(b, f, imports)
 		return
 	}
 
@@ -200,7 +197,7 @@ func (p *pkg) declareImports(b *builder, pinfo *build8.PkgInfo) {
 					`"import.g" in multi-file package only allows import`,
 				)
 			} else {
-				declareImports(b, f, pinfo)
+				declareImports(b, f, imports)
 			}
 
 			continue
@@ -243,7 +240,12 @@ func (p *pkg) build(b *builder, pinfo *build8.PkgInfo) {
 	b.scope.PushTable(p.tops) // package scope
 	defer b.scope.Pop()
 
-	p.declareImports(b, pinfo)
+	imports := make(map[string]*build8.Package)
+	for as, imp := range pinfo.Import {
+		imports[as] = imp.Package
+	}
+
+	p.declareImports(b, imports)
 	if b.Errs() != nil {
 		return
 	}
