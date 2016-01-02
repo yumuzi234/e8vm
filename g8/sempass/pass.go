@@ -75,10 +75,16 @@ func (p *Pkg) Build() (*tast.Pkg, []*lex8.Error) {
 	syms := p.symbols()
 	b := makeBuilder(p.Path)
 	buildPkgConsts(b, syms.consts)
+	buildStructs(b, syms.structs)
 	panic("todo")
 }
 
 // BuildPkgConsts is a temp function for building package consts.
 func BuildPkgConsts(b *Builder, consts []*ast.ConstDecls) []*sym8.Symbol {
 	return buildPkgConsts(b, consts)
+}
+
+// BuildStructs is a temp function for building struct types.
+func BuildStructs(b *Builder, structs []*ast.Struct) []*sym8.Symbol {
+	return buildStructs(b, structs)
 }

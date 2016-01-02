@@ -69,7 +69,7 @@ func declareStructMethods(b *builder, info *structInfo) {
 }
 
 func declareMethod(b *builder, info *structInfo, f *ast.Func) *objFunc {
-	t := buildFuncType(b, info, f.FuncSig)
+	t := buildFuncType(b, info.pt, f.FuncSig)
 	if t == nil {
 		return nil
 	}

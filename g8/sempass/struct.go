@@ -1,0 +1,109 @@
+package sempass
+
+import (
+	"e8vm.io/e8vm/g8/ast"
+	"e8vm.io/e8vm/g8/tast"
+	"e8vm.io/e8vm/g8/types"
+	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/toposort"
+)
+
+type pkgStruct struct {
+	name *lex8.Token
+	ast  *ast.Struct
+	deps []string
+	t    *types.Struct
+	pt   *types.Pointer
+	sym  *sym8.Symbol
+}
+
+func newPkgStruct(s *ast.Struct) *pkgStruct {
+	deps := listStructDeps(s)
+	t := types.NewStruct(s.Name.Lit)
+
+	return &pkgStruct{
+		name: s.Name,
+		ast:  s,
+		deps: deps,
+		t:    t,
+		pt:   types.NewPointer(t),
+	}
+}
+
+func declareStruct(b *Builder, s *ast.Struct) *pkgStruct {
+	ret := newPkgStruct(s)
+	name := ret.name.Lit
+	pos := ret.name.Pos
+	sym := sym8.Make(b.path, name, tast.SymStruct, nil, ret.t, pos)
+	conflict := b.scope.Declare(sym)
+	if conflict != nil {
+		b.Errorf(pos, "%s already defined", name)
+		b.Errorf(conflict.Pos, "previously defined here as a %s",
+			tast.SymStr(conflict.Type),
+		)
+		return nil
+	}
+
+	ret.sym = sym
+	return ret
+}
+
+func sortStructs(b *Builder, m map[string]*pkgStruct) []*pkgStruct {
+	s := toposort.NewSorter("struct")
+	for name, ps := range m {
+		s.AddNode(name, ps.name, ps.deps)
+	}
+
+	order := s.Sort(b)
+	ret := make([]*pkgStruct, 0, len(order))
+	for _, name := range order {
+		ret = append(ret, m[name])
+	}
+	return ret
+}
+
+func buildFields(b *Builder, ps *pkgStruct) {
+	s := ps.ast
+	t := ps.t
+
+	for _, f := range s.Fields {
+		ft := b.BuildType(f.Type)
+		if ft == nil {
+			continue
+		}
+
+		for _, id := range f.Idents.Idents {
+			name := id.Lit
+			field := &types.Field{Name: name, T: ft}
+			sym := sym8.Make(b.path, name, tast.SymField, nil, ft, id.Pos)
+			conflict := t.Syms.Declare(sym)
+			if conflict != nil {
+				b.Errorf(id.Pos, "field %s already defined", id.Lit)
+				b.Errorf(conflict.Pos, "previously defined here")
+				continue
+			}
+
+			t.AddField(field)
+		}
+	}
+}
+
+func buildStructs(b *Builder, structs []*ast.Struct) []*sym8.Symbol {
+	m := make(map[string]*pkgStruct)
+	for _, s := range structs {
+		ps := declareStruct(b, s)
+		if ps != nil {
+			m[ps.name.Lit] = ps
+		}
+	}
+
+	order := sortStructs(b, m)
+
+	ret := make([]*sym8.Symbol, 0, len(order))
+	for _, ps := range order {
+		buildFields(b, ps)
+		ret = append(ret, ps.sym)
+	}
+	return ret
+}

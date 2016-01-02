@@ -77,6 +77,7 @@ func (p *pkg) declareFuncs(b *builder) {
 		}
 	}
 
+	// go-like methods
 	for _, f := range p.methods {
 		sname := f.Recv.StructName
 		info := p.structMap[sname.Lit]
@@ -91,6 +92,7 @@ func (p *pkg) declareFuncs(b *builder) {
 		}
 	}
 
+	// inlined methods for g language
 	for _, s := range p.structOrder {
 		declareStructMethods(b, s)
 	}

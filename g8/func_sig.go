@@ -8,7 +8,9 @@ import (
 
 const thisName = "<this>"
 
-func buildFuncType(b *builder, s *structInfo, f *ast.FuncSig) *types.Func {
+func buildFuncType(
+	b *builder, recv *types.Pointer, f *ast.FuncSig,
+) *types.Func {
 	// the arguments
 	args := buildParaList(b, f.Args)
 	if args == nil {
@@ -27,8 +29,8 @@ func buildFuncType(b *builder, s *structInfo, f *ast.FuncSig) *types.Func {
 		rets = []*types.Arg{{T: retType}}
 	}
 
-	if s != nil {
-		recv := &types.Arg{Name: thisName, T: s.pt}
+	if recv != nil {
+		recv := &types.Arg{Name: thisName, T: recv}
 		return types.NewFunc(recv, args, rets)
 	}
 
