@@ -36,7 +36,7 @@ func newPkg(asts map[string]*ast.File) *pkg {
 	return ret
 }
 
-func (p *pkg) declareConsts(b *builder) {
+func (p *pkg) buildConsts(b *builder) {
 	syms := sempass.BuildPkgConsts(b.spass, p.consts)
 
 	for _, sym := range syms {
@@ -221,7 +221,7 @@ func (p *pkg) build(b *builder, pinfo *build8.PkgInfo) {
 
 	for _, f := range []func(b *builder){
 		p.collectSymbols,
-		p.declareConsts,
+		p.buildConsts,
 		p.declareStructs,
 		p.defineStructs,
 		p.declareFuncs,
