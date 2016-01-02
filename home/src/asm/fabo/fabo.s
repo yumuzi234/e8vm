@@ -9,8 +9,9 @@ func main {
     addi    sp sp 4096 // set sp the stack
 
     addi    r1 r0 17
-	jal     fabo 
+    jal     fabo 
     // r1 = fabo(n) now
+
     jal     fmt.PrintUint32
 
     halt
