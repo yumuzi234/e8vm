@@ -10,13 +10,12 @@ import (
 )
 
 type pkgStruct struct {
-	name    *lex8.Token
-	ast     *ast.Struct    // the struct AST node
-	sym     *sym8.Symbol   // the symbol
-	t       *types.Struct  // type
-	pt      *types.Pointer // pointer type
-	methods []*tast.Func   // methods
-	deps    []string       // depending identifiers
+	name *lex8.Token
+	ast  *ast.Struct    // the struct AST node
+	sym  *sym8.Symbol   // the symbol
+	t    *types.Struct  // type
+	pt   *types.Pointer // pointer type
+	deps []string       // depending identifiers
 }
 
 func newPkgStruct(s *ast.Struct) *pkgStruct {

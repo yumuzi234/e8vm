@@ -11,6 +11,8 @@ import (
 type pkgFunc struct {
 	sym *sym8.Symbol
 	f   *ast.Func
+
+	recv *pkgStruct
 }
 
 func declareFuncSym(b *Builder, f *ast.Func, t types.T) *sym8.Symbol {
@@ -143,13 +145,34 @@ func buildFunc(b *Builder, f *pkgFunc) *tast.Func {
 	return ret
 }
 
-func buildMethod(b *Builder, this *types.Pointer, f *pkgFunc) *tast.Func {
+func buildMethod(b *Builder, f *pkgFunc) *tast.Func {
+	this := f.recv.pt
 	b.thisType = this
 	if f.f.Recv != nil { // go-like, explicit receiver
 		b.this = tast.NewAddressableRef(this)
 	} else { // inlined
 		b.this = tast.NewRef(this)
+		b.scope.PushTable(f.recv.t.Syms)
+		defer b.scope.Pop()
 	}
 
 	return buildFunc(b, f)
+}
+
+func declareMethod(b *Builder, ps *pkgStruct, f *ast.Func) *pkgFunc {
+	t := buildFuncType(b, ps.pt, f.FuncSig)
+	if t == nil {
+		return nil
+	}
+
+	name := f.Name.Lit
+	sym := sym8.Make(b.path, name, tast.SymFunc, nil, t, f.Name.Pos)
+	conflict := ps.t.Syms.Declare(sym)
+	if conflict != nil {
+		b.Errorf(f.Name.Pos, "member %s already defined", name)
+		b.Errorf(conflict.Pos, "previously defined here")
+		return nil
+	}
+
+	return &pkgFunc{sym: sym, f: f, recv: ps}
 }

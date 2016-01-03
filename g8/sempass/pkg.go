@@ -117,13 +117,53 @@ func buildFuncs(b *Builder, funcs []*pkgFunc) []*tast.Func {
 	return ret
 }
 
-func buildMethods(b *Builder, pkgStructs []*pkgStruct) []*tast.Func {
-	var ret []*tast.Func
+func declareMethods(
+	b *Builder, methods []*ast.Func, pkgStructs []*pkgStruct,
+) []*pkgFunc {
+	m := make(map[string]*pkgStruct)
 	for _, ps := range pkgStructs {
-		_ = ps
+		m[ps.name.Lit] = ps
 	}
 
-	panic("todo")
+	var ret []*pkgFunc
+
+	// inlined ones
+	for _, ps := range pkgStructs {
+		for _, f := range ps.ast.Methods {
+			pf := declareMethod(b, ps, f)
+			if pf != nil {
+				ret = append(ret, pf)
+			}
+		}
+	}
+
+	// go-like ones
+	for _, f := range methods {
+		recv := f.Recv.StructName
+		ps := m[recv.Lit]
+		if ps != nil {
+			b.Errorf(recv.Pos, "struct %s not defined", recv.Lit)
+			continue
+		}
+
+		pf := declareMethod(b, ps, f)
+		if pf != nil {
+			ret = append(ret, pf)
+		}
+	}
+
+	return ret
+}
+
+func buildMethods(b *Builder, funcs []*pkgFunc) []*tast.Func {
+	var ret []*tast.Func
+	for _, f := range funcs {
+		r := buildMethod(b, f)
+		if r != nil {
+			ret = append(ret, r)
+		}
+	}
+
 	return ret
 }
 
@@ -147,6 +187,11 @@ func (p *Pkg) Build() (*tast.Pkg, []*lex8.Error) {
 		return nil, errs
 	}
 
+	pkgMethods := declareMethods(b, syms.methods, pkgStructs)
+	if errs := b.Errs(); errs != nil {
+		return nil, errs
+	}
+
 	vars := buildPkgVars(b, syms.vars)
 	if errs := b.Errs(); errs != nil {
 		return nil, errs
@@ -157,7 +202,7 @@ func (p *Pkg) Build() (*tast.Pkg, []*lex8.Error) {
 		return nil, errs
 	}
 
-	methods := buildMethods(b, pkgStructs)
+	methods := buildMethods(b, pkgMethods)
 	if errs := b.Errs(); errs != nil {
 		return nil, errs
 	}
