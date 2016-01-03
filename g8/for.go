@@ -54,3 +54,15 @@ func buildForStmt(b *builder, stmt *tast.ForStmt) {
 
 	b.b = after
 }
+
+func buildContinueStmt(b *builder) {
+	after := b.f.NewBlock(b.b)
+	b.b.Jump(b.continues.top())
+	b.b = after
+}
+
+func buildBreakStmt(b *builder) {
+	after := b.f.NewBlock(b.b)
+	b.b.Jump(b.breaks.top())
+	b.b = after
+}
