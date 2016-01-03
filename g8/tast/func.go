@@ -9,8 +9,8 @@ import (
 type Func struct {
 	Sym *sym8.Symbol // function symbol
 
-	This     *types.Pointer // implicit receiver
-	Receiver *sym8.Symbol   // explicit receiver
+	This     *types.Pointer
+	Receiver *sym8.Symbol // explicit receiver
 
 	Args      []*sym8.Symbol
 	NamedRets []*sym8.Symbol

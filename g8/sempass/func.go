@@ -155,6 +155,9 @@ func buildFunc(b *Builder, f *pkgFunc) *tast.Func {
 			}
 			ret.Receiver = recvSym
 		}
+	} else if b.this != nil {
+		// marking keyword <this> if it is an inlined method
+		ret.This = b.this.Type().(*types.Pointer)
 	}
 
 	if b.this != nil {
@@ -162,12 +165,14 @@ func buildFunc(b *Builder, f *pkgFunc) *tast.Func {
 	} else {
 		ret.Args = declareParas(b, f.f.Args, t.Args)
 	}
+
 	if b.retNamed {
 		ret.NamedRets = declareParas(b, f.f.Rets, t.Rets)
 	}
 
 	ret.Body = buildStmts(b, f.f.Body.Stmts)
 
+	// clear for safety
 	b.retType = nil
 	b.retNamed = false
 
