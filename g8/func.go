@@ -253,6 +253,6 @@ func genFunc(b *builder, f *tast.Func, ref *ref) {
 	}
 
 	for _, stmt := range f.Body {
-		buildStmt2(b, stmt)
+		b.buildStmt2(stmt)
 	}
 }
