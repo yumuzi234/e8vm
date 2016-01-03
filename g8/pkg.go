@@ -231,8 +231,8 @@ func (p *pkg) build(b *builder, pinfo *build8.PkgInfo) {
 		p.buildConsts,
 		p.declareStructs,
 		p.defineStructs,
-		p.declareFuncs,
 		p.declareVars,
+		p.declareFuncs,
 		p.buildFuncs,
 		p.buildTests,
 	} {

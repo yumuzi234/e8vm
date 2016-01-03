@@ -296,6 +296,7 @@ func TestSingleFileBad(t *testing.T) {
 	o("func main() {}; struct A{}; struct A{}")
 
 	o("var a int; func a() {}; func main() {}")
+	o("func main() {}; func main() {};")
 	o("const a, b = a, b; func main() {}")
 	o("const c, d = d, t; func main() {}")
 }
