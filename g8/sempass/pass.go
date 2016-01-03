@@ -90,6 +90,8 @@ func BuildStructs(b *Builder, structs []*ast.Struct) []*sym8.Symbol {
 }
 
 // BuildFuncs is a temp function for building functions.
-func BuildFuncs(b *Builder, funcs []*ast.Func) []*sym8.Symbol {
+func BuildFuncs(b *Builder, funcs []*ast.Func) (
+	[]*tast.Func, []*tast.FuncAlias,
+) {
 	return buildFuncs(b, funcs)
 }

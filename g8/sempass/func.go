@@ -22,7 +22,12 @@ func declareFuncSym(b *Builder, f *ast.Func, t types.T) *sym8.Symbol {
 	return s
 }
 
-func buildFuncAlias(b *Builder, f *ast.Func, t *types.Func) *sym8.Symbol {
+func buildFuncAlias(b *Builder, f *ast.Func) *tast.FuncAlias {
+	t := buildFuncType(b, nil, f.FuncSig)
+	if t == nil {
+		return nil
+	}
+
 	alias := f.Alias
 	pkg := buildPkgRef(b, alias.Pkg)
 	if pkg == nil {
@@ -44,23 +49,50 @@ func buildFuncAlias(b *Builder, f *ast.Func, t *types.Func) *sym8.Symbol {
 	}
 
 	ret := declareFuncSym(b, f, t)
-	return ret
+	if ret == nil {
+		return nil
+	}
+
+	return &tast.FuncAlias{Sym: ret, Of: sym}
 }
 
-func declareFunc(b *Builder, f *ast.Func) *sym8.Symbol {
+func declareFunc(b *Builder, f *ast.Func) *tast.Func {
+	if f.Alias != nil {
+		panic("bug")
+	}
+
 	t := buildFuncType(b, nil, f.FuncSig)
 	if t == nil {
 		return nil
 	}
 
-	if f.Alias != nil {
-		return buildFuncAlias(b, f, t)
+	s := declareFuncSym(b, f, t)
+	if s == nil {
+		return nil
 	}
 
-	panic("todo")
+	return &tast.Func{Sym: s}
 }
 
-func buildFuncs(b *Builder, funcs []*ast.Func) []*sym8.Symbol {
+func buildFuncs(b *Builder, funcs []*ast.Func) (
+	[]*tast.Func, []*tast.FuncAlias,
+) {
+	var ret []*tast.Func
+	var aliases []*tast.FuncAlias
 
-	panic("todo")
+	for _, f := range funcs {
+		if f.Alias != nil {
+			a := buildFuncAlias(b, f)
+			if a != nil {
+				aliases = append(aliases, a)
+			}
+		} else {
+			r := declareFunc(b, f)
+			if r != nil {
+				ret = append(ret, r)
+			}
+		}
+	}
+
+	return ret, aliases
 }

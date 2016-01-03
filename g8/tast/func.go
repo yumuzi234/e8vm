@@ -17,3 +17,9 @@ type Func struct {
 
 	Body *Block
 }
+
+// FuncAlias is a function alias.
+type FuncAlias struct {
+	Sym *sym8.Symbol
+	Of  *sym8.Symbol
+}
