@@ -218,8 +218,7 @@ func buildMethodFunc(b *builder, this *types.Pointer, f *objFunc) {
 	buildFunc(b, f)
 }
 
-func genFunc(b *builder, f *tast.Func, ref *ref) {
-	irFunc := ref.IR().(*ir.Func)
+func genFunc(b *builder, f *tast.Func, irFunc *ir.Func) {
 	b.f = irFunc
 
 	if f.Receiver != nil {

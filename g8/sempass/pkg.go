@@ -78,89 +78,40 @@ func structSyms(pkgStructs []*pkgStruct) []*sym8.Symbol {
 	return ret
 }
 
-func declareFuncs(b *Builder, funcs []*ast.Func) (
-	[]*pkgFunc, []*tast.FuncAlias,
-) {
-	var ret []*pkgFunc
-	var aliases []*tast.FuncAlias
+func (p *Pkg) onlyFile() *ast.File {
+	if len(p.Files) == 1 {
+		for _, f := range p.Files {
+			return f
+		}
+	}
+	return nil
+}
 
-	for _, f := range funcs {
-		if f.Alias != nil {
-			a := buildFuncAlias(b, f)
-			if a != nil {
-				aliases = append(aliases, a)
+func (p *Pkg) buildImports(
+	b *Builder, imps map[string]*build8.Package,
+) []*sym8.Symbol {
+	if f := p.onlyFile(); f != nil {
+		return buildImports(b, f, imps)
+	}
+
+	var ret []*sym8.Symbol
+	for name, f := range p.Files {
+		if name == "import.g" {
+			if len(f.Decls) > 0 {
+				first := f.Decls[0]
+				b.Errorf(ast.DeclPos(first),
+					`"import.g" in multi-file packages only allows import`,
+				)
+			} else {
+				ret = buildImports(b, f, imps)
 			}
 			continue
 		}
 
-		r := declareFunc(b, f)
-		if r != nil {
-			ret = append(ret, r)
-		}
-	}
-
-	return ret, aliases
-}
-
-func buildFuncs(b *Builder, funcs []*pkgFunc) []*tast.Func {
-	b.this = nil
-	b.thisType = nil
-
-	ret := make([]*tast.Func, 0, len(funcs))
-	for _, f := range funcs {
-		res := buildFunc(b, f)
-		if res != nil {
-			ret = append(ret, res)
-		}
-	}
-
-	return ret
-}
-
-func declareMethods(
-	b *Builder, methods []*ast.Func, pkgStructs []*pkgStruct,
-) []*pkgFunc {
-	m := make(map[string]*pkgStruct)
-	for _, ps := range pkgStructs {
-		m[ps.name.Lit] = ps
-	}
-
-	var ret []*pkgFunc
-
-	// inlined ones
-	for _, ps := range pkgStructs {
-		for _, f := range ps.ast.Methods {
-			pf := declareMethod(b, ps, f)
-			if pf != nil {
-				ret = append(ret, pf)
-			}
-		}
-	}
-
-	// go-like ones
-	for _, f := range methods {
-		recv := f.Recv.StructName
-		ps := m[recv.Lit]
-		if ps != nil {
-			b.Errorf(recv.Pos, "struct %s not defined", recv.Lit)
-			continue
-		}
-
-		pf := declareMethod(b, ps, f)
-		if pf != nil {
-			ret = append(ret, pf)
-		}
-	}
-
-	return ret
-}
-
-func buildMethods(b *Builder, funcs []*pkgFunc) []*tast.Func {
-	var ret []*tast.Func
-	for _, f := range funcs {
-		r := buildMethod(b, f)
-		if r != nil {
-			ret = append(ret, r)
+		if f.Imports != nil {
+			b.Errorf(f.Imports.Kw.Pos,
+				`import only allowed in "import.g" for multi-file package`,
+			)
 		}
 	}
 
@@ -169,14 +120,18 @@ func buildMethods(b *Builder, funcs []*pkgFunc) []*tast.Func {
 
 // Build builds a package from an set of file AST's to a typed-AST.
 func (p *Pkg) Build() (*tast.Pkg, []*lex8.Error) {
-	syms := p.symbols()
 	b := makeBuilder(p.Path)
 
 	tops := sym8.NewTable()
 	b.scope.PushTable(tops)
 	defer b.scope.Pop()
 
-	// TODO: imports
+	imports := p.buildImports(b, p.Imports)
+	if errs := b.Errs(); errs != nil {
+		return nil, errs
+	}
+
+	syms := p.symbols()
 
 	consts := buildPkgConsts(b, syms.consts)
 	if errs := b.Errs(); errs != nil {
@@ -216,6 +171,7 @@ func (p *Pkg) Build() (*tast.Pkg, []*lex8.Error) {
 	structs := structSyms(pkgStructs)
 
 	return &tast.Pkg{
+		Imports:     imports,
 		Consts:      consts,
 		Structs:     structs,
 		Vars:        vars,

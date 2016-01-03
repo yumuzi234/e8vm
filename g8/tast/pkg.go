@@ -16,7 +16,7 @@ type Pkg struct {
 	Structs []*sym8.Symbol
 
 	Vars        []*Define
+	FuncAliases []*FuncAlias
 	Funcs       []*Func
 	Methods     []*Func
-	FuncAliases []*FuncAlias
 }

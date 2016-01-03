@@ -6,6 +6,7 @@ import (
 	"e8vm.io/e8vm/g8/ir"
 	"e8vm.io/e8vm/g8/sempass"
 	"e8vm.io/e8vm/g8/types"
+	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/sym8"
 )
 
@@ -254,4 +255,15 @@ func (p *pkg) build(b *builder, pinfo *build8.PkgInfo) {
 	if p.testList != nil {
 		addTestStart(b, p.testList, len(p.testNames))
 	}
+}
+
+func (p *pkg) build2(b *builder, pinfo *build8.PkgInfo) []*lex8.Error {
+	errs := buildPkg2(b, p.files, pinfo)
+	if errs != nil {
+		return errs
+	}
+
+	addInit(b)
+	addStart(b)
+	return nil
 }

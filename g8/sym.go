@@ -2,7 +2,6 @@ package g8
 
 import (
 	"e8vm.io/e8vm/g8/ast"
-	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 )
 
@@ -17,8 +16,6 @@ type objFunc struct {
 	f        *ast.Func
 	isMethod bool
 	isAlias  bool
-
-	tast *tast.Func
 }
 
 type objField struct {

@@ -35,7 +35,8 @@ func declareStruct(b *Builder, s *ast.Struct) *pkgStruct {
 	ret := newPkgStruct(s)
 	name := ret.name.Lit
 	pos := ret.name.Pos
-	sym := sym8.Make(b.path, name, tast.SymStruct, nil, ret.t, pos)
+	t := &types.Type{ret.t}
+	sym := sym8.Make(b.path, name, tast.SymStruct, nil, t, pos)
 	conflict := b.scope.Declare(sym)
 	if conflict != nil {
 		b.Errorf(pos, "%s already defined", name)
@@ -76,7 +77,7 @@ func buildFields(b *Builder, ps *pkgStruct) {
 		for _, id := range f.Idents.Idents {
 			name := id.Lit
 			field := &types.Field{Name: name, T: ft}
-			sym := sym8.Make(b.path, name, tast.SymField, nil, ft, id.Pos)
+			sym := sym8.Make(b.path, name, tast.SymField, field, ft, id.Pos)
 			conflict := t.Syms.Declare(sym)
 			if conflict != nil {
 				b.Errorf(id.Pos, "field %s already defined", id.Lit)
