@@ -51,3 +51,9 @@ func buildStmt(b *builder, stmt ast.Stmt) {
 	}
 	buildStmt2(b, s)
 }
+
+func buildBlock(b *builder, block *tast.Block) {
+	for _, s := range block.Stmts {
+		buildStmt2(b, s)
+	}
+}
