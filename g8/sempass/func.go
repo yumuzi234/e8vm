@@ -8,6 +8,11 @@ import (
 	"e8vm.io/e8vm/sym8"
 )
 
+type pkgFunc struct {
+	sym *sym8.Symbol
+	ast *ast.Func
+}
+
 func declareFuncSym(b *Builder, f *ast.Func, t types.T) *sym8.Symbol {
 	name := f.Name.Lit
 	s := sym8.Make(b.path, name, tast.SymFunc, nil, t, f.Name.Pos)
@@ -56,7 +61,7 @@ func buildFuncAlias(b *Builder, f *ast.Func) *tast.FuncAlias {
 	return &tast.FuncAlias{Sym: ret, Of: sym}
 }
 
-func declareFunc(b *Builder, f *ast.Func) *tast.Func {
+func declareFunc(b *Builder, f *ast.Func) *pkgFunc {
 	if f.Alias != nil {
 		panic("bug")
 	}
@@ -71,13 +76,13 @@ func declareFunc(b *Builder, f *ast.Func) *tast.Func {
 		return nil
 	}
 
-	return &tast.Func{Sym: s}
+	return &pkgFunc{sym: s, ast: f}
 }
 
 func declareFuncs(b *Builder, funcs []*ast.Func) (
-	[]*tast.Func, []*tast.FuncAlias,
+	[]*pkgFunc, []*tast.FuncAlias,
 ) {
-	var ret []*tast.Func
+	var ret []*pkgFunc
 	var aliases []*tast.FuncAlias
 
 	for _, f := range funcs {

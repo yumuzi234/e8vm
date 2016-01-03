@@ -38,19 +38,6 @@ func allocPrepare(
 	return ret
 }
 
-func declareVar(b *Builder, tok *lex8.Token, t types.T) *sym8.Symbol {
-	name := tok.Lit
-	s := sym8.Make(b.path, name, tast.SymVar, nil, t, tok.Pos)
-	conflict := b.scope.Declare(s)
-	if conflict != nil {
-		b.Errorf(tok.Pos, "%q already declared as a %s",
-			name, tast.SymStr(conflict.Type),
-		)
-		return nil
-	}
-	return s
-}
-
 func define(
 	b *Builder, ids []*lex8.Token, expr tast.Expr, eq *lex8.Token,
 ) *tast.Define {

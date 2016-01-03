@@ -10,12 +10,13 @@ import (
 )
 
 type pkgStruct struct {
-	name *lex8.Token
-	ast  *ast.Struct
-	deps []string
-	t    *types.Struct
-	pt   *types.Pointer
-	sym  *sym8.Symbol
+	name    *lex8.Token
+	ast     *ast.Struct    // the struct AST node
+	sym     *sym8.Symbol   // the symbol
+	t       *types.Struct  // type
+	pt      *types.Pointer // pointer type
+	methods []*tast.Func   // methods
+	deps    []string       // depending identifiers
 }
 
 func newPkgStruct(s *ast.Struct) *pkgStruct {
@@ -89,7 +90,7 @@ func buildFields(b *Builder, ps *pkgStruct) {
 	}
 }
 
-func buildStructs(b *Builder, structs []*ast.Struct) []*sym8.Symbol {
+func buildStructs(b *Builder, structs []*ast.Struct) []*pkgStruct {
 	m := make(map[string]*pkgStruct)
 	for _, s := range structs {
 		ps := declareStruct(b, s)
@@ -98,12 +99,9 @@ func buildStructs(b *Builder, structs []*ast.Struct) []*sym8.Symbol {
 		}
 	}
 
-	order := sortStructs(b, m)
-
-	ret := make([]*sym8.Symbol, 0, len(order))
-	for _, ps := range order {
+	ret := sortStructs(b, m)
+	for _, ps := range ret {
 		buildFields(b, ps)
-		ret = append(ret, ps.sym)
 	}
 	return ret
 }

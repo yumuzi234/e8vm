@@ -1,0 +1,43 @@
+package sempass
+
+import (
+	"e8vm.io/e8vm/g8/ast"
+	"e8vm.io/e8vm/g8/tast"
+)
+
+func buildPkgVars(b *Builder, vars []*ast.VarDecls) []*tast.Define {
+	var ret []*tast.Define
+	for _, decls := range vars {
+		for _, d := range decls.Decls {
+			v := buildPkgVar(b, d)
+			if v != nil {
+				ret = append(ret, v)
+			}
+		}
+	}
+	return ret
+}
+
+func buildPkgVar(b *Builder, d *ast.VarDecl) *tast.Define {
+	if d.Eq != nil {
+		b.Errorf(d.Eq.Pos, "init for global var not supported yet")
+		return nil
+	}
+
+	// since there's no init, we cannot possibly infer the type
+	// from the expression
+	if d.Type == nil {
+		panic("type missing")
+	}
+
+	t := b.BuildType(d.Type)
+	if t == nil {
+		return nil
+	}
+
+	syms := declareVars(b, d.Idents.Idents, t)
+	if syms == nil {
+		return nil
+	}
+	return &tast.Define{syms, nil}
+}

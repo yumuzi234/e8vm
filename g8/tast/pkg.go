@@ -15,7 +15,7 @@ type Pkg struct {
 	Consts  []*sym8.Symbol
 	Structs []*sym8.Symbol
 
-	Vars        []*VarDecls
+	Vars        []*Define
 	Funcs       []*Func
 	Methods     []*Func
 	FuncAliases []*FuncAlias

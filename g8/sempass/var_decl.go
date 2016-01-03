@@ -5,7 +5,6 @@ import (
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/lex8"
-	"e8vm.io/e8vm/sym8"
 )
 
 func varDeclPrepare(
@@ -26,18 +25,6 @@ func varDeclPrepare(
 		ret.Append(e)
 	}
 	return ret
-}
-
-func declareVars(b *Builder, ids []*lex8.Token, t types.T) []*sym8.Symbol {
-	var syms []*sym8.Symbol
-	for _, id := range ids {
-		s := declareVar(b, id, t)
-		if s == nil {
-			return nil
-		}
-		syms = append(syms, s)
-	}
-	return syms
 }
 
 func buildVarDecl(b *Builder, d *ast.VarDecl) *tast.Define {

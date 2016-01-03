@@ -70,29 +70,48 @@ func (p *Pkg) symbols() *symbols {
 	return ret
 }
 
+func structSyms(pkgStructs []*pkgStruct) []*sym8.Symbol {
+	ret := make([]*sym8.Symbol, 0, len(pkgStructs))
+	for _, ps := range pkgStructs {
+		ret = append(ret, ps.sym)
+	}
+	return ret
+}
+
 // Build builds a package from an set of file AST's to a typed-AST.
 func (p *Pkg) Build() (*tast.Pkg, []*lex8.Error) {
 	syms := p.symbols()
 	b := makeBuilder(p.Path)
-	consts := buildPkgConsts(b, syms.consts)
-	structs := buildStructs(b, syms.structs)
-	funcs, aliases := declareFuncs(b, syms.funcs)
 
-	errs := b.Errs()
-	if errs != nil {
+	consts := buildPkgConsts(b, syms.consts)
+	if errs := b.Errs(); errs != nil {
 		return nil, errs
 	}
 
+	pkgStructs := buildStructs(b, syms.structs)
+	if errs := b.Errs(); errs != nil {
+		return nil, errs
+	}
+
+	pkgFuncs, aliases := declareFuncs(b, syms.funcs)
+	if errs := b.Errs(); errs != nil {
+		return nil, errs
+	}
+
+	vars := buildPkgVars(b, syms.vars)
+	// funcs := buildFuncs(b, pkgFuncs)
+	// methods := buildMethods(b, pkgStructs)
+	_ = pkgFuncs
+
 	return &tast.Pkg{
-		Consts:      consts,
-		Structs:     structs,
-		Funcs:       funcs,
+		Consts:  consts,
+		Structs: structSyms(pkgStructs),
+		Vars:    vars,
+		// Funcs: funcs,
+		// Methods: methods,
 		FuncAliases: aliases,
 	}, nil
 }
 
 // BuildPkgConsts is a temp function for building package consts.
 var BuildPkgConsts = buildPkgConsts
-
-// BuildStructs is a temp function for building struct types.
-var BuildStructs = buildStructs
