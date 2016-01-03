@@ -104,9 +104,16 @@ func (p *pkg) declareFuncs(b *builder) {
 }
 
 func (p *pkg) declareVars(b *builder) {
-	for _, decls := range p.vars {
-		for _, d := range decls.Decls {
-			buildGlobalVarDecl(b, d)
+	defines := sempass.BuildPkgVars(b.spass, p.vars)
+	for _, d := range defines {
+		if d.Right != nil {
+			panic("var init not supported yet")
+		}
+		for _, sym := range d.Left {
+			t := sym.ObjType.(types.T)
+			name := sym.Name()
+			ref := newAddressableRef(t, b.newGlobalVar(t, name))
+			sym.Obj = &objVar{name: name, ref: ref}
 		}
 	}
 }

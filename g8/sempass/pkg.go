@@ -115,3 +115,6 @@ func (p *Pkg) Build() (*tast.Pkg, []*lex8.Error) {
 
 // BuildPkgConsts is a temp function for building package consts.
 var BuildPkgConsts = buildPkgConsts
+
+// BuildPkgVars is a temp function for building package vars.
+var BuildPkgVars = buildPkgVars
