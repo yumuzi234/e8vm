@@ -223,13 +223,15 @@ func genFunc(b *builder, f *tast.Func, ref *ref) {
 	b.f = irFunc
 
 	if f.Receiver != nil {
+		// bind the receiver
 		t := f.Receiver.ObjType.(types.T)
 		f.Receiver.Obj = newAddressableRef(t, irFunc.ThisRef())
 	} else if f.This != nil {
+		// bind this pointer
 		b.this = newRef(f.This, irFunc.ThisRef())
 	}
 
-	// bind args
+	// bind arg symbols
 	args := irFunc.ArgRefs()
 	if f.IsMethod() {
 		args = args[1:] // skip <this>
@@ -241,7 +243,7 @@ func genFunc(b *builder, f *tast.Func, ref *ref) {
 	}
 
 	if f.NamedRets != nil {
-		// bind named rets
+		// bind named return symbols
 		rets := irFunc.RetRefs()
 		for i, s := range f.NamedRets {
 			if s != nil {
