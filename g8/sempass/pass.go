@@ -88,3 +88,8 @@ func BuildPkgConsts(b *Builder, consts []*ast.ConstDecls) []*sym8.Symbol {
 func BuildStructs(b *Builder, structs []*ast.Struct) []*sym8.Symbol {
 	return buildStructs(b, structs)
 }
+
+// BuildFuncs is a temp function for building functions.
+func BuildFuncs(b *Builder, funcs []*ast.Func) []*sym8.Symbol {
+	return buildFuncs(b, funcs)
+}

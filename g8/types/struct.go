@@ -15,9 +15,7 @@ type Field struct {
 // Offset returns the offset of a field in a struct.
 // It will return the valid number only after the field
 // has been added into a struct.
-func (f *Field) Offset() int32 {
-	return f.offset
-}
+func (f *Field) Offset() int32 { return f.offset }
 
 // Struct is the type of a structure
 type Struct struct {
@@ -50,9 +48,7 @@ func (t *Struct) AddField(f *Field) {
 }
 
 // Size returns the overall size of the structure type
-func (t *Struct) Size() int32 {
-	return t.size
-}
+func (t *Struct) Size() int32 { return t.size }
 
 // String returns the name of the structure type
 func (t *Struct) String() string { return t.name }
