@@ -33,7 +33,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 		}
 
 		ref := ir.NewFuncSym(path, name, makeFuncSig(t))
-		obj := &objFunc{as, newRef(t, ref), nil, false}
+		obj := &objFunc{name: as, ref: newRef(t, ref)}
 		s := sym8.Make(b.path, as, tast.SymFunc, obj, t, nil)
 		pre := b.scope.Declare(s)
 		if pre != nil {
@@ -53,9 +53,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 
 	bi := func(name string) {
 		t := types.NewBuiltInFunc(name)
-		obj := &objFunc{name, newRef(t, nil),
-			nil, false,
-		}
+		obj := &objFunc{name: name, ref: newRef(t, nil)}
 		s := sym8.Make(b.path, name, tast.SymFunc, obj, t, nil)
 		pre := b.scope.Declare(s)
 		if pre != nil {

@@ -10,7 +10,9 @@ import (
 
 const thisName = "<this>"
 
-func buildFuncType(b *Builder, f *ast.FuncSig) *types.Func {
+func buildFuncType(
+	b *Builder, recv *types.Pointer, f *ast.FuncSig,
+) *types.Func {
 	// the arguments
 	args := buildParaList(b, f.Args)
 	if args == nil {
@@ -29,6 +31,10 @@ func buildFuncType(b *Builder, f *ast.FuncSig) *types.Func {
 		rets = []*types.Arg{{T: retType}}
 	}
 
+	if recv != nil {
+		r := &types.Arg{Name: thisName, T: recv}
+		return types.NewFunc(r, args, rets)
+	}
 	return types.NewFunc(nil, args, rets)
 }
 
@@ -120,7 +126,7 @@ func buildType(b *Builder, expr ast.Expr) types.T {
 	case *ast.ParenExpr:
 		return buildType(b, expr.Expr)
 	case *ast.FuncTypeExpr:
-		return buildFuncType(b, expr.FuncSig)
+		return buildFuncType(b, nil, expr.FuncSig)
 	case *ast.MemberExpr:
 		op, ok := expr.Expr.(*ast.Operand)
 		if !ok {

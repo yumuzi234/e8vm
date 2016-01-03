@@ -75,7 +75,7 @@ func declareMethod(b *builder, info *structInfo, f *ast.Func) *objFunc {
 	}
 
 	name := f.Name.Lit
-	ret := &objFunc{name, nil, f, true}
+	ret := &objFunc{name: name, f: f, isMethod: true}
 
 	sym := sym8.Make(b.path, name, tast.SymFunc, ret, t, f.Name.Pos)
 	pre := info.t.Syms.Declare(sym)

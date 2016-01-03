@@ -15,6 +15,7 @@ type objFunc struct {
 	*ref
 	f        *ast.Func
 	isMethod bool
+	isAlias  bool
 }
 
 type objField struct {

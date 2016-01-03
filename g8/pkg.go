@@ -21,6 +21,7 @@ type pkg struct {
 	structMap   map[string]*structInfo
 	structOrder []*structInfo
 	funcObjs    []*objFunc
+	funcAliases []*objFunc
 
 	tops *sym8.Table
 
@@ -73,7 +74,11 @@ func (p *pkg) declareFuncs(b *builder) {
 	for _, f := range p.funcs {
 		ret := declareFunc(b, f)
 		if ret != nil {
-			p.funcObjs = append(p.funcObjs, ret)
+			if !ret.isAlias {
+				p.funcObjs = append(p.funcObjs, ret)
+			} else {
+				p.funcAliases = append(p.funcAliases, ret)
+			}
 		}
 	}
 
