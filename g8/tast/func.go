@@ -12,10 +12,10 @@ type Func struct {
 	This     *types.Pointer // implicit receiver
 	Receiver *sym8.Symbol   // explicit receiver
 
-	Paras     []*sym8.Symbol
+	Args      []*sym8.Symbol
 	NamedRets []*sym8.Symbol
 
-	Body *Block
+	Body []Stmt
 }
 
 // FuncAlias is a function alias.

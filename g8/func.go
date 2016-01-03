@@ -129,6 +129,7 @@ func declareParas(
 	if len(ts) != len(irs) {
 		panic("bug")
 	}
+	paras := lst.Paras
 
 	for i, t := range ts {
 		if t.Name == thisName {
@@ -139,7 +140,7 @@ func declareParas(
 		}
 
 		r := newAddressableRef(t.T, irs[i])
-		declareVarRef(b, lst.Paras[i].Ident, r)
+		declareVarRef(b, paras[i].Ident, r)
 	}
 }
 
@@ -181,13 +182,15 @@ func buildFunc(b *builder, f *objFunc) {
 	}
 
 	retIRRefs := irFunc.RetRefs()
-	declareParas(b, f.f.Rets, t.Rets, retIRRefs)
+	if b.fretNamed {
+		declareParas(b, f.f.Rets, t.Rets, retIRRefs)
+	}
 
 	b.fretRef = makeRetRef(t.Rets, retIRRefs)
 	if b.fretRef == nil {
 		b.spass.SetRetType(nil, b.fretNamed)
 	} else {
-		b.spass.SetRetType(b.fretRef.TypeList(), b.fretNamed)
+		b.spass.SetRetType(t.RetTypes, b.fretNamed)
 	}
 
 	b.b = b.f.NewBlock(nil)

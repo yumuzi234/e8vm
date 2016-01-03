@@ -104,7 +104,7 @@ func declareFuncs(b *Builder, funcs []*ast.Func) (
 }
 
 func buildFuncs(b *Builder, funcs []*pkgFunc) []*tast.Func {
-	b.SetThis(nil)
+	b.this = nil
 
 	ret := make([]*tast.Func, 0, len(funcs))
 	for _, f := range funcs {
@@ -117,7 +117,25 @@ func buildFuncs(b *Builder, funcs []*pkgFunc) []*tast.Func {
 	return ret
 }
 
-// func declareParas(b *Builder, lst *ast.ParaList, ts []*types.Arg)
+func declareParas(
+	b *Builder, lst *ast.ParaList, ts []*types.Arg,
+) []*sym8.Symbol {
+	var ret []*sym8.Symbol
+	paras := lst.Paras
+
+	for i, t := range ts {
+		if t.Name == thisName {
+			panic("trying to declare <this>")
+		}
+
+		var s *sym8.Symbol
+		if t.Name != "" {
+			s = declareVar(b, paras[i].Ident, t.T)
+		}
+		ret = append(ret, s)
+	}
+	return ret
+}
 
 func buildFunc(b *Builder, f *pkgFunc) *tast.Func {
 	b.scope.Push()
@@ -125,6 +143,8 @@ func buildFunc(b *Builder, f *pkgFunc) *tast.Func {
 
 	t := f.sym.ObjType.(*types.Func)
 	b.retNamed = f.f.NamedRet()
+	b.retType = t.RetTypes
+
 	ret := new(tast.Func)
 
 	if f.f.Recv != nil {
@@ -137,8 +157,19 @@ func buildFunc(b *Builder, f *pkgFunc) *tast.Func {
 		}
 	}
 
-	_ = t
+	if b.this != nil {
+		ret.Args = declareParas(b, f.f.Args, t.Args[1:])
+	} else {
+		ret.Args = declareParas(b, f.f.Args, t.Args)
+	}
+	if b.retNamed {
+		ret.NamedRets = declareParas(b, f.f.Rets, t.Rets)
+	}
 
-	panic("todo")
-	return nil
+	ret.Body = buildStmts(b, f.f.Body.Stmts)
+
+	b.retType = nil
+	b.retNamed = false
+
+	return ret
 }

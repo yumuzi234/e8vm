@@ -40,3 +40,14 @@ func buildStmt(b *Builder, stmt ast.Stmt) tast.Stmt {
 	b.Errorf(nil, "invalid or not implemented: %T", stmt)
 	return nil
 }
+
+func buildStmts(b *Builder, stmts []ast.Stmt) []tast.Stmt {
+	var ret []tast.Stmt
+	for _, stmt := range stmts {
+		s := buildStmt(b, stmt)
+		if s != nil {
+			ret = append(ret, s)
+		}
+	}
+	return ret
+}
