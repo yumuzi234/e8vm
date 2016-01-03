@@ -74,7 +74,7 @@ func declareFunc(b *Builder, f *ast.Func) *tast.Func {
 	return &tast.Func{Sym: s}
 }
 
-func buildFuncs(b *Builder, funcs []*ast.Func) (
+func declareFuncs(b *Builder, funcs []*ast.Func) (
 	[]*tast.Func, []*tast.FuncAlias,
 ) {
 	var ret []*tast.Func
@@ -86,11 +86,12 @@ func buildFuncs(b *Builder, funcs []*ast.Func) (
 			if a != nil {
 				aliases = append(aliases, a)
 			}
-		} else {
-			r := declareFunc(b, f)
-			if r != nil {
-				ret = append(ret, r)
-			}
+			continue
+		}
+
+		r := declareFunc(b, f)
+		if r != nil {
+			ret = append(ret, r)
 		}
 	}
 
