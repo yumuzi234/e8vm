@@ -10,7 +10,7 @@ import (
 
 type pkgFunc struct {
 	sym *sym8.Symbol
-	ast *ast.Func
+	f   *ast.Func
 }
 
 func declareFuncSym(b *Builder, f *ast.Func, t types.T) *sym8.Symbol {
@@ -76,7 +76,7 @@ func declareFunc(b *Builder, f *ast.Func) *pkgFunc {
 		return nil
 	}
 
-	return &pkgFunc{sym: s, ast: f}
+	return &pkgFunc{sym: s, f: f}
 }
 
 func declareFuncs(b *Builder, funcs []*ast.Func) (
@@ -101,4 +101,44 @@ func declareFuncs(b *Builder, funcs []*ast.Func) (
 	}
 
 	return ret, aliases
+}
+
+func buildFuncs(b *Builder, funcs []*pkgFunc) []*tast.Func {
+	b.SetThis(nil)
+
+	ret := make([]*tast.Func, 0, len(funcs))
+	for _, f := range funcs {
+		res := buildFunc(b, f)
+		if res != nil {
+			ret = append(ret, res)
+		}
+	}
+
+	return ret
+}
+
+// func declareParas(b *Builder, lst *ast.ParaList, ts []*types.Arg)
+
+func buildFunc(b *Builder, f *pkgFunc) *tast.Func {
+	b.scope.Push()
+	defer b.scope.Pop()
+
+	t := f.sym.ObjType.(*types.Func)
+	b.retNamed = f.f.NamedRet()
+	ret := new(tast.Func)
+
+	if f.f.Recv != nil {
+		if recvTok := f.f.Recv.Recv; recvTok != nil {
+			recvSym := declareVar(b, recvTok, b.this.Type())
+			if recvSym == nil {
+				return nil
+			}
+			ret.Receiver = recvSym
+		}
+	}
+
+	_ = t
+
+	panic("todo")
+	return nil
 }

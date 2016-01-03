@@ -123,29 +123,23 @@ func declareFunc(b *builder, f *ast.Func) *objFunc {
 	return ret
 }
 
-func paraIdent(b *builder,
-	paras []*ast.Para, i int, withThis bool,
-) *lex8.Token {
-	if !withThis {
-		return paras[i].Ident
-	}
-	return paras[i-1].Ident
-}
-
-func declareParas(b *builder,
-	lst *ast.ParaList, ts []*types.Arg, irs []ir.Ref, withThis bool,
+func declareParas(
+	b *builder, lst *ast.ParaList, ts []*types.Arg, irs []ir.Ref,
 ) {
 	if len(ts) != len(irs) {
 		panic("bug")
 	}
 
 	for i, t := range ts {
-		if t.Name == "" || t.Name == thisName {
+		if t.Name == thisName {
+			panic("trying to declare this")
+		}
+		if t.Name == "" { // unamed parameter
 			continue
 		}
 
 		r := newAddressableRef(t.T, irs[i])
-		declareVarRef(b, paraIdent(b, lst.Paras, i, withThis), r)
+		declareVarRef(b, lst.Paras[i].Ident, r)
 	}
 }
 
@@ -173,16 +167,22 @@ func buildFunc(b *builder, f *objFunc) {
 	b.f = irFunc
 	b.fretNamed = f.f.NamedRet()
 
-	if b.golike && f.f.Recv != nil {
+	if f.f.Recv != nil {
 		if recvTok := f.f.Recv.Recv; recvTok != nil {
 			declareVarRef(b, recvTok, b.this)
 		}
 	}
 
 	// build context for resolving symbols
+	if b.this != nil {
+		declareParas(b, f.f.Args, t.Args[1:], irFunc.ArgRefs()[1:])
+	} else {
+		declareParas(b, f.f.Args, t.Args, irFunc.ArgRefs())
+	}
+
 	retIRRefs := irFunc.RetRefs()
-	declareParas(b, f.f.Args, t.Args, irFunc.ArgRefs(), b.this != nil)
-	declareParas(b, f.f.Rets, t.Rets, retIRRefs, false)
+	declareParas(b, f.f.Rets, t.Rets, retIRRefs)
+
 	b.fretRef = makeRetRef(t.Rets, retIRRefs)
 	if b.fretRef == nil {
 		b.spass.SetRetType(nil, b.fretNamed)
