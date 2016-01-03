@@ -26,6 +26,8 @@ type Builder struct {
 
 	nloop    int
 	this     *tast.Ref
+	thisType *types.Pointer
+
 	retType  []types.T
 	retNamed bool
 }

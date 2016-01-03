@@ -78,6 +78,55 @@ func structSyms(pkgStructs []*pkgStruct) []*sym8.Symbol {
 	return ret
 }
 
+func declareFuncs(b *Builder, funcs []*ast.Func) (
+	[]*pkgFunc, []*tast.FuncAlias,
+) {
+	var ret []*pkgFunc
+	var aliases []*tast.FuncAlias
+
+	for _, f := range funcs {
+		if f.Alias != nil {
+			a := buildFuncAlias(b, f)
+			if a != nil {
+				aliases = append(aliases, a)
+			}
+			continue
+		}
+
+		r := declareFunc(b, f)
+		if r != nil {
+			ret = append(ret, r)
+		}
+	}
+
+	return ret, aliases
+}
+
+func buildFuncs(b *Builder, funcs []*pkgFunc) []*tast.Func {
+	b.this = nil
+	b.thisType = nil
+
+	ret := make([]*tast.Func, 0, len(funcs))
+	for _, f := range funcs {
+		res := buildFunc(b, f)
+		if res != nil {
+			ret = append(ret, res)
+		}
+	}
+
+	return ret
+}
+
+func buildMethods(b *Builder, pkgStructs []*pkgStruct) []*tast.Func {
+	var ret []*tast.Func
+	for _, ps := range pkgStructs {
+		_ = ps
+	}
+
+	panic("todo")
+	return ret
+}
+
 // Build builds a package from an set of file AST's to a typed-AST.
 func (p *Pkg) Build() (*tast.Pkg, []*lex8.Error) {
 	syms := p.symbols()
@@ -99,16 +148,28 @@ func (p *Pkg) Build() (*tast.Pkg, []*lex8.Error) {
 	}
 
 	vars := buildPkgVars(b, syms.vars)
-	// funcs := buildFuncs(b, pkgFuncs)
-	// methods := buildMethods(b, pkgStructs)
-	_ = pkgFuncs
+	if errs := b.Errs(); errs != nil {
+		return nil, errs
+	}
+
+	funcs := buildFuncs(b, pkgFuncs)
+	if errs := b.Errs(); errs != nil {
+		return nil, errs
+	}
+
+	methods := buildMethods(b, pkgStructs)
+	if errs := b.Errs(); errs != nil {
+		return nil, errs
+	}
+
+	structs := structSyms(pkgStructs)
 
 	return &tast.Pkg{
-		Consts:  consts,
-		Structs: structSyms(pkgStructs),
-		Vars:    vars,
-		// Funcs: funcs,
-		// Methods: methods,
+		Consts:      consts,
+		Structs:     structs,
+		Vars:        vars,
+		Funcs:       funcs,
+		Methods:     methods,
 		FuncAliases: aliases,
 	}, nil
 }

@@ -79,44 +79,6 @@ func declareFunc(b *Builder, f *ast.Func) *pkgFunc {
 	return &pkgFunc{sym: s, f: f}
 }
 
-func declareFuncs(b *Builder, funcs []*ast.Func) (
-	[]*pkgFunc, []*tast.FuncAlias,
-) {
-	var ret []*pkgFunc
-	var aliases []*tast.FuncAlias
-
-	for _, f := range funcs {
-		if f.Alias != nil {
-			a := buildFuncAlias(b, f)
-			if a != nil {
-				aliases = append(aliases, a)
-			}
-			continue
-		}
-
-		r := declareFunc(b, f)
-		if r != nil {
-			ret = append(ret, r)
-		}
-	}
-
-	return ret, aliases
-}
-
-func buildFuncs(b *Builder, funcs []*pkgFunc) []*tast.Func {
-	b.this = nil
-
-	ret := make([]*tast.Func, 0, len(funcs))
-	for _, f := range funcs {
-		res := buildFunc(b, f)
-		if res != nil {
-			ret = append(ret, res)
-		}
-	}
-
-	return ret
-}
-
 func declareParas(
 	b *Builder, lst *ast.ParaList, ts []*types.Arg,
 ) []*sym8.Symbol {
@@ -147,17 +109,19 @@ func buildFunc(b *Builder, f *pkgFunc) *tast.Func {
 
 	ret := new(tast.Func)
 
-	if f.f.Recv != nil {
-		if recvTok := f.f.Recv.Recv; recvTok != nil {
-			recvSym := declareVar(b, recvTok, b.this.Type())
-			if recvSym == nil {
-				return nil
+	if b.this != nil {
+		if f.f.Recv != nil {
+			if recvTok := f.f.Recv.Recv; recvTok != nil {
+				recvSym := declareVar(b, recvTok, b.thisType)
+				if recvSym == nil {
+					return nil
+				}
+				ret.Receiver = recvSym
 			}
-			ret.Receiver = recvSym
+		} else {
+			// marking keyword <this> if it is an inlined method
+			ret.This = b.thisType
 		}
-	} else if b.this != nil {
-		// marking keyword <this> if it is an inlined method
-		ret.This = b.this.Type().(*types.Pointer)
 	}
 
 	if b.this != nil {
@@ -177,4 +141,15 @@ func buildFunc(b *Builder, f *pkgFunc) *tast.Func {
 	b.retNamed = false
 
 	return ret
+}
+
+func buildMethod(b *Builder, this *types.Pointer, f *pkgFunc) *tast.Func {
+	b.thisType = this
+	if f.f.Recv != nil { // go-like, explicit receiver
+		b.this = tast.NewAddressableRef(this)
+	} else { // inlined
+		b.this = tast.NewRef(this)
+	}
+
+	return buildFunc(b, f)
 }
