@@ -172,6 +172,12 @@ func (p *Pkg) Build() (*tast.Pkg, []*lex8.Error) {
 	syms := p.symbols()
 	b := makeBuilder(p.Path)
 
+	tops := sym8.NewTable()
+	b.scope.PushTable(tops)
+	defer b.scope.Pop()
+
+	// TODO: imports
+
 	consts := buildPkgConsts(b, syms.consts)
 	if errs := b.Errs(); errs != nil {
 		return nil, errs
