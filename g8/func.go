@@ -200,7 +200,7 @@ func buildFunc(b *builder, f *objFunc) {
 	b.spass.SetRetType(nil, false)
 }
 
-func buildMethodFunc(b *builder, s *structInfo, f *objFunc) {
+func buildMethodFunc(b *builder, this *types.Pointer, f *objFunc) {
 	t := f.ref.Type().(*types.Func)
 	ir := f.ref.IR().(*ir.Func)
 
@@ -209,11 +209,48 @@ func buildMethodFunc(b *builder, s *structInfo, f *objFunc) {
 	}
 
 	if !b.golike {
-		b.this = newRef(s.pt, ir.ThisRef())
-		b.spass.SetThis(tast.NewRef(s.pt))
+		b.this = newRef(this, ir.ThisRef())
+		b.spass.SetThis(tast.NewRef(this))
 	} else {
-		b.this = newAddressableRef(s.pt, ir.ThisRef())
-		b.spass.SetThis(tast.NewAddressableRef(s.pt))
+		b.this = newAddressableRef(this, ir.ThisRef())
+		b.spass.SetThis(tast.NewAddressableRef(this))
 	}
 	buildFunc(b, f)
+}
+
+func genFunc(b *builder, f *tast.Func, ref *ref) {
+	irFunc := ref.IR().(*ir.Func)
+	b.f = irFunc
+
+	if f.Receiver != nil {
+		t := f.Receiver.ObjType.(types.T)
+		f.Receiver.Obj = newAddressableRef(t, irFunc.ThisRef())
+	} else if f.This != nil {
+		b.this = newRef(f.This, irFunc.ThisRef())
+	}
+
+	// bind args
+	args := irFunc.ArgRefs()
+	if f.IsMethod() {
+		args = args[1:] // skip <this>
+	}
+	for i, s := range f.Args {
+		if s != nil {
+			s.Obj = args[i]
+		}
+	}
+
+	if f.NamedRets != nil {
+		// bind named rets
+		rets := irFunc.RetRefs()
+		for i, s := range f.NamedRets {
+			if s != nil {
+				s.Obj = rets[i]
+			}
+		}
+	}
+
+	for _, stmt := range f.Body {
+		buildStmt2(b, stmt)
+	}
 }

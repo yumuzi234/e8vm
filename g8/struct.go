@@ -99,6 +99,6 @@ func buildMethods(b *builder, info *structInfo) {
 	}
 
 	for _, m := range info.methodObjs {
-		buildMethodFunc(b, info, m)
+		buildMethodFunc(b, info.pt, m)
 	}
 }

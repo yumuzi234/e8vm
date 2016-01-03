@@ -18,6 +18,11 @@ type Func struct {
 	Body []Stmt
 }
 
+// IsMethod returns true when the function is a method.
+func (f *Func) IsMethod() bool {
+	return f.This == nil && f.Receiver == nil
+}
+
 // FuncAlias is a function alias.
 type FuncAlias struct {
 	Sym *sym8.Symbol
