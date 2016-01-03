@@ -46,3 +46,21 @@ func buildConstExpr(b *builder, expr ast.Expr) *ref {
 	}
 	return buildConst(b, c)
 }
+
+func buildExprList(b *builder, list *tast.ExprList) *ref {
+	if list == nil {
+		return new(ref)
+	}
+	n := list.Len()
+	if n == 0 {
+		return new(ref)
+	} else if n == 1 {
+		return b.buildExpr(list.Exprs[0])
+	}
+
+	ret := new(ref)
+	for _, expr := range list.Exprs {
+		ret = appendRef(ret, b.buildExpr(expr))
+	}
+	return ret
+}
