@@ -27,8 +27,8 @@ func newPkg(asts map[string]*ast.File) *pkg {
 	return ret
 }
 
-func (p *pkg) build2(b *builder, pinfo *build8.PkgInfo) []*lex8.Error {
-	tops, tests, errs := buildPkg2(b, p.files, pinfo)
+func (p *pkg) build(b *builder, pinfo *build8.PkgInfo) []*lex8.Error {
+	tops, tests, errs := buildPkg(b, p.files, pinfo)
 	p.tops = tops
 	p.testNames = tests
 	return errs
@@ -61,7 +61,7 @@ func buildTests(b *builder, tops *sym8.Table) (
 	return b.p.NewTestList(":tests", irs), names
 }
 
-func buildPkg2(
+func buildPkg(
 	b *builder, files map[string]*ast.File, pinfo *build8.PkgInfo,
 ) (syms *sym8.Table, testNames []string, errs []*lex8.Error) {
 	imports := make(map[string]*build8.Package)
@@ -155,12 +155,12 @@ func buildPkg2(
 
 	for _, f := range res.Funcs {
 		obj := f.Sym.Obj.(*objFunc)
-		genFunc(b, f, obj.ref.IR().(*ir.Func))
+		buildFunc(b, f, obj.ref.IR().(*ir.Func))
 	}
 
 	for _, f := range res.Methods {
 		obj := f.Sym.Obj.(*objFunc)
-		genFunc(b, f, obj.ref.IR().(*ir.Func))
+		buildFunc(b, f, obj.ref.IR().(*ir.Func))
 	}
 
 	testList, testNames := buildTests(b, tops)

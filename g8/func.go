@@ -21,7 +21,7 @@ func makeRetRef(ts []*types.Arg, irs []ir.Ref) *ref {
 	return ret
 }
 
-func genFunc(b *builder, f *tast.Func, irFunc *ir.Func) {
+func buildFunc(b *builder, f *tast.Func, irFunc *ir.Func) {
 	b.f = irFunc
 
 	if f.Receiver != nil {
