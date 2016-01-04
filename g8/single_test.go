@@ -255,4 +255,3 @@ func TestSingleFile(t *testing.T) {
 			if before != after { panic() }
 		}`, "")
 }
-
