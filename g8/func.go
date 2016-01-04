@@ -62,6 +62,6 @@ func buildFunc(b *builder, f *tast.Func, irFunc *ir.Func) {
 
 	b.b = b.f.NewBlock(nil)
 	for _, stmt := range f.Body {
-		b.buildStmt2(stmt)
+		b.buildStmt(stmt)
 	}
 }

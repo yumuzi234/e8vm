@@ -11,7 +11,7 @@ func buildIfStmt(b *builder, stmt *tast.IfStmt) {
 		after := b.f.NewBlock(body)
 		b.b.JumpIfNot(c.IR(), after)
 		b.b = body
-		b.buildStmt2(stmt.Body)
+		b.buildStmt(stmt.Body)
 		b.b = after
 		return
 	}
@@ -23,8 +23,8 @@ func buildIfStmt(b *builder, stmt *tast.IfStmt) {
 	ifBody.Jump(after)
 
 	b.b = ifBody // switch to if body
-	b.buildStmt2(stmt.Body)
+	b.buildStmt(stmt.Body)
 	b.b = elseBody
-	b.buildStmt2(stmt.Else)
+	b.buildStmt(stmt.Else)
 	b.b = after
 }

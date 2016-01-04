@@ -6,7 +6,7 @@ import (
 
 func buildForStmt(b *builder, stmt *tast.ForStmt) {
 	if stmt.Init != nil {
-		b.buildStmt2(stmt.Init)
+		b.buildStmt(stmt.Init)
 	}
 
 	if stmt.Cond == nil {
@@ -18,13 +18,13 @@ func buildForStmt(b *builder, stmt *tast.ForStmt) {
 		b.breaks.push(after, "")
 		b.continues.push(body, "")
 
-		b.buildStmt2(stmt.Body)
+		b.buildStmt(stmt.Body)
 
 		b.breaks.pop()
 		b.continues.pop()
 
 		if stmt.Iter != nil {
-			b.buildStmt2(stmt.Iter)
+			b.buildStmt(stmt.Iter)
 		}
 		b.b = after
 		return
@@ -43,13 +43,13 @@ func buildForStmt(b *builder, stmt *tast.ForStmt) {
 	b.breaks.push(after, "")
 	b.continues.push(condBlock, "")
 
-	b.buildStmt2(stmt.Body)
+	b.buildStmt(stmt.Body)
 
 	b.breaks.pop()
 	b.continues.pop()
 
 	if stmt.Iter != nil {
-		b.buildStmt2(stmt.Iter)
+		b.buildStmt(stmt.Iter)
 	}
 
 	b.b = after

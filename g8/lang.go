@@ -53,8 +53,7 @@ func makeBuilder(pinfo *build8.PkgInfo, golike bool) *builder {
 
 func initBuilder(b *builder, imp map[string]*build8.Import) {
 	b.exprFunc = buildExpr2
-	b.stmtFunc = buildStmt
-	b.stmtFunc2 = buildStmt2
+	b.stmtFunc2 = buildStmt
 
 	builtin, ok := imp["$"]
 	if !ok {

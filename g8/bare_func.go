@@ -7,6 +7,7 @@ import (
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/ir"
 	"e8vm.io/e8vm/g8/parse"
+	"e8vm.io/e8vm/g8/sempass"
 	"e8vm.io/e8vm/lex8"
 )
 
@@ -26,15 +27,20 @@ func (bareFunc) Prepare(
 	return nil
 }
 
-func buildBareFunc(b *builder, stmts []ast.Stmt) {
+func buildBareFunc(b *builder, stmts []ast.Stmt) []*lex8.Error {
+	tstmts, errs := sempass.BuildBareFunc(b.scope, stmts)
+	if errs != nil {
+		return errs
+	}
+
 	b.f = b.p.NewFunc(":start", nil, ir.VoidFuncSig)
 	b.fretRef = nil
-	b.spass.SetRetType(nil, false)
 	b.b = b.f.NewBlock(nil)
 
-	b.scope.Push()
-	b.buildStmts(stmts)
-	b.scope.Pop()
+	for _, stmt := range tstmts {
+		buildStmt(b, stmt)
+	}
+	return nil
 }
 
 func findTheFile(pinfo *build8.PkgInfo) (*build8.File, error) {
@@ -68,8 +74,10 @@ func (bare bareFunc) Compile(pinfo *build8.PkgInfo) (
 	if es = b.Errs(); es != nil {
 		return nil, es
 	}
-	buildBareFunc(b, stmts)
-	if es = b.Errs(); es != nil {
+	if es := buildBareFunc(b, stmts); es != nil {
+		return nil, es
+	}
+	if es := b.Errs(); es != nil {
 		return nil, es
 	}
 

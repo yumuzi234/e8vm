@@ -7,7 +7,6 @@ import (
 	"io"
 	"math/rand"
 
-	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/ir"
 	"e8vm.io/e8vm/g8/sempass"
 	"e8vm.io/e8vm/g8/tast"
@@ -35,7 +34,6 @@ type builder struct {
 	breaks    *blockStack
 
 	exprFunc  func(b *builder, expr tast.Expr) *ref
-	stmtFunc  func(b *builder, stmt ast.Stmt)
 	stmtFunc2 func(b *builder, stmt tast.Stmt)
 	irLog     io.WriteCloser
 
@@ -118,19 +116,7 @@ func (b *builder) buildExpr(expr tast.Expr) *ref {
 	return b.exprFunc(b, expr)
 }
 
-func (b *builder) buildStmts(stmts []ast.Stmt) {
-	if b.stmtFunc == nil {
-		return
-	}
-
-	for _, stmt := range stmts {
-		b.stmtFunc(b, stmt)
-	}
-}
-
-func (b *builder) buildStmt(stmt ast.Stmt) { b.stmtFunc(b, stmt) }
-
-func (b *builder) buildStmt2(stmt tast.Stmt) { b.stmtFunc2(b, stmt) }
+func (b *builder) buildStmt(stmt tast.Stmt) { b.stmtFunc2(b, stmt) }
 
 func (b *builder) Errs() []*lex8.Error {
 	if errs := b.spass.Errs(); errs != nil {

@@ -3,11 +3,10 @@ package g8
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/tast"
 )
 
-func buildStmt2(b *builder, s tast.Stmt) {
+func buildStmt(b *builder, s tast.Stmt) {
 	switch stmt := s.(type) {
 	case nil:
 		return // empty statement
@@ -44,16 +43,8 @@ func buildStmt2(b *builder, s tast.Stmt) {
 	}
 }
 
-func buildStmt(b *builder, stmt ast.Stmt) {
-	s := b.spass.BuildStmt(stmt)
-	if s == nil {
-		return
-	}
-	buildStmt2(b, s)
-}
-
 func buildBlock(b *builder, block *tast.Block) {
 	for _, s := range block.Stmts {
-		buildStmt2(b, s)
+		buildStmt(b, s)
 	}
 }
