@@ -17,12 +17,9 @@ type objFunc struct {
 	isAlias  bool
 }
 
+// TODO: this can be removed if typed const is fully supported in g8/types. We
+// are keeping this now only for builtin consts like nil, true and false.
 type objConst struct {
-	name string
-	*ref
-}
-
-type objType struct {
 	name string
 	*ref
 }

@@ -36,12 +36,9 @@ func buildPkgSym(b *builder, m *tast.MemberExpr, pkg *types.Pkg) *ref {
 		return sym.Obj.(*objConst).ref
 	case tast.SymVar:
 		return sym.Obj.(*objVar).ref
-	case tast.SymStruct:
-		return sym.Obj.(*objType).ref
 	case tast.SymFunc:
 		return sym.Obj.(*objFunc).ref
 	}
-
 	panic("bug")
 }
 

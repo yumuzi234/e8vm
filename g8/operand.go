@@ -63,8 +63,6 @@ func buildIdent(b *builder, id *tast.Ident) *ref {
 		return newRecvRef(v.Type().(*types.Func), b.this, v.IR())
 	case tast.SymConst:
 		return s.Obj.(*objConst).ref
-	case tast.SymType, tast.SymStruct:
-		return s.Obj.(*objType).ref
 	case tast.SymField:
 		v := s.Obj.(*types.Field)
 		return buildField(b, b.this.IR(), v)
@@ -79,8 +77,6 @@ func buildConstIdent(b *builder, id *tast.Ident) *ref {
 	switch s.Type {
 	case tast.SymConst:
 		return s.Obj.(*objConst).ref
-	case tast.SymType, tast.SymStruct:
-		return s.Obj.(*objType).ref
 	case tast.SymImport:
 		return s.Obj.(*objImport).ref
 	}

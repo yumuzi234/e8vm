@@ -79,8 +79,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 	c("nil", refNil)
 
 	t := func(name string, t types.T) {
-		obj := &objType{name, newTypeRef(t)}
-		s := sym8.Make(b.path, name, tast.SymType, obj, &types.Type{t}, nil)
+		s := sym8.Make(b.path, name, tast.SymType, nil, &types.Type{t}, nil)
 		pre := b.scope.Declare(s)
 		if pre != nil {
 			b.Errorf(nil, "builtin symbol %s declare failed", name)
