@@ -5,7 +5,7 @@ import (
 	"e8vm.io/e8vm/g8/types"
 )
 
-func buildNamedParaList(b *Builder, lst *ast.ParaList) []*types.Arg {
+func buildNamedParaList(b *builder, lst *ast.ParaList) []*types.Arg {
 	ret := make([]*types.Arg, lst.Len())
 	// named typeed list
 	for i, para := range lst.Paras {
@@ -46,7 +46,7 @@ func buildNamedParaList(b *Builder, lst *ast.ParaList) []*types.Arg {
 	return ret
 }
 
-func buildAnonyParaList(b *Builder, lst *ast.ParaList) []*types.Arg {
+func buildAnonyParaList(b *builder, lst *ast.ParaList) []*types.Arg {
 	ret := make([]*types.Arg, lst.Len())
 	for i, para := range lst.Paras {
 		if para.Ident != nil && para.Type != nil {
@@ -71,7 +71,7 @@ func buildAnonyParaList(b *Builder, lst *ast.ParaList) []*types.Arg {
 	return ret
 }
 
-func buildParaList(b *Builder, lst *ast.ParaList) []*types.Arg {
+func buildParaList(b *builder, lst *ast.ParaList) []*types.Arg {
 	if lst == nil {
 		return make([]*types.Arg, 0)
 	}

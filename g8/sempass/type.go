@@ -11,7 +11,7 @@ import (
 const thisName = "<this>"
 
 func buildFuncType(
-	b *Builder, recv *types.Pointer, f *ast.FuncSig,
+	b *builder, recv *types.Pointer, f *ast.FuncSig,
 ) *types.Func {
 	// the arguments
 	args := buildParaList(b, f.Args)
@@ -38,7 +38,7 @@ func buildFuncType(
 	return types.NewFunc(nil, args, rets)
 }
 
-func buildArrayType(b *Builder, expr *ast.ArrayTypeExpr) types.T {
+func buildArrayType(b *builder, expr *ast.ArrayTypeExpr) types.T {
 	t := buildType(b, expr.Type)
 	if t == nil {
 		return nil
@@ -81,7 +81,7 @@ func buildArrayType(b *Builder, expr *ast.ArrayTypeExpr) types.T {
 	return nil
 }
 
-func buildPkgRef(b *Builder, ident *lex8.Token) *types.Pkg {
+func buildPkgRef(b *builder, ident *lex8.Token) *types.Pkg {
 	s := b.scope.Query(ident.Lit)
 	if s == nil {
 		b.Errorf(ident.Pos, "undefined identifier %s", ident.Lit)
@@ -97,7 +97,7 @@ func buildPkgRef(b *Builder, ident *lex8.Token) *types.Pkg {
 	return s.ObjType.(*types.Pkg)
 }
 
-func buildType(b *Builder, expr ast.Expr) types.T {
+func buildType(b *builder, expr ast.Expr) types.T {
 	if expr == nil {
 		panic("bug")
 	}

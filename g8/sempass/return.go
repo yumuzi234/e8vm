@@ -7,7 +7,7 @@ import (
 	"e8vm.io/e8vm/g8/types"
 )
 
-func buildReturnStmt(b *Builder, stmt *ast.ReturnStmt) tast.Stmt {
+func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {
 	pos := stmt.Kw.Pos
 	if stmt.Exprs == nil {
 		if b.retType == nil || b.retNamed {

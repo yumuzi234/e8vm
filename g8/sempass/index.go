@@ -7,7 +7,7 @@ import (
 	"e8vm.io/e8vm/lex8"
 )
 
-func buildIndexExpr(b *Builder, expr *ast.IndexExpr) tast.Expr {
+func buildIndexExpr(b *builder, expr *ast.IndexExpr) tast.Expr {
 	array := b.BuildExpr(expr.Array)
 	if array == nil {
 		return nil
@@ -36,7 +36,7 @@ func elementType(t types.T) types.T {
 	return nil
 }
 
-func checkArrayIndex(b *Builder, index tast.Expr, pos *lex8.Pos) tast.Expr {
+func checkArrayIndex(b *builder, index tast.Expr, pos *lex8.Pos) tast.Expr {
 	t := index.R().T
 	if v, ok := types.NumConst(t); ok {
 		if v < 0 {
@@ -52,7 +52,7 @@ func checkArrayIndex(b *Builder, index tast.Expr, pos *lex8.Pos) tast.Expr {
 	return index
 }
 
-func buildArrayIndex(b *Builder, expr ast.Expr, pos *lex8.Pos) tast.Expr {
+func buildArrayIndex(b *builder, expr ast.Expr, pos *lex8.Pos) tast.Expr {
 	ret := b.BuildExpr(expr)
 	if ret == nil {
 		return nil
@@ -67,7 +67,7 @@ func buildArrayIndex(b *Builder, expr ast.Expr, pos *lex8.Pos) tast.Expr {
 }
 
 func buildSlicing(
-	b *Builder, expr *ast.IndexExpr, array tast.Expr,
+	b *builder, expr *ast.IndexExpr, array tast.Expr,
 ) tast.Expr {
 	t := array.R().T
 	et := elementType(t)
@@ -102,7 +102,7 @@ func buildSlicing(
 }
 
 func buildArrayGet(
-	b *Builder, expr *ast.IndexExpr, array tast.Expr,
+	b *builder, expr *ast.IndexExpr, array tast.Expr,
 ) tast.Expr {
 	t := array.R().T
 	et := elementType(t)

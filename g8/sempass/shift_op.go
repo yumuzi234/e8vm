@@ -5,7 +5,7 @@ import (
 	"e8vm.io/e8vm/lex8"
 )
 
-func canShift(b *Builder, atyp, btyp types.T, pos *lex8.Pos, op string) bool {
+func canShift(b *builder, atyp, btyp types.T, pos *lex8.Pos, op string) bool {
 	if !types.IsInteger(atyp) {
 		b.Errorf(pos, "%q on %s", op, atyp)
 		return false

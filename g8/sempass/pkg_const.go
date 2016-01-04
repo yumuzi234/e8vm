@@ -16,7 +16,7 @@ type pkgConst struct {
 	deps []string
 }
 
-func buildPkgConstDecl(b *Builder, d *ast.ConstDecl) []*pkgConst {
+func buildPkgConstDecl(b *builder, d *ast.ConstDecl) []*pkgConst {
 	if d.Type != nil {
 		b.Errorf(ast.ExprPos(d.Type), "typed const not implemented")
 		return nil
@@ -52,7 +52,7 @@ func buildPkgConstDecl(b *Builder, d *ast.ConstDecl) []*pkgConst {
 	return ret
 }
 
-func sortPkgConsts(b *Builder, consts []*pkgConst) []*pkgConst {
+func sortPkgConsts(b *builder, consts []*pkgConst) []*pkgConst {
 	m := make(map[string]*pkgConst)
 	s := toposort.NewSorter("const")
 	for _, c := range consts {
@@ -69,7 +69,7 @@ func sortPkgConsts(b *Builder, consts []*pkgConst) []*pkgConst {
 	return ret
 }
 
-func buildPkgConst(b *Builder, c *pkgConst) *sym8.Symbol {
+func buildPkgConst(b *builder, c *pkgConst) *sym8.Symbol {
 	right := b.buildConstExpr(c.expr)
 	if right == nil {
 		return nil
@@ -86,7 +86,7 @@ func buildPkgConst(b *Builder, c *pkgConst) *sym8.Symbol {
 	return c.sym
 }
 
-func buildPkgConsts(b *Builder, consts []*ast.ConstDecls) []*sym8.Symbol {
+func buildPkgConsts(b *builder, consts []*ast.ConstDecls) []*sym8.Symbol {
 	var res []*pkgConst
 	for _, c := range consts {
 		for _, d := range c.Decls {

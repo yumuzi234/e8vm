@@ -7,7 +7,7 @@ import (
 	"e8vm.io/e8vm/g8/types"
 )
 
-func buildCallLen(b *Builder, expr *ast.CallExpr, f tast.Expr) tast.Expr {
+func buildCallLen(b *builder, expr *ast.CallExpr, f tast.Expr) tast.Expr {
 	args := buildExprList(b, expr.Args)
 	if args == nil {
 		return nil
@@ -31,7 +31,7 @@ func buildCallLen(b *Builder, expr *ast.CallExpr, f tast.Expr) tast.Expr {
 	return nil
 }
 
-func buildCallMake(b *Builder, expr *ast.CallExpr, f tast.Expr) tast.Expr {
+func buildCallMake(b *builder, expr *ast.CallExpr, f tast.Expr) tast.Expr {
 	args := buildExprList(b, expr.Args)
 	if args == nil {
 		return nil
@@ -100,7 +100,7 @@ func buildCallMake(b *Builder, expr *ast.CallExpr, f tast.Expr) tast.Expr {
 	return nil
 }
 
-func buildCallExpr(b *Builder, expr *ast.CallExpr) tast.Expr {
+func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 	f := b.BuildExpr(expr.Func)
 	if f == nil {
 		return nil

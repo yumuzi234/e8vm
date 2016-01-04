@@ -5,7 +5,7 @@ import (
 	"e8vm.io/e8vm/g8/tast"
 )
 
-func buildForStmt(b *Builder, stmt *ast.ForStmt) tast.Stmt {
+func buildForStmt(b *builder, stmt *ast.ForStmt) tast.Stmt {
 	b.scope.Push()
 	defer b.scope.Pop()
 

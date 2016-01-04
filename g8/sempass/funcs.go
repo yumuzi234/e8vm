@@ -5,7 +5,7 @@ import (
 	"e8vm.io/e8vm/g8/tast"
 )
 
-func declareFuncs(b *Builder, funcs []*ast.Func) (
+func declareFuncs(b *builder, funcs []*ast.Func) (
 	[]*pkgFunc, []*tast.FuncAlias,
 ) {
 	var ret []*pkgFunc
@@ -29,7 +29,7 @@ func declareFuncs(b *Builder, funcs []*ast.Func) (
 	return ret, aliases
 }
 
-func buildFuncs(b *Builder, funcs []*pkgFunc) []*tast.Func {
+func buildFuncs(b *builder, funcs []*pkgFunc) []*tast.Func {
 	b.this = nil
 	b.thisType = nil
 
@@ -45,7 +45,7 @@ func buildFuncs(b *Builder, funcs []*pkgFunc) []*tast.Func {
 }
 
 func declareMethods(
-	b *Builder, methods []*ast.Func, pkgStructs []*pkgStruct,
+	b *builder, methods []*ast.Func, pkgStructs []*pkgStruct,
 ) []*pkgFunc {
 	m := make(map[string]*pkgStruct)
 	for _, ps := range pkgStructs {
@@ -82,7 +82,7 @@ func declareMethods(
 	return ret
 }
 
-func buildMethods(b *Builder, funcs []*pkgFunc) []*tast.Func {
+func buildMethods(b *builder, funcs []*pkgFunc) []*tast.Func {
 	var ret []*tast.Func
 	for _, f := range funcs {
 		r := buildMethod(b, f)

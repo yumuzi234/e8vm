@@ -6,14 +6,14 @@ import (
 	"e8vm.io/e8vm/g8/types"
 )
 
-func buildConstOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
+func buildConstOpExpr(b *builder, expr *ast.OpExpr) tast.Expr {
 	if expr.A == nil {
 		return buildConstUnaryOpExpr(b, expr)
 	}
 	return buildConstBinaryOpExpr(b, expr)
 }
 
-func buildConstUnaryOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
+func buildConstUnaryOpExpr(b *builder, expr *ast.OpExpr) tast.Expr {
 	opTok := expr.Op
 
 	B := b.buildConstExpr(expr.B)
@@ -23,7 +23,7 @@ func buildConstUnaryOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
 	return unaryOpConst(b, opTok, B)
 }
 
-func buildConstBinaryOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
+func buildConstBinaryOpExpr(b *builder, expr *ast.OpExpr) tast.Expr {
 	opTok := expr.Op
 
 	A := b.buildConstExpr(expr.A)
@@ -38,14 +38,14 @@ func buildConstBinaryOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
 	return binaryOpConst(b, opTok, A, B)
 }
 
-func buildOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
+func buildOpExpr(b *builder, expr *ast.OpExpr) tast.Expr {
 	if expr.A == nil {
 		return buildUnaryOpExpr(b, expr)
 	}
 	return buildBinaryOpExpr(b, expr)
 }
 
-func buildUnaryOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
+func buildUnaryOpExpr(b *builder, expr *ast.OpExpr) tast.Expr {
 	opTok := expr.Op
 	op := opTok.Lit
 	opPos := opTok.Pos
@@ -75,7 +75,7 @@ func buildUnaryOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
 	return nil
 }
 
-func buildBinaryOpExpr(b *Builder, expr *ast.OpExpr) tast.Expr {
+func buildBinaryOpExpr(b *builder, expr *ast.OpExpr) tast.Expr {
 	opTok := expr.Op
 	op := opTok.Lit
 	opPos := opTok.Pos

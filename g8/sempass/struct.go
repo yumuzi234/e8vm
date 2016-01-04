@@ -31,7 +31,7 @@ func newPkgStruct(s *ast.Struct) *pkgStruct {
 	}
 }
 
-func declareStruct(b *Builder, s *ast.Struct) *pkgStruct {
+func declareStruct(b *builder, s *ast.Struct) *pkgStruct {
 	ret := newPkgStruct(s)
 	name := ret.name.Lit
 	pos := ret.name.Pos
@@ -50,7 +50,7 @@ func declareStruct(b *Builder, s *ast.Struct) *pkgStruct {
 	return ret
 }
 
-func sortStructs(b *Builder, m map[string]*pkgStruct) []*pkgStruct {
+func sortStructs(b *builder, m map[string]*pkgStruct) []*pkgStruct {
 	s := toposort.NewSorter("struct")
 	for name, ps := range m {
 		s.AddNode(name, ps.name, ps.deps)
@@ -64,7 +64,7 @@ func sortStructs(b *Builder, m map[string]*pkgStruct) []*pkgStruct {
 	return ret
 }
 
-func buildFields(b *Builder, ps *pkgStruct) {
+func buildFields(b *builder, ps *pkgStruct) {
 	s := ps.ast
 	t := ps.t
 
@@ -90,7 +90,7 @@ func buildFields(b *Builder, ps *pkgStruct) {
 	}
 }
 
-func buildStructs(b *Builder, structs []*ast.Struct) []*pkgStruct {
+func buildStructs(b *builder, structs []*ast.Struct) []*pkgStruct {
 	m := make(map[string]*pkgStruct)
 	for _, s := range structs {
 		ps := declareStruct(b, s)

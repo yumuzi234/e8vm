@@ -7,7 +7,7 @@ import (
 	"e8vm.io/e8vm/sym8"
 )
 
-func declareVar(b *Builder, tok *lex8.Token, t types.T) *sym8.Symbol {
+func declareVar(b *builder, tok *lex8.Token, t types.T) *sym8.Symbol {
 	name := tok.Lit
 	s := sym8.Make(b.path, name, tast.SymVar, nil, t, tok.Pos)
 	conflict := b.scope.Declare(s)
@@ -21,7 +21,7 @@ func declareVar(b *Builder, tok *lex8.Token, t types.T) *sym8.Symbol {
 	return s
 }
 
-func declareVars(b *Builder, ids []*lex8.Token, t types.T) []*sym8.Symbol {
+func declareVars(b *builder, ids []*lex8.Token, t types.T) []*sym8.Symbol {
 	var syms []*sym8.Symbol
 	for _, id := range ids {
 		s := declareVar(b, id, t)

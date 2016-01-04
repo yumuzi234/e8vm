@@ -15,7 +15,7 @@ type pkgFunc struct {
 	recv *pkgStruct
 }
 
-func declareFuncSym(b *Builder, f *ast.Func, t types.T) *sym8.Symbol {
+func declareFuncSym(b *builder, f *ast.Func, t types.T) *sym8.Symbol {
 	name := f.Name.Lit
 	s := sym8.Make(b.path, name, tast.SymFunc, nil, t, f.Name.Pos)
 	conflict := b.scope.Declare(s)
@@ -29,7 +29,7 @@ func declareFuncSym(b *Builder, f *ast.Func, t types.T) *sym8.Symbol {
 	return s
 }
 
-func buildFuncAlias(b *Builder, f *ast.Func) *tast.FuncAlias {
+func buildFuncAlias(b *builder, f *ast.Func) *tast.FuncAlias {
 	t := buildFuncType(b, nil, f.FuncSig)
 	if t == nil {
 		return nil
@@ -63,7 +63,7 @@ func buildFuncAlias(b *Builder, f *ast.Func) *tast.FuncAlias {
 	return &tast.FuncAlias{Sym: ret, Of: sym}
 }
 
-func declareFunc(b *Builder, f *ast.Func) *pkgFunc {
+func declareFunc(b *builder, f *ast.Func) *pkgFunc {
 	if f.Alias != nil {
 		panic("bug")
 	}
@@ -82,7 +82,7 @@ func declareFunc(b *Builder, f *ast.Func) *pkgFunc {
 }
 
 func declareParas(
-	b *Builder, lst *ast.ParaList, ts []*types.Arg,
+	b *builder, lst *ast.ParaList, ts []*types.Arg,
 ) []*sym8.Symbol {
 	var ret []*sym8.Symbol
 	paras := lst.Paras
@@ -101,7 +101,7 @@ func declareParas(
 	return ret
 }
 
-func buildFunc(b *Builder, f *pkgFunc) *tast.Func {
+func buildFunc(b *builder, f *pkgFunc) *tast.Func {
 	b.scope.Push()
 	defer b.scope.Pop()
 
@@ -146,7 +146,7 @@ func buildFunc(b *Builder, f *pkgFunc) *tast.Func {
 	return ret
 }
 
-func buildMethod(b *Builder, f *pkgFunc) *tast.Func {
+func buildMethod(b *builder, f *pkgFunc) *tast.Func {
 	this := f.recv.pt
 	b.thisType = this
 	if f.f.Recv != nil { // go-like, explicit receiver
@@ -160,7 +160,7 @@ func buildMethod(b *Builder, f *pkgFunc) *tast.Func {
 	return buildFunc(b, f)
 }
 
-func declareMethod(b *Builder, ps *pkgStruct, f *ast.Func) *pkgFunc {
+func declareMethod(b *builder, ps *pkgStruct, f *ast.Func) *pkgFunc {
 	t := buildFuncType(b, ps.pt, f.FuncSig)
 	if t == nil {
 		return nil

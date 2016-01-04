@@ -7,7 +7,7 @@ import (
 	"e8vm.io/e8vm/lex8"
 )
 
-func assign(b *Builder, dest, src tast.Expr, op *lex8.Token) tast.Stmt {
+func assign(b *builder, dest, src tast.Expr, op *lex8.Token) tast.Stmt {
 	destRef := dest.R()
 	srcRef := src.R()
 
@@ -62,7 +62,7 @@ func parseAssignOp(op string) string {
 	return op[:opLen-1]
 }
 
-func opAssign(b *Builder, dest, src tast.Expr, op *lex8.Token) tast.Stmt {
+func opAssign(b *builder, dest, src tast.Expr, op *lex8.Token) tast.Stmt {
 	destRef := dest.R()
 	srcRef := src.R()
 	if !destRef.IsSingle() || !srcRef.IsSingle() {
@@ -113,7 +113,7 @@ func opAssign(b *Builder, dest, src tast.Expr, op *lex8.Token) tast.Stmt {
 	return nil
 }
 
-func buildAssignStmt(b *Builder, stmt *ast.AssignStmt) tast.Stmt {
+func buildAssignStmt(b *builder, stmt *ast.AssignStmt) tast.Stmt {
 	left := b.BuildExpr(stmt.Left)
 	if left == nil {
 		return nil

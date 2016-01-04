@@ -5,7 +5,7 @@ import (
 	"e8vm.io/e8vm/g8/tast"
 )
 
-func buildExpr(b *Builder, expr ast.Expr) tast.Expr {
+func buildExpr(b *builder, expr ast.Expr) tast.Expr {
 	if expr == nil {
 		panic("bug")
 	}
@@ -45,7 +45,7 @@ func buildExpr(b *Builder, expr ast.Expr) tast.Expr {
 	return nil
 }
 
-func buildConstExpr(b *Builder, expr ast.Expr) tast.Expr {
+func buildConstExpr(b *builder, expr ast.Expr) tast.Expr {
 	if expr == nil {
 		panic("bug")
 	}
@@ -65,7 +65,7 @@ func buildConstExpr(b *Builder, expr ast.Expr) tast.Expr {
 	return nil
 }
 
-func buildExprStmt(b *Builder, expr ast.Expr) tast.Stmt {
+func buildExprStmt(b *builder, expr ast.Expr) tast.Stmt {
 	if e, ok := expr.(*ast.CallExpr); ok {
 		ret := buildExpr(b, e)
 		if ret == nil {

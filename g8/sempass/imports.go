@@ -9,7 +9,7 @@ import (
 )
 
 func buildImports(
-	b *Builder, f *ast.File, imps map[string]*build8.Package,
+	b *builder, f *ast.File, imps map[string]*build8.Package,
 ) []*sym8.Symbol {
 	if f.Imports == nil {
 		return nil

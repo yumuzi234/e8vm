@@ -5,7 +5,7 @@ import (
 	"e8vm.io/e8vm/g8/tast"
 )
 
-func buildPkgVars(b *Builder, vars []*ast.VarDecls) []*tast.Define {
+func buildPkgVars(b *builder, vars []*ast.VarDecls) []*tast.Define {
 	var ret []*tast.Define
 	for _, decls := range vars {
 		for _, d := range decls.Decls {
@@ -18,7 +18,7 @@ func buildPkgVars(b *Builder, vars []*ast.VarDecls) []*tast.Define {
 	return ret
 }
 
-func buildPkgVar(b *Builder, d *ast.VarDecl) *tast.Define {
+func buildPkgVar(b *builder, d *ast.VarDecl) *tast.Define {
 	if d.Eq != nil {
 		b.Errorf(d.Eq.Pos, "init for global var not supported yet")
 		return nil

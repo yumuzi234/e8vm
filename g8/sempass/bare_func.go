@@ -11,7 +11,7 @@ import (
 func BuildBareFunc(scope *sym8.Scope, stmts []ast.Stmt) (
 	[]tast.Stmt, []*lex8.Error,
 ) {
-	b := NewBuilder("_", scope)
+	b := makeBuilder("_", scope)
 	b.scope.Push()
 	defer b.scope.Pop()
 	ret := buildStmts(b, stmts)

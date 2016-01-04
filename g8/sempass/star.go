@@ -6,7 +6,7 @@ import (
 	"e8vm.io/e8vm/g8/types"
 )
 
-func buildStarExpr(b *Builder, expr *ast.StarExpr) tast.Expr {
+func buildStarExpr(b *builder, expr *ast.StarExpr) tast.Expr {
 	opPos := expr.Star.Pos
 
 	addr := b.BuildExpr(expr.Expr)

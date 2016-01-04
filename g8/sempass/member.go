@@ -10,7 +10,7 @@ import (
 )
 
 func findPackageSym(
-	b *Builder, sub *lex8.Token, pkg *types.Pkg,
+	b *builder, sub *lex8.Token, pkg *types.Pkg,
 ) *sym8.Symbol {
 	sym := pkg.Syms.Query(sub.Lit)
 	if sym == nil {
@@ -28,7 +28,7 @@ func findPackageSym(
 	return sym
 }
 
-func buildConstMember(b *Builder, m *ast.MemberExpr) tast.Expr {
+func buildConstMember(b *builder, m *ast.MemberExpr) tast.Expr {
 	obj := b.buildConstExpr(m.Expr)
 	if obj == nil {
 		return nil
@@ -57,7 +57,7 @@ func buildConstMember(b *Builder, m *ast.MemberExpr) tast.Expr {
 }
 
 func buildPkgSym(
-	b *Builder, m *ast.MemberExpr, pkg *types.Pkg,
+	b *builder, m *ast.MemberExpr, pkg *types.Pkg,
 ) (*tast.Ref, *sym8.Symbol) {
 	sym := findPackageSym(b, m.Sub, pkg)
 	if sym == nil {
@@ -91,7 +91,7 @@ func buildPkgSym(
 	return nil, nil
 }
 
-func buildMember(b *Builder, m *ast.MemberExpr) tast.Expr {
+func buildMember(b *builder, m *ast.MemberExpr) tast.Expr {
 	obj := b.BuildExpr(m.Expr)
 	if obj == nil {
 		return nil

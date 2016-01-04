@@ -6,7 +6,7 @@ import (
 	"e8vm.io/e8vm/lex8"
 )
 
-func unaryOpBool(b *Builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
+func unaryOpBool(b *builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
 	op := opTok.Lit
 	if op == "!" {
 		t := B.R().T
@@ -17,7 +17,7 @@ func unaryOpBool(b *Builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
 	return nil
 }
 
-func binaryOpBool(b *Builder, opTok *lex8.Token, A, B tast.Expr) tast.Expr {
+func binaryOpBool(b *builder, opTok *lex8.Token, A, B tast.Expr) tast.Expr {
 	op := opTok.Lit
 	switch op {
 	case "==", "!=", "&&", "||":

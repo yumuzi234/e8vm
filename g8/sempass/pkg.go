@@ -11,8 +11,7 @@ import (
 	"e8vm.io/e8vm/sym8"
 )
 
-// NewBuilder creates a new builder with a specific path.
-func NewBuilder(path string, scope *sym8.Scope) *Builder {
+func makeBuilder(path string, scope *sym8.Scope) *builder {
 	ret := newBuilder(path)
 	ret.exprFunc = buildExpr
 	ret.constFunc = buildConstExpr
@@ -83,7 +82,7 @@ func (p *Pkg) onlyFile() *ast.File {
 }
 
 func (p *Pkg) buildImports(
-	b *Builder, imps map[string]*build8.Package,
+	b *builder, imps map[string]*build8.Package,
 ) []*sym8.Symbol {
 	if f := p.onlyFile(); f != nil {
 		return buildImports(b, f, imps)
@@ -117,7 +116,7 @@ func (p *Pkg) buildImports(
 func (p *Pkg) Build(scope *sym8.Scope) (
 	*tast.Pkg, *dagvis.Graph, []*lex8.Error,
 ) {
-	b := NewBuilder(p.Path, scope)
+	b := makeBuilder(p.Path, scope)
 	b.InitDeps(p.Files)
 
 	imports := p.buildImports(b, p.Imports)
@@ -175,9 +174,3 @@ func (p *Pkg) Build(scope *sym8.Scope) (
 		FuncAliases: aliases,
 	}, depGraph, nil
 }
-
-// BuildPkgConsts is a temp function for building package consts.
-var BuildPkgConsts = buildPkgConsts
-
-// BuildPkgVars is a temp function for building package vars.
-var BuildPkgVars = buildPkgVars

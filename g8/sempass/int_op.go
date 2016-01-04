@@ -6,7 +6,7 @@ import (
 	"e8vm.io/e8vm/lex8"
 )
 
-func unaryOpConst(b *Builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
+func unaryOpConst(b *builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
 	op := opTok.Lit
 	bref := B.R()
 	if !bref.IsSingle() {
@@ -32,7 +32,7 @@ func unaryOpConst(b *Builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
 	return nil
 }
 
-func binaryOpConst(b *Builder, opTok *lex8.Token, A, B tast.Expr) tast.Expr {
+func binaryOpConst(b *builder, opTok *lex8.Token, A, B tast.Expr) tast.Expr {
 	op := opTok.Lit
 	aref := A.R()
 	bref := B.R()
@@ -97,7 +97,7 @@ func binaryOpConst(b *Builder, opTok *lex8.Token, A, B tast.Expr) tast.Expr {
 	return nil
 }
 
-func unaryOpInt(b *Builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
+func unaryOpInt(b *builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
 	op := opTok.Lit
 	switch op {
 	case "+":
@@ -112,7 +112,7 @@ func unaryOpInt(b *Builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
 }
 
 func binaryOpInt(
-	b *Builder, opTok *lex8.Token, A, B tast.Expr, t types.T,
+	b *builder, opTok *lex8.Token, A, B tast.Expr, t types.T,
 ) tast.Expr {
 	op := opTok.Lit
 	switch op {

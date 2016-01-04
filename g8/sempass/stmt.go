@@ -5,7 +5,7 @@ import (
 	"e8vm.io/e8vm/g8/tast"
 )
 
-func buildStmt(b *Builder, stmt ast.Stmt) tast.Stmt {
+func buildStmt(b *builder, stmt ast.Stmt) tast.Stmt {
 	switch stmt := stmt.(type) {
 	case *ast.EmptyStmt:
 		return nil
@@ -41,7 +41,7 @@ func buildStmt(b *Builder, stmt ast.Stmt) tast.Stmt {
 	return nil
 }
 
-func buildStmts(b *Builder, stmts []ast.Stmt) []tast.Stmt {
+func buildStmts(b *builder, stmts []ast.Stmt) []tast.Stmt {
 	var ret []tast.Stmt
 	for _, stmt := range stmts {
 		s := buildStmt(b, stmt)

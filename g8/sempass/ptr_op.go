@@ -6,7 +6,7 @@ import (
 	"e8vm.io/e8vm/lex8"
 )
 
-func refAddress(b *Builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
+func refAddress(b *builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
 	op := opTok.Lit
 	opPos := opTok.Pos
 
@@ -23,7 +23,7 @@ func refAddress(b *Builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
 	return &tast.OpExpr{nil, opTok, B, r}
 }
 
-func binaryOpNil(b *Builder, opTok *lex8.Token, A, B tast.Expr) tast.Expr {
+func binaryOpNil(b *builder, opTok *lex8.Token, A, B tast.Expr) tast.Expr {
 	op := opTok.Lit
 	switch op {
 	case "==", "!=":
@@ -34,7 +34,7 @@ func binaryOpNil(b *Builder, opTok *lex8.Token, A, B tast.Expr) tast.Expr {
 	return nil
 }
 
-func binaryOpPtr(b *Builder, opTok *lex8.Token, A, B tast.Expr) tast.Expr {
+func binaryOpPtr(b *builder, opTok *lex8.Token, A, B tast.Expr) tast.Expr {
 	op := opTok.Lit
 	atyp := A.R().T
 	btyp := B.R().T
@@ -54,7 +54,7 @@ func binaryOpPtr(b *Builder, opTok *lex8.Token, A, B tast.Expr) tast.Expr {
 	return nil
 }
 
-func binaryOpSlice(b *Builder, opTok *lex8.Token, A, B tast.Expr) tast.Expr {
+func binaryOpSlice(b *builder, opTok *lex8.Token, A, B tast.Expr) tast.Expr {
 	op := opTok.Lit
 	switch op {
 	case "==", "!=":

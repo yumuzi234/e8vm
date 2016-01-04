@@ -6,7 +6,7 @@ import (
 	"e8vm.io/e8vm/g8/types"
 )
 
-func buildIncStmt(b *Builder, stmt *ast.IncStmt) tast.Stmt {
+func buildIncStmt(b *builder, stmt *ast.IncStmt) tast.Stmt {
 	op := stmt.Op.Lit
 	expr := b.BuildExpr(stmt.Expr)
 	if expr == nil {

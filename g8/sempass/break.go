@@ -5,7 +5,7 @@ import (
 	"e8vm.io/e8vm/g8/tast"
 )
 
-func buildBreakStmt(b *Builder, s *ast.BreakStmt) tast.Stmt {
+func buildBreakStmt(b *builder, s *ast.BreakStmt) tast.Stmt {
 	if s.Label != nil {
 		b.Errorf(s.Label.Pos, "break with label not implemented")
 		return nil

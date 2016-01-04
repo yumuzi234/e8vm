@@ -5,12 +5,12 @@ import (
 	"e8vm.io/e8vm/g8/tast"
 )
 
-func buildIfStmt(b *Builder, stmt *ast.IfStmt) tast.Stmt {
+func buildIfStmt(b *builder, stmt *ast.IfStmt) tast.Stmt {
 	return buildIf(b, stmt.Expr, stmt.Body, stmt.Else)
 }
 
 func buildIf(
-	b *Builder, cond ast.Expr, ifs ast.Stmt, elses *ast.ElseStmt,
+	b *builder, cond ast.Expr, ifs ast.Stmt, elses *ast.ElseStmt,
 ) tast.Stmt {
 	c := b.BuildExpr(cond)
 	if c == nil {
@@ -52,7 +52,7 @@ func buildIf(
 	return &tast.IfStmt{c, body, next}
 }
 
-func buildElseStmt(b *Builder, stmt *ast.ElseStmt) tast.Stmt {
+func buildElseStmt(b *builder, stmt *ast.ElseStmt) tast.Stmt {
 	if stmt.If == nil {
 		if stmt.Expr != nil {
 			panic("invalid expression in else")

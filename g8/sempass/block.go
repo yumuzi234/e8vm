@@ -5,7 +5,7 @@ import (
 	"e8vm.io/e8vm/g8/tast"
 )
 
-func buildBlock(b *Builder, block *ast.Block) tast.Stmt {
+func buildBlock(b *builder, block *ast.Block) tast.Stmt {
 	b.scope.Push()
 	defer b.scope.Pop()
 
@@ -20,6 +20,6 @@ func buildBlock(b *Builder, block *ast.Block) tast.Stmt {
 	return &tast.Block{stmts}
 }
 
-func buildBlockStmt(b *Builder, block *ast.BlockStmt) tast.Stmt {
+func buildBlockStmt(b *builder, block *ast.BlockStmt) tast.Stmt {
 	return buildBlock(b, block.Block)
 }

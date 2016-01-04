@@ -5,7 +5,7 @@ import (
 	"e8vm.io/e8vm/g8/tast"
 )
 
-func buildExprList(b *Builder, list *ast.ExprList) tast.Expr {
+func buildExprList(b *builder, list *ast.ExprList) tast.Expr {
 	ret := tast.NewExprList()
 	if list == nil {
 		return ret
@@ -35,7 +35,7 @@ func buildExprList(b *Builder, list *ast.ExprList) tast.Expr {
 	return ret
 }
 
-func buildConstExprList(b *Builder, list *ast.ExprList) tast.Expr {
+func buildConstExprList(b *builder, list *ast.ExprList) tast.Expr {
 	n := list.Len()
 	if n == 0 {
 		b.Errorf(ast.ExprPos(list), "const expression list of zero length")

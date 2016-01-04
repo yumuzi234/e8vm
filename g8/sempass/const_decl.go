@@ -8,7 +8,7 @@ import (
 	"e8vm.io/e8vm/sym8"
 )
 
-func declareConst(b *Builder, tok *lex8.Token, t types.T) *sym8.Symbol {
+func declareConst(b *builder, tok *lex8.Token, t types.T) *sym8.Symbol {
 	name := tok.Lit
 	s := sym8.Make(b.path, name, tast.SymConst, nil, t, tok.Pos)
 	conflict := b.scope.Declare(s)
@@ -22,7 +22,7 @@ func declareConst(b *Builder, tok *lex8.Token, t types.T) *sym8.Symbol {
 	return s
 }
 
-func buildConstDecl(b *Builder, d *ast.ConstDecl) *tast.Define {
+func buildConstDecl(b *builder, d *ast.ConstDecl) *tast.Define {
 	if d.Type != nil {
 		b.Errorf(ast.ExprPos(d.Type), "typed const not implemented yet")
 		return nil
@@ -61,7 +61,7 @@ func buildConstDecl(b *Builder, d *ast.ConstDecl) *tast.Define {
 	return &tast.Define{syms, right}
 }
 
-func buildConstDecls(b *Builder, decls *ast.ConstDecls) tast.Stmt {
+func buildConstDecls(b *builder, decls *ast.ConstDecls) tast.Stmt {
 	if len(decls.Decls) == 0 {
 		return nil
 	}

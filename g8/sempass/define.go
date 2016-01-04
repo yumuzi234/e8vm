@@ -13,7 +13,7 @@ import (
 // implicit type casts if needed. Only literay expression list needs alloc
 // prepare.
 func allocPrepare(
-	b *Builder, toks []*lex8.Token, lst *tast.ExprList,
+	b *builder, toks []*lex8.Token, lst *tast.ExprList,
 ) *tast.ExprList {
 	ret := tast.NewExprList()
 	for i, tok := range toks {
@@ -39,7 +39,7 @@ func allocPrepare(
 }
 
 func define(
-	b *Builder, ids []*lex8.Token, expr tast.Expr, eq *lex8.Token,
+	b *builder, ids []*lex8.Token, expr tast.Expr, eq *lex8.Token,
 ) *tast.Define {
 	// check count matching
 	r := expr.R()
@@ -74,7 +74,7 @@ func define(
 	return &tast.Define{syms, expr}
 }
 
-func buildIdentExprList(b *Builder, list *ast.ExprList) (
+func buildIdentExprList(b *builder, list *ast.ExprList) (
 	idents []*lex8.Token, firstError ast.Expr,
 ) {
 	ret := make([]*lex8.Token, 0, list.Len())
@@ -92,7 +92,7 @@ func buildIdentExprList(b *Builder, list *ast.ExprList) (
 	return ret, nil
 }
 
-func buildDefineStmt(b *Builder, stmt *ast.DefineStmt) tast.Stmt {
+func buildDefineStmt(b *builder, stmt *ast.DefineStmt) tast.Stmt {
 	right := b.BuildExpr(stmt.Right)
 	if right == nil {
 		return nil
