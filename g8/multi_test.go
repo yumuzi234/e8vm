@@ -146,6 +146,11 @@ func TestMultiFileBad(t *testing.T) {
 			t.Error("should error")
 			return
 		}
+
+		t.Log(files)
+		for _, e := range es {
+			t.Log(e)
+		}
 	}
 	type files map[string]string
 
@@ -153,5 +158,22 @@ func TestMultiFileBad(t *testing.T) {
 	o(files{
 		"main/a.g": `func main() { a() }; func b() {}`,
 		"main/b.g": `func a() { b() }`,
+	})
+
+	o(files{
+		"a/a.g":    ``,
+		"main/a.g": `import ("a"); func a() {}; func main() {};`,
+	})
+
+	o(files{
+		"asm/a/a.g": `
+			func A {
+			}
+		`,
+		"main/a.g": `
+			import ("asm/a")
+			struct A { func f() = a.A; }
+			func main() { }
+		`,
 	})
 }

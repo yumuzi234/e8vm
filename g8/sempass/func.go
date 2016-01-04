@@ -161,6 +161,11 @@ func buildMethod(b *builder, f *pkgFunc) *tast.Func {
 }
 
 func declareMethod(b *builder, ps *pkgStruct, f *ast.Func) *pkgFunc {
+	if f.Alias != nil {
+		b.Errorf(f.Alias.Eq.Pos, "cannot alias a function for a method")
+		return nil
+	}
+
 	t := buildFuncType(b, ps.pt, f.FuncSig)
 	if t == nil {
 		return nil
