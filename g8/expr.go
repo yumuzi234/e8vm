@@ -3,7 +3,6 @@ package g8
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 )
@@ -37,14 +36,6 @@ func buildExpr2(b *builder, expr tast.Expr) *ref {
 		return buildExprList(b, expr)
 	}
 	panic(fmt.Errorf("buildExpr2 not implemented for %T", expr))
-}
-
-func buildConstExpr(b *builder, expr ast.Expr) *ref {
-	c := b.spass.BuildConstExpr(expr)
-	if c == nil {
-		return nil
-	}
-	return buildConst(b, c)
 }
 
 func buildExprList(b *builder, list *tast.ExprList) *ref {

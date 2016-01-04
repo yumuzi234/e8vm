@@ -28,7 +28,6 @@ func (bareFunc) Prepare(
 
 func buildBareFunc(b *builder, stmts []ast.Stmt) {
 	b.f = b.p.NewFunc(":start", nil, ir.VoidFuncSig)
-	b.fretNamed = false
 	b.fretRef = nil
 	b.spass.SetRetType(nil, false)
 	b.b = b.f.NewBlock(nil)
