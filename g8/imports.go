@@ -2,8 +2,6 @@ package g8
 
 import (
 	"io"
-	"path"
-	"strconv"
 
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/g8/ast"
@@ -17,48 +15,29 @@ type importDecl struct {
 	pos  *lex8.Pos
 }
 
-func importPos(d *ast.ImportDecl) *lex8.Pos {
-	if d.As == nil {
-		return d.Path.Pos
-	}
-	return d.As.Pos
-}
-
-func importPathAs(d *ast.ImportDecl) (p, as string, err error) {
-	p, err = strconv.Unquote(d.Path.Lit)
-	if err != nil {
-		return "", "", err
-	}
-
-	if d.As == nil {
-		return p, path.Base(p), nil
-	}
-	return p, d.As.Lit, nil
-}
-
 func listImport(
 	f string, rc io.ReadCloser, imp build8.Importer, golike bool,
 ) []*lex8.Error {
-	ast, _, es := parse.File(f, rc, golike)
+	fast, _, es := parse.File(f, rc, golike)
 	if es != nil {
 		return es
 	}
 
-	if ast.Imports == nil {
+	if fast.Imports == nil {
 		return nil
 	}
 
 	m := make(map[string]*importDecl)
 	log := lex8.NewErrorList()
 
-	for _, d := range ast.Imports.Decls {
-		p, as, e := importPathAs(d)
+	for _, d := range fast.Imports.Decls {
+		p, as, e := ast.ImportPathAs(d)
 		if e != nil {
 			log.Errorf(d.Path.Pos, "invalid path string %s", d.Path.Lit)
 			continue
 		}
 
-		pos := importPos(d)
+		pos := ast.ImportPos(d)
 		if other, found := m[as]; found {
 			log.Errorf(pos, "%s already imported", as)
 			log.Errorf(other.pos, "  previously imported here")

@@ -48,19 +48,3 @@ type ConstDecls struct {
 	Rparen *lex8.Token // optional
 	Semi   *lex8.Token
 }
-
-// ImportDecl is a import declare line
-type ImportDecl struct {
-	As   *lex8.Token // optional
-	Path *lex8.Token
-	Semi *lex8.Token
-}
-
-// ImportDecls is a top-level import declaration block
-type ImportDecls struct {
-	Kw     *lex8.Token
-	Lparen *lex8.Token
-	Decls  []*ImportDecl
-	Rparen *lex8.Token
-	Semi   *lex8.Token
-}

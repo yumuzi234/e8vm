@@ -1,35 +1,12 @@
 package sempass
 
 import (
-	"path"
-	"strconv"
-
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
-	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/sym8"
 )
-
-func importPos(d *ast.ImportDecl) *lex8.Pos {
-	if d.As == nil {
-		return d.Path.Pos
-	}
-	return d.As.Pos
-}
-
-func importPathAs(d *ast.ImportDecl) (p, as string, err error) {
-	p, err = strconv.Unquote(d.Path.Lit)
-	if err != nil {
-		return "", "", err
-	}
-
-	if d.As == nil {
-		return p, path.Base(p), nil
-	}
-	return p, d.As.Lit, nil
-}
 
 func buildImports(
 	b *Builder, f *ast.File, imps map[string]*build8.Package,
@@ -40,7 +17,7 @@ func buildImports(
 
 	var ret []*sym8.Symbol
 	for _, d := range f.Imports.Decls {
-		_, as, e := importPathAs(d)
+		_, as, e := ast.ImportPathAs(d)
 		if e != nil {
 			b.Errorf(d.Path.Pos, "invalid import path")
 			continue
@@ -52,7 +29,7 @@ func buildImports(
 			continue
 		}
 
-		pos := importPos(d)
+		pos := ast.ImportPos(d)
 		if !(p.Lang == "asm8" || p.Lang == "g8") {
 			b.Errorf(pos, "cannot import %q pacakge %q",
 				p.Lang, as,
