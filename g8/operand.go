@@ -67,7 +67,8 @@ func buildIdent(b *builder, id *tast.Ident) *ref {
 		v := s.Obj.(*types.Field)
 		return buildField(b, b.this.IR(), v)
 	case tast.SymImport:
-		return s.Obj.(*objImport).ref
+		t := s.ObjType.(types.T)
+		return newRef(t, nil)
 	}
 	panic(fmt.Errorf("unhandled token type: %s", tast.SymStr(s.Type)))
 }
@@ -77,8 +78,6 @@ func buildConstIdent(b *builder, id *tast.Ident) *ref {
 	switch s.Type {
 	case tast.SymConst:
 		return s.Obj.(*objConst).ref
-	case tast.SymImport:
-		return s.Obj.(*objImport).ref
 	}
 	panic(fmt.Errorf("not a const: %s", tast.SymStr(s.Type)))
 }

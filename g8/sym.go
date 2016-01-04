@@ -23,7 +23,3 @@ type objConst struct {
 	name string
 	*ref
 }
-
-type objImport struct {
-	*ref
-}

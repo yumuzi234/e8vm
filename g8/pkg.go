@@ -83,11 +83,6 @@ func buildPkg(
 		return nil, nil, errs
 	}
 
-	for _, imp := range res.Imports {
-		t := imp.ObjType.(types.T)
-		imp.Obj = &objImport{newRef(t, nil)}
-	}
-
 	for _, c := range res.Consts {
 		name := c.Name()
 		t := c.ObjType.(types.T)
