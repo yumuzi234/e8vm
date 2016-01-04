@@ -8,10 +8,7 @@ import (
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/parse"
-	"e8vm.io/e8vm/g8/tast"
-	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/lex8"
-	"e8vm.io/e8vm/sym8"
 )
 
 type importDecl struct {
@@ -80,45 +77,4 @@ func listImport(
 	}
 
 	return nil
-}
-
-func declareImports(
-	b *builder, f *ast.File, imports map[string]*build8.Package,
-) {
-	if f.Imports == nil {
-		return
-	}
-
-	for _, d := range f.Imports.Decls {
-		_, as, e := importPathAs(d)
-		if e != nil {
-			b.Errorf(d.Path.Pos, "invalid path")
-			continue
-		}
-
-		p := imports[as]
-		if p == nil {
-			b.Errorf(d.Path.Pos, "package %s missing", as)
-			continue
-		}
-
-		if p.Lang == "asm8" || p.Lang == "g8" {
-			pos := importPos(d)
-			t := &types.Pkg{as, p.Lang, p.Symbols}
-			ref := newRef(t, nil)
-			obj := &objImport{ref}
-			sym := sym8.Make(b.path, as, tast.SymImport, obj, t, pos)
-			pre := b.scope.Declare(sym)
-			if pre != nil {
-				b.Errorf(pos, "%s already declared", as)
-				continue
-			}
-		} else {
-			b.Errorf(importPos(d), "cannot import %q package %q",
-				p.Lang, as,
-			)
-			continue
-		}
-
-	}
 }
