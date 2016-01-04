@@ -2,7 +2,6 @@ package g8
 
 import (
 	"fmt"
-	"io"
 
 	"e8vm.io/e8vm/g8/ir"
 	"e8vm.io/e8vm/g8/tast"
@@ -30,9 +29,8 @@ type builder struct {
 
 	exprFunc func(b *builder, expr tast.Expr) *ref
 	stmtFunc func(b *builder, stmt tast.Stmt)
-	irLog    io.WriteCloser
 
-	anonyCount int
+	anonyCount int // count for "_"
 }
 
 func newBuilder(path string) *builder {
@@ -81,9 +79,6 @@ func (b *builder) newGlobalVar(t types.T, name string) ir.Ref {
 }
 
 func (b *builder) buildExpr(expr tast.Expr) *ref {
-	if b.exprFunc == nil {
-		panic("exprFunc2 function not assigned")
-	}
 	return b.exprFunc(b, expr)
 }
 
