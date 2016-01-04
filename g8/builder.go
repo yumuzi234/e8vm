@@ -8,7 +8,6 @@ import (
 	"math/rand"
 
 	"e8vm.io/e8vm/g8/ir"
-	"e8vm.io/e8vm/g8/sempass"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/lex8"
@@ -45,8 +44,6 @@ type builder struct {
 	anonyCount int
 
 	rand *rand.Rand
-
-	spass *sempass.Builder
 }
 
 func newRand() *rand.Rand {
@@ -72,8 +69,6 @@ func newBuilder(path string, golike bool) *builder {
 		breaks:    newBlockStack(),
 
 		rand: newRand(),
-
-		spass: sempass.NewBuilder(path, s),
 	}
 }
 
@@ -117,10 +112,3 @@ func (b *builder) buildExpr(expr tast.Expr) *ref {
 }
 
 func (b *builder) buildStmt(stmt tast.Stmt) { b.stmtFunc2(b, stmt) }
-
-func (b *builder) Errs() []*lex8.Error {
-	if errs := b.spass.Errs(); errs != nil {
-		return errs
-	}
-	return b.ErrorList.Errs()
-}
