@@ -98,7 +98,6 @@ func buildPkg2(
 	for _, s := range res.Structs {
 		t := s.ObjType.(*types.Type)
 		st := t.T.(*types.Struct)
-		s.Obj = &structInfo{t: st, pt: &types.Pointer{st}}
 
 		members := st.Syms.List()
 		for _, m := range members {
