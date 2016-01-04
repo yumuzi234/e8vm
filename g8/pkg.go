@@ -1,7 +1,10 @@
 package g8
 
 import (
+	crand "crypto/rand"
+	"encoding/binary"
 	"fmt"
+	"math/rand"
 
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/dagvis"
@@ -37,6 +40,16 @@ func (p *pkg) build(b *builder, pinfo *build8.PkgInfo) []*lex8.Error {
 	return errs
 }
 
+func newRand() *rand.Rand {
+	var buf [8]byte
+	_, err := crand.Read(buf[:])
+	if err != nil {
+		panic(err)
+	}
+	seed := int64(binary.LittleEndian.Uint64(buf[:]))
+	return rand.New(rand.NewSource(seed))
+}
+
 func buildTests(b *builder, tops *sym8.Table) (
 	testList ir.Ref, testNames []string,
 ) {
@@ -52,7 +65,8 @@ func buildTests(b *builder, tops *sym8.Table) (
 		return
 	}
 
-	perm := b.rand.Perm(n)
+	rand := newRand()
+	perm := rand.Perm(n)
 
 	var irs []*ir.Func
 	var names []string

@@ -70,7 +70,7 @@ func (bare bareFunc) Compile(pinfo *build8.PkgInfo) (
 	}
 
 	// building
-	b := makeBuilder(pinfo, false)
+	b := makeBuilder(pinfo)
 	if es = b.Errs(); es != nil {
 		return nil, es
 	}

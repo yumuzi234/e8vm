@@ -1,11 +1,8 @@
 package g8
 
 import (
-	crand "crypto/rand"
-	"encoding/binary"
 	"fmt"
 	"io"
-	"math/rand"
 
 	"e8vm.io/e8vm/g8/ir"
 	"e8vm.io/e8vm/g8/tast"
@@ -17,58 +14,37 @@ import (
 // builder builds a package
 type builder struct {
 	*lex8.ErrorList
-	path string
+	path  string
+	scope *sym8.Scope
 
 	p *ir.Pkg
 	f *ir.Func
 	b *ir.Block
 
-	fretRef *ref
-
-	golike bool
-
-	scope *sym8.Scope
+	panicFunc ir.Ref // for calling panic
+	fretRef   *ref   // to store return value
+	this      *ref   // not nil when building a method
 
 	continues *blockStack
 	breaks    *blockStack
 
-	exprFunc  func(b *builder, expr tast.Expr) *ref
-	stmtFunc2 func(b *builder, stmt tast.Stmt)
-	irLog     io.WriteCloser
-
-	panicFunc ir.Ref
-
-	// this pointer, only valid when building a method.
-	this *ref
+	exprFunc func(b *builder, expr tast.Expr) *ref
+	stmtFunc func(b *builder, stmt tast.Stmt)
+	irLog    io.WriteCloser
 
 	anonyCount int
-
-	rand *rand.Rand
 }
 
-func newRand() *rand.Rand {
-	var buf [8]byte
-	_, err := crand.Read(buf[:])
-	if err != nil {
-		panic(err)
-	}
-	seed := int64(binary.LittleEndian.Uint64(buf[:]))
-	return rand.New(rand.NewSource(seed))
-}
-
-func newBuilder(path string, golike bool) *builder {
+func newBuilder(path string) *builder {
 	s := sym8.NewScope()
 	return &builder{
 		ErrorList: lex8.NewErrorList(),
 		path:      path,
 		p:         ir.NewPkg(path),
 		scope:     s, // package scope
-		golike:    golike,
 
 		continues: newBlockStack(),
 		breaks:    newBlockStack(),
-
-		rand: newRand(),
 	}
 }
 
@@ -111,4 +87,4 @@ func (b *builder) buildExpr(expr tast.Expr) *ref {
 	return b.exprFunc(b, expr)
 }
 
-func (b *builder) buildStmt(stmt tast.Stmt) { b.stmtFunc2(b, stmt) }
+func (b *builder) buildStmt(stmt tast.Stmt) { b.stmtFunc(b, stmt) }

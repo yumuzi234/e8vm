@@ -45,15 +45,15 @@ func (l *lang) Prepare(
 	return listImport(f.Path, f, importer, l.golike)
 }
 
-func makeBuilder(pinfo *build8.PkgInfo, golike bool) *builder {
-	b := newBuilder(pinfo.Path, golike)
+func makeBuilder(pinfo *build8.PkgInfo) *builder {
+	b := newBuilder(pinfo.Path)
 	initBuilder(b, pinfo.Import)
 	return b
 }
 
 func initBuilder(b *builder, imp map[string]*build8.Import) {
 	b.exprFunc = buildExpr2
-	b.stmtFunc2 = buildStmt
+	b.stmtFunc = buildStmt
 
 	builtin, ok := imp["$"]
 	if !ok {
@@ -130,7 +130,7 @@ func (l *lang) Compile(pinfo *build8.PkgInfo) (
 	}
 
 	// building
-	b := makeBuilder(pinfo, l.golike)
+	b := makeBuilder(pinfo)
 	if es = b.Errs(); es != nil {
 		return nil, es
 	}
