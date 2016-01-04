@@ -50,7 +50,7 @@ func buildUnaryOpExpr(b *builder, expr *ast.OpExpr) tast.Expr {
 	op := opTok.Lit
 	opPos := opTok.Pos
 
-	B := b.BuildExpr(expr.B)
+	B := b.buildExpr(expr.B)
 	if B == nil {
 		return nil
 	}
@@ -80,7 +80,7 @@ func buildBinaryOpExpr(b *builder, expr *ast.OpExpr) tast.Expr {
 	op := opTok.Lit
 	opPos := opTok.Pos
 
-	A := b.BuildExpr(expr.A)
+	A := b.buildExpr(expr.A)
 	if A == nil {
 		return nil
 	}
@@ -91,7 +91,7 @@ func buildBinaryOpExpr(b *builder, expr *ast.OpExpr) tast.Expr {
 	}
 	atyp := aref.T
 
-	B := b.BuildExpr(expr.B)
+	B := b.buildExpr(expr.B)
 	if B == nil {
 		return nil
 	}

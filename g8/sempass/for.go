@@ -11,11 +11,11 @@ func buildForStmt(b *builder, stmt *ast.ForStmt) tast.Stmt {
 
 	ret := new(tast.ForStmt)
 	if stmt.Init != nil {
-		ret.Init = b.BuildStmt(stmt.Init)
+		ret.Init = b.buildStmt(stmt.Init)
 	}
 
 	if stmt.Cond != nil {
-		ret.Cond = b.BuildExpr(stmt.Cond)
+		ret.Cond = b.buildExpr(stmt.Cond)
 		ref := ret.Cond.R()
 		if !ref.IsBool() {
 			pos := ast.ExprPos(stmt.Cond)
@@ -29,7 +29,7 @@ func buildForStmt(b *builder, stmt *ast.ForStmt) tast.Stmt {
 	b.nloop--
 
 	if stmt.Iter != nil {
-		ret.Iter = b.BuildStmt(stmt.Iter)
+		ret.Iter = b.buildStmt(stmt.Iter)
 	}
 	return ret
 }

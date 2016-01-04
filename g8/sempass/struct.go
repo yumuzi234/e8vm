@@ -69,7 +69,7 @@ func buildFields(b *builder, ps *pkgStruct) {
 	t := ps.t
 
 	for _, f := range s.Fields {
-		ft := b.BuildType(f.Type)
+		ft := b.buildType(f.Type)
 		if ft == nil {
 			continue
 		}

@@ -88,7 +88,7 @@ func buildPkgRef(b *builder, ident *lex8.Token) *types.Pkg {
 		return nil
 	}
 
-	b.RefSym(s, ident.Pos)
+	b.refSym(s, ident.Pos)
 	if s.Type != tast.SymImport {
 		b.Errorf(ident.Pos, "%s is not an imported package", ident.Lit)
 		return nil

@@ -30,7 +30,7 @@ func buildPkgVar(b *builder, d *ast.VarDecl) *tast.Define {
 		panic("type missing")
 	}
 
-	t := b.BuildType(d.Type)
+	t := b.buildType(d.Type)
 	if t == nil {
 		return nil
 	}

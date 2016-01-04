@@ -114,12 +114,12 @@ func opAssign(b *builder, dest, src tast.Expr, op *lex8.Token) tast.Stmt {
 }
 
 func buildAssignStmt(b *builder, stmt *ast.AssignStmt) tast.Stmt {
-	left := b.BuildExpr(stmt.Left)
+	left := b.buildExpr(stmt.Left)
 	if left == nil {
 		return nil
 	}
 
-	right := b.BuildExpr(stmt.Right)
+	right := b.buildExpr(stmt.Right)
 	if right == nil {
 		return nil
 	}

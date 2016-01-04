@@ -101,7 +101,7 @@ func buildCallMake(b *builder, expr *ast.CallExpr, f tast.Expr) tast.Expr {
 }
 
 func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
-	f := b.BuildExpr(expr.Func)
+	f := b.buildExpr(expr.Func)
 	if f == nil {
 		return nil
 	}

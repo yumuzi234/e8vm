@@ -15,11 +15,11 @@ func buildExprList(b *builder, list *ast.ExprList) tast.Expr {
 		return ret
 	}
 	if n == 1 {
-		return b.BuildExpr(list.Exprs[0])
+		return b.buildExpr(list.Exprs[0])
 	}
 
 	for _, expr := range list.Exprs {
-		ex := b.BuildExpr(expr)
+		ex := b.buildExpr(expr)
 		if ex == nil {
 			return nil
 		}
@@ -42,12 +42,12 @@ func buildConstExprList(b *builder, list *ast.ExprList) tast.Expr {
 		return nil
 	}
 	if n == 1 {
-		return b.BuildConstExpr(list.Exprs[0])
+		return b.buildConst(list.Exprs[0])
 	}
 
 	ret := tast.NewExprList()
 	for _, expr := range list.Exprs {
-		ex := b.BuildConstExpr(expr)
+		ex := b.buildConst(expr)
 		if ex == nil {
 			return nil
 		}

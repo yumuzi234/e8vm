@@ -93,7 +93,7 @@ func buildIdentExprList(b *builder, list *ast.ExprList) (
 }
 
 func buildDefineStmt(b *builder, stmt *ast.DefineStmt) tast.Stmt {
-	right := b.BuildExpr(stmt.Right)
+	right := b.buildExpr(stmt.Right)
 	if right == nil {
 		return nil
 	}

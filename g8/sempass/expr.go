@@ -26,13 +26,13 @@ func buildExpr(b *builder, expr ast.Expr) tast.Expr {
 	case *ast.CallExpr:
 		return buildCallExpr(b, expr)
 	case *ast.ArrayTypeExpr:
-		t := b.BuildType(expr)
+		t := b.buildType(expr)
 		if t == nil {
 			return nil
 		}
 		return tast.NewType(t)
 	case *ast.FuncTypeExpr:
-		t := b.BuildType(expr)
+		t := b.buildType(expr)
 		if t == nil {
 			return nil
 		}

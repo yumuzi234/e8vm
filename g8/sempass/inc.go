@@ -8,7 +8,7 @@ import (
 
 func buildIncStmt(b *builder, stmt *ast.IncStmt) tast.Stmt {
 	op := stmt.Op.Lit
-	expr := b.BuildExpr(stmt.Expr)
+	expr := b.buildExpr(stmt.Expr)
 	if expr == nil {
 		return nil
 	}

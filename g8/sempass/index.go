@@ -8,7 +8,7 @@ import (
 )
 
 func buildIndexExpr(b *builder, expr *ast.IndexExpr) tast.Expr {
-	array := b.BuildExpr(expr.Array)
+	array := b.buildExpr(expr.Array)
 	if array == nil {
 		return nil
 	}
@@ -53,7 +53,7 @@ func checkArrayIndex(b *builder, index tast.Expr, pos *lex8.Pos) tast.Expr {
 }
 
 func buildArrayIndex(b *builder, expr ast.Expr, pos *lex8.Pos) tast.Expr {
-	ret := b.BuildExpr(expr)
+	ret := b.buildExpr(expr)
 	if ret == nil {
 		return nil
 	}

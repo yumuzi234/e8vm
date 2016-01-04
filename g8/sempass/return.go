@@ -22,7 +22,7 @@ func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {
 		return nil
 	}
 
-	src := b.BuildExpr(stmt.Exprs)
+	src := b.buildExpr(stmt.Exprs)
 	if src == nil {
 		return nil
 	}

@@ -26,7 +26,7 @@ func buildNamedParaList(b *builder, lst *ast.ParaList) []*types.Arg {
 			continue
 		}
 
-		t := b.BuildType(para.Type)
+		t := b.buildType(para.Type)
 		if t == nil {
 			return nil
 		}
@@ -60,7 +60,7 @@ func buildAnonyParaList(b *builder, lst *ast.ParaList) []*types.Arg {
 			expr = &ast.Operand{para.Ident}
 		}
 
-		t = b.BuildType(expr)
+		t = b.buildType(expr)
 		if t == nil {
 			return nil
 		}

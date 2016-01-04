@@ -60,7 +60,7 @@ func buildIdent(b *builder, ident *lex8.Token) tast.Expr {
 		return nil
 	}
 
-	b.RefSym(s, ident.Pos)
+	b.refSym(s, ident.Pos)
 
 	t := s.ObjType.(types.T)
 	switch s.Type {
@@ -95,7 +95,7 @@ func buildConstIdent(b *builder, ident *lex8.Token) tast.Expr {
 		return nil
 	}
 
-	b.RefSym(s, ident.Pos)
+	b.refSym(s, ident.Pos)
 
 	t := s.ObjType.(types.T)
 	switch s.Type {

@@ -11,7 +11,7 @@ func buildBlock(b *builder, block *ast.Block) tast.Stmt {
 
 	var stmts []tast.Stmt
 	for _, stmt := range block.Stmts {
-		s := b.BuildStmt(stmt)
+		s := b.buildStmt(stmt)
 		if s != nil {
 			stmts = append(stmts, s)
 		}

@@ -12,7 +12,7 @@ func buildIfStmt(b *builder, stmt *ast.IfStmt) tast.Stmt {
 func buildIf(
 	b *builder, cond ast.Expr, ifs ast.Stmt, elses *ast.ElseStmt,
 ) tast.Stmt {
-	c := b.BuildExpr(cond)
+	c := b.buildExpr(cond)
 	if c == nil {
 		return nil
 	}

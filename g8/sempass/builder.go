@@ -9,7 +9,6 @@ import (
 	"e8vm.io/e8vm/sym8"
 )
 
-// Builder is a semantic pass builder.
 type builder struct {
 	*lex8.ErrorList
 	path string
@@ -40,8 +39,7 @@ func newBuilder(path string) *builder {
 	}
 }
 
-// BuildExpr builds the expression.
-func (b *builder) BuildExpr(expr ast.Expr) tast.Expr {
+func (b *builder) buildExpr(expr ast.Expr) tast.Expr {
 	return b.exprFunc(b, expr)
 }
 
@@ -49,8 +47,7 @@ func (b *builder) buildConstExpr(expr ast.Expr) tast.Expr {
 	return b.constFunc(b, expr)
 }
 
-// BuildConstExpr builds a constant expression.
-func (b *builder) BuildConstExpr(expr ast.Expr) *tast.Const {
+func (b *builder) buildConst(expr ast.Expr) *tast.Const {
 	ret, ok := b.buildConstExpr(expr).(*tast.Const)
 	if !ok {
 		b.Errorf(ast.ExprPos(expr), "expect a const")
@@ -59,18 +56,15 @@ func (b *builder) BuildConstExpr(expr ast.Expr) *tast.Const {
 	return ret
 }
 
-// BuildType builds an expression that represents a type.
-func (b *builder) BuildType(expr ast.Expr) types.T {
+func (b *builder) buildType(expr ast.Expr) types.T {
 	return b.typeFunc(b, expr)
 }
 
-// BuildStmt builds a statement.
-func (b *builder) BuildStmt(stmt ast.Stmt) tast.Stmt {
+func (b *builder) buildStmt(stmt ast.Stmt) tast.Stmt {
 	return b.stmtFunc(b, stmt)
 }
 
-// RefSym references a symbol.
-func (b *builder) RefSym(sym *sym8.Symbol, pos *lex8.Pos) {
+func (b *builder) refSym(sym *sym8.Symbol, pos *lex8.Pos) {
 	// track file dependencies inside a package
 	if b.deps == nil {
 		return // no need to track deps
@@ -90,19 +84,8 @@ func (b *builder) RefSym(sym *sym8.Symbol, pos *lex8.Pos) {
 	b.deps.add(pos.File, symPos.File)
 }
 
-// InitDeps initializes the dependency graph.
-func (b *builder) InitDeps(asts map[string]*ast.File) {
+func (b *builder) initDeps(asts map[string]*ast.File) {
 	b.deps = newDeps(asts)
 }
 
-// SetThis sets the reference for this keyword.
-func (b *builder) SetThis(ref *tast.Ref) { b.this = ref }
-
-// SetRetType sets the return type of the current function.
-func (b *builder) SetRetType(ts []types.T, named bool) {
-	b.retType = ts
-	b.retNamed = named
-}
-
-// DepGraph returns the dependency graph.
-func (b *builder) DepGraph() *dagvis.Graph { return b.deps.graph() }
+func (b *builder) depGraph() *dagvis.Graph { return b.deps.graph() }

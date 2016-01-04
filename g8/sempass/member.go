@@ -92,7 +92,7 @@ func buildPkgSym(
 }
 
 func buildMember(b *builder, m *ast.MemberExpr) tast.Expr {
-	obj := b.BuildExpr(m.Expr)
+	obj := b.buildExpr(m.Expr)
 	if obj == nil {
 		return nil
 	}
@@ -141,7 +141,7 @@ func buildMember(b *builder, m *ast.MemberExpr) tast.Expr {
 		return nil
 	}
 
-	b.RefSym(sym, m.Sub.Pos)
+	b.refSym(sym, m.Sub.Pos)
 
 	if sym.Type == tast.SymField {
 		t := sym.ObjType.(types.T)

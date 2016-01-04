@@ -9,7 +9,7 @@ import (
 func buildStarExpr(b *builder, expr *ast.StarExpr) tast.Expr {
 	opPos := expr.Star.Pos
 
-	addr := b.BuildExpr(expr.Expr)
+	addr := b.buildExpr(expr.Expr)
 	if addr == nil {
 		return nil
 	}

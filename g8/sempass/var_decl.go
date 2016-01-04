@@ -31,7 +31,7 @@ func buildVarDecl(b *builder, d *ast.VarDecl) *tast.Define {
 	ids := d.Idents.Idents
 
 	if d.Eq != nil {
-		right := b.BuildExpr(d.Exprs)
+		right := b.buildExpr(d.Exprs)
 		if right == nil {
 			return nil
 		}
@@ -44,7 +44,7 @@ func buildVarDecl(b *builder, d *ast.VarDecl) *tast.Define {
 			return ret
 		}
 
-		tdest := b.BuildType(d.Type)
+		tdest := b.buildType(d.Type)
 		if tdest == nil {
 			return nil
 		}
@@ -85,7 +85,7 @@ func buildVarDecl(b *builder, d *ast.VarDecl) *tast.Define {
 		panic("type missing")
 	}
 
-	t := b.BuildType(d.Type)
+	t := b.buildType(d.Type)
 	if t == nil {
 		return nil
 	}

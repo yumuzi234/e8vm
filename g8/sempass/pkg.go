@@ -117,7 +117,7 @@ func (p *Pkg) Build(scope *sym8.Scope) (
 	*tast.Pkg, *dagvis.Graph, []*lex8.Error,
 ) {
 	b := makeBuilder(p.Path, scope)
-	b.InitDeps(p.Files)
+	b.initDeps(p.Files)
 
 	imports := p.buildImports(b, p.Imports)
 	if errs := b.Errs(); errs != nil {
@@ -161,7 +161,7 @@ func (p *Pkg) Build(scope *sym8.Scope) (
 		return nil, nil, errs
 	}
 
-	depGraph := b.DepGraph()
+	depGraph := b.depGraph()
 	structs := structSyms(pkgStructs)
 
 	return &tast.Pkg{
