@@ -258,12 +258,8 @@ func (p *pkg) build(b *builder, pinfo *build8.PkgInfo) {
 }
 
 func (p *pkg) build2(b *builder, pinfo *build8.PkgInfo) []*lex8.Error {
-	errs := buildPkg2(b, p.files, pinfo)
-	if errs != nil {
-		return errs
-	}
-
-	addInit(b)
-	addStart(b)
-	return nil
+	tops, tests, errs := buildPkg2(b, p.files, pinfo)
+	p.tops = tops
+	p.testNames = tests
+	return errs
 }

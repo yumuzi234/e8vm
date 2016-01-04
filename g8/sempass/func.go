@@ -110,6 +110,7 @@ func buildFunc(b *Builder, f *pkgFunc) *tast.Func {
 	b.retType = t.RetTypes
 
 	ret := new(tast.Func)
+	ret.Sym = f.sym
 
 	if b.this != nil {
 		if f.f.Recv != nil {

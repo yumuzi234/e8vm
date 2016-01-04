@@ -224,7 +224,8 @@ func genFunc(b *builder, f *tast.Func, irFunc *ir.Func) {
 	if f.Receiver != nil {
 		// bind the receiver
 		t := f.Receiver.ObjType.(types.T)
-		f.Receiver.Obj = newAddressableRef(t, irFunc.ThisRef())
+		ref := newAddressableRef(t, irFunc.ThisRef())
+		f.Receiver.Obj = &objVar{f.Receiver.Name(), ref}
 	} else if f.This != nil {
 		// bind this pointer
 		b.this = newRef(f.This, irFunc.ThisRef())
@@ -237,20 +238,26 @@ func genFunc(b *builder, f *tast.Func, irFunc *ir.Func) {
 	}
 	for i, s := range f.Args {
 		if s != nil {
-			s.Obj = args[i]
+			t := s.ObjType.(types.T)
+			ref := newAddressableRef(t, args[i])
+			s.Obj = &objVar{s.Name(), ref}
 		}
 	}
 
+	// bind named return symbols
+	rets := irFunc.RetRefs()
+
+	t := f.Sym.ObjType.(*types.Func)
+	b.fretRef = makeRetRef(t.Rets, rets)
 	if f.NamedRets != nil {
-		// bind named return symbols
-		rets := irFunc.RetRefs()
 		for i, s := range f.NamedRets {
 			if s != nil {
-				s.Obj = rets[i]
+				s.Obj = &objVar{s.Name(), b.fretRef.At(i)}
 			}
 		}
 	}
 
+	b.b = b.f.NewBlock(nil)
 	for _, stmt := range f.Body {
 		b.buildStmt2(stmt)
 	}

@@ -20,7 +20,7 @@ type Func struct {
 
 // IsMethod returns true when the function is a method.
 func (f *Func) IsMethod() bool {
-	return f.This == nil && f.Receiver == nil
+	return !(f.This == nil && f.Receiver == nil)
 }
 
 // FuncAlias is a function alias.

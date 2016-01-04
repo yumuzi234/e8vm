@@ -10,11 +10,39 @@ import (
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/sym8"
 )
+
+func buildTests(b *builder, tops *sym8.Table) (
+	testList ir.Ref, testNames []string,
+) {
+	tests := listTests(tops)
+	n := len(tests)
+
+	if n > 100000 {
+		b.Errorf(nil, "too many tests in the package")
+		return
+	}
+
+	if n == 0 {
+		return
+	}
+
+	perm := b.rand.Perm(n)
+
+	var irs []*ir.Func
+	var names []string
+	for _, index := range perm {
+		t := tests[index]
+		irs = append(irs, t.ref.IR().(*ir.Func))
+		names = append(names, t.name)
+	}
+	return b.p.NewTestList(":tests", irs), names
+}
 
 func buildPkg2(
 	b *builder, files map[string]*ast.File, pinfo *build8.PkgInfo,
-) []*lex8.Error {
+) (syms *sym8.Table, testNames []string, errs []*lex8.Error) {
 	imports := make(map[string]*build8.Package)
 	for as, imp := range pinfo.Import {
 		imports[as] = imp.Package
@@ -26,9 +54,13 @@ func buildPkg2(
 		Imports: imports,
 	}
 
-	res, errs := sp.Build()
+	tops := sym8.NewTable()
+	b.scope.PushTable(tops)
+	defer b.scope.Pop()
+
+	res, errs := sp.Build(b.scope)
 	if errs != nil {
-		return errs
+		return nil, nil, errs
 	}
 
 	for _, imp := range res.Imports {
@@ -70,7 +102,7 @@ func buildPkg2(
 		name := sym.Name()
 		t := sym.ObjType.(*types.Func)
 		sig := makeFuncSig(t)
-		fsym := ir.NewFuncSym(f.Of.Pkg(), name, sig)
+		fsym := ir.NewFuncSym(f.Of.Pkg(), f.Of.Name(), sig)
 		f.Sym.Obj = &objFunc{
 			name:    name,
 			ref:     newRef(t, fsym),
@@ -89,7 +121,7 @@ func buildPkg2(
 	for _, f := range res.Methods {
 		name := f.Sym.Name()
 		t := f.Sym.ObjType.(*types.Func)
-		s := t.Args[0].T.(*types.Struct)
+		s := t.Args[0].T.(*types.Pointer).T.(*types.Struct)
 
 		fullName := fmt.Sprintf("%s:%s", s, name)
 		sig := makeFuncSig(t)
@@ -111,5 +143,13 @@ func buildPkg2(
 		genFunc(b, f, obj.ref.IR().(*ir.Func))
 	}
 
-	return nil
+	testList, testNames := buildTests(b, tops)
+	addInit(b)
+	addStart(b)
+
+	if testList != nil {
+		addTestStart(b, testList, len(testNames))
+	}
+
+	return tops, testNames, nil
 }

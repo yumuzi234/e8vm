@@ -17,15 +17,9 @@ func NewBuilder(path string, scope *sym8.Scope) *Builder {
 	ret.constFunc = buildConstExpr
 	ret.typeFunc = buildType
 	ret.stmtFunc = buildStmt
-
-	ret.scope = scope // TODO: remove this
+	ret.scope = scope
 
 	return ret
-}
-
-func makeBuilder(path string) *Builder {
-	scope := sym8.NewScope()
-	return NewBuilder(path, scope)
 }
 
 // Pkg is a package that contains information for a sementics pass.
@@ -119,12 +113,8 @@ func (p *Pkg) buildImports(
 }
 
 // Build builds a package from an set of file AST's to a typed-AST.
-func (p *Pkg) Build() (*tast.Pkg, []*lex8.Error) {
-	b := makeBuilder(p.Path)
-
-	tops := sym8.NewTable()
-	b.scope.PushTable(tops)
-	defer b.scope.Pop()
+func (p *Pkg) Build(scope *sym8.Scope) (*tast.Pkg, []*lex8.Error) {
+	b := NewBuilder(p.Path, scope)
 
 	imports := p.buildImports(b, p.Imports)
 	if errs := b.Errs(); errs != nil {

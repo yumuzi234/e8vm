@@ -68,7 +68,7 @@ func declareMethods(
 	for _, f := range methods {
 		recv := f.Recv.StructName
 		ps := m[recv.Lit]
-		if ps != nil {
+		if ps == nil {
 			b.Errorf(recv.Pos, "struct %s not defined", recv.Lit)
 			continue
 		}

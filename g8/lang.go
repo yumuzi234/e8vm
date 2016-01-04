@@ -145,7 +145,7 @@ func (l *lang) Compile(pinfo *build8.PkgInfo) (
 			return nil, es
 		}
 	*/
-	if es = p.build2(b, pinfo); es != nil {
+	if es := p.build2(b, pinfo); es != nil {
 		return nil, es
 	}
 

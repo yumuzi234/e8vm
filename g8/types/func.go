@@ -46,7 +46,6 @@ func NewFunc(this *Arg, args []*Arg, rets []*Arg) *Func {
 	}
 	ret.Args = append(ret.Args, args...)
 	ret.Rets = rets
-
 	ret.RetTypes = argTypes(ret.Rets)
 
 	if this != nil {
@@ -57,7 +56,7 @@ func NewFunc(this *Arg, args []*Arg, rets []*Arg) *Func {
 }
 
 func argTypes(args []*Arg) []T {
-	if args == nil {
+	if len(args) == 0 {
 		return nil
 	}
 	ret := make([]T, 0, len(args))
