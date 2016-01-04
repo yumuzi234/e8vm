@@ -139,12 +139,6 @@ func (l *lang) Compile(pinfo *build8.PkgInfo) (
 	p := newPkg(asts)
 	b.spass.InitDeps(asts)
 
-	/*
-		p.build(b, pinfo)
-		if es = b.Errs(); es != nil {
-			return nil, es
-		}
-	*/
 	if es := p.build2(b, pinfo); es != nil {
 		return nil, es
 	}
