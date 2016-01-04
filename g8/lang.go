@@ -137,7 +137,6 @@ func (l *lang) Compile(pinfo *build8.PkgInfo) (
 	}
 
 	p := newPkg(asts)
-
 	if es := p.build(b, pinfo); es != nil {
 		return nil, es
 	}
