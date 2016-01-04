@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"e8vm.io/e8vm/build8"
+	"e8vm.io/e8vm/dagvis"
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/lex8"
@@ -113,51 +114,55 @@ func (p *Pkg) buildImports(
 }
 
 // Build builds a package from an set of file AST's to a typed-AST.
-func (p *Pkg) Build(scope *sym8.Scope) (*tast.Pkg, []*lex8.Error) {
+func (p *Pkg) Build(scope *sym8.Scope) (
+	*tast.Pkg, *dagvis.Graph, []*lex8.Error,
+) {
 	b := NewBuilder(p.Path, scope)
+	b.InitDeps(p.Files)
 
 	imports := p.buildImports(b, p.Imports)
 	if errs := b.Errs(); errs != nil {
-		return nil, errs
+		return nil, nil, errs
 	}
 
 	syms := p.symbols()
 
 	consts := buildPkgConsts(b, syms.consts)
 	if errs := b.Errs(); errs != nil {
-		return nil, errs
+		return nil, nil, errs
 	}
 
 	pkgStructs := buildStructs(b, syms.structs)
 	if errs := b.Errs(); errs != nil {
-		return nil, errs
+		return nil, nil, errs
 	}
 
 	pkgFuncs, aliases := declareFuncs(b, syms.funcs)
 	if errs := b.Errs(); errs != nil {
-		return nil, errs
+		return nil, nil, errs
 	}
 
 	pkgMethods := declareMethods(b, syms.methods, pkgStructs)
 	if errs := b.Errs(); errs != nil {
-		return nil, errs
+		return nil, nil, errs
 	}
 
 	vars := buildPkgVars(b, syms.vars)
 	if errs := b.Errs(); errs != nil {
-		return nil, errs
+		return nil, nil, errs
 	}
 
 	funcs := buildFuncs(b, pkgFuncs)
 	if errs := b.Errs(); errs != nil {
-		return nil, errs
+		return nil, nil, errs
 	}
 
 	methods := buildMethods(b, pkgMethods)
 	if errs := b.Errs(); errs != nil {
-		return nil, errs
+		return nil, nil, errs
 	}
 
+	depGraph := b.DepGraph()
 	structs := structSyms(pkgStructs)
 
 	return &tast.Pkg{
@@ -168,7 +173,7 @@ func (p *Pkg) Build(scope *sym8.Scope) (*tast.Pkg, []*lex8.Error) {
 		Funcs:       funcs,
 		Methods:     methods,
 		FuncAliases: aliases,
-	}, nil
+	}, depGraph, nil
 }
 
 // BuildPkgConsts is a temp function for building package consts.

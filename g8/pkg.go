@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"e8vm.io/e8vm/build8"
+	"e8vm.io/e8vm/dagvis"
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/ir"
 	"e8vm.io/e8vm/g8/sempass"
@@ -17,6 +18,7 @@ type pkg struct {
 
 	tops      *sym8.Table
 	testNames []string
+	deps      *dagvis.Graph
 }
 
 func newPkg(asts map[string]*ast.File) *pkg {
@@ -27,9 +29,10 @@ func newPkg(asts map[string]*ast.File) *pkg {
 }
 
 func (p *pkg) build(b *builder, pinfo *build8.PkgInfo) []*lex8.Error {
-	tops, tests, errs := buildPkg(b, p.files, pinfo)
+	tops, deps, tests, errs := buildPkg(b, p.files, pinfo)
 	p.tops = tops
 	p.testNames = tests
+	p.deps = deps
 	return errs
 }
 
@@ -62,7 +65,10 @@ func buildTests(b *builder, tops *sym8.Table) (
 
 func buildPkg(
 	b *builder, files map[string]*ast.File, pinfo *build8.PkgInfo,
-) (syms *sym8.Table, testNames []string, errs []*lex8.Error) {
+) (
+	syms *sym8.Table, deps *dagvis.Graph,
+	testNames []string, errs []*lex8.Error,
+) {
 	imports := make(map[string]*build8.Package)
 	for as, imp := range pinfo.Import {
 		imports[as] = imp.Package
@@ -78,9 +84,9 @@ func buildPkg(
 	b.scope.PushTable(tops)
 	defer b.scope.Pop()
 
-	res, errs := sp.Build(b.scope)
+	res, depGraph, errs := sp.Build(b.scope)
 	if errs != nil {
-		return nil, nil, errs
+		return nil, nil, nil, errs
 	}
 
 	for _, c := range res.Consts {
@@ -152,5 +158,5 @@ func buildPkg(
 		addTestStart(b, testList, len(testNames))
 	}
 
-	return tops, testNames, nil
+	return tops, depGraph, testNames, nil
 }

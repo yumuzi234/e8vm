@@ -137,14 +137,12 @@ func (l *lang) Compile(pinfo *build8.PkgInfo) (
 	}
 
 	p := newPkg(asts)
-	b.spass.InitDeps(asts)
 
 	if es := p.build(b, pinfo); es != nil {
 		return nil, es
 	}
 
-	// circular dep check
-	g := b.spass.DepGraph()
+	g := p.deps
 	g, err := g.Rename(func(name string) (string, error) {
 		if strings.HasSuffix(name, ".g") {
 			return strings.TrimSuffix(name, ".g"), nil

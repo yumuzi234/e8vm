@@ -138,3 +138,20 @@ func TestMultiFile(t *testing.T) {
 			func main() { printInt(f()) }`,
 	}, "33")
 }
+
+func TestMultiFileBad(t *testing.T) {
+	o := func(files map[string]string) {
+		_, es, _ := buildMulti(files)
+		if es == nil {
+			t.Error("should error")
+			return
+		}
+	}
+	type files map[string]string
+
+	// circular dependency
+	o(files{
+		"main/a.g": `func main() { a() }; func b() {}`,
+		"main/b.g": `func a() { b() }`,
+	})
+}
