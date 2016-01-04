@@ -76,7 +76,7 @@ func buildMember(b *builder, m *tast.MemberExpr) *ref {
 
 	sym := m.Symbol
 	if sym.Type == tast.SymField {
-		return buildField(b, addr, sym.Obj.(*objField).Field)
+		return buildField(b, addr, sym.Obj.(*types.Field))
 	} else if sym.Type == tast.SymFunc {
 		recv := newRef(types.NewPointer(tstruct), addr)
 		method := sym.Obj.(*objFunc)

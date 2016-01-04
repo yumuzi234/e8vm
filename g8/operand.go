@@ -66,8 +66,8 @@ func buildIdent(b *builder, id *tast.Ident) *ref {
 	case tast.SymType, tast.SymStruct:
 		return s.Obj.(*objType).ref
 	case tast.SymField:
-		v := s.Obj.(*objField)
-		return buildField(b, b.this.IR(), v.Field)
+		v := s.Obj.(*types.Field)
+		return buildField(b, b.this.IR(), v)
 	case tast.SymImport:
 		return s.Obj.(*objImport).ref
 	}

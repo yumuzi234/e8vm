@@ -7,7 +7,6 @@ import (
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/ir"
 	"e8vm.io/e8vm/g8/sempass"
-	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/sym8"
@@ -93,19 +92,6 @@ func buildPkg(
 		name := c.Name()
 		t := c.ObjType.(types.T)
 		c.Obj = &objConst{name: name, ref: newRef(t, nil)}
-	}
-
-	for _, s := range res.Structs {
-		t := s.ObjType.(*types.Type)
-		st := t.T.(*types.Struct)
-
-		members := st.Syms.List()
-		for _, m := range members {
-			if m.Type == tast.SymField {
-				oldObj := m.Obj.(*types.Field)
-				m.Obj = &objField{m.Name(), oldObj}
-			}
-		}
 	}
 
 	for _, v := range res.Vars {

@@ -2,7 +2,6 @@ package g8
 
 import (
 	"e8vm.io/e8vm/g8/ast"
-	"e8vm.io/e8vm/g8/types"
 )
 
 type objVar struct {
@@ -16,11 +15,6 @@ type objFunc struct {
 	f        *ast.Func
 	isMethod bool
 	isAlias  bool
-}
-
-type objField struct {
-	name string
-	*types.Field
 }
 
 type objConst struct {
