@@ -3,30 +3,7 @@ package g8
 import (
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
-	"e8vm.io/e8vm/lex8"
-	"e8vm.io/e8vm/sym8"
 )
-
-func declareVar(b *builder, tok *lex8.Token, t types.T) *objVar {
-	name := tok.Lit
-	v := &objVar{name: name}
-	s := sym8.Make(b.path, name, tast.SymVar, v, t, tok.Pos)
-	conflict := b.scope.Declare(s)
-	if conflict != nil {
-		b.Errorf(tok.Pos, "%q already declared as a %s",
-			name, tast.SymStr(conflict.Type),
-		)
-		return nil
-	}
-	return v
-}
-
-func declareVarRef(b *builder, tok *lex8.Token, r *ref) {
-	obj := declareVar(b, tok, r.Type())
-	if obj != nil {
-		obj.ref = r
-	}
-}
 
 func buildDefine(b *builder, d *tast.Define) {
 	var refs []*ref
