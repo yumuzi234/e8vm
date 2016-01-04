@@ -12,12 +12,11 @@ import (
 )
 
 func makeBuilder(path string, scope *sym8.Scope) *builder {
-	ret := newBuilder(path)
+	ret := newBuilder(path, scope)
 	ret.exprFunc = buildExpr
 	ret.constFunc = buildConstExpr
 	ret.typeFunc = buildType
 	ret.stmtFunc = buildStmt
-	ret.scope = scope
 
 	return ret
 }

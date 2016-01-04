@@ -31,11 +31,11 @@ type builder struct {
 	retNamed bool
 }
 
-func newBuilder(path string) *builder {
+func newBuilder(path string, scope *sym8.Scope) *builder {
 	return &builder{
 		ErrorList: lex8.NewErrorList(),
 		path:      path,
-		scope:     sym8.NewScope(),
+		scope:     scope,
 	}
 }
 
