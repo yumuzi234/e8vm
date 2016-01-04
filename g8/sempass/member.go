@@ -109,6 +109,7 @@ func buildMember(b *Builder, m *ast.MemberExpr) tast.Expr {
 		if r == nil {
 			return nil
 		}
+		// TODO: this can be further optimized
 		return &tast.MemberExpr{obj, m.Sub, r, sym}
 	}
 
