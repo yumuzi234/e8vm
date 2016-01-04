@@ -1,41 +1,9 @@
 package g8
 
 import (
-	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/ir"
 	"e8vm.io/e8vm/g8/types"
 )
-
-const thisName = "<this>"
-
-func buildFuncType(
-	b *builder, recv *types.Pointer, f *ast.FuncSig,
-) *types.Func {
-	// the arguments
-	args := buildParaList(b, f.Args)
-	if args == nil {
-		return nil
-	}
-
-	// the return values
-	var rets []*types.Arg
-	if f.RetType == nil {
-		rets = buildParaList(b, f.Rets)
-	} else {
-		retType := b.spass.BuildType(f.RetType)
-		if retType == nil {
-			return nil
-		}
-		rets = []*types.Arg{{T: retType}}
-	}
-
-	if recv != nil {
-		recv := &types.Arg{Name: thisName, T: recv}
-		return types.NewFunc(recv, args, rets)
-	}
-
-	return types.NewFunc(nil, args, rets)
-}
 
 func makeArg(t *types.Arg) *ir.FuncArg {
 	return &ir.FuncArg{
