@@ -7,8 +7,8 @@ go:
 
 install:
     - go get ./...
-    - go get -u e8vm.io/tools/cmd/e8chk
-    - go get -u github.com/golang/lint/golint
+    - go get e8vm.io/tools/cmd/e8chk
+    - go get github.com/golang/lint/golint
 
 script:
     - test -z `gofmt -s -l .`
