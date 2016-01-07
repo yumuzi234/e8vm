@@ -6,6 +6,8 @@
 
 The result of static analysis:
 
+- syntax annotated lines, with identifier links
+
 - file level dependency
 - token of each file
 - a database that has type and reference of each identifier
