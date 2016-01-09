@@ -1,28 +1,66 @@
-package dagvis
+package dagivs
 
 import "fmt"
 import "testing"
+import "strconv"
+import "math/rand"
 
 func BenchmarkTest(b *testing.B) {
-
+	// num := 1000
+	// p := 0.001
 	// run the test function b.N times
 	for n := 0; n < b.N; n++ {
 		test()
 	}
 }
 
+//func test(num int32, p float32) []*MapNode {
 func test() []*MapNode {
 
-	g := &Graph{
-		Nodes: map[string][]string{
-			"a": {"c", "e"},
-			"b": {"c", "d", "e"},
-			"c": {"d"},
-			"d": {"a", "e"},
-			"e": {"f"},
-			"f": {},
-		},
+	ret := make(map[string][]string)
+
+	for i := 0; i < 1000; i++ {
+		var edge []string
+		for j := 0; j < 1000; j++ {
+			if i == j {
+				continue
+			}
+			q := rand.Float32()
+			if q < 0.002 {
+				var flag bool
+				for _, ele := range ret[strconv.Itoa(j)] {
+					if ele == strconv.Itoa(i) {
+						flag = true
+					}
+				}
+				if !flag {
+					edge = append(edge, strconv.Itoa(j))
+					//fmt.Println(strconv.Itoa(i), strconv.Itoa(j))
+				}
+			}
+		}
+
+		///////////
+
+		// if i == 1 {
+		// 	edge = append(edge, strconv.Itoa(3))
+		// 	edge = append(edge, strconv.Itoa(4))
+		// }
+		// if i == 3 {
+		// 	edge = append(edge, strconv.Itoa(6))
+		// 	edge = append(edge, strconv.Itoa(4))
+		// }
+		// if i == 4 {
+		// 	edge = append(edge, strconv.Itoa(3))
+		// 	edge = append(edge, strconv.Itoa(8))
+		// }
+		// if i == 8 {
+		// 	edge = append(edge, strconv.Itoa(1))
+		// }
+		ret[strconv.Itoa(i)] = edge
 	}
+
+	g := &Graph{Nodes: ret}
 
 	nodes, _ := initMap(g)
 
@@ -31,7 +69,8 @@ func test() []*MapNode {
 }
 
 func TestCircle(t *testing.T) {
-
+	// num := 1000
+	// p := 0.001
 	res := test()
 
 	for _, resNode := range res {
