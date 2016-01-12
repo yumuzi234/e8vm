@@ -9,7 +9,7 @@ const (
 	SymNone   = iota
 	SymFunc   // Item.type == *Func
 	SymVar    // Item.type == *Var
-	SymConst  // Item.type == *Const // TODO
+	SymConst  // Item.type == *Const // TODO(h8liu), support const
 	SymImport // Item.type == *PkgImport
 	SymLabel  // Item.type == *stmt
 )

@@ -27,7 +27,7 @@ func parseFile(p *parser) *ast.File {
 				ret.Decls = append(ret.Decls, v)
 			}
 		} else if p.SeeKeyword("const") {
-			// TODO:
+			// TODO(h8liu): support const
 			p.ErrorfHere("const support not implemented yet")
 			p.skipErrStmt()
 		} else {

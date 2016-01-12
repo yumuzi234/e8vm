@@ -1,6 +1,8 @@
 package ir
 
 import (
+	"math"
+
 	"e8vm.io/e8vm/arch8"
 )
 
@@ -122,13 +124,29 @@ func genFunc(g *gener, f *Func) {
 		genBlock(g, b)
 	}
 
-	// TODO: check ranges
 	// now setup the jumps
 	ninst := int32(0)
 	for b := f.prologue; b != nil; b = b.next {
+		n := len(b.insts)
+		if n > math.MaxInt32/4 {
+			g.Errorf(f.pos, "basic block too large in function %s", f.name)
+			return
+		}
+
 		b.instStart = ninst
-		ninst += int32(len(b.insts))
+		ninst += int32(n)
 		b.instEnd = ninst
+
+		if ninst > math.MaxInt32/4 {
+			g.Errorf(f.pos, "function %s too large", f.name)
+			return
+		}
+	}
+
+	deltaCheck := func(delta int32) {
+		if delta > 0x1ffff || delta < -0x20000 {
+			g.Errorf(f.pos, "branch out of range in function: %s", f.name)
+		}
 	}
 
 	for b := f.prologue; b != nil; b = b.next {
@@ -141,9 +159,10 @@ func genFunc(g *gener, f *Func) {
 		case jmpAlways:
 			b.jumpInst.inst = asm.j(delta)
 		case jmpIfNot:
-			// TODO: check in jump range
+			deltaCheck(delta)
 			b.jumpInst.inst = asm.beq(_0, _4, delta)
 		case jmpIf:
+			deltaCheck(delta)
 			b.jumpInst.inst = asm.bne(_0, _4, delta)
 		default:
 			panic("bug")

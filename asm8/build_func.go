@@ -152,7 +152,7 @@ func resolveSymbol(b *builder, s *funcStmt) (typ int, pkg, name string) {
 			pkg = b.pkgPath(p.as)        // package index, based on alias
 			b.pkgUsed[p.as] = struct{}{} // mark pkg used
 
-			// TODO: support consts in assembly
+			// TODO(h8liu): support consts in assembly
 			sym = p.pkg.Lib.SymbolByName(s.sym) // find the symbol
 			if sym != nil {
 				if sym.Type == link8.SymFunc {

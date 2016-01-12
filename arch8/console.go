@@ -59,5 +59,5 @@ func (c *console) Tick() {
 		c.interrupt(c.IntOut) // out available
 	}
 
-	// TODO: input part
+	// TODO(h8liu): input part
 }
