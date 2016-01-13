@@ -50,13 +50,13 @@ func findFunc(pc uint32, Names []string, Starts []uint32, t *Table) (string, *Fu
 			return "", nil
 		}
 		return Names[right], f
-	} else {
-		f := t.Funcs[Names[left]]
-		if pc > f.Start+f.Size {
-			return "", nil
-		}
-		return Names[left], f
 	}
+
+	f := t.Funcs[Names[left]]
+	if pc > f.Start+f.Size {
+		return "", nil
+	}
+	return Names[left], f
 }
 
 //FprintStack prints the stack trace of the current running point.
