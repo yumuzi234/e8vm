@@ -22,10 +22,10 @@ func test() (uint32, *Func) {
 		frameSize := rand.Uint32()
 		for frameSize > 10000 {
 			frameSize = rand.Uint32()
-		}	
+		}
 
-		t.Funcs[name] = 
-		&Func{Size: frameSize, Start: starts }
+		t.Funcs[name] =
+			&Func{Size: frameSize, Start: starts}
 
 		starts = starts + frameSize + 1
 	}
@@ -50,6 +50,6 @@ func test() (uint32, *Func) {
 func TestFindFunc(t *testing.T) {
 
 	pc, res := test()
-	fmt.Printf( "pc is %v\n start is %v and length is %v\n", pc, res.Start, res.Size)
+	fmt.Printf("pc is %v\n start is %v and length is %v\n", pc, res.Start, res.Size)
 
 }

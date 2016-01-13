@@ -28,7 +28,7 @@ func sortTable(t *Table) ([]uint32, []string) {
 }
 
 func findFunc(pc uint32, Names []string, Starts []uint32, t *Table) (string, *Func) {
-	
+
 	left := 0
 	right := len(Names) - 1
 
@@ -46,14 +46,14 @@ func findFunc(pc uint32, Names []string, Starts []uint32, t *Table) (string, *Fu
 
 	if Starts[right] <= pc {
 		f := t.Funcs[Names[right]]
-		if pc > f.Start + f.Size {
-		return "", nil
+		if pc > f.Start+f.Size {
+			return "", nil
 		}
 		return Names[right], f
 	} else {
 		f := t.Funcs[Names[left]]
-		if pc > f.Start + f.Size {
-		return "", nil
+		if pc > f.Start+f.Size {
+			return "", nil
 		}
 		return Names[left], f
 	}
