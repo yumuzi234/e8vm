@@ -1,4 +1,4 @@
-package dagivs
+package dagvis
 
 import "fmt"
 import "testing"
@@ -6,15 +6,11 @@ import "strconv"
 import "math/rand"
 
 func BenchmarkTest(b *testing.B) {
-	// num := 1000
-	// p := 0.001
-	// run the test function b.N times
 	for n := 0; n < b.N; n++ {
 		test()
 	}
 }
 
-//func test(num int32, p float32) []*MapNode {
 func test() []*MapNode {
 
 	ret := make(map[string][]string)
@@ -35,12 +31,9 @@ func test() []*MapNode {
 				}
 				if !flag {
 					edge = append(edge, strconv.Itoa(j))
-					//fmt.Println(strconv.Itoa(i), strconv.Itoa(j))
 				}
 			}
 		}
-
-		///////////
 
 		// if i == 1 {
 		// 	edge = append(edge, strconv.Itoa(3))
@@ -61,7 +54,6 @@ func test() []*MapNode {
 	}
 
 	g := &Graph{Nodes: ret}
-
 	nodes, _ := initMap(g)
 
 	return shortestCircle(nodes.Nodes)
@@ -69,12 +61,9 @@ func test() []*MapNode {
 }
 
 func TestCircle(t *testing.T) {
-	// num := 1000
-	// p := 0.001
 	res := test()
 
 	for _, resNode := range res {
 		fmt.Printf("%v\n", resNode.Name)
 	}
-
 }
