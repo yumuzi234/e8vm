@@ -27,40 +27,39 @@ func sortTable(t *Table) ([]uint32, []string) {
 	return sta, res
 }
 
-func findFunc(pc uint32, Names []string,
-	Starts []uint32, t *Table) (string, *Func) {
+func findFunc(pc uint32, names []string,
+	starts []uint32, t *Table) (string, *Func) {
 
 	left := 0
-	right := len(Names) - 1
+	right := len(names) - 1
 
 	for left < right-1 {
 		mid := left + (right-left)/2
-		if Starts[mid] == pc {
-			return Names[mid], t.Funcs[Names[mid]]
+		if starts[mid] == pc {
+			return names[mid], t.Funcs[names[mid]]
 		}
-		if Starts[mid] > pc {
+		if starts[mid] > pc {
 			right = mid
 		} else {
 			left = mid
 		}
 	}
 
-	if Starts[right] <= pc {
-		f := t.Funcs[Names[right]]
+	if starts[right] <= pc {
+		f := t.Funcs[names[right]]
 		if pc > f.Start+f.Size {
 			return "", nil
 		}
-		return Names[right], f
+		return names[right], f
 	}
-
-	f := t.Funcs[Names[left]]
+	f := t.Funcs[names[left]]
 	if pc > f.Start+f.Size {
 		return "", nil
 	}
-	return Names[left], f
+	return names[left], f
 }
 
-//FprintStack prints the stack trace of the current running point.
+// FprintStack prints the stack trace of the current running point.
 func FprintStack(w io.Writer, m *arch8.Machine, core byte, t *Table) error {
 	regs := m.DumpRegs(core)
 
@@ -69,12 +68,12 @@ func FprintStack(w io.Writer, m *arch8.Machine, core byte, t *Table) error {
 	ret := regs[arch8.RET]
 
 	level := 0
-	Starts, Names := sortTable(t)
+	starts, names := sortTable(t)
 
 	for {
 		level++
 
-		name, f := findFunc(pc, Names, Starts, t)
+		name, f := findFunc(pc, names, starts, t)
 		if f == nil {
 			if level == 1 {
 				_, err := fmt.Fprintf(w, "? pc=%08x\n", pc)
