@@ -27,7 +27,8 @@ func sortTable(t *Table) ([]uint32, []string) {
 	return sta, res
 }
 
-func findFunc(pc uint32, Names []string, Starts []uint32, t *Table) (string, *Func) {
+func findFunc(pc uint32, Names []string,
+	Starts []uint32, t *Table) (string, *Func) {
 
 	left := 0
 	right := len(Names) - 1
