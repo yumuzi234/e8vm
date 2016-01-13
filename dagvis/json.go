@@ -10,14 +10,14 @@ func JSONMap(m *Map) interface{} {
 	type N struct {
 		X    int      `json:"x"`
 		Y    int      `json:"y"`
-		Ins  []string `json:"ins"`
-		Outs []string `json:"outs"`
+		Ins  []string `json:"i"`
+		Outs []string `json:"o"`
 	}
 
 	type M struct {
-		Height int           `json:"height"`
-		Width  int           `json:"width"`
-		Nodes  map[string]*N `json:"nodes"`
+		Height int           `json:"h"`
+		Width  int           `json:"w"`
+		Nodes  map[string]*N `json:"n"`
 	}
 
 	res := &M{
