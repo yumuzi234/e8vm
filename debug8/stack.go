@@ -7,16 +7,59 @@ import (
 	"e8vm.io/e8vm/arch8"
 )
 
-func findFunc(pc uint32, t *Table) (string, *Func) {
+func sortTable(t *Table) ([]uint32, []string) {
+	var res []string
+	var sta []uint32
+
 	for name, f := range t.Funcs {
-		if pc >= f.Start && pc < f.Start+f.Size {
-			return name, f
+		start := f.Start
+		res = append(res, name)
+		sta = append(sta, start)
+		i := len(res) - 2
+		for i >= 0 && sta[i] > start {
+			res[i+1] = res[i]
+			res[i] = name
+			sta[i+1] = sta[i]
+			sta[i] = start
+			i--
 		}
 	}
-	return "", nil
+	return sta, res
 }
 
-// FprintStack prints the stack trace of the current running point.
+func findFunc(pc uint32, Names []string, Starts []uint32, t *Table) (string, *Func) {
+	
+	left := 0
+	right := len(Names) - 1
+
+	for left < right-1 {
+		mid := left + (right-left)/2
+		if Starts[mid] == pc {
+			return Names[mid], t.Funcs[Names[mid]]
+		}
+		if Starts[mid] > pc {
+			right = mid
+		} else {
+			left = mid
+		}
+	}
+
+	if Starts[right] <= pc {
+		f := t.Funcs[Names[right]]
+		if pc > f.Start + f.Size {
+		return "", nil
+		}
+		return Names[right], f
+	} else {
+		f := t.Funcs[Names[left]]
+		if pc > f.Start + f.Size {
+		return "", nil
+		}
+		return Names[left], f
+	}
+}
+
+//FprintStack prints the stack trace of the current running point.
 func FprintStack(w io.Writer, m *arch8.Machine, core byte, t *Table) error {
 	regs := m.DumpRegs(core)
 
@@ -25,11 +68,12 @@ func FprintStack(w io.Writer, m *arch8.Machine, core byte, t *Table) error {
 	ret := regs[arch8.RET]
 
 	level := 0
+	Starts, Names := sortTable(t)
 
 	for {
 		level++
 
-		name, f := findFunc(pc, t)
+		name, f := findFunc(pc, Names, Starts, t)
 		if f == nil {
 			if level == 1 {
 				_, err := fmt.Fprintf(w, "? pc=%08x\n", pc)
