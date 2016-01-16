@@ -1,8 +1,8 @@
 ## Static analysis
 
-- the typed ast does not need to look into the scope table.
-- what we want is the type of each identifier.
-- because of type infering, this means the type of each expression.
+- we need to support building a particular set of package
+- like a single package or all packages with a particular prefix
+- we also need to support saving static analysis results
 
 The result of static analysis:
 
