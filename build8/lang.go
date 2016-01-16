@@ -81,5 +81,5 @@ type Lang interface {
 	Prepare(src map[string]*File, importer Importer) []*lex8.Error
 
 	// Compile compiles a list of source files into a compiled linkable
-	Compile(pinfo *PkgInfo) (*Package, []*lex8.Error)
+	Compile(pinfo *PkgInfo, opts *Options) (*Package, []*lex8.Error)
 }

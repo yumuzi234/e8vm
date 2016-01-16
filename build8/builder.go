@@ -203,7 +203,7 @@ func (b *Builder) makePkgInfo(p *pkg) *PkgInfo {
 func (b *Builder) build(pkg *pkg) []*lex8.Error {
 	b.fillImports(pkg)
 
-	compiled, es := pkg.lang.Compile(b.makePkgInfo(pkg))
+	compiled, es := pkg.lang.Compile(b.makePkgInfo(pkg), new(Options))
 	if es != nil {
 		return es
 	}

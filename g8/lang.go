@@ -120,7 +120,7 @@ func logDepMap(pinfo *build8.PkgInfo, deps []byte) error {
 	return w.Close()
 }
 
-func (l *lang) Compile(pinfo *build8.PkgInfo) (
+func (l *lang) Compile(pinfo *build8.PkgInfo, opts *build8.Options) (
 	*build8.Package, []*lex8.Error,
 ) {
 	// parsing

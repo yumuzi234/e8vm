@@ -16,7 +16,7 @@ func BuildSingleFile(f string, rc io.ReadCloser) ([]byte, []*lex8.Error) {
 
 	pinfo := build8.SimplePkg(path, f, rc)
 
-	pkg, errs := Lang().Compile(pinfo)
+	pkg, errs := Lang().Compile(pinfo, new(build8.Options))
 	if errs != nil {
 		return nil, errs
 	}
