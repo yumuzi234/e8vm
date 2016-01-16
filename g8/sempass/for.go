@@ -16,6 +16,10 @@ func buildForStmt(b *builder, stmt *ast.ForStmt) tast.Stmt {
 
 	if stmt.Cond != nil {
 		ret.Cond = b.buildExpr(stmt.Cond)
+		if ret.Cond == nil {
+			return nil
+		}
+
 		ref := ret.Cond.R()
 		if !ref.IsBool() {
 			pos := ast.ExprPos(stmt.Cond)

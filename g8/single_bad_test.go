@@ -49,6 +49,10 @@ func TestSingleFileBad(t *testing.T) {
 	o("func main() {}; func main() {};")
 	o("const a, b = a, b; func main() {}")
 	o("const c, d = d, t; func main() {}")
+	o(`	func main() {
+			var s string
+			for i := 0; i < len(s-2); i++ {}
+		}`)
 }
 
 func TestSingleFilePanic(t *testing.T) {
