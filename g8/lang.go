@@ -189,6 +189,7 @@ func (l *lang) Compile(pinfo *build8.PkgInfo) (
 	for i, name := range p.testNames {
 		tests[name] = uint32(i)
 	}
+	ret.Tests = tests
 
 	// check deps
 	if err := l.outputDeps(pinfo, p); err != nil {

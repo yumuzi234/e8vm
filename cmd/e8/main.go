@@ -7,20 +7,24 @@ import (
 	"math"
 	"os"
 	"runtime/pprof"
+	"strings"
 
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/asm8"
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/g8"
+	"e8vm.io/e8vm/lex8"
 )
 
 var (
-	golike   = flag.Bool("golike", false, "uses go-like syntax")
-	runTests = flag.Bool("test", true, "also run tests")
-	initPC   = flag.Uint("initpc", arch8.InitPC,
+	golike     = flag.Bool("golike", false, "uses go-like syntax")
+	runTests   = flag.Bool("test", true, "also run tests")
+	staticOnly = flag.Bool("static", false, "do static analysis only")
+	initPC     = flag.Uint("initpc", arch8.InitPC,
 		"the starting address of the image",
 	)
 	cpuProfile = flag.String("profile", "", "cpu profile output")
+	pkg        = flag.String("pkg", "", "package to build")
 )
 
 func checkInitPC() {
@@ -62,8 +66,18 @@ func main() {
 	b.Verbose = true
 	b.InitPC = uint32(*initPC)
 	b.RunTests = *runTests
+	b.StaticOnly = *staticOnly
 
-	es := b.BuildAll()
+	var es []*lex8.Error
+	if *pkg == "" {
+		es = b.BuildAll()
+	} else if strings.HasSuffix(*pkg, "...") {
+		prefix := strings.TrimSuffix(*pkg, "...")
+		b.BuildPrefix(prefix)
+	} else {
+		es = b.Build(*pkg)
+	}
+
 	if es != nil {
 		for _, e := range es {
 			fmt.Println(e)
