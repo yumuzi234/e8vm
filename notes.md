@@ -3,41 +3,48 @@
 - we need to support building a particular set of package
 - like a single package or all packages with a particular prefix
 - we also need to support saving static analysis results
+- there should be a common syntax saving format for both golang and g language
+- eventually, there should also be a search engine
 
-The result of static analysis:
+- our build system is a little bit messy
+- we are not clear about what it the input and what is the output 
 
-- syntax annotated lines, with identifier links
+- clearly the input could be a file system
+- but it also could be a virtual file system
+- it is fundamentally a set of packages, where each package has a set of files
+- source files, or even non source files
+- we can have a package selector
+- like one single package, by a name
+- or a list of packages that has the common prefix
+- or all packages in a repository
 
-- file level dependency
-- token of each file
-- a database that has type and reference of each identifier
-- defined identity in each file: const, struct, func and var
-- public interface for each package, go doc like sorted
-- package import
+- how about the output
+- the output are files of syntaxed parsted tokens
+- identifer tokens are either anchors
+- or links to another identifer
+- all global identifers has a global name for routing
+- local identifiers also has a number
+- for each packages that are successfully compiled, it can output a library
+- it can also save itself for caching the output result, but this is optional
+- each package also have a bunch of tests that can be run
+- each test case also has a name
+- test cases will be runned
+- and finally a package might produce a binary
 
-```
-struct file {
-	path string
-	name string
-	depName string
+- so the output has
 
-	items []*item
-	defines []*ident
-	refs map[*ident]*ident
-}
+input: a list of packages
+options: build depths
+for each packages
+- reads in files
+- or read in saved libs
+- build errors if any (to stdout)
+- parsed files (to parsed)
+- dependency structure (to deps)
+- symbol/identifier index (to sym)
+- test results (also to stdout, but could be structured)
+- built binaries (to bin)
 
-struct package {
-	path string
-	name string
-
-	imports []*import
-	files []*file
-}
-
-struct ident {
-	pos *pos
-	refs []*ident
-}
-
-```
+bin: built binaries
+pkg: log, pkg, deps, depmap, syms
 
