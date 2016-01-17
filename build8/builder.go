@@ -23,11 +23,7 @@ type Builder struct {
 	linkPkgs   map[string]*link8.Pkg
 	debugFuncs *debug8.Funcs
 
-	Verbose bool
-	InitPC  uint32
-
-	StaticOnly bool
-	RunTests   bool
+	*Options
 }
 
 // NewBuilder creates a new builder with a particular home directory
@@ -38,7 +34,9 @@ func NewBuilder(home Home) *Builder {
 		deps:       make(map[string][]string),
 		linkPkgs:   make(map[string]*link8.Pkg),
 		debugFuncs: debug8.NewFuncs(),
-		InitPC:     arch8.InitPC,
+		Options: &Options{
+			InitPC: arch8.InitPC,
+		},
 	}
 }
 
@@ -229,10 +227,7 @@ func (b *Builder) build(pkg *pkg) []*lex8.Error {
 		return nil
 	}
 
-	if es := b.runTests(pkg); es != nil {
-		return es
-	}
-	return nil
+	return b.runTests(pkg)
 }
 
 func deps(node *dagvis.MapNode) []string {
@@ -259,7 +254,9 @@ func (b *Builder) BuildPkgs(pkgs []string) []*lex8.Error {
 	if err != nil {
 		return lex8.SingleErr(err)
 	}
-	// TODO: save the package dep map
+	if b.SaveDeps != nil {
+		b.SaveDeps(m)
+	}
 
 	nodes := m.SortedNodes()
 	for _, node := range nodes {
@@ -293,6 +290,4 @@ func (b *Builder) BuildPrefix(repo string) []*lex8.Error {
 }
 
 // BuildAll builds all packages.
-func (b *Builder) BuildAll() []*lex8.Error {
-	return b.BuildPrefix("")
-}
+func (b *Builder) BuildAll() []*lex8.Error { return b.BuildPrefix("") }
