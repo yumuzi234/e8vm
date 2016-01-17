@@ -27,7 +27,7 @@ func buildMainPkg(home *build8.MemHome) (
 	}
 
 	image = home.Bin("main")
-	log = home.Log("main", "ir")
+	log = home.OutputBytes("main", "ir")
 	if image == nil {
 		err := errors.New("missing main() function, no binary created")
 		return nil, lex8.SingleErr(err), log

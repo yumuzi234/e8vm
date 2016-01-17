@@ -120,8 +120,8 @@ func (h *MemHome) Output(p, name string) io.WriteCloser {
 	return ret
 }
 
-// Log returns the log file in the file system.
-func (h *MemHome) Log(p, name string) []byte {
+// OutputBytes gets the debug output bytes of a compilation.
+func (h *MemHome) OutputBytes(p, name string) []byte {
 	pkg := h.pkgs[p]
 	if pkg == nil {
 		panic("pkg not exists")
