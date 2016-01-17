@@ -23,9 +23,11 @@ type Builder struct {
 	linkPkgs   map[string]*link8.Pkg
 	debugFuncs *debug8.Funcs
 
-	Verbose  bool
-	InitPC   uint32
-	RunTests bool
+	Verbose bool
+	InitPC  uint32
+
+	StaticOnly bool
+	RunTests   bool
 }
 
 // NewBuilder creates a new builder with a particular home directory
@@ -191,9 +193,15 @@ func (b *Builder) makePkgInfo(p *pkg) *PkgInfo {
 		Path:   p.path,
 		Src:    p.srcMap(),
 		Import: p.imports,
-		CreateLog: func(name string) io.WriteCloser {
-			return b.home.CreateLog(p.path, name)
+
+		Flags: &Flags{
+			StaticOnly: b.StaticOnly,
 		},
+
+		Output: func(name string) io.WriteCloser {
+			return b.home.Output(p.path, name)
+		},
+
 		AddFuncDebug: func(name string, pos *lex8.Pos, frameSize uint32) {
 			b.debugFuncs.Add(p.path, name, pos, frameSize)
 		},
@@ -203,23 +211,27 @@ func (b *Builder) makePkgInfo(p *pkg) *PkgInfo {
 func (b *Builder) build(pkg *pkg) []*lex8.Error {
 	b.fillImports(pkg)
 
-	compiled, es := pkg.lang.Compile(b.makePkgInfo(pkg), new(Options))
+	compiled, es := pkg.lang.Compile(b.makePkgInfo(pkg))
 	if es != nil {
 		return es
 	}
 	pkg.pkg = compiled
 	b.linkPkgs[pkg.path] = pkg.pkg.Lib // add for linking
 
+	if b.StaticOnly { // static analysis stops here
+		return nil
+	}
+
 	if es := b.buildMain(pkg); es != nil {
 		return es
 	}
-
-	if b.RunTests {
-		if es := b.runTests(pkg); es != nil {
-			return es
-		}
+	if !b.RunTests { // skip running tests
+		return nil
 	}
 
+	if es := b.runTests(pkg); es != nil {
+		return es
+	}
 	return nil
 }
 
@@ -274,8 +286,13 @@ func (b *Builder) Build(p string) []*lex8.Error {
 	return b.BuildPkgs([]string{p})
 }
 
-// BuildAll builds all packages, when andTest is also true,
-// it will also test the packages.
+// BuildPrefix builds packages with a particular prefix.
+// in the path.
+func (b *Builder) BuildPrefix(repo string) []*lex8.Error {
+	return b.BuildPkgs(b.home.Pkgs(repo))
+}
+
+// BuildAll builds all packages.
 func (b *Builder) BuildAll() []*lex8.Error {
-	return b.BuildPkgs(b.home.Pkgs(""))
+	return b.BuildPrefix("")
 }

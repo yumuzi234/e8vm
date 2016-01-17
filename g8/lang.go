@@ -3,6 +3,7 @@ package g8
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"path/filepath"
 	"strings"
 
@@ -93,36 +94,79 @@ func (l *lang) parsePkg(pinfo *build8.PkgInfo) (
 	return asts, nil
 }
 
-func logIr(pinfo *build8.PkgInfo, b *builder) error {
-	w := pinfo.CreateLog("ir")
-	ir.PrintPkg(w, b.p)
+func output(w io.WriteCloser, f func(w io.Writer) error) error {
+	err := f(w)
+	if err != nil {
+		w.Close()
+		return err
+	}
 	return w.Close()
 }
 
-func logDeps(pinfo *build8.PkgInfo, g *dagvis.Graph) error {
+func outputIr(pinfo *build8.PkgInfo, b *builder) error {
+	return output(pinfo.Output("ir"), func(w io.Writer) error {
+		return ir.PrintPkg(w, b.p)
+	})
+}
+
+func outputDeps(pinfo *build8.PkgInfo, g *dagvis.Graph) error {
+
 	bs, err := json.MarshalIndent(g.Nodes, "", "    ")
 	if err != nil {
 		panic(err)
 	}
 
-	w := pinfo.CreateLog("deps")
-	if _, err := w.Write(bs); err != nil {
+	return output(pinfo.Output("deps"), func(w io.Writer) error {
+		_, err := w.Write(bs)
 		return err
-	}
-	return w.Close()
+	})
 }
 
-func logDepMap(pinfo *build8.PkgInfo, deps []byte) error {
-	w := pinfo.CreateLog("depmap")
-	if _, err := w.Write(deps); err != nil {
+func outputDepMap(pinfo *build8.PkgInfo, deps []byte) error {
+	return output(pinfo.Output("depmap"), func(w io.Writer) error {
+		_, err := w.Write(deps)
 		return err
-	}
-	return w.Close()
+	})
 }
 
-func (l *lang) Compile(pinfo *build8.PkgInfo, opts *build8.Options) (
+func (l *lang) outputDeps(pinfo *build8.PkgInfo, p *pkg) error {
+	g := p.deps
+	g, err := g.Rename(func(name string) (string, error) {
+		if strings.HasSuffix(name, ".g") {
+			return strings.TrimSuffix(name, ".g"), nil
+		}
+		return name, fmt.Errorf("filename suffix missing: %q", name)
+	})
+
+	if err != nil {
+		return err
+	}
+
+	if err := outputDeps(pinfo, g); err != nil {
+		return err
+	}
+
+	bs, err := dagvis.LayoutJSON(g.Reverse())
+	if err != nil {
+		return err
+	}
+	if err := outputDepMap(pinfo, bs); err != nil {
+		return err
+	}
+
+	return err
+}
+
+func (l *lang) Compile(pinfo *build8.PkgInfo) (
 	*build8.Package, []*lex8.Error,
 ) {
+	ret := &build8.Package{
+		Lang:     "g8",
+		Init:     initName,
+		Main:     startName,
+		TestMain: testStartName,
+	}
+
 	// parsing
 	asts, es := l.parsePkg(pinfo)
 	if es != nil {
@@ -140,56 +184,35 @@ func (l *lang) Compile(pinfo *build8.PkgInfo, opts *build8.Options) (
 		return nil, es
 	}
 
-	g := p.deps
-	g, err := g.Rename(func(name string) (string, error) {
-		if strings.HasSuffix(name, ".g") {
-			return strings.TrimSuffix(name, ".g"), nil
-		}
-		return name, fmt.Errorf("filename suffix missing: %q", name)
-	})
-	if err != nil {
-		return nil, lex8.SingleErr(err)
-	}
-
-	if err := logDeps(pinfo, g); err != nil {
-		return nil, lex8.SingleErr(err)
-	}
-
-	bs, err := dagvis.LayoutJSON(g.Reverse())
-	if err != nil {
-		return nil, lex8.SingleErr(err)
-	}
-	if err := logDepMap(pinfo, bs); err != nil {
-		return nil, lex8.SingleErr(err)
-	}
-
-	// codegen
-	lib, errs := ir.BuildPkg(b.p)
-	if errs != nil {
-		return nil, errs
-	}
-
-	// add debug symbols
-	ir.AddDebug(b.p, pinfo.AddFuncDebug)
-
-	// IR logging
-	if err := logIr(pinfo, b); err != nil {
-		return nil, lex8.SingleErr(err)
-	}
-
+	// test mapping
 	tests := make(map[string]uint32)
 	for i, name := range p.testNames {
 		tests[name] = uint32(i)
 	}
 
-	ret := &build8.Package{
-		Lang:     "g8",
-		Init:     initName,
-		Main:     startName,
-		TestMain: testStartName,
-		Tests:    tests,
-		Lib:      lib,
-		Symbols:  p.tops,
+	// check deps
+	if err := l.outputDeps(pinfo, p); err != nil {
+		return nil, lex8.SingleErr(err)
+	}
+
+	ret.Symbols = p.tops
+	if pinfo.Flags.StaticOnly { // static analysis stops here
+		return ret, nil
+	}
+
+	var errs []*lex8.Error
+	if ret.Lib, errs = ir.BuildPkg(b.p); errs != nil {
+		return nil, errs
+	}
+
+	// add debug symbols
+	//
+	// Functions positionings only available after building.
+	ir.AddDebug(b.p, pinfo.AddFuncDebug)
+
+	// IR logging
+	if err := outputIr(pinfo, b); err != nil {
+		return nil, lex8.SingleErr(err)
 	}
 
 	return ret, nil

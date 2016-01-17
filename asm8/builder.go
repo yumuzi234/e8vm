@@ -1,7 +1,6 @@
 package asm8
 
 import (
-	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/sym8"
 )
@@ -16,7 +15,6 @@ type builder struct {
 
 	imports map[string]string
 	pkgUsed map[string]struct{}
-	inits   []*build8.PkgSym
 }
 
 func newBuilder(path string) *builder {

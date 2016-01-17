@@ -67,20 +67,6 @@ func (h *MemHome) Src(p string) map[string]*File {
 	return ret
 }
 
-// CreateLib opens the library file for writing
-func (h *MemHome) CreateLib(p string) io.WriteCloser {
-	pkg := h.pkgs[p]
-	if pkg == nil {
-		panic("pkg not exists")
-	}
-	if pkg.lib == nil {
-		pkg.lib = newMemFile()
-	} else {
-		pkg.lib.Reset()
-	}
-	return pkg.lib
-}
-
 // CreateBin opens the library binary for writing
 func (h *MemHome) CreateBin(p string) io.WriteCloser {
 	pkg := h.pkgs[p]
@@ -123,14 +109,14 @@ func (h *MemHome) Bin(p string) []byte {
 	return pkg.bin.Bytes()
 }
 
-// CreateLog creates a log file for writing
-func (h *MemHome) CreateLog(p, name string) io.WriteCloser {
+// Output creates a debug output file for writing.
+func (h *MemHome) Output(p, name string) io.WriteCloser {
 	pkg := h.pkgs[p]
 	if pkg == nil {
 		panic("pkg not exists")
 	}
 	ret := newMemFile()
-	pkg.logs[name] = ret
+	pkg.outs[name] = ret
 	return ret
 }
 
@@ -140,7 +126,7 @@ func (h *MemHome) Log(p, name string) []byte {
 	if pkg == nil {
 		panic("pkg not exists")
 	}
-	ret := pkg.logs[name]
+	ret := pkg.outs[name]
 	if ret == nil {
 		return nil
 	}

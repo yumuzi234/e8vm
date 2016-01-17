@@ -48,3 +48,14 @@ for each packages
 bin: built binaries
 pkg: log, pkg, deps, depmap, syms
 
+build
+
+SrcDir {
+	List(ext string) []string
+	Open(name string) (io.Reader, error)
+}
+
+Output {
+	
+}
+Binary io.Writer

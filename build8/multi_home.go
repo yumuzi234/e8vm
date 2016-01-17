@@ -64,14 +64,9 @@ func (h *MultiHome) Src(path string) map[string]*File {
 	return nil
 }
 
-// CreateLib creates the writer for writing the linkable package library
-func (h *MultiHome) CreateLib(path string) io.WriteCloser {
-	return h.HomeFor(path).CreateLib(path)
-}
-
-// CreateLog creates the logger
-func (h *MultiHome) CreateLog(path, name string) io.WriteCloser {
-	return h.HomeFor(path).CreateLog(path, name)
+// Output creates the output writer
+func (h *MultiHome) Output(path, name string) io.WriteCloser {
+	return h.HomeFor(path).Output(path, name)
 }
 
 // CreateBin creates the writer for writing the E8 binary

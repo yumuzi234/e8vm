@@ -4,7 +4,7 @@ package build8
 type MemPkg struct {
 	path  string
 	files map[string]*memFile
-	logs  map[string]*memFile
+	outs  map[string]*memFile
 	bin   *memFile
 	test  *memFile
 	lib   *memFile
@@ -13,7 +13,7 @@ type MemPkg struct {
 func newMemPkg(path string) *MemPkg {
 	ret := new(MemPkg)
 	ret.path = path
-	ret.logs = make(map[string]*memFile)
+	ret.outs = make(map[string]*memFile)
 	ret.files = make(map[string]*memFile)
 	return ret
 }

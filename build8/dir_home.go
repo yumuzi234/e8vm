@@ -187,20 +187,12 @@ func (h *DirHome) CreateTestBin(p string) io.WriteCloser {
 	return newDirFile(h.sub("test", p+".e8"))
 }
 
-// CreateLib returns the writer to write the linkable library.
-func (h *DirHome) CreateLib(p string) io.WriteCloser {
+// Output returns the debug output writer for the particular name.
+func (h *DirHome) Output(p, name string) io.WriteCloser {
 	if !isPkgPath(p) {
 		panic("not package path")
 	}
-	return newDirFile(h.sub("pkg", p+".e8a"))
-}
-
-// CreateLog returns the log writer for the particular name.
-func (h *DirHome) CreateLog(p, name string) io.WriteCloser {
-	if !isPkgPath(p) {
-		panic("not package path")
-	}
-	return newDirFile(h.subFile("log", p, name))
+	return newDirFile(h.subFile("out", p, name))
 }
 
 // Lang returns the language for the particular path.

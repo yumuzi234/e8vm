@@ -56,7 +56,7 @@ func findTheFile(pinfo *build8.PkgInfo) (*build8.File, error) {
 	panic("unreachable")
 }
 
-func (bare bareFunc) Compile(pinfo *build8.PkgInfo, opts *build8.Options) (
+func (bare bareFunc) Compile(pinfo *build8.PkgInfo) (
 	pkg *build8.Package, es []*lex8.Error,
 ) {
 	// parsing
@@ -81,8 +81,7 @@ func (bare bareFunc) Compile(pinfo *build8.PkgInfo, opts *build8.Options) (
 		return nil, es
 	}
 
-	// logging
-	if e := logIr(pinfo, b); e != nil {
+	if e := outputIr(pinfo, b); e != nil {
 		return nil, lex8.SingleErr(e)
 	}
 

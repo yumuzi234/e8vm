@@ -39,7 +39,7 @@ func buildSymTable(p *lib) *sym8.Table {
 	return t
 }
 
-func (lang) Compile(pinfo *build8.PkgInfo, opts *build8.Options) (
+func (lang) Compile(pinfo *build8.PkgInfo) (
 	*build8.Package, []*lex8.Error,
 ) {
 	// resolve pass, will also parse the files

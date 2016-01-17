@@ -40,11 +40,11 @@ type Package struct {
 	// Tests is the list of test cases, mapping from names to test ids.
 	Tests map[string]uint32
 
-	// Lib is the linkable library.
-	Lib *link8.Pkg
-
 	// Symbols stores all the symbols of this package.
 	Symbols *sym8.Table
+
+	// Lib is the linkable library.
+	Lib *link8.Pkg
 }
 
 // Importer is an interface for importing required packages for compiling
@@ -52,9 +52,9 @@ type Importer interface {
 	Import(name, path string, pos *lex8.Pos) // imports a package
 }
 
-// PkgSym is a pointer to a symbol in a package.
-type PkgSym struct {
-	Pkg, Sym string
+// Flags contains the flags for compiling a package
+type Flags struct {
+	StaticOnly bool // only perform static analysis
 }
 
 // PkgInfo contains the information for compiling a package
@@ -62,11 +62,13 @@ type PkgInfo struct {
 	Path   string
 	Src    map[string]*File
 	Import map[string]*Import
+	Flags  *Flags
 
-	Inits []*PkgSym
+	// Output creates an output file for the package.
+	Output func(name string) io.WriteCloser
 
-	// CreateLog creates the log file
-	CreateLog func(name string) io.WriteCloser
+	// ParseOutput saves all the tokens of a file.
+	ParseOutput func(file string, tokens []*lex8.Token)
 
 	// AddFuncDebug adds debug information for a linking function.
 	AddFuncDebug func(name string, pos *lex8.Pos, frameSize uint32)
@@ -81,5 +83,5 @@ type Lang interface {
 	Prepare(src map[string]*File, importer Importer) []*lex8.Error
 
 	// Compile compiles a list of source files into a compiled linkable
-	Compile(pinfo *PkgInfo, opts *Options) (*Package, []*lex8.Error)
+	Compile(pinfo *PkgInfo) (*Package, []*lex8.Error)
 }

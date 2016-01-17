@@ -13,10 +13,10 @@ type Home interface {
 	Src(path string) map[string]*File
 
 	// CreateLib creates the writer for writing the linkable package library.
-	CreateLib(path string) io.WriteCloser
+	// CreateLib(path string) io.WriteCloser
 
-	// CreateLog creates a logger, usually for debugging.
-	CreateLog(path, name string) io.WriteCloser
+	// Output creates a compiler output, usually for debugging.
+	Output(path, name string) io.WriteCloser
 
 	// CreateBin creates the writer for generate the E8 binary image.
 	CreateBin(path string) io.WriteCloser
