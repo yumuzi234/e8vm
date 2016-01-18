@@ -56,7 +56,7 @@ func CompileSingle(fname, s string, golike bool) (
 	if !golike {
 		lang = Lang()
 	} else {
-		lang = LangGolike()
+		lang = LangGoLike()
 	}
 	return buildSingle(fname, s, lang)
 }

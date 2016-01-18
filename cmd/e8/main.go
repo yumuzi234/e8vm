@@ -55,7 +55,7 @@ func main() {
 	if !*golike {
 		lang = g8.Lang()
 	} else {
-		lang = g8.LangGolike()
+		lang = g8.LangGoLike()
 	}
 
 	home := build8.NewDirHome(".", lang)
