@@ -25,6 +25,7 @@ var (
 	)
 	cpuProfile = flag.String("profile", "", "cpu profile output")
 	pkg        = flag.String("pkg", "", "package to build")
+	homeDir    = flag.String("home", ".", "the home directory")
 )
 
 func checkInitPC() {
@@ -58,7 +59,7 @@ func main() {
 		lang = g8.LangGoLike()
 	}
 
-	home := build8.NewDirHome(".", lang)
+	home := build8.NewDirHome(*homeDir, lang)
 	home.AddLang("asm", asm8.Lang())
 	home.AddLang("bare", g8.BareFunc())
 
