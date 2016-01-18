@@ -60,12 +60,16 @@ func NewDirHome(path string, lang Lang) *DirHome {
 	return ret
 }
 
-func (h *DirHome) sub(pre, p string) string {
-	return filepath.Join(h.path, pre, p)
+func (h *DirHome) out(pre, p string) string {
+	return filepath.Join(h.path, "_", pre, p)
 }
 
-func (h *DirHome) subFile(pre, p, f string) string {
-	return filepath.Join(h.path, pre, p, f)
+func (h *DirHome) outFile(pre, p, f string) string {
+	return filepath.Join(h.path, "_", pre, p, f)
+}
+
+func (h *DirHome) srcFile(p, f string) string {
+	return filepath.Join(h.path, p, f)
 }
 
 // ClearCache clears the file list cache
@@ -80,13 +84,16 @@ func (h *DirHome) AddLang(prefix string, lang Lang) {
 
 // Pkgs lists all the packages inside this home folder.
 func (h *DirHome) Pkgs(prefix string) []string {
-	root := filepath.Join(h.path, "src")
+	root := h.path
 	start := filepath.Join(root, prefix)
 	var pkgs []string
 
 	walkFunc := func(p string, info os.FileInfo, e error) error {
 		if e != nil {
 			return e
+		}
+		if p == "." {
+			return nil
 		}
 
 		if !info.IsDir() {
@@ -160,7 +167,7 @@ func (h *DirHome) Src(p string) map[string]*File {
 
 	ret := make(map[string]*File)
 	for _, name := range files {
-		filePath := h.subFile("src", p, name)
+		filePath := h.srcFile(p, name)
 		ret[name] = &File{
 			Path:       filePath,
 			Name:       name,
@@ -176,7 +183,7 @@ func (h *DirHome) CreateBin(p string) io.WriteCloser {
 	if !isPkgPath(p) {
 		panic("not package path")
 	}
-	return newDirFile(h.sub("bin", p+".e8"))
+	return newDirFile(h.out("bin", p+".e8"))
 }
 
 // CreateTestBin returns the writer to write the test binary image.
@@ -184,7 +191,7 @@ func (h *DirHome) CreateTestBin(p string) io.WriteCloser {
 	if !isPkgPath(p) {
 		panic("not package path")
 	}
-	return newDirFile(h.sub("test", p+".e8"))
+	return newDirFile(h.out("test", p+".e8"))
 }
 
 // Output returns the debug output writer for the particular name.
@@ -192,7 +199,7 @@ func (h *DirHome) Output(p, name string) io.WriteCloser {
 	if !isPkgPath(p) {
 		panic("not package path")
 	}
-	return newDirFile(h.subFile("out", p, name))
+	return newDirFile(h.outFile("out", p, name))
 }
 
 // Lang returns the language for the particular path.
