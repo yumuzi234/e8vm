@@ -67,8 +67,8 @@ func (h *MemHome) Src(p string) map[string]*File {
 	return ret
 }
 
-// CreateBin opens the library binary for writing
-func (h *MemHome) CreateBin(p string) io.WriteCloser {
+// Bin opens the library binary for writing
+func (h *MemHome) Bin(p string) io.WriteCloser {
 	pkg := h.pkgs[p]
 	if pkg == nil {
 		panic("pkg not exists")
@@ -81,8 +81,8 @@ func (h *MemHome) CreateBin(p string) io.WriteCloser {
 	return pkg.bin
 }
 
-// CreateTestBin opens the libary for writing the testing binary
-func (h *MemHome) CreateTestBin(p string) io.WriteCloser {
+// TestBin opens the libary for writing the testing binary
+func (h *MemHome) TestBin(p string) io.WriteCloser {
 	pkg := h.pkgs[p]
 	if pkg == nil {
 		panic("pkg not exists")
@@ -95,10 +95,10 @@ func (h *MemHome) CreateTestBin(p string) io.WriteCloser {
 	return pkg.test
 }
 
-// Bin returns the binary for the package if it has a main.
+// BinBytes returns the binary for the package if it has a main.
 // It returns nil if the package does not.
 // It panics if the package does not exist.
-func (h *MemHome) Bin(p string) []byte {
+func (h *MemHome) BinBytes(p string) []byte {
 	pkg := h.pkgs[p]
 	if pkg == nil {
 		panic("pkg not exists")
@@ -140,5 +140,3 @@ func (h *MemHome) Lang(path string) Lang { return h.langs.lang(path) }
 func (h *MemHome) AddLang(prefix string, lang Lang) {
 	h.langs.addLang(prefix, lang)
 }
-
-var _ Home = new(MemHome) // satisfying the interface

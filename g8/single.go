@@ -21,12 +21,12 @@ func makeMemHome(lang build8.Lang) *build8.MemHome {
 func buildMainPkg(home *build8.MemHome) (
 	image []byte, errs []*lex8.Error, log []byte,
 ) {
-	b := build8.NewBuilder(home)
+	b := build8.NewBuilder(home, home)
 	if errs := b.BuildAll(); errs != nil {
 		return nil, errs, nil
 	}
 
-	image = home.Bin("main")
+	image = home.BinBytes("main")
 	log = home.OutputBytes("main", "ir")
 	if image == nil {
 		err := errors.New("missing main() function, no binary created")

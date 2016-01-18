@@ -43,8 +43,6 @@ type DirHome struct {
 	Quiet bool
 }
 
-var _ Home = new(DirHome)
-
 // NewDirHome creates a file system home storage with
 // a particualr default language for compiling.
 func NewDirHome(path string, lang Lang) *DirHome {
@@ -178,16 +176,16 @@ func (h *DirHome) Src(p string) map[string]*File {
 	return ret
 }
 
-// CreateBin returns the writer to write the binary image.
-func (h *DirHome) CreateBin(p string) io.WriteCloser {
+// Bin returns the writer to write the binary image.
+func (h *DirHome) Bin(p string) io.WriteCloser {
 	if !isPkgPath(p) {
 		panic("not package path")
 	}
 	return newDirFile(h.out("bin", p+".e8"))
 }
 
-// CreateTestBin returns the writer to write the test binary image.
-func (h *DirHome) CreateTestBin(p string) io.WriteCloser {
+// TestBin returns the writer to write the test binary image.
+func (h *DirHome) TestBin(p string) io.WriteCloser {
 	if !isPkgPath(p) {
 		panic("not package path")
 	}

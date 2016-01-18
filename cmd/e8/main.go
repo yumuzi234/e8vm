@@ -62,7 +62,7 @@ func main() {
 	home.AddLang("asm", asm8.Lang())
 	home.AddLang("bare", g8.BareFunc())
 
-	b := build8.NewBuilder(home)
+	b := build8.NewBuilder(home, home)
 	b.Verbose = true
 	b.InitPC = uint32(*initPC)
 	b.RunTests = *runTests

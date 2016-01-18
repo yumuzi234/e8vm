@@ -16,7 +16,9 @@ import (
 
 // Builder builds a bunch of packages.
 type Builder struct {
-	home Home
+	input  Input
+	output Output
+
 	pkgs map[string]*pkg
 	deps map[string][]string
 
@@ -27,9 +29,10 @@ type Builder struct {
 }
 
 // NewBuilder creates a new builder with a particular home directory
-func NewBuilder(home Home) *Builder {
+func NewBuilder(input Input, output Output) *Builder {
 	return &Builder{
-		home:       home,
+		input:      input,
+		output:     output,
 		pkgs:       make(map[string]*pkg),
 		deps:       make(map[string][]string),
 		linkPkgs:   make(map[string]*link8.Pkg),
@@ -46,7 +49,7 @@ func (b *Builder) prepare(p string) (*pkg, []*lex8.Error) {
 		return saved, nil // already prepared
 	}
 
-	pkg := newPkg(b.home, p)
+	pkg := newPkg(b.input, b.output, p)
 	b.pkgs[p] = pkg
 	if pkg.err != nil {
 		return pkg, nil
@@ -150,7 +153,7 @@ func (b *Builder) buildMain(p *pkg) []*lex8.Error {
 
 	log := lex8.NewErrorList()
 
-	fout := b.home.CreateBin(p.path)
+	fout := b.output.Bin(p.path)
 	lex8.LogError(log, b.link(fout, p, main))
 	lex8.LogError(log, fout.Close())
 
@@ -166,7 +169,7 @@ func (b *Builder) runTests(p *pkg) []*lex8.Error {
 		if len(tests) > 0 {
 			bs := new(bytes.Buffer)
 			lex8.LogError(log, b.link(bs, p, testMain))
-			fout := b.home.CreateTestBin(p.path)
+			fout := b.output.TestBin(p.path)
 
 			img := bs.Bytes()
 			_, err := fout.Write(img)
@@ -197,7 +200,7 @@ func (b *Builder) makePkgInfo(p *pkg) *PkgInfo {
 		},
 
 		Output: func(name string) io.WriteCloser {
-			return b.home.Output(p.path, name)
+			return b.output.Output(p.path, name)
 		},
 
 		AddFuncDebug: func(name string, pos *lex8.Pos, frameSize uint32) {
@@ -286,7 +289,7 @@ func (b *Builder) Build(p string) []*lex8.Error {
 // BuildPrefix builds packages with a particular prefix.
 // in the path.
 func (b *Builder) BuildPrefix(repo string) []*lex8.Error {
-	return b.BuildPkgs(b.home.Pkgs(repo))
+	return b.BuildPkgs(b.input.Pkgs(repo))
 }
 
 // BuildAll builds all packages.
