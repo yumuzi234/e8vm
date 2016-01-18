@@ -101,9 +101,10 @@ func (h *DirHome) Pkgs(prefix string) []string {
 			return nil
 		}
 
+		base := filepath.Base(path)
 		if !info.IsDir() {
 			return nil
-		} else if !lex8.IsPkgName(info.Name()) {
+		} else if !lex8.IsPkgName(base) {
 			return filepath.SkipDir
 		}
 
