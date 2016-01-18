@@ -90,17 +90,7 @@ func (h *DirHome) Pkgs(prefix string) []string {
 		if e != nil {
 			return e
 		}
-		if p == "." {
-			return nil
-		}
-
-		if !info.IsDir() {
-			return nil
-		} else if !lex8.IsPkgName(info.Name()) {
-			return filepath.SkipDir
-		}
-
-		if root == p {
+		if p == "." || p == root {
 			return nil
 		}
 
@@ -109,6 +99,12 @@ func (h *DirHome) Pkgs(prefix string) []string {
 			panic(e)
 		} else if path == "." {
 			return nil
+		}
+
+		if !info.IsDir() {
+			return nil
+		} else if !lex8.IsPkgName(info.Name()) {
+			return filepath.SkipDir
 		}
 
 		lang := h.Lang(path)
