@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"math"
+	"path"
 
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/dagvis"
@@ -82,21 +82,6 @@ func (b *Builder) prepare(p string) (*pkg, []*lex8.Error) {
 	b.deps[p] = deps
 
 	return pkg, nil
-}
-
-func debugSection(tab *debug8.Table) (*e8.Section, error) {
-	bs := tab.Marshal()
-	if len(bs) > math.MaxInt32-1 {
-		return nil, fmt.Errorf("debug section too large")
-	}
-
-	return &e8.Section{
-		Header: &e8.Header{
-			Type: e8.Debug,
-			Size: uint32(len(bs)),
-		},
-		Bytes: bs,
-	}, nil
 }
 
 func (b *Builder) link(out io.Writer, p *pkg, main string) error {
@@ -195,14 +180,14 @@ func (b *Builder) makePkgInfo(p *pkg) *PkgInfo {
 		Src:    p.srcMap(),
 		Import: p.imports,
 
-		Flags: &Flags{
-			StaticOnly: b.StaticOnly,
-		},
-
+		Flags: &Flags{StaticOnly: b.StaticOnly},
 		Output: func(name string) io.WriteCloser {
 			return b.output.Output(p.path, name)
 		},
-
+		ParseOutput: func(file string, tokens []*lex8.Token) {
+			path := path.Join(p.path, file)
+			b.FileTokens(path, tokens)
+		},
 		AddFuncDebug: func(name string, pos *lex8.Pos, frameSize uint32) {
 			b.debugFuncs.Add(p.path, name, pos, frameSize)
 		},

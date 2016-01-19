@@ -2,6 +2,7 @@ package build8
 
 import (
 	"e8vm.io/e8vm/dagvis"
+	"e8vm.io/e8vm/lex8"
 )
 
 // Options contains options for building a set of packages.
@@ -13,4 +14,6 @@ type Options struct {
 	RunTests   bool
 
 	SaveDeps func(deps *dagvis.Map)
+
+	FileTokens func(p string, toks []*lex8.Token)
 }
