@@ -22,11 +22,11 @@ type runeScanner struct {
 
 // newRuneScanner creates a scanner.
 func newRuneScanner(file string, r io.Reader) *runeScanner {
-	return &runeScanner {
+	return &runeScanner{
 		file: file,
-		r: bufio.NewReader(r),
+		r:    bufio.NewReader(r),
 		line: 1,
-		col: 1,
+		col:  0,
 	}
 }
 

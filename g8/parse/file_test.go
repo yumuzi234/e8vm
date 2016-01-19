@@ -79,3 +79,23 @@ func TestFile_bad(t *testing.T) {
 		}
 	}
 }
+
+func TestFileTokens(t *testing.T) {
+	buf := strings.NewReader("func f() {}")
+	_, rec, es := File("test.g", buf, false)
+	if es != nil {
+		for _, e := range es {
+			t.Log(e)
+		}
+		t.Fail()
+	}
+	toks := rec.Tokens()
+	for _, tok := range toks {
+		t.Log(tok.Pos, tok.Lit)
+	}
+	firstTok := toks[0]
+	pos := firstTok.Pos
+	if pos.Line != 1 || pos.Col != 1 {
+		t.Error("first token not starting with test.g:1:1")
+	}
+}

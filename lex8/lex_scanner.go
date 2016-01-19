@@ -17,13 +17,12 @@ type lexScanner struct {
 
 // newLexScanner creates a new lexer.
 func newLexScanner(file string, r io.Reader) *lexScanner {
-	ret := new(lexScanner)
-	ret.s = newRuneScanner(file, r)
-	ret.errs = NewErrorList()
-
-	ret.buf = new(bytes.Buffer)
+	ret := &lexScanner{
+		s:    newRuneScanner(file, r),
+		errs: NewErrorList(),
+		buf:  new(bytes.Buffer),
+	}
 	ret.pos = ret.s.pos()
-
 	return ret
 }
 
@@ -56,7 +55,6 @@ func (s *lexScanner) accept() (string, *Pos) {
 	pos := s.pos
 
 	s.pos = s.s.pos()
-
 	return ret, pos
 }
 
