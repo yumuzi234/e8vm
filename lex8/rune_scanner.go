@@ -22,13 +22,12 @@ type runeScanner struct {
 
 // newRuneScanner creates a scanner.
 func newRuneScanner(file string, r io.Reader) *runeScanner {
-	ret := new(runeScanner)
-	ret.file = file
-	ret.r = bufio.NewReader(r)
-	ret.line = 1 // natural counting
-	ret.col = 1
-
-	return ret
+	return &runeScanner {
+		file: file,
+		r: bufio.NewReader(r),
+		line: 1,
+		col: 1,
+	}
 }
 
 // scan reads in the next rune to s.Rune.  It closes the reader automatically
