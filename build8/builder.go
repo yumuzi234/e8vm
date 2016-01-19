@@ -174,6 +174,15 @@ func (b *Builder) runTests(p *pkg) []*lex8.Error {
 	return nil
 }
 
+func (b *Builder) parseOutput(p string) func(f string, toks []*lex8.Token) {
+	if b.FileTokens == nil {
+		return nil
+	}
+	return func(file string, tokens []*lex8.Token) {
+		b.FileTokens(path.Join(p, file), tokens)
+	}
+}
+
 func (b *Builder) makePkgInfo(p *pkg) *PkgInfo {
 	return &PkgInfo{
 		Path:   p.path,
@@ -184,10 +193,7 @@ func (b *Builder) makePkgInfo(p *pkg) *PkgInfo {
 		Output: func(name string) io.WriteCloser {
 			return b.output.Output(p.path, name)
 		},
-		ParseOutput: func(file string, tokens []*lex8.Token) {
-			path := path.Join(p.path, file)
-			b.FileTokens(path, tokens)
-		},
+		ParseOutput: b.parseOutput(p.path),
 		AddFuncDebug: func(name string, pos *lex8.Pos, frameSize uint32) {
 			b.debugFuncs.Add(p.path, name, pos, frameSize)
 		},
