@@ -13,7 +13,7 @@ func buildForStmt(b *builder, stmt *tast.ForStmt) {
 		body := b.f.NewBlock(b.b)
 		iter := b.f.NewBlock(body)
 		after := b.f.NewBlock(iter)
-		body.Jump(body)
+		iter.Jump(body)
 
 		b.b = body
 		b.breaks.push(after, "")
