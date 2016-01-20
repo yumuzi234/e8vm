@@ -11,18 +11,20 @@ func buildForStmt(b *builder, stmt *tast.ForStmt) {
 
 	if stmt.Cond == nil {
 		body := b.f.NewBlock(b.b)
-		after := b.f.NewBlock(body)
+		iter := b.f.NewBlock(body)
+		after := b.f.NewBlock(iter)
 		body.Jump(body)
 
 		b.b = body
 		b.breaks.push(after, "")
-		b.continues.push(body, "")
+		b.continues.push(iter, "")
 
 		b.buildStmt(stmt.Body)
 
 		b.breaks.pop()
 		b.continues.pop()
 
+		b.b = iter
 		if stmt.Iter != nil {
 			b.buildStmt(stmt.Iter)
 		}
@@ -32,8 +34,9 @@ func buildForStmt(b *builder, stmt *tast.ForStmt) {
 
 	condBlock := b.f.NewBlock(b.b)
 	body := b.f.NewBlock(condBlock)
-	after := b.f.NewBlock(body)
-	body.Jump(condBlock)
+	iter := b.f.NewBlock(body)
+	after := b.f.NewBlock(iter)
+	iter.Jump(condBlock)
 
 	b.b = condBlock
 	c := b.buildExpr(stmt.Cond)
@@ -41,13 +44,14 @@ func buildForStmt(b *builder, stmt *tast.ForStmt) {
 
 	b.b = body
 	b.breaks.push(after, "")
-	b.continues.push(condBlock, "")
+	b.continues.push(iter, "")
 
 	b.buildStmt(stmt.Body)
 
 	b.breaks.pop()
 	b.continues.pop()
 
+	b.b = iter
 	if stmt.Iter != nil {
 		b.buildStmt(stmt.Iter)
 	}
