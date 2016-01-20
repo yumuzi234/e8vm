@@ -1,18 +1,16 @@
-how do we organize user level code and kernel level code?
+- it is good that we have code visualized now.
+- e8vm.io code should be visualized under e8vm.io
+- we can also visualize os8 and toys under e8vm.io for now
+- but we will move it to shanhu.io once it can host projects
+- at least we have the code and modules for properly visualize a project build
+- ?c=103343223 // commit (change list)
+- ?d=20150112  // daily build
+- ok
+- now we need to build a website for writing, running and saving small piece
+  of code
+- think of it a website for yumuzi234 to write code in your language for fun
+- what should the ui be like then?
 
-- what we really want now is a consistent way to save the source code.
-- we need a user account that belongs to the shanhu system
+- block comments are rendered as markdowns
+- there might be hidden test cases, which is in another file.
 
-e8vm.io / os8 /
-
-- the standard library will be very commonly imported.
-- one solution is that we have special user accounts, these are system users accounts
-- like shanhu.io/~std/
-- for now, it is too early to start the ~std, as we do not have a working os yet
-- so instead, we will start two repositories
-- shanhu.io/~os8/ and shanhu.io/~toybox
-- the ~std is a special repository for standard library that can be imported directly
-- okay, so this one is solved
-- another issue is how to deal with kernel bare-metal binaries and user level binaries
-- the current difference is that kernel binaries and user binaries start at
-  different program counters

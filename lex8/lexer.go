@@ -30,7 +30,7 @@ func NewLexer(file string, r io.Reader) *Lexer {
 	ret.errs = NewErrorList()
 
 	ret.IsWhite = func(r rune) bool {
-		return r == ' ' || r == '\t'
+		return r == ' ' || r == '\t' || r == '\r'
 	}
 
 	ret.Next()
