@@ -45,7 +45,19 @@ func printExpr(f *formatter, expr ast.Expr) {
 			printExprs(f, expr.Func, expr.Lparen, expr.Rparen)
 		}
 	case *ast.IndexExpr:
-		printExprs(f, expr.Array, expr.Lbrack, expr.Index, expr.Rbrack)
+		if expr.Colon != nil {
+			printExprs(f, expr.Array, expr.Lbrack)
+			if expr.Index != nil {
+				printExprs(f, expr.Index)
+			}
+			printExprs(f, expr.Colon)
+			if expr.IndexEnd != nil {
+				printExprs(f, expr.Index)
+			}
+			printExprs(f, expr.Rbrack)
+		} else {
+			printExprs(f, expr.Array, expr.Lbrack, expr.Index, expr.Rbrack)
+		}
 	case *ast.ArrayTypeExpr:
 		if expr.Len == nil {
 			printExprs(f, expr.Lbrack, expr.Rbrack, expr.Type)

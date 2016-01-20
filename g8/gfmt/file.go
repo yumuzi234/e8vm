@@ -24,6 +24,10 @@ func printTopDecl(f *formatter, d ast.Decl) {
 }
 
 func printFile(f *formatter, file *ast.File) {
+	if file.Imports != nil {
+		printImportDecls(f, file.Imports)
+	}
+
 	for i, decl := range file.Decls {
 		printTopDecl(f, decl)
 		if i < len(file.Decls)-1 {

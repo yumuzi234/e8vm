@@ -37,5 +37,11 @@ func TestFormatFile(t *testing.T) {
 	o("func main(){}", "func main() {}\n")          // add spaces
 	o("func main() {\n}", "func main() {}\n")       // merge oneliner
 
+	/*
+	TODO(kcnm): pass this
+	o("func main() { var a [5]int; b := a[:] }",
+		"func main() {\n    var a [5]int\n    b := a[:]\n}\n")
+	*/
+
 	o("// some comment", "// some comment\n") // comment
 }

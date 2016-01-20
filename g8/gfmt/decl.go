@@ -76,3 +76,25 @@ func printConstDecls(f *formatter, d *ast.ConstDecls) {
 		f.printEndl()
 	}
 }
+
+func printImportDecl(f *formatter, d *ast.ImportDecl) {
+	if d.As != nil {
+		printExprs(f, d.As, " ")
+	}
+	printExprs(f, d.Path)
+	f.printEndl()
+}
+
+func printImportDecls(f *formatter, d *ast.ImportDecls) {
+	printExprs(f, d.Kw, " ")
+	f.printToken(d.Lparen)
+	f.printEndl()
+	f.Tab()
+	// TODO: sort imports in groups
+	for _, decl := range d.Decls {
+		printImportDecl(f, decl)
+	}
+	f.ShiftTab()
+	f.printToken(d.Rparen)
+	f.printEndl()
+}
