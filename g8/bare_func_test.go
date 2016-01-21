@@ -253,4 +253,5 @@ func TestBareFunc_panic(t *testing.T) {
 	o("d:=0; a:=3/d")
 	o("d:=0; a:=-3%d")
 	o("var d [3]int; s:=d[:]; s=nil; printInt(s[1])")
+	o("d:=make([]int, 3, uint(0))")
 }

@@ -29,6 +29,7 @@ func buildCallMake(b *builder, expr *tast.CallExpr) *ref {
 	t := arg0.Type().(*types.Type).T.(*types.Slice)
 	size := checkArrayIndex(b, args.At(1))
 	start := args.At(2).IR()
+	nilPointerPanic(b, start)
 	return newSlice(b, t.T, start, size)
 }
 
