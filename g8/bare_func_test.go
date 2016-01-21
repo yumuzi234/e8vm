@@ -166,6 +166,8 @@ func TestBareFunc_good(t *testing.T) {
 	o("const a = 33; printUint(a)", "33")
 	o("const ( a,b=3,4; c=a+b ); printInt(a+b+c)", "14")
 	o("const a,b=3,4; var v [a+b]int; printInt(len(v))", "7")
+
+	o("var a []int = nil; printInt(len(a))", "0")
 }
 
 func TestBareFunc_bad(t *testing.T) {
