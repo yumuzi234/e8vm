@@ -52,7 +52,7 @@ func printExpr(f *formatter, expr ast.Expr) {
 			}
 			printExprs(f, expr.Colon)
 			if expr.IndexEnd != nil {
-				printExprs(f, expr.Index)
+				printExprs(f, expr.IndexEnd)
 			}
 			printExprs(f, expr.Rbrack)
 		} else {
