@@ -16,7 +16,10 @@ func printStmt(f *formatter, stmt ast.Stmt) {
 			f.printToken(stmt.Lbrace)
 			f.printEndl()
 			f.Tab()
-			printStmt(f, stmt.Stmts)
+			for _, s := range stmt.Stmts {
+				printStmt(f, s)
+				f.printEndlPlus(true, 0)
+			}
 			f.ShiftTab()
 			f.printToken(stmt.Rbrace)
 		} else {
@@ -24,11 +27,6 @@ func printStmt(f *formatter, stmt ast.Stmt) {
 		}
 	case *ast.BlockStmt:
 		printStmt(f, stmt.Block)
-	case []ast.Stmt:
-		for _, s := range stmt {
-			printStmt(f, s)
-			f.printEndl()
-		}
 	case *ast.IfStmt:
 		printExprs(f, stmt.If, " ", stmt.Expr, " ")
 		printStmt(f, stmt.Body)
