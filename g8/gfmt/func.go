@@ -36,5 +36,4 @@ func printFunc(f *formatter, fn *ast.Func) {
 
 	f.printSpace()
 	printStmt(f, fn.Body)
-	f.printEndl()
 }

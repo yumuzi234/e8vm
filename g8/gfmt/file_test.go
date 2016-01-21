@@ -36,12 +36,15 @@ func TestFormatFile(t *testing.T) {
 	o("\n\nfunc main  () {  }", "func main() {}\n") // remove lines
 	o("func main(){}", "func main() {}\n")          // add spaces
 	o("func main() {\n}", "func main() {}\n")       // merge oneliner
+	o("// some comment", "// some comment\n")       // comment
 
-	/*
-		TODO(kcnm): pass this
-		o("func main() { var a [5]int; b := a[:] }",
-			"func main() {\n    var a [5]int\n    b := a[:]\n}\n")
-	*/
-
-	o("// some comment", "// some comment\n") // comment
+	// Common case of line break.
+	o("func main() { var a [5]int; b := a[:] }",
+		"func main() {\n    var a [5]int\n    b := a[:]\n}\n")
+	// Preserves additional/optional line breaks in block.
+	o("func main() { var a [5]int;\n\n b := a[:] }",
+		"func main() {\n    var a [5]int\n\n    b := a[:]\n}\n")
+	// Removes redundant line breaks in block.
+	o("func main() { var a [5]int;\n\n b := a[:] }",
+		"func main() {\n    var a [5]int\n\n    b := a[:]\n}\n")
 }
