@@ -35,7 +35,12 @@ func parseOperand(p *parser) ast.Expr {
 		ret := new(ast.ArrayLiteral)
 		ret.Type = t.(*ast.ArrayTypeExpr)
 		ret.Lbrace = p.Shift()
-		ret.Exprs = parseExprListClosed(p, "}")
+		if !p.SeeOp("}") {
+			ret.Exprs = parseExprListClosed(p, "}")
+			if p.InError() {
+				return nil
+			}
+		}
 		ret.Rbrace = p.ExpectOp("}")
 		if p.InError() {
 			return nil

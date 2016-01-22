@@ -51,6 +51,9 @@ func TestStmts_good(t *testing.T) {
 		"a[:3]",
 		"a[3:]",
 		"a[0:7+4]",
+		"[]int{3, 4, 5, 6}",
+		"[]int{3, 4, 5, 6,}",
+		"[]uint{}",
 	} {
 		buf := strings.NewReader(s)
 		stmts, es := Stmts("test.g", buf)
@@ -127,6 +130,7 @@ func TestStmts_good(t *testing.T) {
 		"a++",
 		"a--",
 		"ret := (a.b & 0x1) > 0",
+		"a := []int{3,4}",
 	} {
 		buf := strings.NewReader(s)
 		stmts, es := Stmts("test.g", buf)
@@ -199,6 +203,9 @@ func TestStmts_bad(t *testing.T) {
 		"a,b++",
 		"(i++)+3",
 		"++i",
+		"a := []int{3, 4, 5, 6",
+		"a := []int{,}",
+		"a := []int{3\n}",
 	} {
 		buf := strings.NewReader(s)
 		stmts, es := Stmts("test.g", buf)
