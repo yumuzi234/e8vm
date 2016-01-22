@@ -23,7 +23,25 @@ func parseOperand(p *parser) ast.Expr {
 			Rparen: rp,
 			Expr:   expr,
 		}
-	} else if p.SeeOp("*") || p.SeeOp("[") || p.SeeKeyword("func") {
+	} else if p.SeeOp("[") {
+		t := p.parseType()
+		if t == nil {
+			return nil
+		}
+		if !p.SeeOp("{") {
+			return t
+		}
+
+		ret := new(ast.ArrayLiteral)
+		ret.Type = t.(*ast.ArrayTypeExpr)
+		ret.Lbrace = p.Shift()
+		ret.Exprs = parseExprListClosed(p, "}")
+		ret.Rbrace = p.ExpectOp("}")
+		if p.InError() {
+			return nil
+		}
+		return ret
+	} else if p.SeeOp("*") || p.SeeKeyword("func") {
 		return p.parseType()
 	}
 

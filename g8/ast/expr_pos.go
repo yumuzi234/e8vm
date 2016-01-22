@@ -33,6 +33,8 @@ func ExprPos(e Expr) *lex8.Pos {
 		return ExprPos(e.Expr)
 	case *ArrayTypeExpr:
 		return e.Lbrack.Pos
+	case *ArrayLiteral:
+		return ExprPos(e.Type)
 	case *FuncTypeExpr:
 		return e.Kw.Pos
 	default:

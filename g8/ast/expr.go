@@ -71,9 +71,17 @@ type IndexExpr struct {
 // ArrayTypeExpr is the type expression of an array or a slice
 type ArrayTypeExpr struct {
 	Lbrack *lex8.Token
-	Len    Expr
+	Len    Expr // optional
 	Rbrack *lex8.Token
 	Type   Expr
+}
+
+// ArrayLiteral is an array or slice literal
+type ArrayLiteral struct {
+	Type   *ArrayTypeExpr
+	Lbrace *lex8.Token
+	Exprs  *ExprList
+	Rbrace *lex8.Token
 }
 
 // FuncTypeExpr is the type expression of a function pointer
