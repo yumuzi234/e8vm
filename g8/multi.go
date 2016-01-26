@@ -1,8 +1,6 @@
 package g8
 
 import (
-	"path"
-
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/lex8"
 )
@@ -10,19 +8,8 @@ import (
 func buildMulti(lang build8.Lang, files map[string]string, runTests bool) (
 	image []byte, errs []*lex8.Error, log []byte,
 ) {
-	home := makeMemHome(lang)
-
-	pkgs := make(map[string]*build8.MemPkg)
-	for f, content := range files {
-		p := path.Dir(f)
-		base := path.Base(f)
-		pkg, found := pkgs[p]
-		if !found {
-			pkg = home.NewPkg(p)
-		}
-		pkg.AddFile(f, base, content)
-	}
-
+	home := MakeMemHome(lang)
+	home.AddFiles(files)
 	return buildMainPkg(home, runTests)
 }
 

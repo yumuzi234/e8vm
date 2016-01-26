@@ -2,6 +2,7 @@ package build8
 
 import (
 	"io"
+	"path"
 	"sort"
 	"strings"
 )
@@ -139,4 +140,18 @@ func (h *MemHome) Lang(path string) Lang { return h.langs.lang(path) }
 // AddLang adds a language to a prefix
 func (h *MemHome) AddLang(prefix string, lang Lang) {
 	h.langs.addLang(prefix, lang)
+}
+
+// AddFiles adds a set of files into mem home.
+func (h *MemHome) AddFiles(files map[string]string) {
+	pkgs := make(map[string]*MemPkg)
+	for f, content := range files {
+		p := path.Dir(f)
+		base := path.Base(f)
+		pkg, found := pkgs[p]
+		if !found {
+			pkg = h.NewPkg(p)
+		}
+		pkg.AddFile(f, base, content)
+	}
 }

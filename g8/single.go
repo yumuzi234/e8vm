@@ -9,7 +9,9 @@ import (
 	"e8vm.io/e8vm/lex8"
 )
 
-func makeMemHome(lang build8.Lang) *build8.MemHome {
+// MakeMemHome makes a memory home for compiling.
+// It contains the basic built-in packages.
+func MakeMemHome(lang build8.Lang) *build8.MemHome {
 	home := build8.NewMemHome(lang)
 	home.AddLang("asm", asm8.Lang())
 	builtin := home.NewPkg("asm/builtin")
@@ -40,7 +42,7 @@ func buildMainPkg(home *build8.MemHome, runTests bool) (
 func buildSingle(fname, s string, lang build8.Lang, runTests bool) (
 	image []byte, errs []*lex8.Error, log []byte,
 ) {
-	home := makeMemHome(lang)
+	home := MakeMemHome(lang)
 
 	pkg := home.NewPkg("main")
 	name := filepath.Base(fname)
