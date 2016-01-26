@@ -1,38 +1,16 @@
 package g8
 
 import (
-	"path"
 	"strings"
 	"testing"
 
 	"e8vm.io/e8vm/arch8"
-	"e8vm.io/e8vm/build8"
-	"e8vm.io/e8vm/lex8"
 )
-
-func buildMulti(files map[string]string) (
-	image []byte, errs []*lex8.Error, log []byte,
-) {
-	home := makeMemHome(Lang())
-
-	pkgs := make(map[string]*build8.MemPkg)
-	for f, content := range files {
-		p := path.Dir(f)
-		base := path.Base(f)
-		pkg, found := pkgs[p]
-		if !found {
-			pkg = home.NewPkg(p)
-		}
-		pkg.AddFile(f, base, content)
-	}
-
-	return buildMainPkg(home)
-}
 
 func multiTestRun(t *testing.T, fs map[string]string, N int) (
 	string, error,
 ) {
-	bs, es, _ := buildMulti(fs)
+	bs, es, _ := buildMulti(Lang(), fs, false)
 	if es != nil {
 		t.Log(fs)
 		for _, err := range es {
@@ -141,7 +119,7 @@ func TestMultiFile(t *testing.T) {
 
 func TestMultiFileBad(t *testing.T) {
 	o := func(files map[string]string) {
-		_, es, _ := buildMulti(files)
+		_, es, _ := buildMulti(Lang(), files, false)
 		if es == nil {
 			t.Error("should error")
 			return

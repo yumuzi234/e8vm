@@ -18,10 +18,11 @@ func makeMemHome(lang build8.Lang) *build8.MemHome {
 	return home
 }
 
-func buildMainPkg(home *build8.MemHome) (
+func buildMainPkg(home *build8.MemHome, runTests bool) (
 	image []byte, errs []*lex8.Error, log []byte,
 ) {
 	b := build8.NewBuilder(home, home)
+	b.RunTests = runTests
 	if errs := b.BuildAll(); errs != nil {
 		return nil, errs, nil
 	}
@@ -45,7 +46,7 @@ func buildSingle(fname, s string, lang build8.Lang) (
 	name := filepath.Base(fname)
 	pkg.AddFile(fname, name, s)
 
-	return buildMainPkg(home)
+	return buildMainPkg(home, false)
 }
 
 // CompileSingle compiles a file into a bare-metal E8 image
