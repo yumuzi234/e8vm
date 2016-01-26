@@ -52,13 +52,7 @@ func main() {
 
 	checkInitPC()
 
-	var lang build8.Lang
-	if !*golike {
-		lang = g8.Lang()
-	} else {
-		lang = g8.LangGoLike()
-	}
-
+	lang := g8.Lang(*golike)
 	home := build8.NewDirHome(*homeDir, lang)
 	home.AddLang("asm", asm8.Lang())
 	home.AddLang("bare", g8.BareFunc())

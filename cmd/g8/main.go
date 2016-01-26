@@ -72,7 +72,9 @@ func main() {
 			printErrs(es)
 			gfmt.FprintFile(os.Stdout, f, rec)
 		} else {
-			bs, es, irLog := g8.CompileSingle(fname, string(input), *golike)
+			bs, es, irLog := g8.CompileAndTestSingle(
+				fname, string(input), *golike,
+			)
 			printErrs(es)
 			printIRLog(irLog, *ir)
 			runImage(bs, *dasm, *ncycle)

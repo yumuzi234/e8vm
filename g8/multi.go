@@ -30,13 +30,7 @@ func buildMulti(lang build8.Lang, files map[string]string, runTests bool) (
 func CompileMulti(files map[string]string, golike, runTests bool) (
 	[]byte, []*lex8.Error,
 ) {
-	var lang build8.Lang
-	if !golike {
-		lang = Lang()
-	} else {
-		lang = LangGoLike()
-	}
-
+	lang := Lang(golike)
 	image, errs, _ := buildMulti(lang, files, runTests)
 	return image, errs
 }

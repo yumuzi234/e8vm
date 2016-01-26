@@ -37,7 +37,7 @@ func buildMainPkg(home *build8.MemHome, runTests bool) (
 	return image, nil, log
 }
 
-func buildSingle(fname, s string, lang build8.Lang) (
+func buildSingle(fname, s string, lang build8.Lang, runTests bool) (
 	image []byte, errs []*lex8.Error, log []byte,
 ) {
 	home := makeMemHome(lang)
@@ -46,18 +46,20 @@ func buildSingle(fname, s string, lang build8.Lang) (
 	name := filepath.Base(fname)
 	pkg.AddFile(fname, name, s)
 
-	return buildMainPkg(home, false)
+	return buildMainPkg(home, runTests)
 }
 
 // CompileSingle compiles a file into a bare-metal E8 image
 func CompileSingle(fname, s string, golike bool) (
 	[]byte, []*lex8.Error, []byte,
 ) {
-	var lang build8.Lang
-	if !golike {
-		lang = Lang()
-	} else {
-		lang = LangGoLike()
-	}
-	return buildSingle(fname, s, lang)
+	return buildSingle(fname, s, Lang(golike), false)
+}
+
+// CompileAndTestSingle compiles a file into a bare-metal E8 image and
+// runs the tests.
+func CompileAndTestSingle(fname, s string, golike bool) (
+	[]byte, []*lex8.Error, []byte,
+) {
+	return buildSingle(fname, s, Lang(golike), true)
 }

@@ -20,7 +20,7 @@ type lang struct {
 }
 
 // Lang returns the G language builder for the building system
-func Lang() build8.Lang { return new(lang) }
+func Lang(golike bool) build8.Lang { return &lang{golike: golike} }
 
 // LangGoLike returns the G lauguage that uses a subset of golang AST.
 func LangGoLike() build8.Lang {
