@@ -12,6 +12,7 @@ type Options struct {
 
 	StaticOnly bool
 	RunTests   bool
+	TestCycles int
 
 	SaveDeps func(deps *dagvis.Map)
 

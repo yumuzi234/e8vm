@@ -1,6 +1,7 @@
 package build8
 
 import (
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -9,11 +10,17 @@ import (
 	"e8vm.io/e8vm/lex8"
 )
 
+var errTimeOut = errors.New("time out")
+
 func runTests(
-	log lex8.Logger, tests map[string]uint32, img []byte, verbose bool,
+	log lex8.Logger, tests map[string]uint32, img []byte,
+	verbose bool, ncycle int,
 ) {
 	report := func(name string, pass bool, err error) {
 		if !pass {
+			if err == nil {
+				err = errTimeOut
+			}
 			lex8.LogError(log, fmt.Errorf("%s failed: got %s", name, err))
 			if verbose {
 				fmt.Println("FAILED")
@@ -38,7 +45,7 @@ func runTests(
 		}
 
 		arg := tests[test]
-		_, err := arch8.RunImageArg(img, arg)
+		_, err := arch8.RunImageArg(img, arg, ncycle)
 		if strings.HasPrefix(test, "TestBad") {
 			report(test, arch8.IsPanic(err), err)
 		} else {

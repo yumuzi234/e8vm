@@ -164,7 +164,7 @@ func (b *Builder) runTests(p *pkg) []*lex8.Error {
 				return es
 			}
 
-			runTests(log, tests, img, b.Verbose)
+			runTests(log, tests, img, b.Verbose, b.TestCycles)
 			if es := log.Errs(); es != nil {
 				return es
 			}

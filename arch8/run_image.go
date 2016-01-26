@@ -50,8 +50,8 @@ func RunImage(bs []byte, n int) (int, error) {
 // RunImageArg runs a series of bytes as a VM image with 1GB physical memory
 // until the machine shutsdown.  It returns the number of cycles, and the
 // exit error if any.
-func RunImageArg(bs []byte, arg uint32) (int, error) {
-	return runImageArg(bs, arg, 0)
+func RunImageArg(bs []byte, arg uint32, n int) (int, error) {
+	return runImageArg(bs, arg, n)
 }
 
 // RunImageOutput runs a image. It is similar to RunImage() but also returns
@@ -80,6 +80,9 @@ func IsPanic(e error) bool { return IsErr(e, ErrPanic) }
 
 // IsErr checks if the error is of a particular error code
 func IsErr(e error, code byte) bool {
+	if e == nil {
+		return false
+	}
 	if e, ok := e.(*Excep); ok {
 		return e.Code == code
 	}
