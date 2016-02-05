@@ -1,6 +1,6 @@
 package dagvis
 
-func shortestCircle(nodes map[string]*MapNode) []*MapNode {
+func shortestCircle(nodes map[string]*MapNode) MapNodeSlice {
 
 	shortestDist := 2 * len(nodes)
 	var ret []*MapNode
