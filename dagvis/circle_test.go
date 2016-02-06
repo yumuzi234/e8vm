@@ -1,123 +1,75 @@
 package dagvis
 
 import (
+	"testing"
+
 	"sort"
 	"strconv"
-	"testing"
+	"reflect"
 )
 
 func TestFindCircle(t *testing.T) {
-	eo := func(cond bool, s string, args ...interface{}) {
-		if cond {
-			t.Fatalf(s, args...)
+	o := func(nodes map[string][]string, circExpect []string) {
+		m, err := initMap(&Graph{Nodes: nodes})
+		if err != nil {
+			t.Fatal(err)
+		}
+		res := shortestCircle(m.Nodes)
+
+		var circGot []string
+		for _, node := range res {
+			circGot = append(circGot, node.Name)
+		}
+		sort.Strings(circGot)
+
+		if !reflect.DeepEqual(circGot, circExpect) {
+			t.Errorf("min circle of %v, got %v, expect %v",
+				nodes, circGot, circExpect,
+			)
 		}
 	}
-	helper := func(ret map[string][]string) (MapNodeSlice, int) {
-		g := &Graph{Nodes: ret}
-		nodes, _ := initMap(g)
-		res := shortestCircle(nodes.Nodes)
-		size := len(res)
-		sort.Sort(res)
-		return res, size
+
+	o(map[string][]string{}, nil)
+	o(map[string][]string{"a": {}}, nil)
+
+	o(map[string][]string{
+		"1": {"2"},
+		"2": {"1"},
+	}, []string{"1", "2"})
+
+	o(map[string][]string{
+		"1": {"2"},
+		"2": {"3"},
+		"3": {"1"},
+	}, []string{"1", "2", "3"})
+
+	o(map[string][]string{
+		"1": {"2"},
+		"2": {"3"},
+		"3": {},
+	}, nil)
+
+	o(map[string][]string{
+		"1": {"2"},
+		"2": {"3"},
+		"3": {"1", "4"},
+		"4": {"5"},
+		"5": {"1"},
+	}, []string{"1", "2", "3"})
+
+	nodes := map[string][]string{
+		"1": {"3", "4"},
+		"3": {"6", "4"},
+		"4": {"3", "8"},
+		"8": {"1"},
 	}
-
-	ret := make(map[string][]string)
-	res, size := helper(ret)
-	eo(res != nil, "findSmallestCircle result error")
-
-	var edge []string
-	ret[strconv.Itoa(1)] = edge
-	res, size = helper(ret)
-	eo(res != nil, "findSmallestCircle result error")
-
-	for i := 1; i <= 2; i++ {
-		var edge []string
-		if i == 1 {
-			edge = append(edge, strconv.Itoa(2))
-		}
-		if i == 2 {
-			edge = append(edge, strconv.Itoa(1))
-		}
-		ret[strconv.Itoa(i)] = edge
-	}
-	res, size = helper(ret)
-	eo(size != 2 || res[0].Name != "1" || res[1].Name != "2",
-		"findSmallestCircle result error")
-
-	for i := 1; i <= 3; i++ {
-		var edge []string
-		if i == 1 {
-			edge = append(edge, strconv.Itoa(2))
-		}
-		if i == 2 {
-			edge = append(edge, strconv.Itoa(3))
-		}
-		if i == 3 {
-			edge = append(edge, strconv.Itoa(1))
-		}
-		ret[strconv.Itoa(i)] = edge
-	}
-	res, size = helper(ret)
-	eo(size != 3 || res[0].Name != "1" || res[1].Name != "2" ||
-		res[2].Name != "3", "findSmallestCircle result error1")
-
-	for i := 1; i <= 3; i++ {
-		var edge []string
-		if i == 1 {
-			edge = append(edge, strconv.Itoa(2))
-		}
-		if i == 2 {
-			edge = append(edge, strconv.Itoa(3))
-		}
-		ret[strconv.Itoa(i)] = edge
-	}
-	res, size = helper(ret)
-	eo(res != nil, "findSmallestCircle result error")
-
-	for i := 1; i <= 5; i++ {
-		var edge []string
-		if i == 1 {
-			edge = append(edge, strconv.Itoa(2))
-		}
-		if i == 2 {
-			edge = append(edge, strconv.Itoa(3))
-		}
-		if i == 3 {
-			edge = append(edge, strconv.Itoa(1))
-			edge = append(edge, strconv.Itoa(4))
-		}
-		if i == 4 {
-			edge = append(edge, strconv.Itoa(5))
-		}
-		if i == 5 {
-			edge = append(edge, strconv.Itoa(1))
-		}
-		ret[strconv.Itoa(i)] = edge
-	}
-	res, size = helper(ret)
-	eo(size != 3 || res[0].Name != "1" || res[1].Name != "2" ||
-		res[2].Name != "3", "findSmallestCircle result error1")
-
 	for i := 0; i < 100; i++ {
-		var edge []string
-		if i == 1 {
-			edge = append(edge, strconv.Itoa(3))
-			edge = append(edge, strconv.Itoa(4))
+		k := strconv.Itoa(i)
+		if nodes[k] != nil {
+			continue
 		}
-		if i == 3 {
-			edge = append(edge, strconv.Itoa(6))
-			edge = append(edge, strconv.Itoa(4))
-		}
-		if i == 4 {
-			edge = append(edge, strconv.Itoa(3))
-			edge = append(edge, strconv.Itoa(8))
-		}
-		if i == 8 {
-			edge = append(edge, strconv.Itoa(1))
-		}
-		ret[strconv.Itoa(i)] = edge
+		nodes[k] = []string{}
 	}
-	res, size = helper(ret)
-	eo(size != 2 || res[0].Name != "3" || res[1].Name != "4",
-		"findSmallestCircle result error")
+
+	o(nodes, []string{"3", "4"})
 }

@@ -13,7 +13,6 @@ func BenchmarkFindCircle(b *testing.B) {
 }
 
 func test() []*MapNode {
-
 	ret := make(map[string][]string)
 
 	for i := 0; i < 1000; i++ {

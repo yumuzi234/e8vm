@@ -37,17 +37,3 @@ func newMapNode(name string) *MapNode {
 
 	return ret
 }
-
-type MapNodeSlice []*MapNode
-
-func (p MapNodeSlice) Len() int {
-	return len(p)
-}
-
-func (p MapNodeSlice) Swap(i int, j int) {
-	p[i], p[j] = p[j], p[i]
-}
-
-func (p MapNodeSlice) Less(i int, j int) bool {
-	return p[i].Name < p[j].Name
-}

@@ -47,3 +47,9 @@ func (s byNcritOuts) Less(i, j int) bool {
 
 	return n1.Name < n2.Name
 }
+
+type byName struct{ mapNodes }
+
+func (s byName) Less(i, j int) bool {
+	return s.mapNodes[i].Name < s.mapNodes[j].Name
+}
