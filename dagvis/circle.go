@@ -1,98 +1,43 @@
 package dagvis
 
-func shortestCircle(nodes map[string]*MapNode) []*MapNode {
-	dists := make(map[*MapNode]map[*MapNode]int)
-	nexts := make(map[*MapNode]map[*MapNode]*MapNode)
+func shortestCircle(nodes map[string]*MapNode) MapNodeSlice {
+
+	shortestDist := 2 * len(nodes)
+	var ret []*MapNode
 
 	for _, node := range nodes {
-		dists[node] = make(map[*MapNode]int)
-		nexts[node] = make(map[*MapNode]*MapNode)
-	}
-
-	for _, from := range nodes {
-		for _, to := range from.Outs {
-			dists[from][to] = 1
-			nexts[from][to] = to
+		if node.Outs == nil {
+			continue
 		}
-	}
-
-	dist := func(from, to *MapNode) (d int, inf bool) {
-		d, ok := dists[from][to]
-		if !ok {
-			return 0, true
-		}
-		return d, false
-	}
-
-	var shortestNode *MapNode
-	var shortestDist int
-	shortestDist = 2 * len(nodes)
-
-	for _, via := range nodes {
-		for _, from := range nodes {
-			if from == via {
+		flag := make(map[*MapNode]bool)
+		count := make(map[*MapNode]int)
+		var queue []*MapNode
+		queue = append(queue, node)
+		flag[node] = true
+		for len(queue) > 0 {
+			curr := queue[len(queue)-1]
+			count[curr]++
+			if curr.Outs == nil || count[curr] > len(curr.Outs) {
+				queue = queue[:len(queue)-1]
 				continue
 			}
-
-			d1, d1Inf := dist(from, via)
-			// infinit edge
-			if d1Inf || d1 >= shortestDist {
-				continue
-			}
-
-			for _, to := range nodes {
-				if to == via {
-					continue
-				}
-
-				d2, d2Inf := dist(via, to)
-
-				// infinit edge
-				if d2Inf || d2 >= shortestDist {
-					continue
-				}
-
-				d, inf := dist(from, to)
-				if inf || d1+d2 < d {
-					dists[from][to] = d1 + d2
-					nexts[from][to] = nexts[from][via]
-				}
-
-				if from == to {
-
-					// check circle of two nodes
-					if d1 == 1 && d2 == 1 {
-						var ret []*MapNode
-						ret = append(ret, from)
-						ret = append(ret, via)
-						return ret
+			for _, next := range curr.Outs {
+				if next == node {
+					if len(queue) < shortestDist {
+						shortestDist = len(queue)
+						ret = make([]*MapNode, len(queue))
+						copy(ret, queue)
 					}
-					// update shortestDist
-					if dists[from][to] < shortestDist {
-						shortestDist = dists[from][to]
-						shortestNode = from
-					}
-
+					break
+				}
+				if !flag[next] && len(queue) < shortestDist {
+					queue = append(queue, next)
+					flag[next] = true
+					break
 				}
 			}
 		}
 	}
 
-	if shortestNode == nil { // no circle
-		return nil
-	}
-
-	var ret []*MapNode
-	node := shortestNode
-	for {
-		ret = append(ret, node)
-		if len(ret) > len(nodes) {
-			panic("too big")
-		}
-		node = nexts[node][shortestNode]
-		if node == shortestNode {
-			break
-		}
-	}
 	return ret
 }
