@@ -3,18 +3,19 @@ package dagvis
 import (
 	"testing"
 
-	"sort"
-	"strconv"
+	"fmt"
 	"reflect"
+	"sort"
 )
 
-func TestFindCircle(t *testing.T) {
+func TestMinCircle(t *testing.T) {
 	o := func(nodes map[string][]string, circExpect []string) {
 		m, err := initMap(&Graph{Nodes: nodes})
 		if err != nil {
-			t.Fatal(err)
+			t.Errorf("init map %v, got error: %v", nodes, err)
+			return
 		}
-		res := shortestCircle(m.Nodes)
+		res := minCircle(m.Nodes)
 
 		var circGot []string
 		for _, node := range res {
@@ -61,13 +62,12 @@ func TestFindCircle(t *testing.T) {
 		"1": {"3", "4"},
 		"3": {"6", "4"},
 		"4": {"3", "8"},
+		"6": {},
 		"8": {"1"},
 	}
+	// add a bunch of empty nodes
 	for i := 0; i < 100; i++ {
-		k := strconv.Itoa(i)
-		if nodes[k] != nil {
-			continue
-		}
+		k := fmt.Sprintf(":%d", i)
 		nodes[k] = []string{}
 	}
 

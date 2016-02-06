@@ -40,5 +40,5 @@ func test() []*MapNode {
 	g := &Graph{Nodes: ret}
 	nodes, _ := initMap(g)
 
-	return shortestCircle(nodes.Nodes)
+	return minCircle(nodes.Nodes)
 }

@@ -148,7 +148,7 @@ func (m *Map) makeLayers() ([][]*MapNode, error) {
 	}
 
 	if len(left) != 0 {
-		circle := shortestCircle(m.Nodes)
+		circle := minCircle(m.Nodes)
 		if len(circle) == 0 {
 			panic("should find a circle")
 		}
