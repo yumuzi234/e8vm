@@ -9,64 +9,61 @@ type funcLocation struct {
 	start uint32
 }
 
-type funcLocationSlice []*funcLocation
+type byStart []*funcLocation
 
-func (f funcLocationSlice) Len() int {
-	return len(f)
-}
+func (f byStart) Len() int { return len(f) }
 
-func (f funcLocationSlice) Swap(i int, j int) {
+func (f byStart) Swap(i int, j int) {
 	f[i], f[j] = f[j], f[i]
 }
 
-func (f funcLocationSlice) Less(i int, j int) bool {
+func (f byStart) Less(i int, j int) bool {
 	return f[i].start < f[j].start
 }
 
-func sortTable(t *Table) funcLocationSlice {
-
-	var fLocation funcLocationSlice
+func sortTable(t *Table) []*funcLocation {
+	var funcs []*funcLocation
 	for name, f := range t.Funcs {
 		start := f.Start
 		var curr funcLocation
 		curr.name = name
 		curr.start = start
-		fLocation = append(fLocation, &curr)
+		funcs = append(funcs, &curr)
 	}
-	sort.Sort(fLocation)
-	return fLocation
+	sort.Sort(byStart(funcs))
+	return funcs
 }
 
-func findFunc(pc uint32, fLoc funcLocationSlice, t *Table) (string, *Func) {
-	if len(fLoc) == 0 {
+func findFunc(pc uint32, funcs []*funcLocation, t *Table) (string, *Func) {
+	if len(funcs) == 0 {
 		return "", nil
 	}
 
 	left := 0
-	right := len(fLoc) - 1
+	right := len(funcs) - 1
 
 	for left < right-1 {
 		mid := left + (right-left)/2
-		if fLoc[mid].start == pc {
-			return fLoc[mid].name, t.Funcs[fLoc[mid].name]
+		if funcs[mid].start == pc {
+			return funcs[mid].name, t.Funcs[funcs[mid].name]
 		}
-		if fLoc[mid].start > pc {
+		if funcs[mid].start > pc {
 			right = mid
 		} else {
 			left = mid
 		}
 	}
 
-	if fLoc[right].start <= pc {
-		f := t.Funcs[fLoc[right].name]
+	if funcs[right].start <= pc {
+		f := t.Funcs[funcs[right].name]
 		if pc > f.Start+f.Size {
 			return "", nil
 		}
-		return fLoc[right].name, f
+		return funcs[right].name, f
 	}
-	f := t.Funcs[fLoc[left].name]
+	f := t.Funcs[funcs[left].name]
 	if pc > f.Start+f.Size {
 		return "", nil
 	}
-	return fLoc[left].name, f
+	return funcs[left].name, f
 }

@@ -16,24 +16,26 @@ func TestFindFunc(t *testing.T) {
 	tbl := NewTable()
 	fLoc := sortTable(tbl)
 	_, f := findFunc(1, fLoc, tbl)
-	eo(f != nil, "findFunc error")
+	eo(f != nil, "func not found")
 
-	tbl = NewTable()
-	tbl.Funcs["1"] =
-		&Func{Size: 20, Start: 0}
+	tbl = &Table{
+		Funcs: map[string]*Func{
+			"f1": {Size: 20, Start: 0},
+		},
+	}
 	fLoc = sortTable(tbl)
 	_, f = findFunc(30, fLoc, tbl)
 	eo(f != nil, "findFunc error")
 	_, f = findFunc(10, fLoc, tbl)
 	eo(f.Start != 0, "findFunc error")
 
-	tbl = NewTable()
-	tbl.Funcs["1"] =
-		&Func{Size: 20, Start: 0}
-	tbl.Funcs["2"] =
-		&Func{Size: 1, Start: 25}
-	tbl.Funcs["3"] =
-		&Func{Size: 20, Start: 27}
+	tbl = &Table{
+		Funcs: map[string]*Func{
+			"f1": {Size: 20, Start: 0},
+			"f2": {Size: 1, Start: 25},
+			"f3": {Size: 20, Start: 27},
+		},
+	}
 	fLoc = sortTable(tbl)
 	_, f = findFunc(26, fLoc, tbl)
 	eo(f.Start != 25,
@@ -46,11 +48,9 @@ func TestFindFunc(t *testing.T) {
 	tbl = NewTable()
 	var sum uint32
 	for i := 0; i < 100; i++ {
-		name := strconv.Itoa(i)
+		name := "f" + strconv.Itoa(i)
 		size := rand.Uint32()
-		tbl.Funcs[name] =
-			&Func{Size: size, Start: sum}
-
+		tbl.Funcs[name] = &Func{Size: size, Start: sum}
 		sum = sum + size + 1
 	}
 	pc := rand.Uint32()
