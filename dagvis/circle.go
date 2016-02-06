@@ -11,29 +11,31 @@ func minCircle(nodes map[string]*MapNode) []*MapNode {
 		flag := make(map[*MapNode]bool)
 		count := make(map[*MapNode]int)
 
-		var queue []*MapNode
-		queue = append(queue, node)
+		var stack []*MapNode
+		stack = append(stack, node)
 		flag[node] = true
 
-		for len(queue) > 0 {
-			cur := queue[len(queue)-1]
+		for len(stack) > 0 {
+			cur := stack[len(stack)-1]
 			count[cur]++
+
+			// why count[cur] can be compared with len(cur.Outs) ?
 			if cur.Outs == nil || count[cur] > len(cur.Outs) {
-				queue = queue[:len(queue)-1]
+				stack = stack[:len(stack)-1]
 				continue
 			}
 
 			for _, next := range cur.Outs {
 				if next == node {
-					if len(queue) < minDist {
-						minDist = len(queue)
-						ret = make([]*MapNode, len(queue))
-						copy(ret, queue)
+					if len(stack) < minDist {
+						minDist = len(stack)
+						ret = make([]*MapNode, len(stack))
+						copy(ret, stack)
 					}
 					break
 				}
-				if !flag[next] && len(queue) < minDist {
-					queue = append(queue, next)
+				if !flag[next] && len(stack) < minDist {
+					stack = append(stack, next)
 					flag[next] = true
 					break
 				}
