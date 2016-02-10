@@ -61,7 +61,7 @@ E8VM proposes an entire set of langauge tool-chain that puts code
 readability, or more precisely, code comprehensibility as the only
 first priority.
 
-Many programming langauge and systems put coding efficiency,
+Many programming langauges and systems put coding efficiency,
 performance and safety as first considerations, but readability and
 comprehensibility as the last 
 ([for example](http://andrewkelley.me/post/intro-to-zig.html)). 
