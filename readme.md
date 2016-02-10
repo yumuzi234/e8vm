@@ -51,10 +51,11 @@ and again, in different times, maybe under different stories.
 This makes no sense. This is a waste of our lives. Code should live
 forever.
 
-Some code dies because they are not needed; that's fine. But some code
-dies because it is too complex to maintain and modify, and that's bad.
-It is often not because algorithm too complex to comprehend, but the
-architecture losses its structure due to unmanaged code debt.
+Some code dies because they are no longer needed; that's fine. But
+some code dies because it is too complex to maintain and modify;
+that's bad. Often times, it is not because the algorithm is too
+complex to comprehend, but the architecture losses its structure due
+to unmanaged code debt.
 
 E8VM proposes an entire set of langauge tool-chain that puts code
 readability, or more precisely, code comprehensibility as the only
