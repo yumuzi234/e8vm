@@ -57,8 +57,8 @@ efficiency, performance and safety as first considerations, but
 readability and comprehensibility as the last 
 ([for example](http://andrewkelley.me/post/intro-to-zig.html)).
 
-I disagree with those priorities. Good code quality fundamentally
-comes from relentless iterations, and iterations require good code
+I disagree with this ordering. Good code quality fundamentally comes
+from relentless iterations, and iterations require good code
 understandings by *human* programmers. In the long run, code
 comprehensibility dominates all.
 
