@@ -47,7 +47,7 @@ long life.
 As a result, programmers keep writing essentially the same code again
 and again, in different times, maybe under different stories.
 
-Some code dies because they are no longer needed; that's fine. But
+Some code dies because it is no longer needed; that's fine. But
 some code dies because it is too complex to maintain or modify. Often
 times, it is not because the algorithm is too complex to comprehend,
 but the architecture losses its structure due to unmanaged code debt.
@@ -62,7 +62,8 @@ efficiency, performance and safety as first considerations, but
 readability and comprehensibility as the last 
 ([for example](http://andrewkelley.me/post/intro-to-zig.html)).
 
-I disagree with this ordering. Good code quality fundamentally comes
+I disagree with this ordering. At the scale of today's software enginneering,
+good code quality fundamentally comes
 from relentless iterations, and iterations require good code
 understandings by *human* programmers (before AI's can read and write 
 programs). In the long run, code comprehensibility dominates all.
