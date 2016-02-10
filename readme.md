@@ -51,6 +51,11 @@ Some code dies because they are no longer needed; that's fine. But
 some code dies because it is too complex to maintain and modify. Often
 times, it is not because the algorithm is too complex to comprehend,
 but the architecture losses its structure due to unmanaged code debt.
+No one understands the code any more.
+
+To avoid replaying this history, E8VM proposes an entire set of
+langauge tool-chain that puts code readability, or more precisely,
+code comprehensibility as the one and only first priority.
 
 However, even today, many programming langauges and systems put coding
 efficiency, performance and safety as first considerations, but
@@ -61,10 +66,6 @@ I disagree with this ordering. Good code quality fundamentally comes
 from relentless iterations, and iterations require good code
 understandings by *human* programmers. In the long run, code
 comprehensibility dominates all.
-
-E8VM proposes an entire set of langauge tool-chain that puts code
-readability, or more precisely, code comprehensibility as the one and
-only first priority.
 
 To achieve high comprehensibility:
 
