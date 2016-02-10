@@ -47,20 +47,17 @@ long life.
 As a result, programmers keep writing essentially the same code again
 and again, in different times, maybe under different stories.
 
-This makes no sense. This is a waste of our lives. Code should live
-forever.
-
 Some code dies because they are no longer needed; that's fine. But
-some code dies because it is too complex to maintain and modify;
-that's bad. Often times, it is not because the algorithm is too
-complex to comprehend, but the architecture losses its structure due
-to unmanaged code debt.
+some code dies because it is too complex to maintain and modify. Often
+times, it is not because the algorithm is too complex to comprehend,
+but the architecture losses its structure due to unmanaged code debt.
 
-Many programming langauges and systems put coding efficiency,
-performance and safety as first considerations, but readability and
-comprehensibility as the last 
-([for example](http://andrewkelley.me/post/intro-to-zig.html)). 
-I do not agree with those priorities. Good code quality fundamentally
+However, even today, many programming langauges and systems put coding
+efficiency, performance and safety as first considerations, but
+readability and comprehensibility as the last 
+([for example](http://andrewkelley.me/post/intro-to-zig.html)).
+
+I disagree with those priorities. Good code quality fundamentally
 comes from relentless iterations, and iterations require good code
 understandings by *human* programmers. In the long run, code
 comprehensibility dominates all.
