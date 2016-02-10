@@ -77,10 +77,10 @@ To achieve high comprehensibility, E8VM project:
 - Minimizes tool-chain setup frictions; compiles and runs
   right inside the Web browsers.
 
-These principles do not immediately achieve the best possible code
-comprehensibility, but they at least encourages code reading and with
+These principles do not immediately lead to the best possible code
+comprehensibility, but they at least encourage code reading, and with
 some proper execution, they will hopefully close the feedback loop on
-code comprehensibility.
+code comprehensibility so that comprehensibility can improve by iterations.
 
 Long live our code.
 
