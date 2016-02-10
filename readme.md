@@ -80,7 +80,7 @@ To achieve high comprehensibility, E8VM project:
 These principles do not immediately lead to the best possible code
 comprehensibility, but they at least encourage code reading, and with
 some proper execution, they will hopefully close the feedback loop on
-code comprehensibility so that comprehensibility can improve by iterations.
+code comprehensibility so that comprehensibility can improve over iterations.
 
 Long live our code.
 
