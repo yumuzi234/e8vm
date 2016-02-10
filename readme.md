@@ -76,7 +76,7 @@ To achieve high comprehensibility, E8VM project:
   forbids circular dependencies among files with compiler-enforced
   checking.
 - Minimizes tool-chain setup frictions; compiles and runs
-  right inside the Web browsers.
+  right inside Web browsers.
 
 These principles do not immediately lead to the best possible code
 comprehensibility, but they at least encourage code reading, and with
