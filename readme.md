@@ -37,6 +37,38 @@ go get -u github.com/golang/lint/golint
 go get -u github.com/jstemmer/gotags
 ```
 
+## Why?
+
+Why another language? Why another operating system?
+
+All code dies. If you have been programming long enough, you must have
+seen code die. Some dies in hours, some dies in years, but seldom
+lives a long life.
+
+As a result, programmers keep writing essentially the same code again
+and again, in different times, maybe under different stories.
+
+This makes no sense. This is a waste of our lives. Code should live
+forever.
+
+Some code dies because they are not needed; that's fine. But some code
+dies because it is too complex to maintain and modify, and that's bad.
+It is often not because algorithm too complex to comprehend, but the
+architecture losses its structure due to unmanaged code debt.
+
+E8VM proposes an entire set of langauge tool-chain that puts code
+readability, or more precisely, code comprehensibility as the only
+first priority.
+
+Many programming langauge and systems put coding efficiency,
+performance and safety as first considerations, but readability and
+comprehensibility as the last (
+(for example)[http://andrewkelley.me/post/intro-to-zig.html]). I do
+not agree with those priorities. Good code quality fundamentally comes
+from relentless iterations, and iterations require good code
+understandings by *human* programmers. In the long run, code
+comprehensibility dominates all.
+
 ## Copyright and License
 
 The project developers own the copyright; my employer (Google) does
