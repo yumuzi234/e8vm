@@ -67,13 +67,14 @@ from relentless iterations, and iterations require good code
 understandings by *human* programmers (before AI's can read and write 
 programs). In the long run, code comprehensibility dominates all.
 
-To achieve high comprehensibility:
+To achieve high comprehensibility, E8VM project:
 
-- It uses a simple programming language with only a small set of
+- Uses simple programming languages with only a small set of
   language features.
-- It uses small files (80 chars per line, 300 lines maximum), and
-  forbids circular dependencies among them, compiler enforced.
-- It minimizes tool-chain setup frictions; it compiles and runs
+- Limits file sizes (80 chars per line, 300 lines maximum), and
+  forbids circular dependencies among files with compiler-enforced
+  checking.
+- Minimizes tool-chain setup frictions; compiles and runs
   right inside the Web browsers.
 
 These principles do not immediately achieve the best possible code
