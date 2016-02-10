@@ -41,9 +41,8 @@ go get -u github.com/jstemmer/gotags
 
 Why another language? Why another operating system?
 
-All code dies. If you have been programming long enough, you must have
-seen code die. Some dies in hours, some dies in years, but seldom
-lives a long life.
+All code dies. Some dies in hours, some dies in years. Seldom lives a
+long life.
 
 As a result, programmers keep writing essentially the same code again
 and again, in different times, maybe under different stories.
