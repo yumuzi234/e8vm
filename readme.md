@@ -55,7 +55,7 @@ No one understands the code any more.
 
 To avoid replaying this history, E8VM proposes an entire set of
 langauge tool-chain that puts code readability, or more precisely,
-code comprehensibility as the one and only first priority.
+code *comprehensibility* as the one and only first priority.
 
 Note that, even today, many programming langauges and systems put coding
 efficiency, performance and safety as first considerations, but
