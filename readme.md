@@ -48,7 +48,7 @@ As a result, programmers keep writing essentially the same code again
 and again, in different times, maybe under different stories.
 
 Some code dies because they are no longer needed; that's fine. But
-some code dies because it is too complex to maintain and modify. Often
+some code dies because it is too complex to maintain or modify. Often
 times, it is not because the algorithm is too complex to comprehend,
 but the architecture losses its structure due to unmanaged code debt.
 No one understands the code any more.
