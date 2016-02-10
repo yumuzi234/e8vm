@@ -57,10 +57,6 @@ that's bad. Often times, it is not because the algorithm is too
 complex to comprehend, but the architecture losses its structure due
 to unmanaged code debt.
 
-E8VM proposes an entire set of langauge tool-chain that puts code
-readability, or more precisely, code comprehensibility as the only
-first priority.
-
 Many programming langauges and systems put coding efficiency,
 performance and safety as first considerations, but readability and
 comprehensibility as the last 
@@ -69,6 +65,26 @@ I do not agree with those priorities. Good code quality fundamentally
 comes from relentless iterations, and iterations require good code
 understandings by *human* programmers. In the long run, code
 comprehensibility dominates all.
+
+E8VM proposes an entire set of langauge tool-chain that puts code
+readability, or more precisely, code comprehensibility as the one and
+only first priority.
+
+To achieve high comprehensibility:
+
+- It uses a simple programming language with only a small set of
+  language features.
+- It uses small files (80 chars per line, 300 lines maximum), and
+  forbids circular dependencies among them, compiler enforced.
+- It minimizes tool-chain setup frictions; it compiles and runs
+  right inside the Web browsers.
+
+These principles do not immediately achieve the best possible code
+comprehensibility, but they at least encourages code reading and with
+some proper execution, they will hopefully close the feedback loop on
+code comprehensibility.
+
+Long live our code.
 
 ## Copyright and License
 
