@@ -64,8 +64,8 @@ readability and comprehensibility as the last
 
 I disagree with this ordering. Good code quality fundamentally comes
 from relentless iterations, and iterations require good code
-understandings by *human* programmers. In the long run, code
-comprehensibility dominates all.
+understandings by *human* programmers (before AI's can read and write 
+programs). In the long run, code comprehensibility dominates all.
 
 To achieve high comprehensibility:
 
