@@ -54,15 +54,15 @@ but the architecture losses its structure due to unmanaged code debt.
 No one understands the code any more.
 
 To avoid replaying this history, E8VM proposes an entire set of
-langauge tool-chain that puts code readability, or more precisely,
+language tool-chain that puts code readability, or more precisely,
 code *comprehensibility* as the one and only first priority.
 
-Note that, even today, many programming langauges and systems put coding
+Note that, even today, many programming languages and systems put coding
 efficiency, performance and safety as first considerations, but
 readability and comprehensibility as the last 
 ([for example](http://andrewkelley.me/post/intro-to-zig.html)).
 
-I disagree with this ordering. At the scale of today's software enginneering,
+I disagree with this ordering. At the scale of today's software engineering,
 good code quality fundamentally comes
 from relentless iterations, and iterations require good code
 understandings by *human* programmers (before AI's can read and write 
