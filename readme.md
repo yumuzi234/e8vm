@@ -21,6 +21,10 @@ dependencies, and as a result, the project architecture can be
 automatically [visualized](http://8k.lonnie.io) from static code
 analysis.
 
+The main project in this repository depends on nothing other than the
+Go standard library. Hence, it is not a compiler project that based on
+LLVM.
+
 For Go language documentation on the package APIs, I recommend
 [GoWalker](https://gowalker.org/e8vm.io/e8vm). I find it slightly
 better than [godoc.org](https://godoc.org/e8vm.io/e8vm).
