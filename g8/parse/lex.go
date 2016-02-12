@@ -22,7 +22,7 @@ func lexG8(x *lex8.Lexer) *lex8.Token {
 		return lex8.LexString(x, Char, '\'')
 	}
 
-	if isDigit(r) {
+	if lex8.IsDigit(r) {
 		return lexNumber(x)
 	} else if isLetter(r) {
 		return lexIdent(x)

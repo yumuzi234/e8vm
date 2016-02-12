@@ -5,40 +5,14 @@ import (
 )
 
 func isLetter(r rune) bool {
-	if r >= 'a' && r <= 'z' {
-		return true
-	}
-	if r >= 'A' && r <= 'Z' {
-		return true
-	}
-	if r == '_' {
-		return true
-	}
-	return false
-}
-
-func isDigit(r rune) bool {
-	return r >= '0' && r <= '9'
-}
-
-func isHexDigit(r rune) bool {
-	if isDigit(r) {
-		return true
-	}
-	if r >= 'a' && r <= 'f' {
-		return true
-	}
-	if r >= 'A' && r <= 'F' {
-		return true
-	}
-	return false
+	return r == '_' || lex8.IsLetter(r)
 }
 
 func lexNumber(x *lex8.Lexer) *lex8.Token {
 	// TODO: lex floating point as well
 
 	start := x.Rune()
-	if !isDigit(start) {
+	if !lex8.IsDigit(start) {
 		panic("not starting with a number")
 	}
 
@@ -48,11 +22,11 @@ func lexNumber(x *lex8.Lexer) *lex8.Token {
 	if start == '0' && r == 'x' {
 		x.Next()
 
-		for isHexDigit(x.Rune()) {
+		for lex8.IsHexDigit(x.Rune()) {
 			x.Next()
 		}
 	} else {
-		for isDigit(x.Rune()) {
+		for lex8.IsDigit(x.Rune()) {
 			x.Next()
 		}
 	}
@@ -68,7 +42,7 @@ func lexIdent(x *lex8.Lexer) *lex8.Token {
 	for {
 		x.Next()
 		r := x.Rune()
-		if !isLetter(r) && !isDigit(r) {
+		if !isLetter(r) && !lex8.IsDigit(r) {
 			break
 		}
 	}
