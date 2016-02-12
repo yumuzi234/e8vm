@@ -39,9 +39,6 @@ func lexG8(x *lex8.Lexer) *lex8.Token {
 	return x.MakeToken(lex8.Illegal)
 }
 
-// newLexer creates a new c8 lexer for a file input stream.
 func newLexer(file string, r io.Reader) *lex8.Lexer {
-	ret := lex8.NewLexer(file, r)
-	ret.LexFunc = lexG8
-	return ret
+	return lex8.MakeLexer(file, r, lexG8)
 }

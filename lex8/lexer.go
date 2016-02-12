@@ -23,6 +23,13 @@ type Lexer struct {
 	LexFunc
 }
 
+// MakeLexer creates a lexer with the particular lexer func.
+func MakeLexer(file string, r io.Reader, f LexFunc) *Lexer {
+	ret := NewLexer(file, r)
+	ret.LexFunc = f
+	return ret
+}
+
 // NewLexer creates a new lexer.
 func NewLexer(file string, r io.Reader) *Lexer {
 	ret := new(Lexer)

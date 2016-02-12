@@ -38,11 +38,8 @@ func lexAsm8(x *lex8.Lexer) *lex8.Token {
 	return x.MakeToken(lex8.Illegal)
 }
 
-// NewLexer creates a new lexer of a file stream.
 func newLexer(file string, r io.Reader) *lex8.Lexer {
-	ret := lex8.NewLexer(file, r)
-	ret.LexFunc = lexAsm8
-	return ret
+	return lex8.MakeLexer(file, r, lexAsm8)
 }
 
 // Tokens parses a file in a token array
