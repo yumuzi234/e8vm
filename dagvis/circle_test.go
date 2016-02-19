@@ -94,4 +94,41 @@ func TestMinCircle(t *testing.T) {
 	}
 
 	o(nodes, []string{"3", "4"})
+
+	nodes = map[string][]string{
+		"1": {"2"},
+		"2": {"3"},
+		"3": {"1"},
+	}
+
+	for i := 0; i < 5; i++ {
+		k1 := fmt.Sprintf("a%d", i)
+		k2 := fmt.Sprintf("b%d", i)
+		nodes["1"] = append(nodes["1"], k1)
+		nodes[k1] = []string{k2}
+		nodes[k2] = []string{"2"}
+	}
+
+	for i := 0; i < 5; i++ {
+		k1 := fmt.Sprintf("c%d", i)
+		k2 := fmt.Sprintf("d%d", i)
+		nodes["2"] = append(nodes["2"], k1)
+		nodes[k1] = []string{k2}
+		nodes[k2] = []string{"3"}
+	}
+
+	for i := 0; i < 5; i++ {
+		k1 := fmt.Sprintf("e%d", i)
+		k2 := fmt.Sprintf("f%d", i)
+		nodes["3"] = append(nodes["3"], k1)
+		nodes[k1] = []string{k2}
+		nodes[k2] = []string{"1"}
+	}
+
+	// because iterations on maps are random, we do it for several times so
+	// that it will iterate with different random permutations.
+	for i := 0; i < 5; i++ {
+		// TODO(YsGH): uncomment this when the implementation is fixed.
+		// o(nodes, []string{"1", "2", "3"})
+	}
 }
