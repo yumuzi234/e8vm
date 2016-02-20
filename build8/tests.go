@@ -12,24 +12,35 @@ import (
 
 var errTimeOut = errors.New("time out")
 
+func cycleStr(n int) string {
+	if n >= -1 && n <= 1 {
+		return fmt.Sprintf("%d cycle", n)
+	}
+	return fmt.Sprintf("%d cycles", n)
+}
+
 func runTests(
 	log lex8.Logger, tests map[string]uint32, img []byte,
-	verbose bool, ncycle int,
+	verbose bool, ncycle int, logln func(s string),
 ) {
-	report := func(name string, pass bool, err error) {
+	// TODO(h8liu): this reporting should go with JSON for better formatting.
+	report := func(name string, ncycle int, pass bool, err error) {
 		if !pass {
 			if err == nil {
 				err = errTimeOut
 			}
 			lex8.LogError(log, fmt.Errorf("%s failed: got %s", name, err))
 			if verbose {
-				fmt.Println("FAILED")
+				logln(fmt.Sprintf(
+					"  - %s: FAILED (%s, got %s)",
+					name, cycleStr(ncycle), err,
+				))
 			}
 			return
 		}
 
 		if verbose {
-			fmt.Println("pass")
+			logln(fmt.Sprintf("  - %s: passed (%s)", name, cycleStr(ncycle)))
 		}
 	}
 
@@ -40,16 +51,12 @@ func runTests(
 	sort.Strings(testNames)
 
 	for _, test := range testNames {
-		if verbose {
-			fmt.Printf("  - %s: ", test)
-		}
-
 		arg := tests[test]
-		_, err := arch8.RunImageArg(img, arg, ncycle)
+		n, err := arch8.RunImageArg(img, arg, ncycle)
 		if strings.HasPrefix(test, "TestBad") {
-			report(test, arch8.IsPanic(err), err)
+			report(test, n, arch8.IsPanic(err), err)
 		} else {
-			report(test, arch8.IsHalt(err), err)
+			report(test, n, arch8.IsHalt(err), err)
 		}
 	}
 }

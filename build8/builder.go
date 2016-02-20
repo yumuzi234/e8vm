@@ -37,9 +37,15 @@ func NewBuilder(input Input, output Output) *Builder {
 		deps:       make(map[string][]string),
 		linkPkgs:   make(map[string]*link8.Pkg),
 		debugFuncs: debug8.NewFuncs(),
-		Options: &Options{
-			InitPC: arch8.InitPC,
-		},
+		Options:    &Options{InitPC: arch8.InitPC},
+	}
+}
+
+func (b *Builder) logln(s string) {
+	if b.LogLine == nil {
+		fmt.Println(s)
+	} else {
+		b.LogLine(s)
 	}
 }
 
@@ -164,7 +170,7 @@ func (b *Builder) runTests(p *pkg) []*lex8.Error {
 				return es
 			}
 
-			runTests(log, tests, img, b.Verbose, b.TestCycles)
+			runTests(log, tests, img, b.Verbose, b.TestCycles, b.logln)
 			if es := log.Errs(); es != nil {
 				return es
 			}
@@ -175,11 +181,11 @@ func (b *Builder) runTests(p *pkg) []*lex8.Error {
 }
 
 func (b *Builder) parseOutput(p string) func(f string, toks []*lex8.Token) {
-	if b.FileTokens == nil {
+	if b.SaveFileTokens == nil {
 		return nil
 	}
 	return func(file string, tokens []*lex8.Token) {
-		b.FileTokens(path.Join(p, file), tokens)
+		b.SaveFileTokens(path.Join(p, file), tokens)
 	}
 }
 
@@ -255,7 +261,7 @@ func (b *Builder) BuildPkgs(pkgs []string) []*lex8.Error {
 	nodes := m.SortedNodes()
 	for _, node := range nodes {
 		if b.Verbose { // report progress
-			fmt.Println(node.Name)
+			b.logln(node.Name)
 		}
 
 		pkg := b.pkgs[node.Name]
