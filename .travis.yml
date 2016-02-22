@@ -4,6 +4,7 @@ go_import_path: e8vm.io/e8vm
 
 go:
     - 1.5
+    - 1.6
 
 install:
     - go get ./...
