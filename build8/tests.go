@@ -1,6 +1,7 @@
 package build8
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"sort"
@@ -24,7 +25,10 @@ func runTests(
 	verbose bool, ncycle int, logln func(s string),
 ) {
 	// TODO(h8liu): this reporting should go with JSON for better formatting.
-	report := func(name string, ncycle int, pass bool, err error) {
+	report := func(
+		name string, ncycle int, pass bool,
+		m *arch8.Machine, err error,
+	) {
 		if !pass {
 			if err == nil {
 				err = errTimeOut
@@ -35,6 +39,13 @@ func runTests(
 					"  - %s: FAILED (%s, got %s)",
 					name, cycleStr(ncycle), err,
 				))
+				// TODO(h8liu): this is too ugly here...
+				excep, ok := err.(*arch8.CoreExcep)
+				if !arch8.IsHalt(err) && ok {
+					stackTrace := new(bytes.Buffer)
+					arch8.FprintStack(stackTrace, m, excep)
+					logln(stackTrace.String())
+				}
 			}
 			return
 		}
@@ -52,11 +63,21 @@ func runTests(
 
 	for _, test := range testNames {
 		arg := tests[test]
-		n, err := arch8.RunImageArg(img, arg, ncycle)
+		m := arch8.NewMachine(0, 1)
+		if err := m.LoadImageBytes(img); err != nil {
+			report(test, 0, false, m, err)
+			continue
+		}
+		if err := m.WriteWord(arch8.AddrBootArg, arg); err != nil {
+			report(test, 0, false, m, err)
+			continue
+		}
+
+		n, excep := m.Run(ncycle)
 		if strings.HasPrefix(test, "TestBad") {
-			report(test, n, arch8.IsPanic(err), err)
+			report(test, n, arch8.IsPanic(excep), m, excep)
 		} else {
-			report(test, n, arch8.IsHalt(err), err)
+			report(test, n, arch8.IsHalt(excep), m, excep)
 		}
 	}
 }

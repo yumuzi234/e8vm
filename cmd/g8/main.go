@@ -39,6 +39,7 @@ var (
 	ir       = flag.Bool("ir", false, "prints out the IR")
 	dasm     = flag.Bool("d", false, "deassemble the image")
 	ncycle   = flag.Int("n", 100000, "maximum number of cycles")
+	verbose  = flag.Bool("v", false, "verbose")
 	golike   = flag.Bool("golike", false, "using strict go-like syntax")
 )
 

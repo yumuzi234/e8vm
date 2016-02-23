@@ -86,7 +86,7 @@ func debugSection(secs []*e8.Section) *e8.Section {
 
 // FprintStack prints the stack trace of a machine from its exception
 // and registers.
-func FprintStack(w io.Writer, m *Machine, exp *CoreExcep) error {
+func FprintStack(w io.Writer, m *Machine, excep *CoreExcep) error {
 	sec := debugSection(m.Sections)
 	if sec == nil {
 		return errors.New("debug section not found")
@@ -98,7 +98,7 @@ func FprintStack(w io.Writer, m *Machine, exp *CoreExcep) error {
 	}
 	funcs := sortTable(t)
 
-	core := byte(exp.Core)
+	core := byte(excep.Core)
 	regs := m.DumpRegs(core)
 	pc := regs[PC]
 	sp := regs[SP]
