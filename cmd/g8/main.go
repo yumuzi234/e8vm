@@ -114,5 +114,4 @@ func printIRLog(irLog []byte, ir bool) {
 	} else {
 		fmt.Println(string(irLog))
 	}
-
 }
