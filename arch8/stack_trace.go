@@ -107,7 +107,6 @@ func FprintStack(w io.Writer, m *Machine, exp *CoreExcep) error {
 
 	for {
 		level++
-		fmt.Println(pc)
 
 		name, f := findFunc(funcs, pc, t)
 		if f == nil {
