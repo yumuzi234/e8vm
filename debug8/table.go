@@ -52,7 +52,7 @@ func (t *Table) LinkFunc(fs *Funcs, pkg, name string, addr, size uint32) {
 // PrintTo prints the table to an output stream.
 func (t *Table) PrintTo(w io.Writer) error {
 	for name, f := range t.Funcs {
-		_, err := fmt.Fprintln(w, funcString(name, f))
+		_, err := fmt.Fprintln(w, f.String(name))
 		if err != nil {
 			return err
 		}

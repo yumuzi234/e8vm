@@ -7,7 +7,16 @@ import (
 	"e8vm.io/e8vm/lex8"
 )
 
-func funcString(name string, f *Func) string {
+// Func saves the debug information of a function
+type Func struct {
+	Start uint32
+	Size  uint32
+	Frame uint32
+
+	Pos *lex8.Pos
+}
+
+func (f *Func) String(name string) string {
 	buf := new(bytes.Buffer)
 	fmt.Fprintf(buf, "%8x +%4d: ", f.Start, f.Size)
 	fmt.Fprintf(buf, "%s", name)
@@ -18,13 +27,4 @@ func funcString(name string, f *Func) string {
 		fmt.Fprintf(buf, " (frame=%d)", f.Frame)
 	}
 	return buf.String()
-}
-
-// Func saves the debug information of a function
-type Func struct {
-	Start uint32
-	Size  uint32
-	Frame uint32
-
-	Pos *lex8.Pos
 }

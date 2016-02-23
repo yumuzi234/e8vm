@@ -20,6 +20,9 @@ type Machine struct {
 	rom     *rom
 
 	devices []device
+
+	// Sections that are loaded into the machine
+	Sections []*e8.Section
 }
 
 // Default SP settings.
@@ -158,6 +161,15 @@ func (m *Machine) RandSeed(s int64) {
 	m.ticker.Rand = rand.New(rand.NewSource(s))
 }
 
+func findCodeStart(secs []*e8.Section) (uint32, bool) {
+	for _, s := range secs {
+		if s.Type == e8.Code {
+			return s.Addr, true
+		}
+	}
+	return 0, false
+}
+
 // LoadSections loads a list of sections into the machine.
 func (m *Machine) LoadSections(secs []*e8.Section) error {
 	for _, s := range secs {
@@ -181,6 +193,8 @@ func (m *Machine) LoadSections(secs []*e8.Section) error {
 	if pc, found := findCodeStart(secs); found {
 		m.SetPC(pc)
 	}
+	m.Sections = secs
+
 	return nil
 }
 
@@ -196,15 +210,6 @@ func (m *Machine) SetSP(sp, stackSize uint32) {
 	for i, cpu := range m.cores.cores {
 		cpu.regs[SP] = sp + uint32(i+1)*stackSize
 	}
-}
-
-func findCodeStart(secs []*e8.Section) (uint32, bool) {
-	for _, s := range secs {
-		if s.Type == e8.Code {
-			return s.Addr, true
-		}
-	}
-	return 0, false
 }
 
 // LoadImage loads an e8 image into the machine.

@@ -26,34 +26,6 @@ var (
 	randSeed    = flag.Int64("seed", 0, "random seed, 0 for using the time")
 )
 
-func debugSection(secs []*e8.Section) *e8.Section {
-	for _, sec := range secs {
-		if sec.Type == e8.Debug {
-			return sec
-		}
-	}
-	return nil
-}
-
-func printStackTrace(m *arch8.Machine, exp error, sec *e8.Section) {
-	if sec == nil {
-		return
-	}
-
-	coreExp, ok := exp.(*arch8.CoreExcep)
-	if !ok {
-		return
-	}
-
-	tab, err := debug8.UnmarshalTable(sec.Bytes)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	debug8.FprintStack(os.Stdout, m, byte(coreExp.Core), tab)
-}
-
 func run(bs []byte) (int, error) {
 	// create a single core machine
 	m := arch8.NewMachine(uint32(*memSize), 1)
@@ -86,7 +58,11 @@ func run(bs []byte) (int, error) {
 	}
 
 	if !arch8.IsHalt(exp) {
-		printStackTrace(m, exp, debugSection(secs))
+		fmt.Println(exp)
+		err := arch8.FprintStack(os.Stdout, m, exp)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	if exp == nil {

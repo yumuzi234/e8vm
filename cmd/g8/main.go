@@ -94,11 +94,21 @@ func runImage(bs []byte, dasm bool, n int) {
 		return
 	}
 
-	ncycle, e := arch8.RunImage(bs, n)
+	m := arch8.NewMachine(0, 1)
+	if err := m.LoadImageBytes(bs); err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	ncycle, exp := m.Run(n)
 	fmt.Printf("(%d cycles)\n", ncycle)
-	if e != nil {
-		if !arch8.IsHalt(e) {
-			fmt.Println(e)
+	if exp != nil {
+		if !arch8.IsHalt(exp) {
+			fmt.Println(exp)
+			err := arch8.FprintStack(os.Stdout, m, exp)
+			if err != nil {
+				fmt.Println(err)
+			}
 		}
 	} else {
 		fmt.Println("(end of time)")
