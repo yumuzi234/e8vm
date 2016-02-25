@@ -10,7 +10,7 @@ func buildMulti(lang build8.Lang, files map[string]string, runTests bool) (
 ) {
 	home := MakeMemHome(lang)
 	home.AddFiles(files)
-	return buildMainPkg(home, runTests)
+	return buildMainPkg(home, runTests, 0)
 }
 
 // CompileMulti compiles a set of files into a bare-metal E8 image

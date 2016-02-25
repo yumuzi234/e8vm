@@ -20,12 +20,13 @@ func MakeMemHome(lang build8.Lang) *build8.MemHome {
 	return home
 }
 
-func buildMainPkg(home *build8.MemHome, runTests bool) (
+func buildMainPkg(home *build8.MemHome, runTests bool, testCycles int) (
 	image []byte, errs []*lex8.Error, log []byte,
 ) {
 	b := build8.NewBuilder(home, home)
 	b.RunTests = runTests
 	b.Verbose = true
+	b.TestCycles = testCycles
 	if errs := b.BuildAll(); errs != nil {
 		return nil, errs, nil
 	}
@@ -40,29 +41,31 @@ func buildMainPkg(home *build8.MemHome, runTests bool) (
 	return image, nil, log
 }
 
-func buildSingle(fname, s string, lang build8.Lang, runTests bool) (
+func buildSingle(
+	f, s string, lang build8.Lang, runTests bool, testCycles int,
+) (
 	image []byte, errs []*lex8.Error, log []byte,
 ) {
 	home := MakeMemHome(lang)
 
 	pkg := home.NewPkg("main")
-	name := filepath.Base(fname)
-	pkg.AddFile(fname, name, s)
+	name := filepath.Base(f)
+	pkg.AddFile(f, name, s)
 
-	return buildMainPkg(home, runTests)
+	return buildMainPkg(home, runTests, testCycles)
 }
 
 // CompileSingle compiles a file into a bare-metal E8 image
 func CompileSingle(fname, s string, golike bool) (
 	[]byte, []*lex8.Error, []byte,
 ) {
-	return buildSingle(fname, s, Lang(golike), false)
+	return buildSingle(fname, s, Lang(golike), false, 0)
 }
 
 // CompileAndTestSingle compiles a file into a bare-metal E8 image and
 // runs the tests.
-func CompileAndTestSingle(fname, s string, golike bool) (
+func CompileAndTestSingle(fname, s string, golike bool, testCycles int) (
 	[]byte, []*lex8.Error, []byte,
 ) {
-	return buildSingle(fname, s, Lang(golike), true)
+	return buildSingle(fname, s, Lang(golike), true, testCycles)
 }

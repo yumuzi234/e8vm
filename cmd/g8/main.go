@@ -34,13 +34,14 @@ func printErrs(es []*lex8.Error) {
 }
 
 var (
-	bare     = flag.Bool("bare", false, "parse as bare function")
-	parseAST = flag.Bool("parse", false, "parse only and print out the ast")
-	ir       = flag.Bool("ir", false, "prints out the IR")
-	dasm     = flag.Bool("d", false, "deassemble the image")
-	ncycle   = flag.Int("n", 100000, "maximum number of cycles")
-	verbose  = flag.Bool("v", false, "verbose")
-	golike   = flag.Bool("golike", false, "using strict go-like syntax")
+	bare       = flag.Bool("bare", false, "parse as bare function")
+	parseAST   = flag.Bool("parse", false, "parse only and print out the ast")
+	ir         = flag.Bool("ir", false, "prints out the IR")
+	dasm       = flag.Bool("d", false, "deassemble the image")
+	ncycle     = flag.Int("n", 100000, "maximum number of cycles")
+	ncycleTest = flag.Int("ntest", 0, "maximum number of cycles for tests")
+	verbose    = flag.Bool("v", false, "verbose")
+	golike     = flag.Bool("golike", false, "using strict go-like syntax")
 )
 
 func main() {
@@ -74,7 +75,7 @@ func main() {
 			gfmt.FprintFile(os.Stdout, f, rec)
 		} else {
 			bs, es, irLog := g8.CompileAndTestSingle(
-				fname, string(input), *golike,
+				fname, string(input), *golike, *ncycleTest,
 			)
 			printErrs(es)
 			printIRLog(irLog, *ir)

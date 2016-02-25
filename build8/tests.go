@@ -73,11 +73,15 @@ func runTests(
 			continue
 		}
 
+		var err error
 		n, excep := m.Run(ncycle)
+		if excep == nil {
+			err = errTimeOut
+		}
 		if strings.HasPrefix(test, "TestBad") {
-			report(test, n, arch8.IsPanic(excep), m, excep)
+			report(test, n, arch8.IsPanic(err), m, err)
 		} else {
-			report(test, n, arch8.IsHalt(excep), m, excep)
+			report(test, n, arch8.IsHalt(err), m, err)
 		}
 	}
 }
