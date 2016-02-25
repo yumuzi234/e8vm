@@ -77,6 +77,8 @@ func runTests(
 		n, excep := m.Run(ncycle)
 		if excep == nil {
 			err = errTimeOut
+		} else {
+			err = excep
 		}
 		if strings.HasPrefix(test, "TestBad") {
 			report(test, n, arch8.IsPanic(err), m, err)
