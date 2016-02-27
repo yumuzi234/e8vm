@@ -14,8 +14,7 @@ func Sys(op, reg uint32) uint32 {
 
 // Imm composes an immediate based instruction
 func Imm(op, d, s, im uint32) uint32 {
-	ret := uint32(0)
-	ret |= (op & 0xff) << 24
+	ret := (op & 0xff) << 24
 	ret |= (d & 0x7) << 21
 	ret |= (s & 0x7) << 18
 	ret |= (im & 0xffff)

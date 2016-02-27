@@ -16,16 +16,7 @@ func buildConst(b *builder, c *tast.Const) *ref {
 
 	if t, ok := c.T.(types.Basic); ok {
 		v := c.ConstValue.(int64)
-		switch t {
-		case types.Int, types.Uint:
-			return newRef(c.T, ir.Num(uint32(v)))
-		case types.Int8:
-			return newRef(c.T, ir.Byt(uint8(v), false))
-		case types.Uint8, types.Bool:
-			return newRef(c.T, ir.Byt(uint8(v), true))
-		default:
-			panic("other basic types not supported yet")
-		}
+		return newRef(c.T, constNumIr(v, t))
 	}
 
 	if c.T == types.String {

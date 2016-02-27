@@ -143,11 +143,12 @@ func loadRef(b *Block, reg uint32, r Ref) {
 		if r.u8 {
 			b.inst(asm.ori(reg, _0, uint32(r.v)))
 		} else {
-			if r.v > 0 {
-				b.inst(asm.ori(reg, _0, uint32(r.v)))
+			bt := int8(r.v)
+			if bt > 0 {
+				b.inst(asm.ori(reg, _0, uint32(bt)))
 			} else {
 				b.inst(asm.lui(reg, 0xffff))
-				b.inst(asm.ori(reg, reg, uint32(int32(int8(r.v)))) & 0xffff)
+				b.inst(asm.ori(reg, reg, uint32(int32(bt))&0xffff))
 			}
 		}
 	case *Func:
@@ -164,9 +165,9 @@ func loadRef(b *Block, reg uint32, r Ref) {
 		loadRef(b, reg, r.base)
 		if r.size == 1 {
 			if r.u8 {
-				b.inst(asm.lb(reg, reg, r.offset))
-			} else {
 				b.inst(asm.lbu(reg, reg, r.offset))
+			} else {
+				b.inst(asm.lb(reg, reg, r.offset))
 			}
 		} else if r.size == regSize && r.regSizeAlign {
 			b.inst(asm.lw(reg, reg, r.offset))
