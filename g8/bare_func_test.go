@@ -132,10 +132,14 @@ func TestBareFunc_good(t *testing.T) {
 	o("printInt(int(byte(3)))", "3")
 	o("printInt(int(byte(int(256))))", "0")
 	o("printInt(int(char(int(-1))))", "-1")
+	o("printInt(int(int8(-1)))", "-1")
 	o("printInt(int(char(int(255))))", "-1")
 	o("printInt(int(char(int(256))))", "0")
 	o("printInt(int(byte(char(int(255)))))", "255")
 	o("printInt(int(byte(char(int(-1)))))", "255")
+
+	o("var a int8=-3; printInt(int(a))", "-3")
+	o("var a=[]int8{-3}; printInt(int(a[0]))", "-3")
 
 	o("printInt(33 << uint(1))", "66")
 	o("printInt(33 << 1)", "66")
