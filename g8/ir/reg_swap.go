@@ -142,11 +142,13 @@ func loadRef(b *Block, reg uint32, r Ref) {
 	case *byt:
 		if r.u8 {
 			b.inst(asm.ori(reg, _0, uint32(r.v)))
-		} else if r.v > 0 {
-			b.inst(asm.ori(reg, _0, uint32(r.v)))
 		} else {
-			b.inst(asm.lui(reg, 0xffff))
-			b.inst(asm.ori(reg, reg, uint32(int32(int8(r.v)))) & 0xffff)
+			if r.v > 0 {
+				b.inst(asm.ori(reg, _0, uint32(r.v)))
+			} else {
+				b.inst(asm.lui(reg, 0xffff))
+				b.inst(asm.ori(reg, reg, uint32(int32(int8(r.v)))) & 0xffff)
+			}
 		}
 	case *Func:
 		loadSym(b, reg, r.pkg, r.name)
