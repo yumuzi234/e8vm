@@ -101,7 +101,7 @@ func genArithOp(g *gener, b *Block, op *arithOp) {
 		}
 	} else if op.op == "makeDat" {
 		d := op.b.(*heapDat)
-		n := len(d.bs)
+		n := d.n
 		if n > 0 {
 			if n > math.MaxInt32-1 {
 				panic("dat too long")

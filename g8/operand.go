@@ -19,8 +19,10 @@ func buildConst(b *builder, c *tast.Const) *ref {
 		switch t {
 		case types.Int, types.Uint:
 			return newRef(c.T, ir.Num(uint32(v)))
-		case types.Int8, types.Uint8, types.Bool:
-			return newRef(c.T, ir.Byt(uint8(v)))
+		case types.Int8:
+			return newRef(c.T, ir.Byt(uint8(v), false))
+		case types.Uint8, types.Bool:
+			return newRef(c.T, ir.Byt(uint8(v), true))
 		default:
 			panic("other basic types not supported yet")
 		}
@@ -41,11 +43,13 @@ func buildConst(b *builder, c *tast.Const) *ref {
 				ret := b.newTemp(t)
 				ref := b.p.NewHeapDat(bs, bt.Size(), bt.RegSizeAlign())
 				b.b.Arith(ret.IR(), nil, "makeDat", ref)
+				return ret
 			default:
 				panic("other const slices not supported")
 			}
+		} else {
+			panic("not basic type")
 		}
-
 	}
 
 	panic("other const types not supported")

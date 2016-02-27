@@ -8,6 +8,7 @@ import (
 // BuildPkg builds a package and returns the built lib
 func BuildPkg(p *Pkg) (*link8.Pkg, []*lex8.Error) {
 	p.strPool.declare(p.lib)
+	p.datPool.declare(p.lib)
 
 	for _, v := range p.vars {
 		var align uint32 = regSize

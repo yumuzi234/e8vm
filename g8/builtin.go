@@ -9,8 +9,8 @@ import (
 )
 
 var (
-	refTrue  = newRef(types.Bool, ir.Byt(1))
-	refFalse = newRef(types.Bool, ir.Byt(0))
+	refTrue  = newRef(types.Bool, ir.Byt(1, true))
+	refFalse = newRef(types.Bool, ir.Byt(0, true))
 	refNil   = newRef(types.Nil(), nil)
 )
 

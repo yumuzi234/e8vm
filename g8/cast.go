@@ -31,8 +31,10 @@ func constNumIr(v int64, t types.T) ir.Ref {
 			return ir.Snum(int32(v))
 		case types.Uint:
 			return ir.Num(uint32(v))
-		case types.Int8, types.Uint8:
-			return ir.Byt(uint8(v))
+		case types.Int8:
+			return ir.Byt(uint8(v), false)
+		case types.Uint8:
+			return ir.Byt(uint8(v), true)
 		}
 	}
 	panic("expect an integer type")

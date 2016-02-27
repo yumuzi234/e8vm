@@ -56,8 +56,7 @@ func buildArrayType(b *builder, expr *ast.ArrayTypeExpr) types.T {
 	}
 
 	ntype := n.R().T
-	c, ok := ntype.(*types.Const)
-	if !ok {
+	if _, ok := ntype.(*types.Const); !ok {
 		// might be true, false, or other builtin consts
 		b.Errorf(ast.ExprPos(expr), "array index is not a constant")
 		return nil
@@ -65,9 +64,7 @@ func buildArrayType(b *builder, expr *ast.ArrayTypeExpr) types.T {
 
 	if v, ok := types.NumConst(ntype); ok {
 		if v < 0 {
-			b.Errorf(ast.ExprPos(expr),
-				"array index is negative: %d", c.Value,
-			)
+			b.Errorf(ast.ExprPos(expr), "array index is negative: %d", v)
 			return nil
 		} else if !types.InRange(v, types.Int) {
 			b.Errorf(ast.ExprPos(expr), "index out of range of int32")
