@@ -10,8 +10,15 @@ import (
 )
 
 func buildArrayLit(b *builder, lit *ast.ArrayLiteral) tast.Expr {
-	buf := new(bytes.Buffer)
+	if lit.Type.Len != nil {
+		b.Errorf(
+			ast.ExprPos(lit),
+			"array literal with length not supported yet",
+		)
+		return nil
+	}
 
+	buf := new(bytes.Buffer)
 	t := buildType(b, lit.Type.Type)
 	if t == nil {
 		return nil
