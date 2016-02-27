@@ -99,6 +99,23 @@ func genArithOp(g *gener, b *Block, op *arithOp) {
 			b.inst(asm.sw(_0, _1, 0))
 			b.inst(asm.sw(_0, _1, 4))
 		}
+	} else if op.op == "makeDat" {
+		d := op.b.(*heapDat)
+		n := len(d.bs)
+		if n > 0 {
+			if n > math.MaxInt32-1 {
+				panic("dat too long")
+			}
+			loadSym(b, _4, d.pkg, d.name)
+			loadAddr(b, _1, op.dest)
+			b.inst(asm.sw(_4, _1, 0))
+			loadUint32(b, _4, uint32(n))
+			b.inst(asm.sw(_4, _1, 4))
+		} else {
+			loadAddr(b, _1, op.dest)
+			b.inst(asm.sw(_0, _1, 0))
+			b.inst(asm.sw(_0, _1, 4))
+		}
 	} else {
 		// other unary arith op
 		switch op.op {

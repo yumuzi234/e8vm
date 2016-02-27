@@ -14,10 +14,10 @@ type strConst struct {
 }
 
 func newStrConst(id int, s string) *strConst {
-	ret := new(strConst)
-	ret.id = id
-	ret.str = s
-	return ret
+	return &strConst{
+		id:  id,
+		str: s,
+	}
 }
 
 func (s *strConst) String() string {
@@ -40,10 +40,10 @@ type strPool struct {
 }
 
 func newStrPool(pkg string) *strPool {
-	ret := new(strPool)
-	ret.pkg = pkg
-	ret.strMap = make(map[string]*strConst)
-	return ret
+	return &strPool{
+		pkg:    pkg,
+		strMap: make(map[string]*strConst),
+	}
 }
 
 func (p *strPool) addString(s string) *strConst {
@@ -56,7 +56,6 @@ func (p *strPool) addString(s string) *strConst {
 	ret := newStrConst(n, s)
 	p.strs = append(p.strs, ret)
 	p.strMap[s] = ret
-
 	return ret
 }
 
@@ -72,6 +71,10 @@ func countDigit(n int) int {
 func (p *strPool) declare(lib *link8.Pkg) {
 	if lib.Path() != p.pkg {
 		panic("package name mismatch")
+	}
+
+	if len(p.strs) == 0 {
+		return
 	}
 
 	ndigit := countDigit(len(p.strs))

@@ -17,6 +17,7 @@ type Pkg struct {
 	vars    []*HeapSym
 	tests   *testList
 	strPool *strPool
+	datPool *datPool
 
 	// helper functions required for generating
 	g *gener
@@ -24,14 +25,13 @@ type Pkg struct {
 
 // NewPkg creates a package with a particular path name.
 func NewPkg(path string) *Pkg {
-	ret := new(Pkg)
-	ret.path = path
-	ret.lib = link8.NewPkg(path)
-	ret.strPool = newStrPool(path)
-
-	ret.g = newGener()
-
-	return ret
+	return &Pkg{
+		path:    path,
+		lib:     link8.NewPkg(path),
+		strPool: newStrPool(path),
+		datPool: newDatPool(path),
+		g:       newGener(),
+	}
 }
 
 // NewFunc creates a new function for the package.
@@ -98,4 +98,9 @@ func (p *Pkg) HookBuiltin(pkg *link8.Pkg) error {
 // NewString adds a new string constant and returns its reference.
 func (p *Pkg) NewString(s string) Ref {
 	return p.strPool.addString(s)
+}
+
+// NewHeapDat adds a byte array of heap static data.
+func (p *Pkg) NewHeapDat(bs []byte, unit int32, regSizeAlign bool) Ref {
+	return p.datPool.addDat(bs, unit, regSizeAlign)
 }

@@ -33,6 +33,21 @@ func buildConst(b *builder, c *tast.Const) *ref {
 		return ret
 	}
 
+	if t, ok := c.T.(*types.Slice); ok {
+		if bt, ok := t.T.(types.Basic); ok {
+			switch bt {
+			case types.Int, types.Uint, types.Int8, types.Uint8, types.Bool:
+				bs := c.ConstValue.([]byte)
+				ret := b.newTemp(t)
+				ref := b.p.NewHeapDat(bs, bt.Size(), bt.RegSizeAlign())
+				b.b.Arith(ret.IR(), nil, "makeDat", ref)
+			default:
+				panic("other const slices not supported")
+			}
+		}
+
+	}
+
 	panic("other const types not supported")
 }
 
