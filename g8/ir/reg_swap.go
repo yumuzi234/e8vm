@@ -144,7 +144,7 @@ func loadRef(b *Block, reg uint32, r Ref) {
 			b.inst(asm.ori(reg, _0, uint32(r.v)))
 		} else {
 			bt := int8(r.v)
-			if bt > 0 {
+			if bt >= 0 {
 				b.inst(asm.ori(reg, _0, uint32(bt)))
 			} else {
 				b.inst(asm.lui(reg, 0xffff))

@@ -172,6 +172,8 @@ func TestBareFunc_good(t *testing.T) {
 	o("const a,b=3,4; var v [a+b]int; printInt(len(v))", "7")
 
 	o("var a []int = nil; printInt(len(a))", "0")
+	o("a := []int{}; printInt(len(a))", "0")
+	o("var a byte; if a == 0 { printInt(33) }", "33")
 }
 
 func TestBareFunc_bad(t *testing.T) {
