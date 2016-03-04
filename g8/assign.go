@@ -3,6 +3,7 @@ package g8
 import (
 	"e8vm.io/e8vm/g8/ir"
 	"e8vm.io/e8vm/g8/tast"
+	"e8vm.io/e8vm/g8/types"
 )
 
 func buildAssignStmt(b *builder, stmt *tast.AssignStmt) {
@@ -37,10 +38,28 @@ func assign(b *builder, dest, src *ref) {
 
 func opAssign(b *builder, dest, src *ref, op string) {
 	opOp := op[:len(op)-1]
-	if opOp == ">>=" || opOp == "<<=" {
+	if opOp == ">>" || opOp == "<<" {
 		buildShift(b, dest, dest, src, opOp)
 		return
 	}
 
-	buildBasicArith(b, dest, dest, src, opOp)
+	ok, t := types.SameBasic(src.Type(), dest.Type())
+	if !ok {
+		panic("bug")
+	}
+
+	switch t {
+	case types.Int, types.Int8:
+		buildBasicArith(b, dest, dest, src, opOp)
+		return
+	case types.Uint, types.Uint8:
+		switch opOp {
+		case "*", "/", "%":
+			opOp = "u" + opOp
+		}
+		buildBasicArith(b, dest, dest, src, opOp)
+		return
+	}
+
+	panic("bug")
 }
