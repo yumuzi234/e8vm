@@ -151,6 +151,9 @@ func TestBareFunc_good(t *testing.T) {
 	o("printInt(int(byte(255) << 1))", "254")
 	o("printInt(int(uint(33) >> uint(1)))", "16")
 	o("printInt(int(uint(33) >> 1))", "16")
+	o("printUint(uint(0x80000000) / 10)", "214748364")
+	o("printUint(uint(0x80000000) % 10)", "8")
+	o("a:=uint(214748364); printUint(a*2)", "429496728")
 
 	o("a:=3; a+=4; printInt(a)", "7")
 	o("a:=3; a-=4; printInt(a)", "-1")

@@ -6,7 +6,8 @@ import (
 )
 
 func buildBasicArith(b *builder, ret, A, B *ref, op string) {
-	if op == "%" || op == "/" {
+	switch op {
+	case "/", "%", "u/", "u%":
 		isZero := b.newCond()
 		b.b.Arith(isZero, B.IR(), "==", ir.Num(0))
 
@@ -38,9 +39,13 @@ func binaryOpInt(b *builder, op string, A, B *ref, t types.T) *ref {
 
 func binaryOpUint(b *builder, op string, A, B *ref, t types.T) *ref {
 	switch op {
-	case "+", "-", "*", "&", "|", "^", "%", "/":
+	case "+", "-", "&", "|", "^":
 		ret := b.newTemp(t)
 		buildBasicArith(b, ret, A, B, op)
+		return ret
+	case "*", "%", "/":
+		ret := b.newTemp(t)
+		buildBasicArith(b, ret, A, B, "u"+op)
 		return ret
 	case "==", "!=":
 		ret := b.newTemp(types.Bool)

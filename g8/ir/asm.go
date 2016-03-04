@@ -57,8 +57,11 @@ func (_s) reg(op, d, s1, s2 uint32) uint32 {
 func (_s) add(d, s1, s2 uint32) uint32  { return asm.reg(A.ADD, d, s1, s2) }
 func (_s) sub(d, s1, s2 uint32) uint32  { return asm.reg(A.SUB, d, s1, s2) }
 func (_s) mul(d, s1, s2 uint32) uint32  { return asm.reg(A.MUL, d, s1, s2) }
+func (_s) mulu(d, s1, s2 uint32) uint32 { return asm.reg(A.MULU, d, s1, s2) }
 func (_s) div(d, s1, s2 uint32) uint32  { return asm.reg(A.DIV, d, s1, s2) }
+func (_s) divu(d, s1, s2 uint32) uint32 { return asm.reg(A.DIVU, d, s1, s2) }
 func (_s) mod(d, s1, s2 uint32) uint32  { return asm.reg(A.MOD, d, s1, s2) }
+func (_s) modu(d, s1, s2 uint32) uint32 { return asm.reg(A.MODU, d, s1, s2) }
 func (_s) and(d, s1, s2 uint32) uint32  { return asm.reg(A.AND, d, s1, s2) }
 func (_s) or(d, s1, s2 uint32) uint32   { return asm.reg(A.OR, d, s1, s2) }
 func (_s) xor(d, s1, s2 uint32) uint32  { return asm.reg(A.XOR, d, s1, s2) }
