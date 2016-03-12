@@ -1,5 +1,9 @@
 package dagvis
 
+func minCircle2(nodes map[string]*MapNode) []*MapNode {
+	panic("todo")
+}
+
 func minCircle(nodes map[string]*MapNode) []*MapNode {
 	minDist := 2 * len(nodes)
 	var ret []*MapNode
