@@ -112,7 +112,6 @@ func outputIr(pinfo *build8.PkgInfo, b *builder) error {
 }
 
 func outputDeps(pinfo *build8.PkgInfo, g *dagvis.Graph) error {
-
 	bs, err := json.MarshalIndent(g.Nodes, "", "    ")
 	if err != nil {
 		panic(err)
@@ -209,7 +208,6 @@ func (l *lang) Compile(pinfo *build8.PkgInfo) (
 	}
 
 	// add debug symbols
-	//
 	// Functions positionings only available after building.
 	ir.AddDebug(b.p, pinfo.AddFuncDebug)
 

@@ -9,11 +9,13 @@ import (
 
 // Func saves the debug information of a function
 type Func struct {
+	// compiler filled information
+	Frame uint32
+	Pos   *lex8.Pos
+
+	// linker filled information
 	Start uint32
 	Size  uint32
-	Frame uint32
-
-	Pos *lex8.Pos
 }
 
 func (f *Func) String(name string) string {

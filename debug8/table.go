@@ -20,7 +20,7 @@ func NewTable() *Table {
 // UnmarshalTable unmarshals a debug table.
 func UnmarshalTable(bs []byte) (*Table, error) {
 	t := NewTable()
-	err := json.Unmarshal(bs, t)
+	err := json.Unmarshal(bs, &t.Funcs)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +29,7 @@ func UnmarshalTable(bs []byte) (*Table, error) {
 
 // Marshal marshals the debug table out.
 func (t *Table) Marshal() []byte {
-	bs, err := json.Marshal(t)
+	bs, err := json.Marshal(t.Funcs)
 	if err != nil {
 		panic(err)
 	}
