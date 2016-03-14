@@ -1,51 +1,73 @@
 package dagvis
 
-func minCircle2(nodes map[string]*MapNode) []*MapNode {
-	panic("todo")
+type searchNode struct {
+	start  *MapNode
+	this   *MapNode
+	last   *searchNode
+	length int
+}
+
+func traceCircle(trace []*searchNode, snode *searchNode) []*MapNode {
+	n := snode.length
+	ret := make([]*MapNode, n)
+	for i := 0; i < n; i++ {
+		ret[n-1-i] = snode.this
+		snode = snode.last
+	}
+
+	if snode != nil {
+		panic("bug")
+	}
+	return ret
 }
 
 func minCircle(nodes map[string]*MapNode) []*MapNode {
-	minDist := 2 * len(nodes)
-	var ret []*MapNode
+	var trace []*searchNode
+	visited := make(map[string]map[string]bool)
+	for _, node := range nodes {
+		m := make(map[string]bool)
+		m[node.Name] = true
+		visited[node.Name] = m
+	}
 
 	for _, node := range nodes {
-		if node.Outs == nil {
-			continue
-		}
-		flag := make(map[*MapNode]bool)
-		count := make(map[*MapNode]int)
+		trace = append(trace, &searchNode{
+			start:  node,
+			this:   node,
+			last:   nil,
+			length: 1,
+		})
+	}
 
-		var stack []*MapNode
-		stack = append(stack, node)
-		flag[node] = true
+	pt := 0
+	for pt < len(trace) {
+		snode := trace[pt]
+		start := snode.start
+		vmap := visited[start.Name]
+		for name, out := range snode.this.Outs {
+			if name == start.Name {
+				return traceCircle(trace, snode)
+			}
 
-		for len(stack) > 0 {
-			cur := stack[len(stack)-1]
-			count[cur]++
-
-			// why count[cur] can be compared with len(cur.Outs) ?
-			if cur.Outs == nil || count[cur] > len(cur.Outs) {
-				stack = stack[:len(stack)-1]
+			if vmap[name] {
+				// visited before from this start
+				continue
+			}
+			if name > start.Name {
+				// a node larger than the start; skip it
 				continue
 			}
 
-			for _, next := range cur.Outs {
-				if next == node {
-					if len(stack) < minDist {
-						minDist = len(stack)
-						ret = make([]*MapNode, len(stack))
-						copy(ret, stack)
-					}
-					break
-				}
-				if !flag[next] && len(stack) < minDist {
-					stack = append(stack, next)
-					flag[next] = true
-					break
-				}
-			}
+			trace = append(trace, &searchNode{
+				start:  start,
+				this:   out,
+				last:   snode,
+				length: snode.length + 1,
+			})
 		}
+
+		pt++ // next one
 	}
 
-	return ret
+	return nil // no circle found
 }

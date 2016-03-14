@@ -5,7 +5,6 @@ import (
 
 	"fmt"
 	"reflect"
-	"sort"
 )
 
 func TestMinCircle(t *testing.T) {
@@ -21,7 +20,24 @@ func TestMinCircle(t *testing.T) {
 		for _, node := range res {
 			circGot = append(circGot, node.Name)
 		}
-		sort.Strings(circGot)
+
+		if len(circGot) > 0 {
+			min := 0
+			for i, node := range circGot {
+				if node < circGot[min] {
+					min = i
+				}
+			}
+
+			if min > 0 {
+				n := len(circGot)
+				rotated := make([]string, n)
+				for i := range rotated {
+					rotated[i] = circGot[(min+i)%n]
+				}
+				circGot = rotated
+			}
+		}
 
 		if !reflect.DeepEqual(circGot, circExpect) {
 			t.Errorf("min circle of %v, got %v, expect %v",
@@ -128,7 +144,6 @@ func TestMinCircle(t *testing.T) {
 	// because iterations on maps are random, we do it for several times so
 	// that it will iterate with different random permutations.
 	for i := 0; i < 5; i++ {
-		// TODO(YsGH): uncomment this when the implementation is fixed.
-		// o(nodes, []string{"1", "2", "3"})
+		o(nodes, []string{"1", "2", "3"})
 	}
 }
