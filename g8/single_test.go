@@ -231,9 +231,12 @@ func TestSingleFile(t *testing.T) {
 
 	// Bugs found by the fuzzer in the past
 	o("func main() { a := 0==0; if a { printInt(33) } }", "33")
-	o("func n()[(3+4)*5]string{}; func main() { printInt(len(n())) }", "35")
-	o("func n()[1<<6]string{}; func main() { printInt(len(n())) }", "64")
-	o("func n()[1>>6]string{}; func main() { printInt(len(n())) }", "0")
+	o(`	func n()[(4-3)*1]string { var a [1]string; return a }
+		func main() { printInt(len(n())) }`, "1")
+	o(`	func n()[1<<1]string { var a [2]string; return a }
+		func main() { printInt(len(n())) }`, "2")
+	o(` func n()[1>>1]string { var a [0]string; return a }
+		func main() { printInt(len(n())) }`, "0")
 	o("func main() { r:=+'0'; printChar(r) }", "0")
 	o("func n(b**bool) { **b=**b }; func main() {}", "")
 	o("func n(b****bool) { ****b=****b }; func main() {}", "")

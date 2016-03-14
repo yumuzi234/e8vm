@@ -139,6 +139,10 @@ func buildFunc(b *builder, f *pkgFunc) *tast.Func {
 
 	ret.Body = buildStmts(b, f.f.Body.Stmts)
 
+	if len(b.retType) > 0 && !isBlockTerminal(f.f.Body) {
+		b.Errorf(f.f.Body.Rbrace.Pos, "missing return at the end of function")
+	}
+
 	// clear for safety
 	b.retType = nil
 	b.retNamed = false

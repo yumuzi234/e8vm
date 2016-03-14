@@ -13,6 +13,34 @@ func isBlockTerminal(block *ast.Block) bool {
 	return isTerminal(stmts[nstmt-1])
 }
 
+func hasBreak(stmt ast.Stmt) bool {
+	switch stmt := stmt.(type) {
+	case *ast.BreakStmt:
+		return true
+	case *ast.ReturnStmt:
+		return true
+	case *ast.ForStmt:
+		// TODO(h8liu): need to change this if labeled break is added
+		return false
+	case *ast.IfStmt:
+		if hasBreak(stmt.Body) {
+			return true
+		}
+		selse := stmt.Else
+		for selse != nil {
+			for _, s := range selse.Body.Stmts {
+				if hasBreak(s) {
+					return true
+				}
+			}
+			selse = selse.Next
+		}
+		return false
+	default:
+		return false
+	}
+}
+
 func isTerminal(stmt ast.Stmt) bool {
 	switch stmt := stmt.(type) {
 	case *ast.BlockStmt:
@@ -36,6 +64,16 @@ func isTerminal(stmt ast.Stmt) bool {
 				return false
 			}
 			selse = selse.Next
+		}
+		return true
+	case *ast.ForStmt:
+		if stmt.Cond != nil {
+			return false
+		}
+		for _, s := range stmt.Body.Stmts {
+			if hasBreak(s) {
+				return false
+			}
 		}
 		return true
 	case *ast.ReturnStmt:
