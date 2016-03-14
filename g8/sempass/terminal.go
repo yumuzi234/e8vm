@@ -30,8 +30,6 @@ func hasBreak(stmt ast.Stmt) bool {
 		return blockHasBreak(stmt)
 	case *ast.BreakStmt:
 		return true
-	case *ast.ReturnStmt:
-		return true
 	case *ast.ForStmt:
 		// TODO(h8liu): need to change this if labeled break is added
 		return false

@@ -38,9 +38,15 @@ func TestSingleFileBad(t *testing.T) {
 		func p(a, b, c int) { }
 		func main() { p(r(), 5) }`)
 
-	o(` func f() int { }; func main() { }`)
-	o(` func f() int { for { break } }; func main() { }`)
-	o(` func f() int { for { if true { break } } }; func main() { }`)
+	// missing returns
+	o(`func f() int { }; func main() { }`)
+	o(`func f() int { for { break } }; func main() { }`)
+	o(`func f() int { for { if true { break } } }; func main() { }`)
+	o(`func f() int { for { if true break } }; func main() { }`)
+	o(`func f() int { for true { if true { return 0 } } }; func main() { }`)
+	o(`func f() int { for true { if true return 0 } }; func main() { }`)
+	o(`func f() int { if true { return 0 } }; func main() { }`)
+	o(`func f() int { if true return 0 }; func main() { }`)
 
 	// Bugs found by the fuzzer in the past
 	o("func main() {}; func f() **o.o {}")

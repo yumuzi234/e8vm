@@ -232,6 +232,7 @@ func TestSingleFile(t *testing.T) {
 	o(`func f() int { for {} }; func main() { }`, "")
 	o(`	func f() int { if true { return 1 } else { return 0 } }
 		func main() { }`, "")
+	o(`func f() int { for { if true { return 0 } } }; func main() { }`, "")
 
 	// Bugs found by the fuzzer in the past
 	o("func main() { a := 0==0; if a { printInt(33) } }", "33")
