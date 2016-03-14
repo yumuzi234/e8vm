@@ -22,6 +22,17 @@ func traceCircle(trace []*searchNode, snode *searchNode) []*MapNode {
 }
 
 func minCircle(nodes map[string]*MapNode) []*MapNode {
+	/*
+		Breath first search starting from all nodes, where the first node must
+		be the smallest node of the circle. Disregarding the complexity of the
+		hash maps, Worst case complexity of this algorithm is no larger than
+		O(dn^2) where d is the number of edges per node. In practice, a
+		dependency map often has a constant number of (d), i.e. importing
+		limited number of packages, and hence the complexity is acceptable.
+		Also it returns when ths smallest circle is found, so the actual run
+		time would often be much smaller than O(dn^2).
+	*/
+
 	var trace []*searchNode
 	visited := make(map[string]map[string]bool)
 	for _, node := range nodes {
@@ -53,8 +64,8 @@ func minCircle(nodes map[string]*MapNode) []*MapNode {
 				// visited before from this start
 				continue
 			}
-			if name > start.Name {
-				// a node larger than the start; skip it
+			if name < start.Name {
+				// a node smaller than the start; skip it
 				continue
 			}
 
