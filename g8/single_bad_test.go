@@ -38,6 +38,10 @@ func TestSingleFileBad(t *testing.T) {
 		func p(a, b, c int) { }
 		func main() { p(r(), 5) }`)
 
+	o(` func f() int { }; func main() { }`)
+	o(` func f() int { for { break } }; func main() { }`)
+	o(` func f() int { for { if true { break } } }; func main() { }`)
+
 	// Bugs found by the fuzzer in the past
 	o("func main() {}; func f() **o.o {}")
 	o("func main() {}; func n()[char[:]]string{}")

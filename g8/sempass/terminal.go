@@ -13,8 +13,21 @@ func isBlockTerminal(block *ast.Block) bool {
 	return isTerminal(stmts[nstmt-1])
 }
 
+func blockHasBreak(b *ast.Block) bool {
+	for _, s := range b.Stmts {
+		if hasBreak(s) {
+			return true
+		}
+	}
+	return false
+}
+
 func hasBreak(stmt ast.Stmt) bool {
 	switch stmt := stmt.(type) {
+	case *ast.BlockStmt:
+		return blockHasBreak(stmt.Block)
+	case *ast.Block:
+		return blockHasBreak(stmt)
 	case *ast.BreakStmt:
 		return true
 	case *ast.ReturnStmt:

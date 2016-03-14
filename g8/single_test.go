@@ -229,6 +229,10 @@ func TestSingleFile(t *testing.T) {
 			printInt(a[1]); printInt(a[2])
 		}`, "33\n47")
 
+	o(`func f() int { for {} }; func main() { }`, "")
+	o(`	func f() int { if true { return 1 } else { return 0 } }
+		func main() { }`, "")
+
 	// Bugs found by the fuzzer in the past
 	o("func main() { a := 0==0; if a { printInt(33) } }", "33")
 	o(`	func n()[(4-3)*1]string { var a [1]string; return a }
