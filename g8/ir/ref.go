@@ -26,4 +26,5 @@ type AddrRef struct {
 // Number is a constant number
 type Number struct {
 	V uint32
+	*Attr
 }
