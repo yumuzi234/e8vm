@@ -25,7 +25,9 @@ func buildPkgSym(b *builder, m *tast.MemberExpr, pkg *types.Pkg) *ref {
 			}
 			return newRef(
 				types.VoidFunc,
-				codegen.NewFuncSym(sym.Pkg(), sym.Name(), codegen.VoidFuncSig),
+				codegen.NewFuncSym(
+					sym.Pkg(), sym.Name(), codegen.VoidFuncSig,
+				),
 			)
 		}
 		panic("bug")

@@ -50,7 +50,9 @@ func addTestStart(b *builder, testList codegen.Ref, n int) {
 
 	argAddr := codegen.Num(arch8.AddrBootArg) // the arg
 	index := b.newTempIR(types.Uint)          // to save the index
-	b.b.Assign(index, codegen.NewAddrRef(argAddr, arch8.RegSize, 0, false, true))
+	b.b.Assign(index, codegen.NewAddrRef(
+		argAddr, arch8.RegSize, 0, false, true,
+	))
 
 	size := codegen.Num(uint32(n))
 	checkInRange(b, index, size, "u<")
