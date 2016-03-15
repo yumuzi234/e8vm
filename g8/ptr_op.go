@@ -1,7 +1,7 @@
 package g8
 
 import (
-	"e8vm.io/e8vm/g8/ir"
+	"e8vm.io/e8vm/g8/codegen"
 	"e8vm.io/e8vm/g8/types"
 )
 
@@ -23,9 +23,9 @@ func binaryOpPtr(b *builder, op string, A, B *ref) *ref {
 	case "==", "!=":
 		// replace nil with a typed zero
 		if types.IsNil(atyp) {
-			A = newRef(btyp, ir.Num(0))
+			A = newRef(btyp, codegen.Num(0))
 		} else if types.IsNil(btyp) {
-			B = newRef(atyp, ir.Num(0))
+			B = newRef(atyp, codegen.Num(0))
 		}
 
 		ret := b.newTemp(types.Bool)
@@ -39,7 +39,7 @@ func testNilSlice(b *builder, r *ref, neg bool) *ref {
 	addr := b.newPtr()
 	isNil := b.newCond()
 	b.b.Arith(addr, nil, "&", r.IR())
-	b.b.Arith(isNil, nil, "?", ir.NewAddrRef(addr, 4, 0, false, true))
+	b.b.Arith(isNil, nil, "?", codegen.NewAddrRef(addr, 4, 0, false, true))
 	if neg {
 		b.b.Arith(isNil, nil, "!", isNil)
 	}
@@ -62,10 +62,10 @@ func binaryOpSlice(b *builder, op string, A, B *ref) *ref {
 		addrB := b.newPtr()
 		b.b.Arith(addrA, nil, "&", A.IR())
 		b.b.Arith(addrB, nil, "&", B.IR())
-		baseA := ir.NewAddrRef(addrA, 4, 0, false, true)
-		sizeA := ir.NewAddrRef(addrA, 4, 4, false, true)
-		baseB := ir.NewAddrRef(addrB, 4, 0, false, true)
-		sizeB := ir.NewAddrRef(addrB, 4, 4, false, true)
+		baseA := codegen.NewAddrRef(addrA, 4, 0, false, true)
+		sizeA := codegen.NewAddrRef(addrA, 4, 4, false, true)
+		baseB := codegen.NewAddrRef(addrB, 4, 0, false, true)
+		sizeB := codegen.NewAddrRef(addrB, 4, 4, false, true)
 
 		ptrEq := b.newCond()
 		sizeEq := b.newCond()

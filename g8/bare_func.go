@@ -5,7 +5,7 @@ import (
 
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/g8/ast"
-	"e8vm.io/e8vm/g8/ir"
+	"e8vm.io/e8vm/g8/codegen"
 	"e8vm.io/e8vm/g8/parse"
 	"e8vm.io/e8vm/g8/sempass"
 	"e8vm.io/e8vm/lex8"
@@ -33,7 +33,7 @@ func buildBareFunc(b *builder, stmts []ast.Stmt) []*lex8.Error {
 		return errs
 	}
 
-	b.f = b.p.NewFunc(":start", nil, ir.VoidFuncSig)
+	b.f = b.p.NewFunc(":start", nil, codegen.VoidFuncSig)
 	b.fretRef = nil
 	b.b = b.f.NewBlock(nil)
 
@@ -86,7 +86,7 @@ func (bare bareFunc) Compile(pinfo *build8.PkgInfo) (
 	}
 
 	// codegen
-	lib, errs := ir.BuildPkg(b.p)
+	lib, errs := codegen.BuildPkg(b.p)
 	if errs != nil {
 		return nil, errs
 	}

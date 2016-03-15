@@ -1,7 +1,7 @@
 package g8
 
 import (
-	"e8vm.io/e8vm/g8/ir"
+	"e8vm.io/e8vm/g8/codegen"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 )
@@ -14,7 +14,7 @@ func arrayElementSize(t types.T) int32 {
 	return ret
 }
 
-func checkInRange(b *builder, index, n ir.Ref, op string) {
+func checkInRange(b *builder, index, n codegen.Ref, op string) {
 	inRange := b.newCond()
 	b.b.Arith(inRange, index, op, n)
 
@@ -28,12 +28,12 @@ func checkInRange(b *builder, index, n ir.Ref, op string) {
 	b.b = after
 }
 
-func newSlice(b *builder, t types.T, addr, size ir.Ref) *ref {
+func newSlice(b *builder, t types.T, addr, size codegen.Ref) *ref {
 	ret := b.newTemp(&types.Slice{T: t})
 	retAddr := b.newPtr()
 	b.b.Arith(retAddr, nil, "&", ret.IR())
-	b.b.Assign(ir.NewAddrRef(retAddr, 4, 0, false, true), addr)
-	b.b.Assign(ir.NewAddrRef(retAddr, 4, 4, false, true), size)
+	b.b.Assign(codegen.NewAddrRef(retAddr, 4, 0, false, true), addr)
+	b.b.Assign(codegen.NewAddrRef(retAddr, 4, 4, false, true), size)
 	return ret
 }
 
@@ -46,23 +46,23 @@ func buildIndexExpr(b *builder, expr *tast.IndexExpr) *ref {
 	return buildArrayGet(b, expr, array)
 }
 
-func loadArray(b *builder, array *ref) (addr, n ir.Ref, et types.T) {
+func loadArray(b *builder, array *ref) (addr, n codegen.Ref, et types.T) {
 	base := b.newPtr()
 	t := array.Type()
 	switch t := t.(type) {
 	case *types.Array:
 		b.b.Arith(base, nil, "&", array.IR())
-		return base, ir.Snum(t.N), t.T
+		return base, codegen.Snum(t.N), t.T
 	case *types.Slice:
 		b.b.Arith(base, nil, "&", array.IR())
-		addr = ir.NewAddrRef(base, 4, 0, false, true)
-		n = ir.NewAddrRef(base, 4, 4, false, true)
+		addr = codegen.NewAddrRef(base, 4, 0, false, true)
+		n = codegen.NewAddrRef(base, 4, 4, false, true)
 		return addr, n, t.T
 	}
 	panic("bug")
 }
 
-func checkArrayIndex(b *builder, index *ref) ir.Ref {
+func checkArrayIndex(b *builder, index *ref) codegen.Ref {
 	t := index.Type()
 	if types.IsSigned(t) {
 		neg := b.newCond()
@@ -79,7 +79,7 @@ func checkArrayIndex(b *builder, index *ref) ir.Ref {
 	return index.IR()
 }
 
-func buildArrayIndex(b *builder, expr tast.Expr) ir.Ref {
+func buildArrayIndex(b *builder, expr tast.Expr) codegen.Ref {
 	index := b.buildExpr(expr)
 	return checkArrayIndex(b, index)
 }
@@ -87,21 +87,21 @@ func buildArrayIndex(b *builder, expr tast.Expr) ir.Ref {
 func buildSlicing(b *builder, expr *tast.IndexExpr, array *ref) *ref {
 	baseAddr, n, et := loadArray(b, array)
 
-	var addr, indexStart, offset ir.Ref
+	var addr, indexStart, offset codegen.Ref
 	if expr.Index == nil {
-		indexStart = ir.Num(0)
+		indexStart = codegen.Num(0)
 		addr = baseAddr
 	} else {
 		indexStart = buildArrayIndex(b, expr.Index)
 		checkInRange(b, indexStart, n, "u<=")
 
 		offset = b.newPtr()
-		b.b.Arith(offset, indexStart, "*", ir.Snum(arrayElementSize(et)))
+		b.b.Arith(offset, indexStart, "*", codegen.Snum(arrayElementSize(et)))
 		addr = b.newPtr()
 		b.b.Arith(addr, baseAddr, "+", offset)
 	}
 
-	var indexEnd ir.Ref
+	var indexEnd codegen.Ref
 	if expr.IndexEnd == nil {
 		indexEnd = n
 	} else {
@@ -121,11 +121,11 @@ func buildArrayGet(b *builder, expr *tast.IndexExpr, array *ref) *ref {
 	checkInRange(b, index, n, "u<")
 
 	addr := b.newPtr()
-	b.b.Arith(addr, index, "*", ir.Snum(arrayElementSize(et)))
+	b.b.Arith(addr, index, "*", codegen.Snum(arrayElementSize(et)))
 	b.b.Arith(addr, base, "+", addr)
 	size := et.Size()
 
-	retIR := ir.NewAddrRef(
+	retIR := codegen.NewAddrRef(
 		addr,             // base address
 		size,             // size
 		0,                // dynamic offset; precalculated

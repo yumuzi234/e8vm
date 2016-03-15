@@ -1,12 +1,12 @@
 package g8
 
 import (
-	"e8vm.io/e8vm/g8/ir"
+	"e8vm.io/e8vm/g8/codegen"
 )
 
 type blockLayer struct {
 	name string
-	b    *ir.Block
+	b    *codegen.Block
 }
 
 type blockStack struct {
@@ -20,7 +20,7 @@ func newBlockStack() *blockStack {
 	return ret
 }
 
-func (s *blockStack) push(b *ir.Block, name string) bool {
+func (s *blockStack) push(b *codegen.Block, name string) bool {
 	if name != "" && s.bmap[name] != nil {
 		return false
 	}
@@ -42,7 +42,7 @@ func (s *blockStack) pop() {
 	}
 }
 
-func (s *blockStack) top() *ir.Block {
+func (s *blockStack) top() *codegen.Block {
 	nlayer := len(s.bs)
 	if nlayer == 0 {
 		return nil
@@ -51,7 +51,7 @@ func (s *blockStack) top() *ir.Block {
 	return ret.b
 }
 
-func (s *blockStack) byName(name string) *ir.Block {
+func (s *blockStack) byName(name string) *codegen.Block {
 	layer := s.bmap[name]
 	if layer == nil {
 		return nil

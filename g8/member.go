@@ -2,7 +2,7 @@ package g8
 
 import (
 	"e8vm.io/e8vm/asm8"
-	"e8vm.io/e8vm/g8/ir"
+	"e8vm.io/e8vm/g8/codegen"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 )
@@ -16,7 +16,7 @@ func buildPkgSym(b *builder, m *tast.MemberExpr, pkg *types.Pkg) *ref {
 				panic("bug")
 			}
 			ptr := b.newTemp(types.Uint)
-			s := ir.NewHeapSym(sym.Pkg(), sym.Name(), 0, false, false)
+			s := codegen.NewHeapSym(sym.Pkg(), sym.Name(), 0, false, false)
 			b.b.Arith(ptr.IR(), nil, "&", s)
 			return ptr
 		case asm8.SymFunc:
@@ -25,7 +25,7 @@ func buildPkgSym(b *builder, m *tast.MemberExpr, pkg *types.Pkg) *ref {
 			}
 			return newRef(
 				types.VoidFunc,
-				ir.NewFuncSym(sym.Pkg(), sym.Name(), ir.VoidFuncSig),
+				codegen.NewFuncSym(sym.Pkg(), sym.Name(), codegen.VoidFuncSig),
 			)
 		}
 		panic("bug")

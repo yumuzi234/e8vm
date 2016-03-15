@@ -1,7 +1,7 @@
 package g8
 
 import (
-	"e8vm.io/e8vm/g8/ir"
+	"e8vm.io/e8vm/g8/codegen"
 	"e8vm.io/e8vm/g8/types"
 )
 
@@ -9,7 +9,7 @@ func buildBasicArith(b *builder, ret, A, B *ref, op string) {
 	switch op {
 	case "/", "%", "u/", "u%":
 		isZero := b.newCond()
-		b.b.Arith(isZero, B.IR(), "==", ir.Num(0))
+		b.b.Arith(isZero, B.IR(), "==", codegen.Num(0))
 
 		zeroPanic := b.f.NewBlock(b.b)
 		after := b.f.NewBlock(zeroPanic)

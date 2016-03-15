@@ -3,7 +3,7 @@ package g8
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/g8/ir"
+	"e8vm.io/e8vm/g8/codegen"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 )
@@ -46,8 +46,8 @@ func buildConst(b *builder, c *tast.Const) *ref {
 	panic("other const types not supported")
 }
 
-func buildField(b *builder, this ir.Ref, field *types.Field) *ref {
-	retIR := ir.NewAddrRef(
+func buildField(b *builder, this codegen.Ref, field *types.Field) *ref {
+	retIR := codegen.NewAddrRef(
 		this,
 		field.T.Size(),
 		field.Offset(),

@@ -9,7 +9,7 @@ import (
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/dagvis"
 	"e8vm.io/e8vm/g8/ast"
-	"e8vm.io/e8vm/g8/ir"
+	"e8vm.io/e8vm/g8/codegen"
 	"e8vm.io/e8vm/g8/sempass"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
@@ -51,7 +51,7 @@ func newRand() *rand.Rand {
 }
 
 func buildTests(b *builder, tops *sym8.Table) (
-	testList ir.Ref, testNames []string,
+	testList codegen.Ref, testNames []string,
 ) {
 	tests := listTests(tops)
 	n := len(tests)
@@ -68,11 +68,11 @@ func buildTests(b *builder, tops *sym8.Table) (
 	rand := newRand()
 	perm := rand.Perm(n)
 
-	var irs []*ir.Func
+	var irs []*codegen.Func
 	var names []string
 	for _, index := range perm {
 		t := tests[index]
-		irs = append(irs, t.ref.IR().(*ir.Func))
+		irs = append(irs, t.ref.IR().(*codegen.Func))
 		names = append(names, t.name)
 	}
 	return b.p.NewTestList(":tests", irs), names
@@ -103,7 +103,7 @@ func fillFuncAlias(funcs []*tast.FuncAlias) {
 		name := sym.Name()
 		t := sym.ObjType.(*types.Func)
 		sig := makeFuncSig(t)
-		fsym := ir.NewFuncSym(f.Of.Pkg(), f.Of.Name(), sig)
+		fsym := codegen.NewFuncSym(f.Of.Pkg(), f.Of.Name(), sig)
 		f.Sym.Obj = &objFunc{
 			name:    name,
 			ref:     newRef(t, fsym),
@@ -142,7 +142,7 @@ func fillMethods(b *builder, methods []*tast.Func) {
 func buildFuncs(b *builder, funcs []*tast.Func) {
 	for _, f := range funcs {
 		obj := f.Sym.Obj.(*objFunc)
-		buildFunc(b, f, obj.ref.IR().(*ir.Func))
+		buildFunc(b, f, obj.ref.IR().(*codegen.Func))
 	}
 }
 

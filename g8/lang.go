@@ -10,7 +10,7 @@ import (
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/dagvis"
 	"e8vm.io/e8vm/g8/ast"
-	"e8vm.io/e8vm/g8/ir"
+	"e8vm.io/e8vm/g8/codegen"
 	"e8vm.io/e8vm/g8/parse"
 	"e8vm.io/e8vm/lex8"
 )
@@ -107,7 +107,7 @@ func output(w io.WriteCloser, f func(w io.Writer) error) error {
 
 func outputIr(pinfo *build8.PkgInfo, b *builder) error {
 	return output(pinfo.Output("ir"), func(w io.Writer) error {
-		return ir.PrintPkg(w, b.p)
+		return codegen.PrintPkg(w, b.p)
 	})
 }
 
@@ -203,13 +203,13 @@ func (l *lang) Compile(pinfo *build8.PkgInfo) (
 	}
 
 	var errs []*lex8.Error
-	if ret.Lib, errs = ir.BuildPkg(b.p); errs != nil {
+	if ret.Lib, errs = codegen.BuildPkg(b.p); errs != nil {
 		return nil, errs
 	}
 
 	// add debug symbols
 	// Functions positionings only available after building.
-	ir.AddDebug(b.p, pinfo.AddFuncDebug)
+	codegen.AddDebug(b.p, pinfo.AddFuncDebug)
 
 	// IR logging
 	if err := outputIr(pinfo, b); err != nil {

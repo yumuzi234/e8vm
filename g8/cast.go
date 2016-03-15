@@ -2,7 +2,7 @@ package g8
 
 import (
 	"e8vm.io/e8vm/arch8"
-	"e8vm.io/e8vm/g8/ir"
+	"e8vm.io/e8vm/g8/codegen"
 	"e8vm.io/e8vm/g8/types"
 )
 
@@ -23,18 +23,18 @@ func regSizeCastable(to, from types.T) bool {
 	return false
 }
 
-func constNumIr(v int64, t types.T) ir.Ref {
+func constNumIr(v int64, t types.T) codegen.Ref {
 	b, ok := t.(types.Basic)
 	if ok {
 		switch b {
 		case types.Int:
-			return ir.Snum(int32(v))
+			return codegen.Snum(int32(v))
 		case types.Uint:
-			return ir.Num(uint32(v))
+			return codegen.Num(uint32(v))
 		case types.Int8:
-			return ir.Byt(uint8(v), false)
+			return codegen.Byt(uint8(v), false)
 		case types.Uint8:
-			return ir.Byt(uint8(v), true)
+			return codegen.Byt(uint8(v), true)
 		}
 	}
 	panic("expect an integer type")
@@ -47,7 +47,7 @@ func buildCast(b *builder, from *ref, t types.T) *ref {
 	if types.IsNil(srcType) {
 		size := t.Size()
 		if size == arch8.RegSize {
-			return newRef(t, ir.Num(0))
+			return newRef(t, codegen.Num(0))
 		}
 		if _, ok := t.(*types.Slice); !ok {
 			panic("bug")

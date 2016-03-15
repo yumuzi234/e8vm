@@ -1,7 +1,7 @@
 package g8
 
 import (
-	"e8vm.io/e8vm/g8/ir"
+	"e8vm.io/e8vm/g8/codegen"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 	"e8vm.io/e8vm/link8"
@@ -9,8 +9,8 @@ import (
 )
 
 var (
-	refTrue  = newRef(types.Bool, ir.Byt(1, true))
-	refFalse = newRef(types.Bool, ir.Byt(0, true))
+	refTrue  = newRef(types.Bool, codegen.Byt(1, true))
+	refFalse = newRef(types.Bool, codegen.Byt(0, true))
 	refNil   = newRef(types.Nil(), nil)
 )
 
@@ -22,7 +22,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 		return
 	}
 
-	o := func(name, as string, t *types.Func) ir.Ref {
+	o := func(name, as string, t *types.Func) codegen.Ref {
 		sym := builtin.SymbolByName(name)
 		if sym == nil {
 			b.Errorf(nil, "builtin symbol %s missing", name)
@@ -32,7 +32,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 			return nil
 		}
 
-		ref := ir.NewFuncSym(path, name, makeFuncSig(t))
+		ref := codegen.NewFuncSym(path, name, makeFuncSig(t))
 		obj := &objFunc{name: as, ref: newRef(t, ref)}
 		s := sym8.Make(b.path, as, tast.SymFunc, obj, t, nil)
 		pre := b.scope.Declare(s)

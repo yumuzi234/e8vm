@@ -1,7 +1,7 @@
 package g8
 
 import (
-	"e8vm.io/e8vm/g8/ir"
+	"e8vm.io/e8vm/g8/codegen"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 )
@@ -14,10 +14,10 @@ func buildCallLen(b *builder, expr *tast.CallExpr) *ref {
 	case *types.Slice:
 		addr := b.newPtr()
 		b.b.Arith(addr, nil, "&", args.IR())
-		b.b.Assign(ret.IR(), ir.NewAddrRef(addr, 4, 4, false, true))
+		b.b.Assign(ret.IR(), codegen.NewAddrRef(addr, 4, 4, false, true))
 		return ret
 	case *types.Array:
-		b.b.Assign(ret.IR(), ir.Num(uint32(t.N)))
+		b.b.Assign(ret.IR(), codegen.Num(uint32(t.N)))
 		return ret
 	}
 	panic("bug")
@@ -60,7 +60,7 @@ func buildCallExpr(b *builder, expr *tast.CallExpr) *ref {
 		fref := wrapFuncPtr(f.IR(), funcType)
 		b.b.Call(ret.IRList(), fref, irs...)
 	} else {
-		var irs []ir.Ref
+		var irs []codegen.Ref
 		irs = append(irs, f.recv.IR())
 		irs = append(irs, args.IRList()...)
 		fref := wrapFuncPtr(f.IR(), f.recvFunc)
@@ -70,12 +70,12 @@ func buildCallExpr(b *builder, expr *tast.CallExpr) *ref {
 	return ret
 }
 
-func wrapFuncPtr(f ir.Ref, t *types.Func) ir.Ref {
+func wrapFuncPtr(f codegen.Ref, t *types.Func) codegen.Ref {
 	switch f := f.(type) {
-	case *ir.FuncSym:
+	case *codegen.FuncSym:
 		return f
-	case *ir.Func:
+	case *codegen.Func:
 		return f
 	}
-	return ir.NewFuncPtr(makeFuncSig(t), f)
+	return codegen.NewFuncPtr(makeFuncSig(t), f)
 }

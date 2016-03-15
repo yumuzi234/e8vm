@@ -1,12 +1,12 @@
 package g8
 
 import (
-	"e8vm.io/e8vm/g8/ir"
+	"e8vm.io/e8vm/g8/codegen"
 	"e8vm.io/e8vm/g8/types"
 )
 
-func makeArg(t *types.Arg) *ir.FuncArg {
-	return &ir.FuncArg{
+func makeArg(t *types.Arg) *codegen.FuncArg {
+	return &codegen.FuncArg{
 		Name:         t.Name,
 		Size:         t.Size(),
 		U8:           types.IsBasic(t.T, types.Uint8),
@@ -15,9 +15,9 @@ func makeArg(t *types.Arg) *ir.FuncArg {
 }
 
 // converts a langauge function signature into a IR function signature
-func makeFuncSig(f *types.Func) *ir.FuncSig {
+func makeFuncSig(f *types.Func) *codegen.FuncSig {
 	narg := len(f.Args)
-	args := make([]*ir.FuncArg, 0, narg)
+	args := make([]*codegen.FuncArg, 0, narg)
 
 	for _, t := range f.Args {
 		if t.T == nil {
@@ -26,10 +26,10 @@ func makeFuncSig(f *types.Func) *ir.FuncSig {
 		args = append(args, makeArg(t))
 	}
 
-	rets := make([]*ir.FuncArg, len(f.Rets))
+	rets := make([]*codegen.FuncArg, len(f.Rets))
 	for i, t := range f.Rets {
 		rets[i] = makeArg(t)
 	}
 
-	return ir.NewFuncSig(args, rets)
+	return codegen.NewFuncSig(args, rets)
 }

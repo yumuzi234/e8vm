@@ -2,7 +2,7 @@ package g8
 
 import (
 	"e8vm.io/e8vm/fmt8"
-	"e8vm.io/e8vm/g8/ir"
+	"e8vm.io/e8vm/g8/codegen"
 	"e8vm.io/e8vm/g8/types"
 )
 
@@ -15,18 +15,18 @@ type ref struct {
 	recv        *ref        // receiver, if any
 	recvFunc    *types.Func // the actual func type
 
-	ir ir.Ref
+	ir codegen.Ref
 }
 
-func newRef(t types.T, r ir.Ref) *ref { return &ref{typ: t, ir: r} }
+func newRef(t types.T, r codegen.Ref) *ref { return &ref{typ: t, ir: r} }
 
 func newTypeRef(t types.T) *ref { return &ref{typ: &types.Type{t}} }
 
-func newAddressableRef(t types.T, r ir.Ref) *ref {
+func newAddressableRef(t types.T, r codegen.Ref) *ref {
 	return &ref{typ: t, ir: r, addressable: true}
 }
 
-func newRecvRef(t *types.Func, recv *ref, r ir.Ref) *ref {
+func newRecvRef(t *types.Func, recv *ref, r codegen.Ref) *ref {
 	return &ref{typ: t.MethodFunc, ir: r, recv: recv, recvFunc: t}
 }
 
@@ -98,7 +98,7 @@ func (r *ref) TypeType() types.T {
 	return r.Type().(*types.Type).T
 }
 
-func (r *ref) IR() ir.Ref {
+func (r *ref) IR() codegen.Ref {
 	if !r.IsSingle() {
 		panic("not single")
 	}
@@ -145,15 +145,15 @@ func (r *ref) At(i int) *ref {
 	return r.lst[i]
 }
 
-func (r *ref) IRList() []ir.Ref {
+func (r *ref) IRList() []codegen.Ref {
 	if len(r.lst) == 0 {
 		if r.typ == nil {
 			return nil
 		}
-		return []ir.Ref{r.ir}
+		return []codegen.Ref{r.ir}
 	}
 
-	var ret []ir.Ref
+	var ret []codegen.Ref
 	for _, ref := range r.lst {
 		ret = append(ret, ref.IR())
 	}

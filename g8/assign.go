@@ -1,7 +1,7 @@
 package g8
 
 import (
-	"e8vm.io/e8vm/g8/ir"
+	"e8vm.io/e8vm/g8/codegen"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 )
@@ -23,7 +23,7 @@ func assign(b *builder, dest, src *ref) {
 		return
 	}
 
-	temps := make([]ir.Ref, n)
+	temps := make([]codegen.Ref, n)
 	for i := 0; i < n; i++ {
 		s := src.At(i)
 		t := s.Type()

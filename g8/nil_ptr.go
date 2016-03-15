@@ -1,20 +1,20 @@
 package g8
 
 import (
-	"e8vm.io/e8vm/g8/ir"
+	"e8vm.io/e8vm/g8/codegen"
 )
 
-func nilPointerPanic(b *builder, pt ir.Ref) {
+func nilPointerPanic(b *builder, pt codegen.Ref) {
 	nilPointerPanicOp(b, pt, "?")
 }
 
-func nilFuncPointerPanic(b *builder, pt ir.Ref) {
+func nilFuncPointerPanic(b *builder, pt codegen.Ref) {
 	nilPointerPanicOp(b, pt, "?f")
 }
 
-func nilPointerPanicOp(b *builder, pt ir.Ref, op string) {
+func nilPointerPanicOp(b *builder, pt codegen.Ref, op string) {
 	// TODO: optimize for consts/functions that are impossible to be nil
-	if !ir.CanBeZero(pt) {
+	if !codegen.CanBeZero(pt) {
 		return
 	}
 

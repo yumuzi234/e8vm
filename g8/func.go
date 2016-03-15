@@ -1,12 +1,12 @@
 package g8
 
 import (
-	"e8vm.io/e8vm/g8/ir"
+	"e8vm.io/e8vm/g8/codegen"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
 )
 
-func makeRetRef(ts []*types.Arg, irs []ir.Ref) *ref {
+func makeRetRef(ts []*types.Arg, irs []codegen.Ref) *ref {
 	if len(ts) != len(irs) {
 		panic("bug")
 	}
@@ -21,7 +21,7 @@ func makeRetRef(ts []*types.Arg, irs []ir.Ref) *ref {
 	return ret
 }
 
-func buildFunc(b *builder, f *tast.Func, irFunc *ir.Func) {
+func buildFunc(b *builder, f *tast.Func, irFunc *codegen.Func) {
 	b.f = irFunc
 
 	if f.Receiver != nil {
