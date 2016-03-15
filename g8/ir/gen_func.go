@@ -30,13 +30,13 @@ other args are pushed on the stack
 **/
 
 // pushVar allocates a frame slot for the local var
-func pushVar(f *Func, vars ...*varRef) {
+func pushVar(f *Func, vars ...*Var) {
 	for _, v := range vars {
 		f.frameSize += v.size
 		if v.regSizeAlign {
 			f.frameSize = alignUp(f.frameSize, regSize)
 		}
-		v.offset = f.frameSize
+		v.Offset = f.frameSize
 	}
 }
 
@@ -49,14 +49,14 @@ func layoutLocals(f *Func) {
 		// the caller is not using this reg for sending
 		// the argument, the callee hence needs to
 		// save this register
-		v := newVar(regSize, "", false, true)
+		v := NewVar(regSize, "", false, true)
 		v.viaReg = uint32(i)
 		f.savedRegs = append(f.savedRegs, v)
 	}
 
 	// layout the variables in the function
 	f.frameSize = f.sig.frameSize
-	f.retAddr = newVar(regSize, "", false, true)
+	f.retAddr = NewVar(regSize, "", false, true)
 	f.retAddr.viaReg = arch8.RET // the return address
 
 	// if all args and rets are via register

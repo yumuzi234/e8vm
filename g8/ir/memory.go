@@ -6,8 +6,8 @@ import (
 
 func loadAddr(b *Block, reg uint32, r Ref) {
 	switch r := r.(type) {
-	case *varRef:
-		b.inst(asm.addi(reg, _sp, *b.frameSize-r.offset))
+	case *Var:
+		b.inst(asm.addi(reg, _sp, *b.frameSize-r.Offset))
 	case *addrRef:
 		loadRef(b, reg, r.base)
 		if r.offset != 0 {
@@ -22,6 +22,6 @@ func loadAddr(b *Block, reg uint32, r Ref) {
 	}
 }
 
-func loadArgAddr(b *Block, reg uint32, r *varRef) {
-	b.inst(asm.addi(reg, _sp, -r.offset))
+func loadArgAddr(b *Block, reg uint32, r *Var) {
+	b.inst(asm.addi(reg, _sp, -r.Offset))
 }

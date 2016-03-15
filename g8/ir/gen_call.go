@@ -6,8 +6,8 @@ import (
 	"e8vm.io/e8vm/link8"
 )
 
-func callSig(op *callOp) *FuncSig {
-	switch f := op.f.(type) {
+func callSig(op *CallOp) *FuncSig {
+	switch f := op.F.(type) {
 	case *FuncSym:
 		return f.sig
 	case *Func:
@@ -19,25 +19,25 @@ func callSig(op *callOp) *FuncSig {
 	}
 }
 
-func genCallOp(g *gener, b *Block, op *callOp) {
+func genCallOp(g *gener, b *Block, op *CallOp) {
 	sig := callSig(op)
 
 	// load the args
 	// first copy the ones that send in on the stack
 	for i, arg := range sig.args {
 		if arg.viaReg == 0 {
-			copyRef(g, b, arg, op.args[i], true)
+			copyRef(g, b, arg, op.Args[i], true)
 		}
 	}
 	// then set the ones loaded by register
 	for i, arg := range sig.args {
 		if arg.viaReg > 0 {
-			loadRef(b, arg.viaReg, op.args[i])
+			loadRef(b, arg.viaReg, op.Args[i])
 		}
 	}
 
 	// do the function call
-	switch f := op.f.(type) {
+	switch f := op.F.(type) {
 	case *FuncSym:
 		jal := b.inst(asm.jal(0))
 		jal.sym = &linkSym{link8.FillLink, f.pkg, f.name}
@@ -57,13 +57,13 @@ func genCallOp(g *gener, b *Block, op *callOp) {
 	// first save the ones returned via register
 	for i, ret := range sig.rets {
 		if ret.viaReg > 0 {
-			saveRef(b, ret.viaReg, op.dest[i], _4)
+			saveRef(b, ret.viaReg, op.Dest[i], _4)
 		}
 	}
 	// then copy the ones stored on the stack
 	for i, ret := range sig.rets {
 		if ret.viaReg == 0 {
-			loadAddr(b, _1, op.dest[i])
+			loadAddr(b, _1, op.Dest[i])
 			loadArgAddr(b, _2, ret)
 			loadUint32(b, _3, uint32(ret.Size()))
 			jal := b.inst(asm.jal(0))

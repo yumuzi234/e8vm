@@ -7,30 +7,30 @@ import (
 	"e8vm.io/e8vm/fmt8"
 )
 
-func printOp(p io.Writer, op op) {
+func printOp(p io.Writer, op Op) {
 	switch op := op.(type) {
-	case *comment:
-		fmt.Fprintf(p, "// %s\n", op.s)
-	case *arithOp:
-		if op.a == nil {
-			if op.op == "" {
-				fmt.Fprintf(p, "%s = %s\n", op.dest, op.b)
-			} else if op.op == "0" {
-				fmt.Fprintf(p, "%s = 0\n", op.dest)
+	case *Comment:
+		fmt.Fprintf(p, "// %s\n", op.Str)
+	case *ArithOp:
+		if op.A == nil {
+			if op.Op == "" {
+				fmt.Fprintf(p, "%s = %s\n", op.Dest, op.B)
+			} else if op.Op == "0" {
+				fmt.Fprintf(p, "%s = 0\n", op.Dest)
 			} else {
-				fmt.Fprintf(p, "%s = %s %s\n", op.dest, op.op, op.b)
+				fmt.Fprintf(p, "%s = %s %s\n", op.Dest, op.Op, op.B)
 			}
 		} else {
 			fmt.Fprintf(p, "%s = %s %s %s\n",
-				op.dest, op.a, op.op, op.b,
+				op.Dest, op.A, op.Op, op.B,
 			)
 		}
-	case *callOp:
+	case *CallOp:
 		var args string
-		if op.args != nil {
-			args = fmt8.Join(op.args, ",")
+		if op.Args != nil {
+			args = fmt8.Join(op.Args, ",")
 		}
-		fmt.Fprintf(p, "%s = %s(%s)\n", op.dest, op.f, args)
+		fmt.Fprintf(p, "%s = %s(%s)\n", op.Dest, op.F, args)
 	default:
 		panic(fmt.Errorf("invalid or unknown IR op: %T", op))
 	}

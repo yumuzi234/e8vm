@@ -6,71 +6,71 @@ import (
 	"e8vm.io/e8vm/link8"
 )
 
-func loadRetAddr(b *Block, v *varRef) {
+func loadRetAddr(b *Block, v *Var) {
 	if v.size != regSize {
 		panic("ret must be regsize")
 	}
 	loadArg(b, _pc, v)
 }
 
-func saveRetAddr(b *Block, v *varRef) {
+func saveRetAddr(b *Block, v *Var) {
 	if v.size != regSize {
 		panic("ret must be regsize")
 	}
 	saveArg(b, _ret, v)
 }
 
-func saveArg(b *Block, reg uint32, v *varRef) {
+func saveArg(b *Block, reg uint32, v *Var) {
 	switch v.size {
 	case 0:
 	case 1:
-		b.inst(asm.sb(reg, _sp, -v.offset))
+		b.inst(asm.sb(reg, _sp, -v.Offset))
 	case regSize:
-		b.inst(asm.sw(reg, _sp, -v.offset))
+		b.inst(asm.sw(reg, _sp, -v.Offset))
 	default:
 		panic("invalid size to save from a register")
 	}
 }
 
-func loadArg(b *Block, reg uint32, v *varRef) {
+func loadArg(b *Block, reg uint32, v *Var) {
 	switch v.size {
 	case 0:
 	case 1:
-		if !v.u8 {
-			b.inst(asm.lb(reg, _sp, -v.offset))
+		if !v.U8 {
+			b.inst(asm.lb(reg, _sp, -v.Offset))
 		} else {
-			b.inst(asm.lbu(reg, _sp, -v.offset))
+			b.inst(asm.lbu(reg, _sp, -v.Offset))
 		}
 	case regSize:
-		b.inst(asm.lw(reg, _sp, -v.offset))
+		b.inst(asm.lw(reg, _sp, -v.Offset))
 	default:
 		panic("invalid size to save from a register")
 	}
 }
 
-func saveVar(b *Block, reg uint32, v *varRef) {
+func saveVar(b *Block, reg uint32, v *Var) {
 	switch v.size {
 	case 0:
 	case 1:
-		b.inst(asm.sb(reg, _sp, *b.frameSize-v.offset))
+		b.inst(asm.sb(reg, _sp, *b.frameSize-v.Offset))
 	case regSize:
-		b.inst(asm.sw(reg, _sp, *b.frameSize-v.offset))
+		b.inst(asm.sw(reg, _sp, *b.frameSize-v.Offset))
 	default:
 		panic("invalid size to save from a register")
 	}
 }
 
-func loadVar(b *Block, reg uint32, v *varRef) {
+func loadVar(b *Block, reg uint32, v *Var) {
 	switch v.size {
 	case 0: // do nothing
 	case 1:
-		if !v.u8 {
-			b.inst(asm.lb(reg, _sp, *b.frameSize-v.offset))
+		if !v.U8 {
+			b.inst(asm.lb(reg, _sp, *b.frameSize-v.Offset))
 		} else {
-			b.inst(asm.lbu(reg, _sp, *b.frameSize-v.offset))
+			b.inst(asm.lbu(reg, _sp, *b.frameSize-v.Offset))
 		}
 	default:
-		b.inst(asm.lw(reg, _sp, *b.frameSize-v.offset))
+		b.inst(asm.lw(reg, _sp, *b.frameSize-v.Offset))
 	}
 }
 
@@ -80,7 +80,7 @@ func saveRef(b *Block, reg uint32, r Ref, tmpReg uint32) {
 	}
 
 	switch r := r.(type) {
-	case *varRef:
+	case *Var:
 		saveVar(b, reg, r)
 	case *addrRef:
 		if r.size == 0 {
@@ -135,7 +135,7 @@ func loadUint32(b *Block, reg uint32, v uint32) {
 
 func loadRef(b *Block, reg uint32, r Ref) {
 	switch r := r.(type) {
-	case *varRef:
+	case *Var:
 		loadVar(b, reg, r)
 	case *number:
 		loadUint32(b, reg, r.v)
@@ -199,7 +199,7 @@ func loadRef(b *Block, reg uint32, r Ref) {
 
 func canViaReg(r Ref) bool {
 	switch r := r.(type) {
-	case *varRef:
+	case *Var:
 		return r.size <= 1 || r.size == regSize
 	case *number:
 		return true

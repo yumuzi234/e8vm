@@ -15,9 +15,9 @@ type Func struct {
 	pos  *lex8.Pos
 	sig  *FuncSig
 
-	savedRegs []*varRef
-	locals    []*varRef // local variables
-	retAddr   *varRef   // saved return address register
+	savedRegs []*Var
+	locals    []*Var // local variables
+	retAddr   *Var   // saved return address register
 
 	prologue *Block
 	epilogue *Block
@@ -66,7 +66,7 @@ func (f *Func) RetRefs() []Ref {
 
 // NewLocal creates a new named local variable of size n on the stack.
 func (f *Func) NewLocal(n int32, name string, u8, regSizeAlign bool) Ref {
-	ret := newVar(n, name, u8, regSizeAlign)
+	ret := NewVar(n, name, u8, regSizeAlign)
 	f.locals = append(f.locals, ret)
 	return ret
 }

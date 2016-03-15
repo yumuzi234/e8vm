@@ -1,20 +1,24 @@
 package ir
 
-type op interface{}
+// Op is a general IR operation
+type Op interface{}
 
-type arithOp struct {
-	dest Ref
-	a    Ref
-	op   string
-	b    Ref
+// ArithOp is an arithmetic operation
+type ArithOp struct {
+	Dest Ref
+	A    Ref
+	Op   string
+	B    Ref
 }
 
-type callOp struct {
-	dest []Ref
-	f    Ref
-	args []Ref
+// CallOp is a function call operation
+type CallOp struct {
+	Dest []Ref
+	F    Ref
+	Args []Ref
 }
 
-type comment struct {
-	s string
+// Comment is a comment line for debugging
+type Comment struct {
+	Str string
 }

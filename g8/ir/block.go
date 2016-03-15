@@ -19,7 +19,7 @@ type blockJump struct {
 // Block is a basic block
 type Block struct {
 	id  int // basic block ida
-	ops []op
+	ops []Op
 
 	insts    []*inst
 	jumpInst *inst
@@ -45,11 +45,11 @@ func checkRefs(refs ...Ref) {
 
 func (b *Block) String() string { return fmt.Sprintf("B%d", b.id) }
 
-func (b *Block) addOp(op op) { b.ops = append(b.ops, op) }
+func (b *Block) addOp(op Op) { b.ops = append(b.ops, op) }
 
 // Comment adds an IR comment.
 func (b *Block) Comment(s string) {
-	b.addOp(&comment{s})
+	b.addOp(&Comment{s})
 }
 
 // Commentf adds an IR comment with a particular printing format.
@@ -59,7 +59,7 @@ func (b *Block) Commentf(s string, args ...interface{}) {
 
 // Arith append an arithmetic operation to the basic block
 func (b *Block) Arith(dest Ref, x Ref, op string, y Ref) {
-	b.addOp(&arithOp{dest, x, op, y})
+	b.addOp(&ArithOp{dest, x, op, y})
 }
 
 // Assign appends an assignment operation to the basic block
@@ -81,7 +81,7 @@ func (b *Block) Call(dests []Ref, f Ref, args ...Ref) {
 
 	argsCopy := make([]Ref, len(args))
 	copy(argsCopy, args)
-	b.addOp(&callOp{dests, f, argsCopy})
+	b.addOp(&CallOp{dests, f, argsCopy})
 }
 
 // Jump sets the block always jump to the dest block at its end

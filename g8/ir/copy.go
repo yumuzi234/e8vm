@@ -11,7 +11,7 @@ func copyRef(g *gener, b *Block, dest, src Ref, isArg bool) {
 		if !isArg {
 			loadAddr(b, r, dest)
 		} else {
-			loadArgAddr(b, r, dest.(*varRef))
+			loadArgAddr(b, r, dest.(*Var))
 		}
 	}
 
@@ -30,7 +30,7 @@ func copyRef(g *gener, b *Block, dest, src Ref, isArg bool) {
 		if !isArg {
 			saveRef(b, _4, dest, _1)
 		} else {
-			saveArg(b, _4, dest.(*varRef))
+			saveArg(b, _4, dest.(*Var))
 		}
 	default:
 		loadDestAddr(_1)

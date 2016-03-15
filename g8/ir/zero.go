@@ -27,7 +27,7 @@ func zeroAddr(g *gener, b *Block, reg uint32, size int32, regSizeAlign bool) {
 
 func zeroRef(g *gener, b *Block, r Ref) {
 	switch r := r.(type) {
-	case *varRef:
+	case *Var:
 		if r.size < 0 {
 			panic("invalid varRef size")
 		}

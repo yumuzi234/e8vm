@@ -31,7 +31,7 @@ func printBlockInsts(p *fmt8.Printer, b *Block) {
 	p.ShiftTab()
 }
 
-func printVars(p *fmt8.Printer, seg string, vars []*varRef) {
+func printVars(p *fmt8.Printer, seg string, vars []*Var) {
 	if len(vars) == 0 {
 		return
 	}

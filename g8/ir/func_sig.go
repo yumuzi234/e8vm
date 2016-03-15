@@ -11,11 +11,11 @@ type FuncArg struct {
 // FuncSig describes the function signature of a callable
 // function
 type FuncSig struct {
-	args []*varRef
-	rets []*varRef
+	args []*Var
+	rets []*Var
 
-	regArgs []*varRef // args sent in via registers
-	regRets []*varRef // return values sent out via registers
+	regArgs []*Var // args sent in via registers
+	regRets []*Var // return values sent out via registers
 
 	argRegUsed []bool
 	frameSize  int32
@@ -25,11 +25,11 @@ type FuncSig struct {
 func NewFuncSig(args, rets []*FuncArg) *FuncSig {
 	ret := new(FuncSig)
 	for _, arg := range args {
-		v := newVar(arg.Size, arg.Name, arg.U8, arg.RegSizeAlign)
+		v := NewVar(arg.Size, arg.Name, arg.U8, arg.RegSizeAlign)
 		ret.args = append(ret.args, v)
 	}
 	for _, arg := range rets {
-		v := newVar(arg.Size, arg.Name, arg.U8, arg.RegSizeAlign)
+		v := NewVar(arg.Size, arg.Name, arg.U8, arg.RegSizeAlign)
 		ret.rets = append(ret.rets, v)
 	}
 
@@ -39,23 +39,23 @@ func NewFuncSig(args, rets []*FuncArg) *FuncSig {
 	return ret
 }
 
-func layoutFuncArgs(f *FuncSig, args []*varRef) ([]*varRef, []bool) {
+func layoutFuncArgs(f *FuncSig, args []*Var) ([]*Var, []bool) {
 	const viaRegMax = 3
 
 	frameSize := int32(0)
 	nreg := uint32(0)
 	regUsed := make([]bool, viaRegMax+1) // only track r1-r3
-	regArgs := make([]*varRef, 0, viaRegMax)
+	regArgs := make([]*Var, 0, viaRegMax)
 
 	for _, arg := range args {
 		if arg.size == 0 {
 			continue
-		} else if nreg >= viaRegMax || !arg.canViaReg() {
+		} else if nreg >= viaRegMax || !arg.CanViaReg() {
 			frameSize += arg.size
 			if arg.regSizeAlign {
 				frameSize = alignUp(frameSize, regSize)
 			}
-			arg.offset = frameSize
+			arg.Offset = frameSize
 			continue
 		}
 
