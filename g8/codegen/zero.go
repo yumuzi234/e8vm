@@ -44,7 +44,7 @@ func zeroRef(g *gener, b *Block, r Ref) {
 			f := g.memClear
 			jal.sym = &linkSym{link8.FillLink, f.pkg, f.name}
 		}
-	case *addrRef:
+	case *AddrRef:
 		if r.size == 0 {
 			return
 		}

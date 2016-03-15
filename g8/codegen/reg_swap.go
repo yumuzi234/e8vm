@@ -82,7 +82,7 @@ func saveRef(b *Block, reg uint32, r Ref, tmpReg uint32) {
 	switch r := r.(type) {
 	case *Var:
 		saveVar(b, reg, r)
-	case *addrRef:
+	case *AddrRef:
 		if r.size == 0 {
 			return
 		}
@@ -157,7 +157,7 @@ func loadRef(b *Block, reg uint32, r Ref) {
 		loadSym(b, reg, r.pkg, r.name)
 	case *FuncPtr:
 		loadRef(b, reg, r.Ref)
-	case *addrRef:
+	case *AddrRef:
 		if r.size == 0 {
 			return
 		}
@@ -209,7 +209,7 @@ func canViaReg(r Ref) bool {
 		return true
 	case *FuncSym:
 		return true
-	case *addrRef:
+	case *AddrRef:
 		return r.size <= 1 || (r.size == regSize && r.regSizeAlign)
 	case *HeapSym:
 		return r.size <= 1 || r.size == regSize

@@ -4,11 +4,11 @@ import (
 	"fmt"
 )
 
-// addrRef is an indirect reference of an address range.
+// AddrRef is an indirect reference of an address range.
 // we need this to implement *pointer, array, and struct.
 // that is all the other right-hand values that is more than
 // just a simple temp variable.
-type addrRef struct {
+type AddrRef struct {
 	base         Ref
 	offset       int32
 	size         int32
@@ -22,24 +22,25 @@ func NewAddrRef(base Ref, n, offset int32, u8, regSizeAlign bool) Ref {
 	return newAddrRef(base, n, offset, u8, regSizeAlign)
 }
 
-func newAddrRef(base Ref, n, offset int32, u8, regSizeAlign bool) *addrRef {
-	ret := new(addrRef)
-	ret.base = base
-	ret.size = n
-	ret.offset = offset
-	ret.u8 = u8
-	ret.regSizeAlign = regSizeAlign
-
-	return ret
+func newAddrRef(base Ref, n, offset int32, u8, regSizeAlign bool) *AddrRef {
+	return &AddrRef{
+		base:         base,
+		size:         n,
+		offset:       offset,
+		u8:           u8,
+		regSizeAlign: regSizeAlign,
+	}
 }
 
-func (r *addrRef) String() string {
+func (r *AddrRef) String() string {
 	if r.offset == 0 {
 		return fmt.Sprintf("*%s", r.base.String())
 	}
 	return fmt.Sprintf("*(%s+%d)", r.base.String(), r.offset)
 }
 
-func (r *addrRef) Size() int32 { return r.size }
+// Size returns the size of the address reference
+func (r *AddrRef) Size() int32 { return r.size }
 
-func (r *addrRef) RegSizeAlign() bool { return r.regSizeAlign }
+// RegSizeAlign tells if the refernece is register size aligned
+func (r *AddrRef) RegSizeAlign() bool { return r.regSizeAlign }

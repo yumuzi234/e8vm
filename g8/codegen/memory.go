@@ -8,7 +8,7 @@ func loadAddr(b *Block, reg uint32, r Ref) {
 	switch r := r.(type) {
 	case *Var:
 		b.inst(asm.addi(reg, _sp, *b.frameSize-r.Offset))
-	case *addrRef:
+	case *AddrRef:
 		loadRef(b, reg, r.base)
 		if r.offset != 0 {
 			b.inst(asm.addi(reg, reg, r.offset))
