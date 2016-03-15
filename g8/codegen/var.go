@@ -1,6 +1,6 @@
 package codegen
 
-// Var is a variable on stack, it is always word aligned
+// Var is a variable on stack.
 type Var struct {
 	name         string // not unique, just for debugging
 	size         int32

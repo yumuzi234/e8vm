@@ -18,7 +18,7 @@ type blockJump struct {
 
 // Block is a basic block
 type Block struct {
-	id  int // basic block ida
+	id  int
 	ops []Op
 
 	insts    []*inst
