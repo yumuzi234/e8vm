@@ -1,30 +1,37 @@
 package ir
 
 // Ref is a general reference to a variable or constant
-type Ref interface{}
+type Ref interface {
+	Attr() *Attribute
+}
 
-// Attr is a reference attribute
-type Attr struct {
+// Attribute is a reference attribute
+type Attribute struct {
 	Size   int32
 	Align  int32
 	Signed bool
 }
 
+// Attr returns the attribute itself.
+func (a *Attribute) Attr() *Attribute {
+	return a
+}
+
 // Var is a local variable allocated on stack
 type Var struct {
 	Name string
-	*Attr
+	*Attribute
 }
 
 // AddrRef is an indirect reference of a variable
 type AddrRef struct {
 	Base   Ref
 	Offset int32
-	*Attr
+	*Attribute
 }
 
 // Number is a constant number
 type Number struct {
 	V uint32
-	*Attr
+	*Attribute
 }
