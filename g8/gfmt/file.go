@@ -1,10 +1,12 @@
 package gfmt
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 
 	"e8vm.io/e8vm/g8/ast"
+	"e8vm.io/e8vm/g8/parse"
 	"e8vm.io/e8vm/lex8"
 )
 
@@ -40,4 +42,16 @@ func printFile(f *formatter, file *ast.File) {
 func FprintFile(out io.Writer, file *ast.File, rec *lex8.Recorder) {
 	f := newFormatter(out, rec.Tokens())
 	printFile(f, file)
+}
+
+// File formats a g language file.
+func File(fname string, file []byte) ([]byte, []*lex8.Error) {
+	f, rec, errs := parse.File(fname, bytes.NewBuffer(file), false)
+	if errs != nil {
+		return nil, errs
+	}
+
+	out := new(bytes.Buffer)
+	FprintFile(out, f, rec)
+	return out.Bytes(), nil
 }
