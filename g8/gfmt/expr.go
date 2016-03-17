@@ -71,7 +71,11 @@ func printExpr(f *formatter, expr ast.Expr) {
 		}
 
 		f.printExprs(expr.Type.Type)
-		f.printExprs(expr.Lbrace, expr.Exprs, expr.Rbrace)
+		if expr.Exprs != nil {
+			f.printExprs(expr.Lbrace, expr.Exprs, expr.Rbrace)
+		} else {
+			f.printExprs(expr.Lbrace, expr.Rbrace)
+		}
 	default:
 		panic(fmt.Errorf("invalid expression type: %T", expr))
 	}
