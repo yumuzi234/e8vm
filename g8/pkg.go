@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"math/rand"
+	"time"
 
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/dagvis"
@@ -43,10 +44,12 @@ func (p *pkg) build(b *builder, pinfo *build8.PkgInfo) []*lex8.Error {
 func newRand() *rand.Rand {
 	var buf [8]byte
 	_, err := crand.Read(buf[:])
-	if err != nil {
-		panic(err)
+	var seed int64
+	if err == nil {
+		seed = int64(binary.LittleEndian.Uint64(buf[:]))
+	} else {
+		seed = time.Now().UnixNano()
 	}
-	seed := int64(binary.LittleEndian.Uint64(buf[:]))
 	return rand.New(rand.NewSource(seed))
 }
 
