@@ -68,6 +68,15 @@ func printExpr(f *formatter, expr ast.Expr) {
 		f.printToken(expr.Kw)
 	case *ast.MemberExpr:
 		printExprs(f, expr.Expr, expr.Dot, expr.Sub)
+	case *ast.ArrayLiteral:
+		if expr.Type.Len != nil {
+			printExprs(f, expr.Type.Lbrack, expr.Type.Len, expr.Type.Rbrack)
+		} else {
+			printExprs(f, expr.Type.Lbrack, expr.Type.Rbrack)
+		}
+
+		printExprs(f, expr.Type.Type)
+		printExprs(f, expr.Lbrace, expr.Exprs, expr.Rbrace)
 	default:
 		panic(fmt.Errorf("invalid expression type: %T", expr))
 	}
