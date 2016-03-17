@@ -5,14 +5,14 @@ import (
 )
 
 func printStruct(f *formatter, d *ast.Struct) {
-	printExprs(f, d.Kw, " ", d.Name, " ", d.Lbrace)
+	f.printExprs(d.Kw, " ", d.Name, " ", d.Lbrace)
 	f.printEndl()
 	f.Tab()
 
 	for i, field := range d.Fields {
 		printIdents(f, field.Idents)
 		f.printSpace()
-		printExpr(f, field.Type)
+		f.printExprs(field.Type)
 		f.printEndlPlus(i < len(d.Fields)-1, 0)
 	}
 

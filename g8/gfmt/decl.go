@@ -7,7 +7,7 @@ import (
 func printIdents(f *formatter, idents *ast.IdentList) {
 	for i, id := range idents.Idents {
 		if i > 0 {
-			printExprs(f, idents.Commas[i-1], " ")
+			f.printExprs(idents.Commas[i-1], " ")
 		}
 		f.printToken(id)
 	}
@@ -16,15 +16,15 @@ func printIdents(f *formatter, idents *ast.IdentList) {
 func printVarDecl(f *formatter, d *ast.VarDecl) {
 	printIdents(f, d.Idents)
 	if d.Type != nil {
-		printExprs(f, " ", d.Type)
+		f.printExprs(" ", d.Type)
 	}
 	if d.Eq != nil {
-		printExprs(f, " ", d.Eq, " ", d.Exprs)
+		f.printExprs(" ", d.Eq, " ", d.Exprs)
 	}
 }
 
 func printVarDecls(f *formatter, d *ast.VarDecls) {
-	printExprs(f, d.Kw, " ")
+	f.printExprs(d.Kw, " ")
 	if d.Lparen == nil {
 		// single declare
 		printVarDecl(f, d.Decls[0])
@@ -44,15 +44,15 @@ func printVarDecls(f *formatter, d *ast.VarDecls) {
 func printConstDecl(f *formatter, d *ast.ConstDecl) {
 	printIdents(f, d.Idents)
 	if d.Type != nil {
-		printExprs(f, " ", d.Type)
+		f.printExprs(" ", d.Type)
 	}
 	if d.Eq != nil {
-		printExprs(f, " ", d.Eq, " ", d.Exprs)
+		f.printExprs(" ", d.Eq, " ", d.Exprs)
 	}
 }
 
 func printConstDecls(f *formatter, d *ast.ConstDecls) {
-	printExprs(f, d.Kw, " ")
+	f.printExprs(d.Kw, " ")
 	if d.Lparen == nil {
 		// single declare
 		printConstDecl(f, d.Decls[0])
@@ -71,13 +71,13 @@ func printConstDecls(f *formatter, d *ast.ConstDecls) {
 
 func printImportDecl(f *formatter, d *ast.ImportDecl) {
 	if d.As != nil {
-		printExprs(f, d.As, " ")
+		f.printExprs(d.As, " ")
 	}
-	printExprs(f, d.Path)
+	f.printExprs(d.Path)
 }
 
 func printImportDecls(f *formatter, d *ast.ImportDecls) {
-	printExprs(f, d.Kw, " ")
+	f.printExprs(d.Kw, " ")
 	f.printToken(d.Lparen)
 	f.printEndl()
 	f.Tab()

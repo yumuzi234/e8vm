@@ -5,6 +5,7 @@ import (
 	"io"
 
 	"e8vm.io/e8vm/fmt8"
+	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/parse"
 	"e8vm.io/e8vm/lex8"
 )
@@ -14,11 +15,28 @@ type formatter struct {
 	tokens    []*lex8.Token
 	lastToken *lex8.Token
 	offset    int
+
+	exprFunc func(f *formatter, expr ast.Expr)
+}
+
+func (f *formatter) printExpr(expr ast.Expr) {
+	f.exprFunc(f, expr)
+}
+
+func (f *formatter) printExprs(args ...interface{}) {
+	for _, arg := range args {
+		f.printExpr(arg)
+	}
 }
 
 func newFormatter(out io.Writer, tokens []*lex8.Token) *formatter {
 	p := fmt8.NewPrinter(out)
-	return &formatter{p, tokens, nil, 0}
+	return &formatter{
+		Printer:   p,
+		tokens:    tokens,
+		lastToken: nil,
+		offset:    0,
+	}
 }
 
 func (f *formatter) printStr(s string) {
