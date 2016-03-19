@@ -48,6 +48,14 @@ func TestSingleFileBad(t *testing.T) {
 	o(`func f() int { if true { return 0 } }; func main() { }`)
 	o(`func f() int { if true return 0 }; func main() { }`)
 
+	// unused vars
+	o(`func main() { var a int }`)
+	o(`func main() { var a = 3 }`)
+	o(`func main() { var a, b = 3; _ := a }`)
+	o(`func main() { a := 3 }`)
+	o(`func main() { var a int; a = 3 }`)
+	o(`func main() { var a int; (a) = (3) }`)
+
 	// Bugs found by the fuzzer in the past
 	o("func main() {}; func f() **o.o {}")
 	o("func main() {}; func n()[char[:]]string{}")
