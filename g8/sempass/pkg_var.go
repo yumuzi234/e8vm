@@ -35,7 +35,7 @@ func buildPkgVar(b *builder, d *ast.VarDecl) *tast.Define {
 		return nil
 	}
 
-	syms := declareVars(b, d.Idents.Idents, t)
+	syms := declareVars(b, d.Idents.Idents, t, false)
 	if syms == nil {
 		return nil
 	}

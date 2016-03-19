@@ -114,7 +114,9 @@ func opAssign(b *builder, dest, src tast.Expr, op *lex8.Token) tast.Stmt {
 }
 
 func buildAssignStmt(b *builder, stmt *ast.AssignStmt) tast.Stmt {
+	hold := b.lhsSwap(true)
 	left := b.buildExpr(stmt.Left)
+	b.lhsRestore(hold)
 	if left == nil {
 		return nil
 	}

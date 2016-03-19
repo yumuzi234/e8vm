@@ -64,7 +64,7 @@ func define(
 	var syms []*sym8.Symbol
 	ts := expr.R().TypeList()
 	for i, tok := range ids {
-		s := declareVar(b, tok, ts[i])
+		s := declareVar(b, tok, ts[i], false)
 		if s == nil {
 			return nil
 		}

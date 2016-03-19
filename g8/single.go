@@ -25,7 +25,6 @@ func buildMainPkg(home *build8.MemHome, runTests bool, testCycles int) (
 ) {
 	b := build8.NewBuilder(home, home)
 	b.RunTests = runTests
-	b.Verbose = true
 	b.TestCycles = testCycles
 	if errs := b.BuildAll(); errs != nil {
 		return nil, errs, nil

@@ -39,6 +39,9 @@ func buildConstBinaryOpExpr(b *builder, expr *ast.OpExpr) tast.Expr {
 }
 
 func buildOpExpr(b *builder, expr *ast.OpExpr) tast.Expr {
+	hold := b.lhsSwap(false)
+	defer b.lhsRestore(hold)
+
 	if expr.A == nil {
 		return buildUnaryOpExpr(b, expr)
 	}

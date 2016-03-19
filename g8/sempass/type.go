@@ -98,6 +98,8 @@ func buildType(b *builder, expr ast.Expr) types.T {
 	if expr == nil {
 		panic("bug")
 	}
+	hold := b.lhsSwap(false)
+	defer b.lhsRestore(hold)
 
 	switch expr := expr.(type) {
 	case *ast.Operand:

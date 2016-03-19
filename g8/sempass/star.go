@@ -7,6 +7,9 @@ import (
 )
 
 func buildStarExpr(b *builder, expr *ast.StarExpr) tast.Expr {
+	hold := b.lhsSwap(false)
+	defer b.lhsRestore(hold)
+
 	opPos := expr.Star.Pos
 
 	addr := b.buildExpr(expr.Expr)

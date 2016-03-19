@@ -29,6 +29,10 @@ type builder struct {
 
 	retType  []types.T
 	retNamed bool
+
+	// if the parsing is in left hand side.
+	// when in left hand side, referecing a variable does not count.
+	lhs bool
 }
 
 func newBuilder(path string, scope *sym8.Scope) *builder {
@@ -38,6 +42,13 @@ func newBuilder(path string, scope *sym8.Scope) *builder {
 		scope:     scope,
 	}
 }
+
+func (b *builder) lhsSwap(lhs bool) bool {
+	lhs, b.lhs = b.lhs, lhs
+	return lhs
+}
+
+func (b *builder) lhsRestore(lhs bool) { b.lhs = lhs }
 
 func (b *builder) buildExpr(expr ast.Expr) tast.Expr {
 	return b.exprFunc(b, expr)
@@ -65,6 +76,10 @@ func (b *builder) buildStmt(stmt ast.Stmt) tast.Stmt {
 }
 
 func (b *builder) refSym(sym *sym8.Symbol, pos *lex8.Pos) {
+	if !b.lhs {
+		sym.Used = true
+	}
+
 	// track file dependencies inside a package
 	if b.deps == nil {
 		return // no need to track deps

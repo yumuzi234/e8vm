@@ -27,14 +27,16 @@ func (s *Scope) PushTable(tab *Table) {
 
 // Pop removes a symbol table from the top of the stack.
 // It panics when the stack is empty after the pop.
-func (s *Scope) Pop() {
+func (s *Scope) Pop() *Table {
 	n := len(s.stack)
 	if n < 2 {
 		panic("stack empty after pop")
 	}
 
+	ret := s.top
 	s.stack = s.stack[:n-1]
 	s.top = s.stack[n-2]
+	return ret
 }
 
 // Depth returns the number of scopes on the stack.

@@ -92,6 +92,9 @@ func buildPkgSym(
 }
 
 func buildMember(b *builder, m *ast.MemberExpr) tast.Expr {
+	hold := b.lhsSwap(false)
+	defer b.lhsRestore(hold)
+
 	obj := b.buildExpr(m.Expr)
 	if obj == nil {
 		return nil

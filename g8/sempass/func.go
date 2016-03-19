@@ -94,7 +94,7 @@ func declareParas(
 
 		var s *sym8.Symbol
 		if t.Name != "" {
-			s = declareVar(b, paras[i].Ident, t.T)
+			s = declareVar(b, paras[i].Ident, t.T, true)
 		}
 		ret = append(ret, s)
 	}
@@ -103,7 +103,7 @@ func declareParas(
 
 func buildFunc(b *builder, f *pkgFunc) *tast.Func {
 	b.scope.Push()
-	defer b.scope.Pop()
+	defer scopePopAndCheck(b)
 
 	t := f.sym.ObjType.(*types.Func)
 	b.retNamed = f.f.NamedRet()
@@ -115,7 +115,7 @@ func buildFunc(b *builder, f *pkgFunc) *tast.Func {
 	if b.this != nil {
 		if f.f.Recv != nil {
 			if recvTok := f.f.Recv.Recv; recvTok != nil {
-				recvSym := declareVar(b, recvTok, b.thisType)
+				recvSym := declareVar(b, recvTok, b.thisType, true)
 				if recvSym == nil {
 					return nil
 				}

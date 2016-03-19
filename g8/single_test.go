@@ -124,9 +124,10 @@ func TestSingleFile(t *testing.T) {
 	o(`	func printStr(s string) {
 			n:=len(s); for i:=0;i<n;i++ { printChar(s[i]) }
 		}
-		func main() { b:="hello"; var a []int8; a=b; printStr(b) }`, "hello")
+		func main() { b:="hello"; var a []int8; a=b; printStr(b); _ := a }`,
+		"hello")
 
-	o(` struct A {}; func main() { var a A; pa := &a; }`, "")
+	o(` struct A {}; func main() { var a A; pa := &a; _ := pa }`, "")
 	o(` struct A { a int }
 		func main() { var a A; printInt(a.a) }`, "0")
 	o(` struct A { a int }

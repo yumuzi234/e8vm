@@ -13,6 +13,7 @@ type Symbol struct {
 	Obj     interface{}
 	ObjType interface{}
 	Pos     *lex8.Pos
+	Used    bool
 }
 
 // Name returns the symbol name.
@@ -35,5 +36,5 @@ func Make(
 	obj, objType interface{},
 	pos *lex8.Pos,
 ) *Symbol {
-	return &Symbol{pkg, name, t, obj, objType, pos}
+	return &Symbol{pkg, name, t, obj, objType, pos, false}
 }

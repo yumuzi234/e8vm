@@ -74,7 +74,7 @@ func buildVarDecl(b *builder, d *ast.VarDecl) *tast.Define {
 			right = exprList
 		}
 
-		syms := declareVars(b, ids, tdest)
+		syms := declareVars(b, ids, tdest, false)
 		if syms == nil {
 			return nil
 		}
@@ -90,7 +90,7 @@ func buildVarDecl(b *builder, d *ast.VarDecl) *tast.Define {
 		return nil
 	}
 
-	syms := declareVars(b, ids, t)
+	syms := declareVars(b, ids, t, false)
 	if syms == nil {
 		return nil
 	}

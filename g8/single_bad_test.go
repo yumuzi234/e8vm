@@ -26,13 +26,13 @@ func TestSingleFileBad(t *testing.T) {
 	o(`struct A {}; func main() { a := A }`)
 
 	o(`	struct A { func f(){} }; 
-		func main() { var a A; var f func() = a.f; }`)
+		func main() { var a A; var f func()=a.f; _:=f }`)
 	o(`	struct A { func f(){} }; 
-		func main() { var a A; var f func(); f=a.f; }`)
+		func main() { var a A; var f func(); f=a.f; _:=f }`)
 
 	o(`import(); import()`)
 	o("import() func main()")
-	o(`struct A { func f(){} }; func main() { var a A; f := a.f; }`)
+	o(`struct A { func f(){} }; func main() { var a A; f := a.f; _ := f }`)
 
 	o(` func r() (int, int) { return 3, 4 }
 		func p(a, b, c int) { }
@@ -51,8 +51,8 @@ func TestSingleFileBad(t *testing.T) {
 	// Bugs found by the fuzzer in the past
 	o("func main() {}; func f() **o.o {}")
 	o("func main() {}; func n()[char[:]]string{}")
-	o("func main() {}; func n() { var r = len }")
-	o("func main() {}; func n() { r := len }")
+	o("func main() {}; func n() { var r = len; _ := r}")
+	o("func main() {}; func n() { r := len; _ := r }")
 	o("func main() {}; struct A{}; struct A{}")
 
 	o("var a int; func a() {}; func main() {}")
@@ -81,7 +81,7 @@ func TestSingleFilePanic(t *testing.T) {
 
 	o("func main() { panic() }")
 	o("func main() { var pa *int; printInt(*pa) }")
-	o("struct A { a int }; func main() { var pa *A; b := pa.a }")
+	o("struct A { a int }; func main() { var pa *A; b := pa.a; _ := b }")
 	o("func main() { var a func(); a() }")
 	o("func f() {}; func main() { var a func()=f; a=nil; a() }")
 	o("func f(p *int) { printInt(*p) }; func main() { f(nil) }")

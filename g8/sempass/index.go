@@ -8,6 +8,9 @@ import (
 )
 
 func buildIndexExpr(b *builder, expr *ast.IndexExpr) tast.Expr {
+	hold := b.lhsSwap(false)
+	defer b.lhsRestore(hold)
+
 	array := b.buildExpr(expr.Array)
 	if array == nil {
 		return nil

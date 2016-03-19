@@ -10,6 +10,9 @@ import (
 )
 
 func buildArrayLit(b *builder, lit *ast.ArrayLiteral) tast.Expr {
+	hold := b.lhsSwap(false)
+	defer b.lhsRestore(hold)
+
 	if lit.Type.Len != nil {
 		b.Errorf(
 			ast.ExprPos(lit),
