@@ -37,7 +37,7 @@ func NewBuilder(input Input, output Output) *Builder {
 		deps:       make(map[string][]string),
 		linkPkgs:   make(map[string]*link8.Pkg),
 		debugFuncs: debug8.NewFuncs(),
-		Options:    &Options{InitPC: arch8.InitPC},
+		Options:    new(Options),
 	}
 }
 
@@ -109,6 +109,9 @@ func (b *Builder) link(out io.Writer, p *pkg, main string) error {
 	debugTable := debug8.NewTable()
 	job := link8.NewJob(b.linkPkgs, funcs)
 	job.InitPC = b.InitPC
+	if job.InitPC == 0 {
+		job.InitPC = arch8.InitPC
+	}
 	job.FuncDebug = func(pkg, name string, addr, size uint32) {
 		debugTable.LinkFunc(b.debugFuncs, pkg, name, addr, size)
 	}
@@ -170,7 +173,7 @@ func (b *Builder) runTests(p *pkg) []*lex8.Error {
 				return es
 			}
 
-			runTests(log, tests, img, b.Verbose, b.TestCycles, b.logln)
+			runTests(log, tests, img, b.Options)
 			if es := log.Errs(); es != nil {
 				return es
 			}

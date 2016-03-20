@@ -102,5 +102,5 @@ func (bare bareFunc) Compile(pinfo *build8.PkgInfo) (
 // CompileBareFunc compiles a bare function into a bare-metal E8 image
 func CompileBareFunc(fname, s string) ([]byte, []*lex8.Error, []byte) {
 	lang := BareFunc()
-	return buildSingle(fname, s, lang, false, 0)
+	return buildSingle(fname, s, lang, new(build8.Options))
 }

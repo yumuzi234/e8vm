@@ -21,37 +21,38 @@ func cycleStr(n int) string {
 }
 
 func runTests(
-	log lex8.Logger, tests map[string]uint32, img []byte,
-	verbose bool, ncycle int, logln func(s string),
+	log lex8.Logger, tests map[string]uint32, img []byte, opt *Options,
 ) {
 	// TODO(h8liu): this reporting should go with JSON for better formatting.
 	report := func(
 		name string, ncycle int, pass bool,
 		m *arch8.Machine, err error,
 	) {
-		if !pass {
-			if err == nil {
-				err = errTimeOut
-			}
-			lex8.LogError(log, fmt.Errorf("%s failed: got %s", name, err))
-			if verbose {
-				logln(fmt.Sprintf(
-					"  - %s: FAILED (%s, got %s)",
-					name, cycleStr(ncycle), err,
+		if pass {
+			if opt.Verbose {
+				opt.LogLine(fmt.Sprintf(
+					"  - %s: passed (%s)", name, cycleStr(ncycle),
 				))
-				// TODO(h8liu): this is too ugly here...
-				excep, ok := err.(*arch8.CoreExcep)
-				if !arch8.IsHalt(err) && ok {
-					stackTrace := new(bytes.Buffer)
-					arch8.FprintStack(stackTrace, m, excep)
-					logln(stackTrace.String())
-				}
 			}
 			return
 		}
 
-		if verbose {
-			logln(fmt.Sprintf("  - %s: passed (%s)", name, cycleStr(ncycle)))
+		if err == nil {
+			err = errTimeOut
+		}
+		lex8.LogError(log, fmt.Errorf("%s failed: got %s", name, err))
+		if opt.Verbose {
+			opt.LogLine(fmt.Sprintf(
+				"  - %s: FAILED (%s, got %s)",
+				name, cycleStr(ncycle), err,
+			))
+			// TODO(h8liu): this is too ugly here...
+			excep, ok := err.(*arch8.CoreExcep)
+			if !arch8.IsHalt(err) && ok {
+				stackTrace := new(bytes.Buffer)
+				arch8.FprintStack(stackTrace, m, excep)
+				opt.LogLine(stackTrace.String())
+			}
 		}
 	}
 
@@ -74,7 +75,7 @@ func runTests(
 		}
 
 		var err error
-		n, excep := m.Run(ncycle)
+		n, excep := m.Run(opt.TestCycles)
 		if excep == nil {
 			err = errTimeOut
 		} else {
