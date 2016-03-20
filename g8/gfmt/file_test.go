@@ -138,15 +138,15 @@ func TestFormatFile(t *testing.T) {
 		}
 	`)
 	/*
-	o(`
-		func main() {
-		/* some comment /
-		}
-	`, `
-		func main() {
+		o(`
+			func main() {
 			/* some comment /
-		}
-	`)
+			}
+		`, `
+			func main() {
+				/* some comment /
+			}
+		`)
 	*/
 
 }
