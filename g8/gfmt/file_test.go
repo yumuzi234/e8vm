@@ -53,7 +53,6 @@ func tabPrefixToSpace(line string) string {
 	return line
 }
 
-
 func formatProg(s string) string {
 	lines := strings.Split(s, "\n")
 	lines = trimBlanks(lines)
