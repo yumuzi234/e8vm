@@ -7,6 +7,9 @@ import (
 
 func allHasPrefix(lines []string, prefix string) bool {
 	for _, line := range lines {
+		if strings.TrimSpace(line) == "" {
+			continue
+		}
 		if !strings.HasPrefix(line, prefix) {
 			return false
 		}
@@ -38,6 +41,19 @@ func trimBlanks(lines []string) []string {
 	return lines
 }
 
+func tabPrefixToSpace(line string) string {
+	prefix := ""
+	for i, c := range line {
+		if c == '\t' {
+			prefix += "    "
+		} else {
+			return prefix + line[i:]
+		}
+	}
+	return line
+}
+
+
 func formatProg(s string) string {
 	lines := strings.Split(s, "\n")
 	lines = trimBlanks(lines)
@@ -50,7 +66,14 @@ func formatProg(s string) string {
 	prefix := tabPrefix(first)
 	if allHasPrefix(lines, prefix) {
 		for i := range lines {
-			lines[i] = strings.TrimPrefix(lines[i], prefix)
+			line := lines[i]
+			if strings.TrimSpace(line) == "" {
+				line = ""
+			} else {
+				line = strings.TrimPrefix(line, prefix)
+				line = tabPrefixToSpace(line)
+			}
+			lines[i] = line
 		}
 	}
 
@@ -99,4 +122,16 @@ func TestFormatFile(t *testing.T) {
 	// Removes redundant line breaks in block.
 	o("func main() { var a [5]int;\n\n b := a[:] }",
 		"func main() {\n    var a [5]int\n\n    b := a[:]\n}\n")
+	o(`
+		func main() { var a [5]int;
+
+			b := a[:]
+		}
+	`, `
+		func main() {
+			var a [5]int
+
+			b := a[:]
+		}
+	`)
 }
