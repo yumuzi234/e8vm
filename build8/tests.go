@@ -23,6 +23,14 @@ func cycleStr(n int) string {
 func runTests(
 	log lex8.Logger, tests map[string]uint32, img []byte, opt *Options,
 ) {
+	logln := func(s string) {
+		if opt.LogLine == nil {
+			fmt.Println(s)
+		} else {
+			opt.LogLine(s)
+		}
+	}
+
 	// TODO(h8liu): this reporting should go with JSON for better formatting.
 	report := func(
 		name string, ncycle int, pass bool,
@@ -30,7 +38,7 @@ func runTests(
 	) {
 		if pass {
 			if opt.Verbose {
-				opt.LogLine(fmt.Sprintf(
+				logln(fmt.Sprintf(
 					"  - %s: passed (%s)", name, cycleStr(ncycle),
 				))
 			}
@@ -42,7 +50,7 @@ func runTests(
 		}
 		lex8.LogError(log, fmt.Errorf("%s failed: got %s", name, err))
 		if opt.Verbose {
-			opt.LogLine(fmt.Sprintf(
+			logln(fmt.Sprintf(
 				"  - %s: FAILED (%s, got %s)",
 				name, cycleStr(ncycle), err,
 			))
@@ -51,7 +59,7 @@ func runTests(
 			if !arch8.IsHalt(err) && ok {
 				stackTrace := new(bytes.Buffer)
 				arch8.FprintStack(stackTrace, m, excep)
-				opt.LogLine(stackTrace.String())
+				logln(stackTrace.String())
 			}
 		}
 	}
