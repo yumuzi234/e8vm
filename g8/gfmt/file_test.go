@@ -99,8 +99,12 @@ func TestFormatFile(t *testing.T) {
 		s = formatProg(s)
 		exp = formatProg(exp)
 		got := gfmt(s)
+		got2 := gfmt(s)
 		if exp != got {
 			t.Errorf("gfmt %q: expect %q, got %q", s, exp, got)
+		}
+		if got2 != got {
+			t.Errorf("gfmt result %q changed to %q", s, got, got2)
 		}
 	}
 
@@ -133,4 +137,16 @@ func TestFormatFile(t *testing.T) {
 			b := a[:]
 		}
 	`)
+	/*
+	o(`
+		func main() {
+		/* some comment /
+		}
+	`, `
+		func main() {
+			/* some comment /
+		}
+	`)
+	*/
+
 }

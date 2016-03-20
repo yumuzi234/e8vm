@@ -22,7 +22,8 @@ func printStmt(f *formatter, stmt ast.Stmt) {
 			f.ShiftTab()
 			f.printToken(stmt.Rbrace)
 		} else {
-			f.printExprs(stmt.Lbrace, stmt.Rbrace)
+			f.printToken(stmt.Lbrace)
+			f.printToken(stmt.Rbrace)
 		}
 	case *ast.BlockStmt:
 		printStmt(f, stmt.Block)
