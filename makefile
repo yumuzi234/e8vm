@@ -19,6 +19,7 @@ tags:
 	gotags -R . > tags
 
 test:
+	gofmt -s -w -l .
 	go test ./...
 
 testv:
