@@ -46,9 +46,9 @@ func genCallOp(g *gener, b *Block, op *CallOp) {
 		jal.sym = &linkSym{link8.FillLink, f.pkg, f.name}
 	case *FuncPtr:
 		// function pointer, set PC manually
-		loadRef(b, _4, f.Ref)
+		loadRef(b, _r4, f.Ref)
 		b.inst(asm.addi(_ret, _pc, 4))
-		b.inst(asm.ori(_pc, _4, 0))
+		b.inst(asm.ori(_pc, _r4, 0))
 	default:
 		panic("bug")
 	}
@@ -57,15 +57,15 @@ func genCallOp(g *gener, b *Block, op *CallOp) {
 	// first save the ones returned via register
 	for i, ret := range sig.rets {
 		if ret.ViaReg > 0 {
-			saveRef(b, ret.ViaReg, op.Dest[i], _4)
+			saveRef(b, ret.ViaReg, op.Dest[i], _r4)
 		}
 	}
 	// then copy the ones stored on the stack
 	for i, ret := range sig.rets {
 		if ret.ViaReg == 0 {
-			loadAddr(b, _1, op.Dest[i])
-			loadArgAddr(b, _2, ret)
-			loadUint32(b, _3, uint32(ret.Size()))
+			loadAddr(b, _r1, op.Dest[i])
+			loadArgAddr(b, _r2, ret)
+			loadUint32(b, _r3, uint32(ret.Size()))
 			jal := b.inst(asm.jal(0))
 			f := g.memCopy
 			jal.sym = &linkSym{link8.FillLink, f.pkg, f.name}

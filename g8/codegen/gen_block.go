@@ -10,11 +10,11 @@ func genBlock(g *gener, b *Block) {
 	} else if b.jump.typ == jmpAlways {
 		b.jumpInst = b.inst(asm.j(0))
 	} else if b.jump.typ == jmpIfNot {
-		loadRef(b, _4, b.jump.cond)
-		b.jumpInst = b.inst(asm.beq(_0, _4, 0))
+		loadRef(b, _r4, b.jump.cond)
+		b.jumpInst = b.inst(asm.beq(_r0, _r4, 0))
 	} else if b.jump.typ == jmpIf {
-		loadRef(b, _4, b.jump.cond)
-		b.jumpInst = b.inst(asm.bne(_0, _4, 0))
+		loadRef(b, _r4, b.jump.cond)
+		b.jumpInst = b.inst(asm.bne(_r0, _r4, 0))
 	} else {
 		panic("unknown jump")
 	}

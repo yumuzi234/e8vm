@@ -8,11 +8,11 @@ import (
 // go lint (stupidly) forbids import with .
 // so we will just copy the consts in here
 const (
-	_0   = A.R0
-	_1   = A.R1
-	_2   = A.R2
-	_3   = A.R3
-	_4   = A.R4
+	_r0  = A.R0
+	_r1  = A.R1
+	_r2  = A.R2
+	_r3  = A.R3
+	_r4  = A.R4
 	_ret = A.RET
 	_sp  = A.SP
 	_pc  = A.PC

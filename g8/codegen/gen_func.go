@@ -160,10 +160,10 @@ func genFunc(g *gener, f *Func) {
 			b.jumpInst.inst = asm.j(delta)
 		case jmpIfNot:
 			deltaCheck(delta)
-			b.jumpInst.inst = asm.beq(_0, _4, delta)
+			b.jumpInst.inst = asm.beq(_r0, _r4, delta)
 		case jmpIf:
 			deltaCheck(delta)
-			b.jumpInst.inst = asm.bne(_0, _4, delta)
+			b.jumpInst.inst = asm.bne(_r0, _r4, delta)
 		default:
 			panic("bug")
 		}

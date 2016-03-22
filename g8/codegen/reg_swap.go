@@ -129,7 +129,7 @@ func loadUint32(b *Block, reg uint32, v uint32) {
 		b.inst(asm.lui(reg, high))
 		b.inst(asm.ori(reg, reg, v))
 	} else {
-		b.inst(asm.ori(reg, _0, v))
+		b.inst(asm.ori(reg, _r0, v))
 	}
 }
 
@@ -141,11 +141,11 @@ func loadRef(b *Block, reg uint32, r Ref) {
 		loadUint32(b, reg, r.v)
 	case *byt:
 		if r.u8 {
-			b.inst(asm.ori(reg, _0, uint32(r.v)))
+			b.inst(asm.ori(reg, _r0, uint32(r.v)))
 		} else {
 			bt := int8(r.v)
 			if bt >= 0 {
-				b.inst(asm.ori(reg, _0, uint32(bt)))
+				b.inst(asm.ori(reg, _r0, uint32(bt)))
 			} else {
 				b.inst(asm.lui(reg, 0xffff))
 				b.inst(asm.ori(reg, reg, uint32(int32(bt))&0xffff))

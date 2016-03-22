@@ -26,16 +26,16 @@ func copyRef(g *gener, b *Block, dest, src Ref, isArg bool) {
 	case size == 0:
 		return
 	case canViaReg(dest) && canViaReg(src):
-		loadRef(b, _4, src)
+		loadRef(b, _r4, src)
 		if !isArg {
-			saveRef(b, _4, dest, _1)
+			saveRef(b, _r4, dest, _r1)
 		} else {
-			saveArg(b, _4, dest.(*Var))
+			saveArg(b, _r4, dest.(*Var))
 		}
 	default:
-		loadDestAddr(_1)
-		loadAddr(b, _2, src)
-		loadUint32(b, _3, uint32(size))
+		loadDestAddr(_r1)
+		loadAddr(b, _r2, src)
+		loadUint32(b, _r3, uint32(size))
 
 		jal := b.inst(asm.jal(0))
 		f := g.memCopy
