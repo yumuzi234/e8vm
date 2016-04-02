@@ -5,20 +5,6 @@ import (
 	"strings"
 )
 
-func spacePrefix(s string) string {
-	ret := ""
-	for _, c := range s {
-		if c == ' ' {
-			ret += " "
-		} else if c == '\t' {
-			ret += "    "
-		} else {
-			break
-		}
-	}
-	return ret
-}
-
 func indentWithSpace(s string) string {
 	ret := ""
 	for i, c := range s {
@@ -32,6 +18,24 @@ func indentWithSpace(s string) string {
 	}
 
 	return ret
+}
+
+func allSpaces(s string) bool {
+	for _, r := range s {
+		if r != ' ' {
+			return false
+		}
+	}
+	return true
+}
+
+func indentCount(s string) int {
+	for i, r := range s {
+		if r != ' ' {
+			return i
+		}
+	}
+	return len(s)
 }
 
 func formatComment(c string) string {
@@ -51,30 +55,44 @@ func formatComment(c string) string {
 	lines := strings.Split(body, "\n")
 	nline := len(lines)
 
+	// convert indent into space, make blank lines empty.
 	for i := range lines {
 		if i == 0 {
 			continue
 		}
-		lines[i] = indentWithSpace(lines[i])
+		line := lines[i]
+		line = indentWithSpace(line)
+		if allSpaces(line) {
+			line = ""
+		}
+		lines[i] = line
 	}
 
-	prefix := ""
 	if nline > 1 {
-		prefix = spacePrefix(lines[1])
-	}
-	for i := range lines {
-		lines[i] = strings.TrimPrefix(lines[i], prefix)
-	}
+		minIndentCount := indentCount(lines[1])
+		for i, line := range lines {
+			if i <= 1 {
+				continue
+			}
+			if line == "" {
+				continue
+			}
 
-	for i := range lines {
-		if i == 0 {
-			continue
+			n := indentCount(line)
+			if n < minIndentCount {
+				minIndentCount = n
+			}
 		}
-		if i == nline-1 {
-			continue
-		}
-		if strings.TrimSpace(lines[i]) == "" {
-			lines[i] = ""
+
+		for i := range lines {
+			if i == 0 {
+				continue
+			}
+			if lines[i] == "" {
+				continue
+			}
+			// trim prefix of minIndent
+			lines[i] = lines[i][minIndentCount:]
 		}
 	}
 
