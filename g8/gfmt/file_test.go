@@ -9,7 +9,7 @@ import (
 )
 
 func formatProg(s string) string {
-	s = fmt8.Box(s)
+	s = fmt8.BoxSpaceIndent(s)
 	if strings.HasPrefix(s, "\n") {
 		s = s[1:]
 	}
