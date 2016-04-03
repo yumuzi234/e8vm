@@ -39,6 +39,46 @@ func (f *formatter) printStr(s string) { fmt.Fprint(f.Printer, s) }
 func (f *formatter) printSpace()       { f.printStr(" ") }
 func (f *formatter) printEndl()        { fmt.Fprintln(f.Printer) }
 
+func (f *formatter) peek() *lex8.Token {
+	for {
+		cur := f.toks.peek()
+		if cur == nil {
+			return nil
+		}
+		if cur.Type == parse.Semi {
+			f.toks.shift()
+			continue
+		}
+		return cur
+	}
+}
+
+func (f *formatter) cue() *lex8.Token {
+	for {
+		cur := f.peek()
+		if cur == nil {
+			panic(fmt.Errorf("unmatched token: %v", cur))
+		}
+
+		if cur.Type == lex8.Comment {
+			f.printStr(formatComment(cur.Lit))
+			f.toks.shift()
+			f.printEndlPlus(true, false)
+			continue
+		}
+
+		return cur
+	}
+}
+
+func (f *formatter) expect(token *lex8.Token) {
+	cur := f.cue()
+	if cur != token {
+		panic(fmt.Errorf("unmatched token %v, got %v", token, cur))
+	}
+	f.toks.shift()
+}
+
 // printEndlPlus prints one endline plus some number of empty lines if
 // possible. This number is usually 0 or 1 depending on the line diffs between
 // last token and next, but can be overriden by minEmptyLines.
@@ -57,39 +97,10 @@ func (f *formatter) printEndlPlus(plus, paraGap bool) {
 	}
 }
 
-func (f *formatter) printToken(token *lex8.Token) {
-	f.cueToken(token)
-	t := f.shift()
-	if t != token {
-		panic("bug")
-	}
-
+func (f *formatter) printToken(t *lex8.Token) {
+	f.expect(t)
 	f.printStr(t.Lit)
 	f.printSameLineComments(t.Pos.Line)
-}
-
-func (f *formatter) cueToken(token *lex8.Token) {
-	for {
-		t := f.peek()
-		if t == nil {
-			panic(fmt.Errorf("unmatched token: %v", token))
-		}
-
-		if t.Type == lex8.Comment {
-			f.printStr(formatComment(t.Lit))
-			f.toks.shift()
-			f.printEndlPlus(true, false)
-			continue
-		}
-
-		if t != token {
-			panic(fmt.Errorf(
-				"unmatched token: got %v, expected %v", t, token,
-			))
-		}
-
-		return
-	}
 }
 
 func (f *formatter) printSameLineComments(line int) {
@@ -109,58 +120,14 @@ func (f *formatter) printSameLineComments(line int) {
 	}
 }
 
-func (f *formatter) expect(token *lex8.Token) {
-	t := f.shift()
-	if t == nil {
-		panic(fmt.Errorf("unmatched token: %v", token))
-	}
-	if t != token {
-		panic(fmt.Errorf("unmatched token: got %v, expected %v", t, token))
-	}
-}
-
-func (f *formatter) peek() *lex8.Token {
-	for {
-		cur := f.toks.peek()
-		if cur == nil {
-			return nil
-		}
-		if cur.Type == parse.Semi {
-			f.toks.shift()
-			continue
-		}
-		return cur
-	}
-}
-
-func (f *formatter) shift() *lex8.Token {
-	for {
-		ret := f.toks.shift()
-		if ret == nil {
-			return nil
-		}
-		if ret.Type == parse.Semi {
-			continue
-		}
-
-		if ret.Type == lex8.Comment {
-			f.printStr(formatComment(ret.Lit))
-			f.printEndlPlus(true, false)
-			continue
-		}
-
-		return ret
-	}
-}
-
 func (f *formatter) finish() {
-	tok := f.shift()
+	tok := f.cue()
 	if tok.Type != lex8.EOF {
 		panic(fmt.Errorf("unmatched token: got %v, expected EOF", tok))
 	}
+	f.toks.shift()
 
-	tok = f.shift()
-	if tok != nil {
-		panic("unfinished tokens")
+	if f.toks.peek() != nil {
+		panic(fmt.Errorf("unfinished tokens: %v", tok))
 	}
 }
