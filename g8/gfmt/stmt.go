@@ -17,8 +17,9 @@ func printStmt(f *formatter, stmt ast.Stmt) {
 			f.Tab()
 			for _, s := range stmt.Stmts {
 				printStmt(f, s)
-				f.printEndlPlus(true, 0)
+				f.printEndlPlus(true, false)
 			}
+			f.cueTo(stmt.Rbrace)
 			f.ShiftTab()
 			f.printToken(stmt.Rbrace)
 		} else {

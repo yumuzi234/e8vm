@@ -1,98 +1,34 @@
 package gfmt
 
 import (
-	"strings"
 	"testing"
+
+	"strings"
+
+	"e8vm.io/e8vm/fmt8"
 )
 
-func allHasPrefix(lines []string, prefix string) bool {
-	for _, line := range lines {
-		if strings.TrimSpace(line) == "" {
-			continue
-		}
-		if !strings.HasPrefix(line, prefix) {
-			return false
-		}
-	}
-	return true
-}
-
-func tabPrefix(line string) string {
-	ret := ""
-	for _, c := range line {
-		if c == '\t' {
-			ret += "\t"
-		} else {
-			return ret
-		}
-	}
-	return ret
-}
-
-func trimBlanks(lines []string) []string {
-	// Remove the first blank line
-	if len(lines) > 0 && strings.TrimSpace(lines[0]) == "" {
-		lines = lines[1:]
-	}
-	nline := len(lines)
-	if len(lines) > 0 && strings.TrimSpace(lines[nline-1]) == "" {
-		lines = lines[:nline-1]
-	}
-	return lines
-}
-
-func tabPrefixToSpace(line string) string {
-	prefix := ""
-	for i, c := range line {
-		if c == '\t' {
-			prefix += "    "
-		} else {
-			return prefix + line[i:]
-		}
-	}
-	return line
-}
-
 func formatProg(s string) string {
-	lines := strings.Split(s, "\n")
-	lines = trimBlanks(lines)
-
-	if len(lines) == 0 {
-		return ""
+	s = fmt8.BoxSpaceIndent(s)
+	if strings.HasPrefix(s, "\n") {
+		s = s[1:]
 	}
-
-	first := lines[0]
-	prefix := tabPrefix(first)
-	if allHasPrefix(lines, prefix) {
-		for i := range lines {
-			line := lines[i]
-			if strings.TrimSpace(line) == "" {
-				line = ""
-			} else {
-				line = strings.TrimPrefix(line, prefix)
-				line = tabPrefixToSpace(line)
-			}
-			lines[i] = line
-		}
+	if !strings.HasSuffix(s, "\n") {
+		s += "\n"
 	}
-
-	ret := strings.Join(lines, "\n")
-	if !strings.HasSuffix(ret, "\n") {
-		ret += "\n"
-	}
-	return ret
+	return s
 }
 
 func TestFormatFile(t *testing.T) {
 	gfmt := func(s string) string {
-		out, errs := Format("a.g", s)
+		out, errs := File("a.g", []byte(s))
 		if len(errs) > 0 {
 			t.Errorf("parsing %q failed with errors", s)
 			for _, err := range errs {
 				t.Log(err)
 			}
 		}
-		return out
+		return string(out)
 	}
 
 	o := func(s, exp string) {
@@ -161,16 +97,15 @@ func TestFormatFile(t *testing.T) {
 			g()
 		}
 	`)
-	/*
-		o(`
-			func main() {
-			/* some comment /
-			}
-		`, `
-			func main() {
-				/* some comment /
-			}
-		`)
-	*/
-
+	o(`
+		func main() {
+			f()
+		/* some comment */
+		}
+	`, `
+		func main() {
+			f()
+			/* some comment */
+		}
+	`)
 }

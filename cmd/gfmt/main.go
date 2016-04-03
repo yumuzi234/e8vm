@@ -8,45 +8,9 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"strings"
 
 	"e8vm.io/e8vm/g8/gfmt"
-	"e8vm.io/e8vm/g8/parse"
 )
-
-const tabExpand = 4
-
-func countIndent(line string) int {
-	ret := 0
-
-loop:
-	for _, r := range line {
-		switch r {
-		case ' ':
-			ret++
-		case '\t':
-			ret += tabExpand
-		default:
-			break loop
-		}
-	}
-
-	return ret
-}
-
-func fmtLine(line string) string {
-	ret := new(bytes.Buffer)
-
-	indent := countIndent(line)
-	for i := 0; i < indent; i++ {
-		ret.WriteRune(' ')
-	}
-
-	ret.WriteString(strings.TrimLeft(line, " \t"))
-
-	retLine := ret.String()
-	return retLine
-}
 
 var tempDir = os.TempDir()
 
@@ -56,14 +20,15 @@ func fmtFile(fname string) (bool, error) {
 		return false, e
 	}
 
-	f, rec, es := parse.File(fname, bytes.NewBuffer(input), false)
-	if es != nil {
-		return false, fmt.Errorf("%d errors found at parsing", len(es))
+	out, errs := gfmt.File(fname, input)
+	if errs != nil {
+		for _, err := range errs {
+			fmt.Println(err)
+		}
+		return false, fmt.Errorf("%d errors found at parsing", len(errs))
 	}
 
-	var output bytes.Buffer
-	gfmt.FprintFile(&output, f, rec)
-	if bytes.Compare(input, output.Bytes()) == 0 {
+	if bytes.Compare(input, out) == 0 {
 		return false, nil
 	}
 
@@ -71,7 +36,7 @@ func fmtFile(fname string) (bool, error) {
 	if e != nil {
 		return false, e
 	}
-	if _, e := tempfile.Write(output.Bytes()); e != nil {
+	if _, e := tempfile.Write(out); e != nil {
 		return false, e
 	}
 	if e := tempfile.Close(); e != nil {
