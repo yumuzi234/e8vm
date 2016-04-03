@@ -13,7 +13,7 @@ func printStruct(f *formatter, d *ast.Struct) {
 		printIdents(f, field.Idents)
 		f.printSpace()
 		f.printExprs(field.Type)
-		f.printEndlPlus(i < len(d.Fields)-1, 0)
+		f.printEndlPlus(i < len(d.Fields)-1, false)
 	}
 
 	if len(d.Methods) > 0 {
@@ -21,7 +21,7 @@ func printStruct(f *formatter, d *ast.Struct) {
 	}
 	for i, method := range d.Methods {
 		printFunc(f, method)
-		f.printEndlPlus(i < len(d.Methods)-1, 0)
+		f.printEndlPlus(i < len(d.Methods)-1, false)
 	}
 
 	f.ShiftTab()

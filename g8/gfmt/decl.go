@@ -34,7 +34,7 @@ func printVarDecls(f *formatter, d *ast.VarDecls) {
 		f.Tab()
 		for i, decl := range d.Decls {
 			printVarDecl(f, decl)
-			f.printEndlPlus(i < len(d.Decls)-1, 0)
+			f.printEndlPlus(i < len(d.Decls)-1, false)
 		}
 		f.ShiftTab()
 		f.printToken(d.Rparen)
@@ -62,7 +62,7 @@ func printConstDecls(f *formatter, d *ast.ConstDecls) {
 		f.Tab()
 		for i, decl := range d.Decls {
 			printConstDecl(f, decl)
-			f.printEndlPlus(i < len(d.Decls)-1, 0)
+			f.printEndlPlus(i < len(d.Decls)-1, false)
 		}
 		f.ShiftTab()
 		f.printToken(d.Rparen)
@@ -84,7 +84,7 @@ func printImportDecls(f *formatter, d *ast.ImportDecls) {
 	// TODO: sort imports in groups
 	for i, decl := range d.Decls {
 		printImportDecl(f, decl)
-		f.printEndlPlus(i < len(d.Decls)-1, 0)
+		f.printEndlPlus(i < len(d.Decls)-1, false)
 	}
 	f.ShiftTab()
 	f.printToken(d.Rparen)
