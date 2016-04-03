@@ -73,16 +73,16 @@ func TestFormatFile(t *testing.T) {
 			b := a[:]
 		}
 	`)
-	/*
-		o(`
-			func main() {
-			/* some comment /
-			}
-		`, `
-			func main() {
-				/* some comment /
-			}
-		`)
-	*/
+	o(`
+		func main() {
+			f()
+		/* some comment */
+		}
+	`, `
+		func main() {
+			f()
+			/* some comment */
+		}
+	`)
 
 }

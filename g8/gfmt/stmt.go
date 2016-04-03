@@ -19,6 +19,7 @@ func printStmt(f *formatter, stmt ast.Stmt) {
 				printStmt(f, s)
 				f.printEndlPlus(true, false)
 			}
+			f.cueTo(stmt.Rbrace)
 			f.ShiftTab()
 			f.printToken(stmt.Rbrace)
 		} else {

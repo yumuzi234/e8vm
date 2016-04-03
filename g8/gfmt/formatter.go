@@ -71,11 +71,15 @@ func (f *formatter) cue() *lex8.Token {
 	}
 }
 
-func (f *formatter) expect(token *lex8.Token) {
+func (f *formatter) cueTo(token *lex8.Token) {
 	cur := f.cue()
 	if cur != token {
 		panic(fmt.Errorf("unmatched token %v, got %v", token, cur))
 	}
+}
+
+func (f *formatter) expect(token *lex8.Token) {
+	f.cueTo(token)
 	f.toks.shift()
 }
 
