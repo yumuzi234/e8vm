@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"io"
 
-	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/parse"
 	"e8vm.io/e8vm/lex8"
 )
@@ -15,26 +14,25 @@ func makeFormatter(out io.Writer, tokens []*lex8.Token) *formatter {
 	return ret
 }
 
-// FprintStmts prints the statements out to a writer
-func FprintStmts(out io.Writer, stmts []ast.Stmt) {
-	f := makeFormatter(out, nil) // TODO(h8liu): nil tokens, this will break
-	printStmt(f, stmts)
-}
+// FileTo formats a g language file and output the formatted
+// program via a writer.
+func FileTo(fname string, file []byte, out io.Writer) []*lex8.Error {
+	fast, rec, errs := parse.File(fname, bytes.NewBuffer(file), false)
+	if errs != nil {
+		return errs
+	}
 
-// FprintFile prints a file
-func FprintFile(out io.Writer, file *ast.File, rec *lex8.Recorder) {
 	f := makeFormatter(out, rec.Tokens())
-	printFile(f, file)
+	printFile(f, fast)
+	return nil
 }
 
-// File formats a g language file.
+// File formats a g language file in bytes.
 func File(fname string, file []byte) ([]byte, []*lex8.Error) {
-	f, rec, errs := parse.File(fname, bytes.NewBuffer(file), false)
+	out := new(bytes.Buffer)
+	errs := FileTo(fname, file, out)
 	if errs != nil {
 		return nil, errs
 	}
-
-	out := new(bytes.Buffer)
-	FprintFile(out, f, rec)
 	return out.Bytes(), nil
 }

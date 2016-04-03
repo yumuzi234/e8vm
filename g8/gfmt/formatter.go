@@ -32,24 +32,14 @@ func (f *formatter) printExprs(args ...interface{}) {
 func newFormatter(out io.Writer, tokens []*lex8.Token) *formatter {
 	p := fmt8.NewPrinter(out)
 	return &formatter{
-		Printer:   p,
-		tokens:    tokens,
-		lastToken: nil,
-		offset:    0,
+		Printer: p,
+		tokens:  tokens,
 	}
 }
 
-func (f *formatter) printStr(s string) {
-	fmt.Fprint(f.Printer, s)
-}
-
-func (f *formatter) printSpace() {
-	f.printStr(" ")
-}
-
-func (f *formatter) printEndl() {
-	fmt.Fprintln(f.Printer)
-}
+func (f *formatter) printStr(s string) { fmt.Fprint(f.Printer, s) }
+func (f *formatter) printSpace()       { f.printStr(" ") }
+func (f *formatter) printEndl()        { fmt.Fprintln(f.Printer) }
 
 // printEndlPlus prints one endline plus some number of empty lines if
 // possible. This number is usually 0 or 1 depending on the line diffs between
@@ -75,20 +65,31 @@ func (f *formatter) printEndlPlus(plus bool, minEmptyLines int) {
 }
 
 func (f *formatter) printToken(token *lex8.Token) {
+	f.cueToken(token)
+	f.printStr(token.Lit)
+	f.printSameLineComments(token.Pos.Line)
+}
+
+func (f *formatter) cueToken(token *lex8.Token) {
 	if f.tokens != nil {
 		f.expect(token)
 	}
-	f.printStr(token.Lit)
+}
 
-	// Dump same line comments.
-	for f.peek() != nil {
-		next := f.peek()
-		if next.Type != lex8.Comment || next.Pos.Line != token.Pos.Line {
+func (f *formatter) printSameLineComments(line int) {
+	for {
+		tok := f.peek()
+		if tok == nil {
+			break
+		}
+
+		if tok.Type != lex8.Comment || tok.Pos.Line != line {
 			return
 		}
+
 		f.printSpace()
-		lit := next.Lit
-		if next.Type == lex8.Comment {
+		lit := tok.Lit
+		if tok.Type == lex8.Comment {
 			lit = formatComment(lit)
 		}
 		f.printStr(lit)
@@ -111,7 +112,7 @@ func (f *formatter) peek() *lex8.Token {
 		if token := f.tokens[f.offset]; token.Type != parse.Semi {
 			return token
 		}
-		f.offset++ // ignore semi-s
+		f.offset++ // ignore semi's
 	}
 	return nil
 }
@@ -121,7 +122,7 @@ func (f *formatter) next() *lex8.Token {
 		f.lastToken = f.tokens[f.offset]
 		f.offset++
 		if f.lastToken.Type == parse.Semi {
-			continue // ignore semi-s
+			continue // ignore semi's
 		}
 		if f.lastToken.Type == lex8.Comment {
 			lit := formatComment(f.lastToken.Lit)

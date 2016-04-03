@@ -21,14 +21,14 @@ func formatProg(s string) string {
 
 func TestFormatFile(t *testing.T) {
 	gfmt := func(s string) string {
-		out, errs := Format("a.g", s)
+		out, errs := File("a.g", []byte(s))
 		if len(errs) > 0 {
 			t.Errorf("parsing %q failed with errors", s)
 			for _, err := range errs {
 				t.Log(err)
 			}
 		}
-		return out
+		return string(out)
 	}
 
 	o := func(s, exp string) {

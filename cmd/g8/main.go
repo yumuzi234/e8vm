@@ -11,8 +11,6 @@ import (
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/dasm8"
 	"e8vm.io/e8vm/g8"
-	"e8vm.io/e8vm/g8/gfmt"
-	"e8vm.io/e8vm/g8/parse"
 	"e8vm.io/e8vm/lex8"
 )
 
@@ -35,7 +33,6 @@ func printErrs(es []*lex8.Error) {
 
 var (
 	bare       = flag.Bool("bare", false, "parse as bare function")
-	parseAST   = flag.Bool("parse", false, "parse only and print out the ast")
 	ir         = flag.Bool("ir", false, "prints out the IR")
 	dasm       = flag.Bool("d", false, "deassemble the image")
 	ncycle     = flag.Int("n", 100000, "maximum number of cycles")
@@ -58,29 +55,17 @@ func main() {
 	}
 
 	if *bare {
-		if *parseAST {
-			stmts, es := parse.Stmts(fname, bytes.NewBuffer(input))
-			printErrs(es)
-			gfmt.FprintStmts(os.Stdout, stmts)
-		} else {
-			bs, es, irLog := g8.CompileBareFunc(fname, string(input))
-			printErrs(es)
-			printIRLog(irLog, *ir)
-			runImage(bs, *dasm, *ncycle)
-		}
+		bs, es, irLog := g8.CompileBareFunc(fname, string(input))
+		printErrs(es)
+		printIRLog(irLog, *ir)
+		runImage(bs, *dasm, *ncycle)
 	} else {
-		if *parseAST {
-			f, rec, es := parse.File(fname, bytes.NewBuffer(input), true)
-			printErrs(es)
-			gfmt.FprintFile(os.Stdout, f, rec)
-		} else {
-			bs, es, irLog := g8.CompileAndTestSingle(
-				fname, string(input), *golike, *ncycleTest,
-			)
-			printErrs(es)
-			printIRLog(irLog, *ir)
-			runImage(bs, *dasm, *ncycle)
-		}
+		bs, es, irLog := g8.CompileAndTestSingle(
+			fname, string(input), *golike, *ncycleTest,
+		)
+		printErrs(es)
+		printIRLog(irLog, *ir)
+		runImage(bs, *dasm, *ncycle)
 	}
 }
 
