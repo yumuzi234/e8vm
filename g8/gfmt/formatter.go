@@ -3,6 +3,7 @@ package gfmt
 import (
 	"fmt"
 	"io"
+	"strings"
 
 	"e8vm.io/e8vm/fmt8"
 	"e8vm.io/e8vm/g8/ast"
@@ -136,7 +137,10 @@ func (f *formatter) printSameLineComments(line int) {
 			return
 		}
 
-		f.printSpace()
+		if strings.HasPrefix(tok.Lit, "//") {
+			f.printSpace()
+		}
+
 		f.printStr(formatComment(tok.Lit))
 		f.toks.shift()
 	}

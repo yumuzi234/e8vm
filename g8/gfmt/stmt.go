@@ -2,14 +2,19 @@ package gfmt
 
 import (
 	"e8vm.io/e8vm/g8/ast"
+	"e8vm.io/e8vm/lex8"
 )
+
+func sameLine(t1, t2 *lex8.Token) bool {
+	return t1.Pos.Line == t2.Pos.Line
+}
 
 func printStmt(f *formatter, stmt ast.Stmt) {
 	switch stmt := stmt.(type) {
 	case *ast.EmptyStmt:
 		// empty, print nothing
 	case *ast.Block:
-		if len(stmt.Stmts) > 0 {
+		if !sameLine(stmt.Lbrace, stmt.Rbrace) || len(stmt.Stmts) > 0 {
 			f.printToken(stmt.Lbrace)
 			f.printEndl()
 			f.Tab()

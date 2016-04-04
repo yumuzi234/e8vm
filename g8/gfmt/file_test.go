@@ -48,7 +48,8 @@ func TestFormatFile(t *testing.T) {
 	o("func main  () {  }", "func main() {}\n")     // remove spaces
 	o("\n\nfunc main  () {  }", "func main() {}\n") // remove lines
 	o("func main(){}", "func main() {}\n")          // add spaces
-	o("func main() {\n}", "func main() {}\n")       // merge oneliner
+	o("func main() {\n}", "func main() {\n}\n")     // do not auto merge one liner
+	o("func main() {\n  }", "func main() {\n}\n")   // do not auto merge one liner
 	o("// some comment", "// some comment\n")       // comment
 	o("/* some comment */", "/* some comment */")   // block comment
 
@@ -61,12 +62,17 @@ func TestFormatFile(t *testing.T) {
 	// Removes redundant line breaks in block.
 	o("func main() { var a [5]int;\n\n b := a[:] }",
 		"func main() {\n    var a [5]int\n\n    b := a[:]\n}\n")
+	o("func main() {/*something*/}", "func main() {/*something*/}\n")
+	o("func main() { /*something*/ }", "func main() {/*something*/}\n")
+	o("func main() { // something\n}", "func main() { // something\n}\n")
+	o("func main() {\n// something\n}",
+		"func main() {\n    // something\n}\n")
+
 	o(`
 		func main() { var a [5]int;
 
 			b := a[:]
-		}
-	`, `
+		}`, `
 		func main() {
 			var a [5]int
 
@@ -76,8 +82,7 @@ func TestFormatFile(t *testing.T) {
 	o(`
 		func main() {
 			f(); g()
-		}
-	`, `
+		}`, `
 		func main() {
 			f()
 			g()
@@ -89,8 +94,7 @@ func TestFormatFile(t *testing.T) {
 
 			
 			g()
-		}
-	`, `
+		}`, `
 		func main() {
 			f()
 
@@ -101,8 +105,17 @@ func TestFormatFile(t *testing.T) {
 		func main() {
 			f()
 		/* some comment */
+		}`, `
+		func main() {
+			f()
+			/* some comment */
 		}
-	`, `
+	`)
+	o(`
+		func main() {
+			f()
+		/* some comment */
+		}`, `
 		func main() {
 			f()
 			/* some comment */
