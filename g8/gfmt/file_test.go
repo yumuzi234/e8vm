@@ -67,7 +67,6 @@ func TestFormatFile(t *testing.T) {
 	o("func main() { // something\n}", "func main() { // something\n}\n")
 	o("func main() {\n// something\n}",
 		"func main() {\n    // something\n}\n")
-
 	o(`
 		func main() { var a [5]int;
 
@@ -121,4 +120,22 @@ func TestFormatFile(t *testing.T) {
 			/* some comment */
 		}
 	`)
+
+	/*
+		o(`
+			func main() {
+				f(
+					3, // arg1
+					4, // arg2
+				)
+			}
+		`, `
+			func main() {
+				f(
+					3, // arg1
+					4, // arg2
+				)
+			}
+		`)
+	*/
 }
