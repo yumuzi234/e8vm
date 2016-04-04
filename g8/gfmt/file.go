@@ -1,8 +1,6 @@
 package gfmt
 
 import (
-	"fmt"
-
 	"e8vm.io/e8vm/g8/ast"
 )
 
@@ -17,7 +15,7 @@ func printTopDecl(f *formatter, d ast.Decl) {
 	case *ast.ConstDecls:
 		printConstDecls(f, d)
 	default:
-		panic(fmt.Errorf("invalid top-level declaration type: %T", d))
+		f.errorf(nil, "invalid top-level declaration type: %T", d)
 	}
 }
 

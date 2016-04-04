@@ -1,8 +1,6 @@
 package gfmt
 
 import (
-	"fmt"
-
 	"e8vm.io/e8vm/g8/ast"
 )
 
@@ -90,6 +88,6 @@ func printStmt(f *formatter, stmt ast.Stmt) {
 	case *ast.ConstDecls:
 		printConstDecls(f, stmt)
 	default:
-		panic(fmt.Errorf("invalid statement type: %T", stmt))
+		f.errorf(nil, "invalid statement type: %T", stmt)
 	}
 }

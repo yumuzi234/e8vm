@@ -24,7 +24,7 @@ func FileTo(fname string, file []byte, out io.Writer) []*lex8.Error {
 
 	f := makeFormatter(out, rec.Tokens())
 	printFile(f, fast)
-	return nil
+	return f.errs()
 }
 
 // File formats a g language file in bytes.

@@ -1,8 +1,6 @@
 package gfmt
 
 import (
-	"fmt"
-
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/lex8"
 )
@@ -77,6 +75,6 @@ func printExpr(f *formatter, expr ast.Expr) {
 			f.printExprs(expr.Lbrace, expr.Rbrace)
 		}
 	default:
-		panic(fmt.Errorf("invalid expression type: %T", expr))
+		f.errorf(nil, "invalid expression type: %T", expr)
 	}
 }

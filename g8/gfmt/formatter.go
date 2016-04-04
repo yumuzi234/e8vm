@@ -13,8 +13,26 @@ import (
 type formatter struct {
 	*fmt8.Printer
 	toks *tokens
+	err  *lex8.Error
 
 	exprFunc func(f *formatter, expr ast.Expr)
+}
+
+func (f *formatter) errs() []*lex8.Error {
+	if f.err != nil {
+		return []*lex8.Error{f.err}
+	}
+	return nil
+}
+
+func (f *formatter) errorf(pos *lex8.Pos, s string, args ...interface{}) {
+	if f.err != nil {
+		return
+	}
+	f.err = &lex8.Error{
+		Pos: pos,
+		Err: fmt.Errorf(s, args...),
+	}
 }
 
 func (f *formatter) printExpr(expr ast.Expr) {
@@ -57,7 +75,7 @@ func (f *formatter) cue() *lex8.Token {
 	for {
 		cur := f.peek()
 		if cur == nil {
-			panic(fmt.Errorf("unmatched token: %v", cur))
+			return nil
 		}
 
 		if cur.Type == lex8.Comment {
@@ -74,7 +92,7 @@ func (f *formatter) cue() *lex8.Token {
 func (f *formatter) cueTo(token *lex8.Token) {
 	cur := f.cue()
 	if cur != token {
-		panic(fmt.Errorf("unmatched token %v, got %v", token, cur))
+		f.errorf(token.Pos, "unmatched token %v, got %v", token, cur)
 	}
 }
 
@@ -127,11 +145,12 @@ func (f *formatter) printSameLineComments(line int) {
 func (f *formatter) finish() {
 	tok := f.cue()
 	if tok.Type != lex8.EOF {
-		panic(fmt.Errorf("unmatched token: got %v, expected EOF", tok))
+		f.errorf(tok.Pos, "unmatched token: got %v, expected EOF", tok)
+		return
 	}
 	f.toks.shift()
 
 	if f.toks.peek() != nil {
-		panic(fmt.Errorf("unfinished tokens: %v", tok))
+		f.errorf(tok.Pos, "unfinished tokens: %v", tok)
 	}
 }
