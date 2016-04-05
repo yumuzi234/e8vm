@@ -120,20 +120,34 @@ func TestFormatFile(t *testing.T) {
 			/* some comment */
 		}
 	`)
+	/*
+		o(`
+			func main() {
+				f(
+				1, // arg1
+				)
+			}`, `
+			func main() {
+				f(
+					1, // arg1
+				)
+			}
+		`)
+	*/
 
 	/*
 		o(`
 			func main() {
 				f(
-					3, // arg1
-					4, // arg2
+					3, /* arg1 /
+					4, /* arg2 /
 				)
 			}
 		`, `
 			func main() {
 				f(
-					3, // arg1
-					4, // arg2
+					3, /* arg1 /
+					4, /* arg2 /
 				)
 			}
 		`)
