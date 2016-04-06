@@ -113,6 +113,7 @@ func (f *formatter) printEndlPlus(plus, paraGap bool) {
 
 	if paraGap {
 		f.printEndl()
+		return
 	}
 
 	if f.toks.lineGap() >= 2 {
