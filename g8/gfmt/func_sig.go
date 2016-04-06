@@ -7,9 +7,6 @@ import (
 func printParaList(f *formatter, lst *ast.ParaList) {
 	f.printToken(lst.Lparen)
 	for i, para := range lst.Paras {
-		if i > 0 {
-			f.printExprs(lst.Commas[i-1], " ")
-		}
 		if para.Ident != nil {
 			f.printToken(para.Ident)
 			if para.Type != nil {
@@ -19,6 +16,9 @@ func printParaList(f *formatter, lst *ast.ParaList) {
 
 		if para.Type != nil {
 			f.printExpr(para.Type)
+		}
+		if i < len(lst.Commas) {
+			f.printExprs(lst.Commas[i], " ")
 		}
 	}
 	f.printToken(lst.Rparen)
