@@ -59,7 +59,9 @@ func printStmt(f *formatter, stmt ast.Stmt) {
 				printExpr(f, stmt.Cond)
 			}
 			f.printStr("; ")
-			printStmt(f, stmt.Iter)
+			if stmt.Iter != nil {
+				printStmt(f, stmt.Iter)
+			}
 			f.printSpace()
 		} else if stmt.Cond != nil {
 			f.printExprs(stmt.Cond, " ")
