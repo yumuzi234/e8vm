@@ -25,10 +25,10 @@ func printExpr(f *formatter, expr ast.Expr) {
 		f.printExprs(expr.Lparen, expr.Expr, expr.Rparen)
 	case *ast.ExprList:
 		for i, e := range expr.Exprs {
-			if i != 0 {
-				f.printExprs(expr.Commas[i-1], " ")
-			}
 			printExpr(f, e)
+			if i < len(expr.Commas) {
+				f.printExprs(expr.Commas[i], " ")
+			}
 		}
 	case *ast.CallExpr:
 		if expr.Args != nil {

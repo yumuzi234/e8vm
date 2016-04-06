@@ -126,6 +126,11 @@ func (f *formatter) printToken(t *lex8.Token) {
 	f.printSameLineComments(t.Pos.Line)
 }
 
+func (f *formatter) omitToken(t *lex8.Token) {
+	f.expect(t)
+	f.printSameLineComments(t.Pos.Line)
+}
+
 func (f *formatter) printSameLineComments(line int) {
 	for {
 		tok := f.peek()
