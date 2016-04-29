@@ -8,14 +8,27 @@ import (
 func parseStruct(p *parser) *ast.Struct {
 	var ret *ast.Struct
 	if !p.golike {
-		if !p.SeeKeyword("struct") {
-			panic("expect keyword struct")
-		}
-
-		ret = &ast.Struct{
-			Kw:     p.ExpectKeyword("struct"),
-			Name:   p.Expect(Ident),
-			Lbrace: p.ExpectOp("{"),
+		if p.SeeKeyword("struct") {
+			ret = &ast.Struct{
+				Kw:     p.ExpectKeyword("struct"),
+				Name:   p.Expect(Ident),
+				Lbrace: p.ExpectOp("{"),
+			}
+		} else if p.SeeLit(Ident, "type") {
+			ret = &ast.Struct{
+				Kw:      p.Expect(Ident),
+				Name:    p.Expect(Ident),
+				KwAfter: p.ExpectKeyword("struct"),
+				Lbrace:  p.ExpectOp("{"),
+			}
+			p.Errorf(
+				ret.Kw.Pos,
+				`G langauge uses "struct %s {}" `+
+					`rather than "type %s struct {}"`,
+				ret.Name.Lit, ret.Name.Lit,
+			)
+		} else {
+			panic("expect type or struct")
 		}
 	} else {
 		if !p.SeeKeyword("type") {

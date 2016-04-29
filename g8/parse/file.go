@@ -17,7 +17,9 @@ func parseTopDecl(p *parser) ast.Decl {
 		return parseVarDecls(p)
 	} else if p.SeeKeyword("func") {
 		return parseFunc(p)
-	} else if p.SeeKeyword("struct") && !p.golike {
+	} else if !p.golike && p.SeeKeyword("struct") {
+		return parseStruct(p)
+	} else if !p.golike && p.SeeLit(Ident, "type") {
 		return parseStruct(p)
 	} else if p.SeeKeyword("type") && p.golike {
 		return parseStruct(p)
@@ -47,6 +49,15 @@ func parseFile(p *parser) *ast.File {
 		}
 
 		ret.Package = &ast.PackageTitle{Kw: kw, Name: name, Semi: semi}
+	} else if p.SeeLit(Ident, "package") {
+		p.ErrorfHere("G language does not need the package clause")
+		p.ErrorfHere("please just remove it")
+		p.Next()
+		p.Expect(Ident)
+		p.ExpectSemi()
+		if p.InError() {
+			return ret
+		}
 	}
 
 	if p.SeeKeyword("import") {
