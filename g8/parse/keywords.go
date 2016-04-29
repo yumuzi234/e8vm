@@ -10,9 +10,7 @@ func keywordSet(s ...string) map[string]struct{} {
 
 var gKeywords = keywordSet(
 	"func", "var", "const", "struct", "import",
-	"if", "else", "for",
-	"break", "continue", "return",
-	"this",
+	"if", "else", "for", "break", "continue", "return",
 )
 
 var golikeKeywords = keywordSet(
