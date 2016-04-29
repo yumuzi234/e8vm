@@ -13,7 +13,7 @@ func parseFunc(p *parser) *ast.Func {
 	ret.Kw = p.Shift()
 
 	// function receiver
-	if p.golike && p.SeeOp("(") {
+	if p.SeeOp("(") {
 		recv := new(ast.FuncRecv)
 		recv.Lparen = p.Shift()
 		if !p.SeeOp("*") {

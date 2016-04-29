@@ -153,35 +153,37 @@ func TestSingleFile(t *testing.T) {
 	o("struct A { a *A }; func main() {}", "")
 	o(`struct A { b B }; struct B { a *A }; func main() {}`, "")
 
-	o(` struct A { func p(a int) { printInt(a) } }
+	o(` struct A {}; func (p *A) p(a int) { printInt(a) }
 		func main() { var a A; a.p(33) }`, "33")
-	o(` struct A { 
-			a int;
-			func s(a int) { this.a = a }
-			func p() { printInt(a) }
-		}
+	o(` struct A { a int }
+		func (p *A) s(a int) { p.a = a }
+		func (a *A) p() { printInt(a.a) }
 		func main() { var a A; a.s(33); a.p() }`, "33")
-	o(` struct A { 
-			a int;
-			func s(a int) { (*this).a = a }
-			func p() { printInt(a) }
-		}
+	o(` struct A { a int }
+		func (p *A) s(a int) { (*p).a = a }
+		func (a *A) p() { printInt(a.a) }
 		func main() { var a A; a.s(33); a.p() }`, "33")
-	o(` struct A { 
-			a int;
-			func p() { printInt(a) }
-			func q(a int) { printInt(a) }
-		}
+	o(` struct A { a int }
+		func (a *A) p() { printInt(a.a) }
+		func (p *A) q(a int) { printInt(a) }
 		func main() { var a A; a.p(); a.a=33; a.p(); a.q(78) }`, "0\n33\n78")
-	o(` struct A { func p() { printInt(33) }; func q() { p() } }
+	o(` struct A { }
+		func (a *A) p() { printInt(33) }
+		func (a *A) q() { a.p() }
 		func main() { var a A; a.q() }`, "33")
 
 	o("var a int; func main() { a := 33; printInt(a) }", "33")
-	o(`	struct A { func p() { printInt(33) } }; var a A
+	o(`	struct A { }
+		func (a *A) p() { printInt(33) }
+		var a A
 		func main() { a.p() }`, "33")
-	o(` struct A { a int; func p() { printInt(a) } }; var a A
+	o(` struct A { a int }
+		func (a *A) p() { printInt(a.a) }
+		var a A
 		func main() { a.a=33; a.p() }`, "33")
-	o(` struct A { a, b int; func p() { printInt(a+b) } }; var a A
+	o(` struct A { a, b int }
+		func (a *A) p() { printInt(a.a+a.b) }
+		var a A
 		func main() { a.a=30; a.b=3; a.p() }`, "33")
 	o(` var ( a []int; s [2]int )
 		func main() { a=s[:]; s[1]=33; printInt(a[1]) }`, "33")
@@ -246,7 +248,8 @@ func TestSingleFile(t *testing.T) {
 	o("func main() { r:=+'0'; printChar(r) }", "0")
 	o("func n(b**bool) { **b=**b }; func main() {}", "")
 	o("func n(b****bool) { ****b=****b }; func main() {}", "")
-	o(` struct A { func n() (a int) { return 33 } };
+	o(` struct A { }
+		func (p *A) n() (a int) { return 33 }
 		func main() { var a A; printInt(a.n()) }`, "33")
 	o(`	func main() {printInt(33)}
 		func _(){}

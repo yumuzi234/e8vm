@@ -68,7 +68,7 @@ func TestMultiFile(t *testing.T) {
 	}, "33")
 
 	o(files{
-		"a/a.g":    "struct A { func P() { printInt(33) } }",
+		"a/a.g":    "struct A {}; func (a *A) P() { printInt(33) }",
 		"b/b.g":    `import ("a"); var A a.A`,
 		"main/m.g": `import ("b"); func main() { b.A.P() }`,
 	}, "33")
