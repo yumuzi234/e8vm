@@ -50,6 +50,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 	o("PrintUint32", "printUint", types.NewVoidFunc(types.Uint))
 	o("PrintChar", "printChar", types.NewVoidFunc(types.Int8))
 	b.panicFunc = o("Panic", "panic", types.VoidFunc)
+	o("Assert", "assert", types.NewVoidFunc(types.Bool))
 
 	bi := func(name string) {
 		t := types.NewBuiltInFunc(name)

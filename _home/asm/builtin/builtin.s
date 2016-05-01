@@ -103,6 +103,14 @@ func Panic {
 	panic
 }
 
+// Assert panics if the condition is not met
+func Assert {
+    bne r1 r0 .ret
+    panic
+.ret
+    mov pc ret
+}
+
 // MemCopy copies a range of memory
 //    r1 - destination address
 //    r2 - source address

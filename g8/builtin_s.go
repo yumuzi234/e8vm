@@ -106,6 +106,14 @@ func Panic {
 	panic
 }
 
+// Assert panics if the condition is not met
+func Assert {
+	bne r1 r0 .ret
+	panic
+.ret
+	mov pc ret
+}
+
 // Halt halts the system with halt exception
 func Halt {
     halt
