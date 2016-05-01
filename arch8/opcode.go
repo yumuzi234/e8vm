@@ -1,6 +1,6 @@
 package arch8
 
-// imm instructions
+// Immediate instructions
 const (
 	ADDI = 1
 	SLTI = 2
@@ -16,7 +16,7 @@ const (
 	SB  = 11
 )
 
-// reg instructions
+// Register instructions
 const (
 	PANIC = 0
 	SLL   = 1
@@ -47,23 +47,23 @@ const (
 	FINT = 4
 )
 
-// branch instructions
+// Branch instructions
 const (
 	BNE = 32
 	BEQ = 33
 )
 
-// system instructions
+// System instructions
 const (
 	HALT    = 64
 	SYSCALL = 65
 	JRUSER  = 66
 	VTABLE  = 67
 	IRET    = 68
-	CPUID   = 69
+	SYSINFO = 69
 )
 
-// jump instructions
+// Jump instructions
 const (
 	J   = 2
 	JAL = 3

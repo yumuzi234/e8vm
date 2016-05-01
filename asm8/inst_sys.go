@@ -16,9 +16,9 @@ var (
 
 	// op reg
 	opSys1Map = map[string]uint32{
-		"jruser": arch8.JRUSER,
-		"vtable": arch8.VTABLE,
-		"cpuid":  arch8.CPUID,
+		"jruser":  arch8.JRUSER,
+		"vtable":  arch8.VTABLE,
+		"sysinfo": arch8.SYSINFO,
 	}
 )
 

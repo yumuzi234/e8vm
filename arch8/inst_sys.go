@@ -3,6 +3,17 @@ package arch8
 // InstSys exectues a system instruction
 type instSys struct{}
 
+func sysInfo(cpu *cpu, cmd uint32) uint32 {
+	switch cmd {
+	case NCYCLE:
+		return 0 // TODO
+	case CPUID:
+		return uint32(cpu.index)
+	}
+
+	return 0
+}
+
 // I executes the system instruction.
 // Returns any exception encountered.
 func (i *instSys) I(cpu *cpu, in uint32) *Excep {
@@ -32,8 +43,8 @@ func (i *instSys) I(cpu *cpu, in uint32) *Excep {
 			return errInvalidInst
 		}
 		return cpu.Iret()
-	case CPUID:
-		s = uint32(cpu.index)
+	case SYSINFO:
+		s = sysInfo(cpu, s)
 	default:
 		return errInvalidInst
 	}
