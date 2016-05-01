@@ -16,21 +16,25 @@ var (
 
 	// op reg
 	opSys1Map = map[string]uint32{
-		"jruser":  arch8.JRUSER,
-		"vtable":  arch8.VTABLE,
+		"jruser": arch8.JRUSER,
+		"vtable": arch8.VTABLE,
+	}
+
+	// op reg reg
+	opSys2Map = map[string]uint32{
 		"sysinfo": arch8.SYSINFO,
 	}
 )
 
-func makeInstSys(op, reg uint32) *inst {
-	return &inst{inst: asminst.Sys(op, reg)}
+func makeInstSys(op, reg1, reg2 uint32) *inst {
+	return &inst{inst: asminst.Sys(op, reg1, reg2)}
 }
 
 func resolveInstSys(p lex8.Logger, ops []*lex8.Token) (*inst, bool) {
 	op0 := ops[0]
 	opName := op0.Lit
 	args := ops[1:]
-	var op, reg uint32
+	var op, reg1, reg2 uint32
 
 	argCount := func(n int) bool {
 		if !argCount(p, ops, n) {
@@ -38,7 +42,10 @@ func resolveInstSys(p lex8.Logger, ops []*lex8.Token) (*inst, bool) {
 		}
 
 		if n >= 1 {
-			reg = resolveReg(p, args[0])
+			reg1 = resolveReg(p, args[0])
+		}
+		if n >= 2 {
+			reg2 = resolveReg(p, args[1])
 		}
 		return true
 	}
@@ -50,9 +57,11 @@ func resolveInstSys(p lex8.Logger, ops []*lex8.Token) (*inst, bool) {
 	} else if op, found = opSys1Map[opName]; found {
 		// op reg
 		argCount(1)
+	} else if op, found = opSys2Map[opName]; found {
+		argCount(2)
 	} else {
 		return nil, false
 	}
 
-	return makeInstSys(op, reg), true
+	return makeInstSys(op, reg1, reg2), true
 }

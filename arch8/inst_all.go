@@ -12,7 +12,7 @@ type instArch8 struct {
 // I executes an arch8 instructino
 func (i *instArch8) I(cpu *cpu, in uint32) *Excep {
 	if (in >> 31) == 0 {
-		op := (in >> 24) & 0xff
+		op := (in >> 24) & 0xff // (32:24]
 		switch {
 		case op == 0: // op == 0
 			return i.reg.I(cpu, in)

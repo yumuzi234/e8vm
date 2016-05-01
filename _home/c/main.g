@@ -22,5 +22,6 @@ struct A {
 func f2() {
 	var a *int
 	var b = *a
+	_ := b
 	panic()
 }

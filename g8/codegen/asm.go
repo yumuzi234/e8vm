@@ -86,4 +86,4 @@ func (_s) bne(s1, s2 uint32, im int32) uint32 {
 func (_s) jal(im int32) uint32 { return S.Jmp(A.JAL, im) }
 func (_s) j(im int32) uint32   { return S.Jmp(A.J, im) }
 
-func (_s) halt() uint32 { return S.Sys(A.HALT, 0) }
+func (_s) halt() uint32 { return S.Sys(A.HALT, 0, 0) }

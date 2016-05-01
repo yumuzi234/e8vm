@@ -16,7 +16,7 @@ func wrapMain(funcs []*PkgSym) *Func {
 		ret.AddLink(FillLink, f)
 	}
 
-	ret.AddInst(inst.Sys(arch8.HALT, 0))
+	ret.AddInst(inst.Sys(arch8.HALT, 0, 0))
 
 	return ret
 }

@@ -16,8 +16,9 @@ type cpu struct {
 	virtMem   *virtMemory
 	interrupt *interrupt
 
-	inst  inst
-	index byte
+	inst   inst
+	index  byte
+	ncycle uint64
 }
 
 // newCPU creates a CPU with memroy and instruction binding
@@ -62,6 +63,7 @@ func (c *cpu) Reset() {
 }
 
 func (c *cpu) tick() *Excep {
+	c.ncycle++
 	pc := c.regs[PC]
 	inst, e := c.readWord(pc)
 	if e != nil {

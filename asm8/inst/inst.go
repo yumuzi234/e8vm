@@ -8,8 +8,11 @@ func Jmp(op uint32, im int32) uint32 {
 }
 
 // Sys makes a system instruction
-func Sys(op, reg uint32) uint32 {
-	return ((op & 0xff) << 24) | ((reg & 0x7) << 21)
+func Sys(op, reg1, reg2 uint32) uint32 {
+	ret := (op & 0xff) << 24
+	ret |= (reg1 & 0x7) << 21
+	ret |= (reg2 & 0x7) << 18
+	return ret
 }
 
 // Imm composes an immediate based instruction
