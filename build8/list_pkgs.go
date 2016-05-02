@@ -1,12 +1,12 @@
 package build8
 
 import (
+	"path"
 	"sort"
-	"strings"
 )
 
 // ListPkgs lists all packages based on the selector.
-// If a selector ends with "/...", it selects all sub packages.
+// If a selector ends with "...", it selects all sub packages.
 // Otherwise, it selects the exact package.
 func ListPkgs(input Input, selectors []string) []string {
 	picked := make(map[string]struct{})
@@ -19,14 +19,21 @@ func ListPkgs(input Input, selectors []string) []string {
 	for _, s := range selectors {
 		if s == "*" {
 			add(input.Pkgs(""))
-		} else if strings.HasSuffix(s, "/...") {
-			pre := strings.TrimSuffix(s, "/...")
+		} else if path.Base(s) == "..." {
+			pre := path.Dir(s)
+			if pre == "." {
+				pre = ""
+			}
 			add(input.Pkgs(pre))
 		} else {
 			if input.HasPkg(s) {
 				add([]string{s})
 			}
 		}
+	}
+
+	if len(picked) == 0 {
+		return nil
 	}
 
 	ret := make([]string, 0, len(picked))
