@@ -28,6 +28,12 @@ func (h *MemHome) NewPkg(path string) *MemPkg {
 	return ret
 }
 
+// HasPkg checks if it has a particular package.
+func (h *MemHome) HasPkg(p string) bool {
+	_, found := h.pkgs[p]
+	return found
+}
+
 // Pkgs lists all the packages in this home
 func (h *MemHome) Pkgs(prefix string) []string {
 	var ret []string

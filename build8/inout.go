@@ -6,6 +6,9 @@ import (
 
 // Input provides input source files.
 type Input interface {
+	// HasPkg checks if a package exists.
+	HasPkg(p string) bool
+
 	// Pkgs lists all the packages.
 	Pkgs(prefix string) []string
 

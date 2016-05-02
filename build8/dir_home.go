@@ -80,6 +80,39 @@ func (h *DirHome) AddLang(prefix string, lang Lang) {
 	h.langs.addLang(prefix, lang)
 }
 
+// HasPkg checks if a package exists.
+func (h *DirHome) HasPkg(p string) bool {
+	root := h.path
+	fp := filepath.Join(root, p)
+	info, err := os.Stat(fp)
+	if err != nil {
+		return false
+	}
+
+	if !info.IsDir() {
+		return false
+	}
+
+	base := filepath.Base(p)
+	if !lex8.IsPkgName(base) {
+		return false
+	}
+
+	lang := h.Lang(p)
+
+	files, err := listSrcFiles(p, lang)
+	if err != nil {
+		return false
+	}
+
+	if len(files) > 0 {
+		h.fileList[p] = files // caching
+		return true
+	}
+
+	return false
+}
+
 // Pkgs lists all the packages inside this home folder.
 func (h *DirHome) Pkgs(prefix string) []string {
 	root := h.path
@@ -113,9 +146,9 @@ func (h *DirHome) Pkgs(prefix string) []string {
 			panic(path)
 		}
 
-		files, e := listSrcFiles(p, lang)
-		if e != nil {
-			return e
+		files, err := listSrcFiles(p, lang)
+		if err != nil {
+			return err
 		}
 
 		if len(files) > 0 {
