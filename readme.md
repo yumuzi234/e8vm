@@ -1,6 +1,4 @@
 [![BuildStatus](https://travis-ci.org/e8vm/e8vm.png?branch=master)](https://travis-ci.org/e8vm/e8vm)
-[![Coverage
-Status](https://coveralls.io/repos/github/e8vm/e8vm/badge.svg?branch=master)](https://coveralls.io/github/e8vm/e8vm?branch=master)
 
 ```
 go get -u e8vm.io/e8vm/...
