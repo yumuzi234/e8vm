@@ -4,7 +4,7 @@ import (
 	"e8vm.io/e8vm/lex8"
 )
 
-// StmtLexer replaces end-lines with semicolons
+// a pipe that replaces end-lines with semicolons
 type semiInserter struct {
 	x          lex8.Tokener
 	save       *lex8.Token
