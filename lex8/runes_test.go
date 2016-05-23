@@ -5,7 +5,6 @@ import (
 )
 
 func TestIsLetter(t *testing.T) {
-	t.Log("Testing IsLetter")
 	for _, r := range "abzdATZ" {
 		if !IsLetter(r) {
 			t.Errorf("%v should be a letter", r)
@@ -20,7 +19,6 @@ func TestIsLetter(t *testing.T) {
 }
 
 func TestIsDigit(t *testing.T) {
-	t.Log("Testing IsDigit")
 	for _, r := range "0123456789" {
 		if !IsDigit(r) {
 			t.Errorf("%v should be a digit", r)
@@ -35,7 +33,6 @@ func TestIsDigit(t *testing.T) {
 }
 
 func TestIsHexDigit(t *testing.T) {
-	t.Log("Testing IsHexDigit")
 	for _, r := range "0123456789" {
 		if !IsHexDigit(r) {
 			t.Errorf("%v should be a hexdigit", r)
