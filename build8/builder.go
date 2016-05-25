@@ -61,8 +61,7 @@ func (b *Builder) prepare(p string) (*pkg, []*lex8.Error) {
 		return pkg, nil
 	}
 
-	es := pkg.lang.Prepare(pkg.srcMap(), pkg)
-	if es != nil {
+	if es := pkg.lang.Prepare(pkg.srcMap(), pkg); es != nil {
 		return pkg, es
 	}
 
@@ -226,7 +225,7 @@ func (b *Builder) build(pkg *pkg) []*lex8.Error {
 	if es := b.buildMain(pkg); es != nil {
 		return es
 	}
-	if !b.RunTests { // skip running tests
+	if !pkg.runTests { // skip running tests
 		return nil
 	}
 
@@ -250,6 +249,12 @@ func (b *Builder) BuildPkgs(pkgs []string) []*lex8.Error {
 		}
 	}
 
+	if b.RunTests {
+		for _, p := range pkgs {
+			b.pkgs[p].runTests = true
+		}
+	}
+
 	g := &dagvis.Graph{b.deps}
 	g = g.Reverse()
 
@@ -268,10 +273,6 @@ func (b *Builder) BuildPkgs(pkgs []string) []*lex8.Error {
 		}
 
 		pkg := b.pkgs[node.Name]
-		if pkg == nil {
-			panic("package not prepared")
-		}
-
 		pkg.deps = deps(node)
 		if es := b.build(pkg); es != nil {
 			return es

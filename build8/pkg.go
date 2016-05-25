@@ -12,6 +12,8 @@ type pkg struct {
 	path   string
 	src    string
 
+	runTests bool
+
 	lang    Lang
 	files   []string
 	imports map[string]*Import
