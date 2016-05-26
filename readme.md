@@ -20,7 +20,7 @@ characters. Among these small files, there are no circular
 dependencies, and as a result, the project architecture can be
 automatically visualized from static code analysis.
 
-[Check the visualization here.](https://e8vm.io/e8vm)
+[Check the visualization of the architecture.](https://e8vm.io/e8vm)
 
 The main project in this repository depends on nothing other than the
 Go standard library. Hence, it is not a compiler project that based on
