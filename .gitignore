@@ -1,3 +1,6 @@
 /tags
 /cover.out
 .DS_Store
+
+# no viscode
+/.vscode
