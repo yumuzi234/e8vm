@@ -3,36 +3,36 @@ package lex8
 import (
 	"errors"
 	"io"
+	"reflect"
 	"strings"
 	"testing"
 )
 
 type errorScanner struct {
-	scanner *runeScanner
-	count   int
+	s *runeScanner
+	n int
 }
 
-func newErrorScanner(filename string, r io.Reader) *errorScanner {
+func newErrorScanner(f string, r io.Reader) *errorScanner {
 	return &errorScanner{
-		scanner: newRuneScanner(filename, r),
-		count:   1,
+		s: newRuneScanner(f, r),
+		n: 1,
 	}
 }
 
-var testErr = errors.New("timeout")
+var errTest = errors.New("timeout")
 
 func (s *errorScanner) err() error {
-	if s.count == 1 {
-		for s.scanner.scan() {
+	if s.n == 1 {
+		for s.s.scan() {
 		}
-		s.count++
-		return s.scanner.Err
+		s.n++
+		return s.s.Err
 	}
-	return testErr
+	return errTest
 }
 
 func TestRuneScanner(t *testing.T) {
-
 	testCase := []struct {
 		r    rune
 		line int
@@ -46,43 +46,44 @@ func TestRuneScanner(t *testing.T) {
 		{'1', 3, 1},
 		{'A', 3, 2},
 	}
-	reader := strings.NewReader("a~ \n\n1A")
-	fName := "testFileName"
-	scanner := newRuneScanner(fName, reader)
+
+	r := strings.NewReader("a~ \n\n1A")
+	file := "a.txt"
+	s := newRuneScanner(file, r)
 	for _, tc := range testCase {
-		if !scanner.scan() {
-			t.Errorf("scan() FALSE, wants TRUE")
+		if !s.scan() {
+			t.Fatal("scan failed")
 		}
-		if scanner.pos().Col != tc.col {
-			t.Errorf("col=%d, wants %d", scanner.pos().Col, tc.col)
+		p := s.pos()
+		want := &Pos{
+			Col:  tc.col,
+			Line: tc.line,
+			File: file,
 		}
-		if scanner.pos().Line != tc.line {
-			t.Errorf("line=%d, wants %d", scanner.pos().Line, tc.line)
+		if !reflect.DeepEqual(p, want) {
+			t.Errorf("pos got %v, want %v", p, want)
 		}
-		if scanner.pos().File != fName {
-			t.Errorf("filename=%s, wants %s", scanner.pos().File, fName)
-		}
-		if scanner.Rune != tc.r {
-			t.Errorf("rune=%c, wants %c", scanner.Rune, tc.r)
+		if s.Rune != tc.r {
+			t.Errorf("rune got %c, want %c", s.Rune, tc.r)
 		}
 	}
-	if scanner.scan() {
-		t.Errorf("scanner.scan()=%d, wants False", scanner.closed)
+	if s.scan() {
+		t.Error("s.scan() got false, want true")
 	}
-	if !scanner.closed {
-		t.Errorf("scanner close=%d, wants TRUE", scanner.closed)
+	if !s.closed {
+		t.Error("s close got false, want true")
 	}
-	if scanner.Err != nil {
-		t.Errorf("Err=%v, wants nil", scanner.Err)
+	if s.Err != nil {
+		t.Errorf("expected error %v", s.Err)
 	}
 
-	//test for errors
-	reader = strings.NewReader("")
-	ts := newErrorScanner(fName, reader)
+	// test for errors
+	r = strings.NewReader("")
+	ts := newErrorScanner(file, r)
 	if ts.err() != nil {
-		t.Errorf("Err=%v, wants nil", scanner.Err)
+		t.Errorf("Err=%v, wants nil", s.Err)
 	}
-	if ts.err() != testErr {
-		t.Errorf("Err=%v, wants timeout", scanner.Err)
+	if ts.err() != errTest {
+		t.Errorf("Err=%v, wants timeout", s.Err)
 	}
 }
