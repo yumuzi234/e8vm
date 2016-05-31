@@ -1,33 +1,34 @@
 package lex8
 
 import (
+	"errors"
+	"io"
 	"strings"
 	"testing"
-	"io"
-	"errors"
 )
 
 type errorScanner struct {
-		scanner *runeScanner
-	 	count int
+	scanner *runeScanner
+	count   int
 }
 
-func newErrorScanner (filename string, r io.Reader) *errorScanner {
+func newErrorScanner(filename string, r io.Reader) *errorScanner {
 	return &errorScanner{
 		scanner: newRuneScanner(filename, r),
-		count: 1,
+		count:   1,
 	}
 }
 
 var testErr = errors.New("timeout")
 
-func (s *errorScanner) err() error{
-	 	if s.count==1 {
-			for s.scanner.scan() {}
-			s.count++
-			return s.scanner.Err
+func (s *errorScanner) err() error {
+	if s.count == 1 {
+		for s.scanner.scan() {
 		}
-		return testErr
+		s.count++
+		return s.scanner.Err
+	}
+	return testErr
 }
 
 func TestRuneScanner(t *testing.T) {
@@ -68,20 +69,20 @@ func TestRuneScanner(t *testing.T) {
 	if scanner.scan() {
 		t.Errorf("scanner.scan()=%d, wants False", scanner.closed)
 	}
-    if !scanner.closed {
+	if !scanner.closed {
 		t.Errorf("scanner close=%d, wants TRUE", scanner.closed)
-    }
-    if scanner.Err!=nil {
-		t.Errorf("Err=%v, wants nil", scanner.Err)
-    }
-	
-	//test for errors
-	reader=strings.NewReader("")
-	ts:=newErrorScanner(fName,reader)
-	if ts.err()!=nil {
+	}
+	if scanner.Err != nil {
 		t.Errorf("Err=%v, wants nil", scanner.Err)
 	}
-	if ts.err()!=testErr {
+
+	//test for errors
+	reader = strings.NewReader("")
+	ts := newErrorScanner(fName, reader)
+	if ts.err() != nil {
+		t.Errorf("Err=%v, wants nil", scanner.Err)
+	}
+	if ts.err() != testErr {
 		t.Errorf("Err=%v, wants timeout", scanner.Err)
 	}
 }
