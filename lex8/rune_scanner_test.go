@@ -2,34 +2,33 @@ package lex8
 
 import (
 	"errors"
-	"io"
 	"reflect"
 	"strings"
 	"testing"
 )
 
-type errorScanner struct {
-	s *runeScanner
-	n int
+type errorReader struct {
+	err error
+	n   int
 }
 
-func newErrorScanner(f string, r io.Reader) *errorScanner {
-	return &errorScanner{
-		s: newRuneScanner(f, r),
-		n: 1,
+func newErrorReader(e error) *errorReader {
+	return &errorReader{
+		err: e,
+		n:   1,
 	}
 }
 
 var errTest = errors.New("timeout")
 
-func (s *errorScanner) err() error {
-	if s.n == 1 {
-		for s.s.scan() {
+func (eR *errorReader) writeError(rS *runeScanner) {
+	if eR.n == 1 {
+		for rS.scan() {
 		}
-		s.n++
-		return s.s.Err
+		eR.n++
+	} else {
+		rS.Err = eR.err
 	}
-	return errTest
 }
 
 func TestRuneScanner(t *testing.T) {
@@ -79,11 +78,14 @@ func TestRuneScanner(t *testing.T) {
 
 	// test for errors
 	r = strings.NewReader("")
-	ts := newErrorScanner(file, r)
-	if ts.err() != nil {
+	s = newRuneScanner(file, r)
+	eR := newErrorReader(errTest)
+	eR.writeError(s)
+	if s.Err != nil {
 		t.Errorf("Err=%v, wants nil", s.Err)
 	}
-	if ts.err() != errTest {
+	eR.writeError(s)
+	if s.Err != errTest {
 		t.Errorf("Err=%v, wants timeout", s.Err)
 	}
 }
