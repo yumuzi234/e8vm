@@ -2,34 +2,11 @@ package lex8
 
 import (
 	"errors"
+	"io"
 	"reflect"
 	"strings"
 	"testing"
 )
-
-type errorReader struct {
-	err error
-	n   int
-}
-
-func newErrorReader(e error) *errorReader {
-	return &errorReader{
-		err: e,
-		n:   1,
-	}
-}
-
-var errTest = errors.New("timeout")
-
-func (eR *errorReader) writeError(rS *runeScanner) {
-	if eR.n == 1 {
-		for rS.scan() {
-		}
-		eR.n++
-	} else {
-		rS.Err = eR.err
-	}
-}
 
 func TestRuneScanner(t *testing.T) {
 	testCase := []struct {
@@ -75,17 +52,33 @@ func TestRuneScanner(t *testing.T) {
 	if s.Err != nil {
 		t.Errorf("expected error %v", s.Err)
 	}
+}
 
-	// test for errors
-	r = strings.NewReader("")
-	s = newRuneScanner(file, r)
-	eR := newErrorReader(errTest)
-	eR.writeError(s)
-	if s.Err != nil {
-		t.Errorf("Err=%v, wants nil", s.Err)
+type errorReader struct {
+	r io.Reader
+	n int
+}
+
+var errTest = errors.New("timeout")
+
+func (r *errorReader) Read(bs []byte) (int, error) {
+	if r.n == 0 {
+		r.n++
+		return r.r.Read(bs)
 	}
-	eR.writeError(s)
+	return 0, errTest
+}
+
+func TestRuneScannerError(t *testing.T) {
+	r := &errorReader{r: strings.NewReader("x")}
+	s := newRuneScanner("a.txt", r)
+	if !s.scan() {
+		t.Error("first scan should succeed")
+	}
+	if s.scan() {
+		t.Error("second scan should fail")
+	}
 	if s.Err != errTest {
-		t.Errorf("Err=%v, wants timeout", s.Err)
+		t.Errorf("got err %v, want errTest", s.Err)
 	}
 }
