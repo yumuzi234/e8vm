@@ -20,7 +20,7 @@ type Lexer struct {
 	r rune
 
 	IsWhite WhiteFunc
-	LexFunc
+	LexFunc LexFunc
 }
 
 // MakeLexer creates a lexer with the particular lexer func.
