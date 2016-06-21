@@ -1,9 +1,13 @@
 package lex8
 
+import (
+	"fmt"
+)
 // LexComment lexes a c style comment.
 func LexComment(x *Lexer) *Token {
 	if x.Buffered() != "/" {
-		panic("needs to buffer a '/' for lex comment")
+		//panic("needs to buffer a '/' for lex comment")
+		fmt.Printf("x.Buffered()= %s \n", x.Buffered())
 	}
 
 	if x.Rune() == '/' {
