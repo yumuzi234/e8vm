@@ -1,9 +1,12 @@
 package lex8
 
-//#### NOTE! LexComment is not a complete LexFunc, need to run with a LexFunc
-//#### LexComment is called when lexer.Buffered()='/' and rune='/' or '*'
+import (
+	"io"
+)
 
-// LexComment lexes a c style comment.
+// LexComment lexes a c style comment. It is not a complete LexFunc,
+// where it assumes that there is already a "/" buffered in the lexer as a
+// precondition.
 func LexComment(x *Lexer) *Token {
 	if x.Buffered() != "/" {
 		panic("needs to buffer a '/' for lex comment")
@@ -16,6 +19,25 @@ func LexComment(x *Lexer) *Token {
 	}
 	x.Errorf("illegal char %q", x.Rune())
 	return x.MakeToken(Illegal)
+}
+
+// lexComment is a LexFunc that parses only comments.
+func lexComment(x *Lexer) *Token {
+	r := x.Rune()
+	if r == '/' {
+		x.Next()
+		return LexComment(x)
+	}
+	x.Next()
+	x.Errorf("illegal rune %q", r)
+	return x.MakeToken(Illegal)
+}
+
+// NewCommentLexer returns a lexer that parse only comments.
+func NewCommentLexer(file string, r io.Reader) *Lexer {
+	ret := MakeLexer(file, r, lexComment)
+	ret.IsWhite = IsWhiteOrEndl
+	return ret
 }
 
 func lexLineComment(x *Lexer) *Token {

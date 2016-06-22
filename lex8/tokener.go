@@ -21,3 +21,17 @@ func NewTokener(f string, r io.Reader, x LexFunc, w WhiteFunc) Tokener {
 
 	return ret
 }
+
+// Tokens takes a lexer that is already setup and returns
+// its tokens and errors.
+func Tokens(tokener Tokener) ([]*Token, []*Error) {
+	var ret []*Token
+	for {
+		t := tokener.Token()
+		ret = append(ret, t)
+		if t.Type == EOF {
+			break
+		}
+	}
+	return ret, tokener.Errs()
+}

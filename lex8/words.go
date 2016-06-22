@@ -31,8 +31,6 @@ func lexWord(x *Lexer) *Token {
 // into words and punctuations.
 func NewWordLexer(file string, r io.Reader) *Lexer {
 	ret := MakeLexer(file, r, lexWord)
-	ret.IsWhite = func(r rune) bool {
-		return r == ' ' || r == '\t' || r == '\r' || r == '\n'
-	}
+	ret.IsWhite = IsWhiteOrEndl
 	return ret
 }
