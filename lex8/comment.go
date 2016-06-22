@@ -1,5 +1,8 @@
 package lex8
 
+//#### NOTE! LexComment is not a complete LexFunc, need to run with a LexFunc
+//#### LexComment is called when lexer.Buffered()='/' and rune='/' or '*'
+
 // LexComment lexes a c style comment.
 func LexComment(x *Lexer) *Token {
 	if x.Buffered() != "/" {
