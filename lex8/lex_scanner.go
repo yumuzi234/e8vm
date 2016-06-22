@@ -35,12 +35,6 @@ func (s *lexScanner) next() (rune, error) {
 
 	if !s.s.scan() {
 		return 0, s.s.Err
-
-		// if s.s.Err != nil {
-		// 	return 0, s.s.Err
-		// }
-
-		// return 0, io.EOF // signal end of file
 	}
 
 	s.valid = true
