@@ -8,7 +8,6 @@ import (
 // lexScanner parses a file input stream into tokens.
 type lexScanner struct {
 	s     *runeScanner
-	errs  *ErrorList
 	valid bool
 
 	pos *Pos
@@ -18,9 +17,8 @@ type lexScanner struct {
 // newLexScanner creates a new lexer.
 func newLexScanner(file string, r io.Reader) *lexScanner {
 	ret := &lexScanner{
-		s:    newRuneScanner(file, r),
-		errs: NewErrorList(),
-		buf:  new(bytes.Buffer),
+		s:   newRuneScanner(file, r),
+		buf: new(bytes.Buffer),
 	}
 	ret.pos = ret.s.pos()
 	return ret
@@ -36,11 +34,13 @@ func (s *lexScanner) next() (rune, error) {
 	}
 
 	if !s.s.scan() {
-		if s.s.Err != nil {
-			return 0, s.s.Err
-		}
+		return 0, s.s.Err
 
-		return 0, io.EOF // signal end of file
+		// if s.s.Err != nil {
+		// 	return 0, s.s.Err
+		// }
+
+		// return 0, io.EOF // signal end of file
 	}
 
 	s.valid = true

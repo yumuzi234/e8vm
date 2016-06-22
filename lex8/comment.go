@@ -1,13 +1,12 @@
 package lex8
 
-import (
-	"fmt"
-)
+//#### NOTE! LexComment is not a complete LexFunc, need to run with a LexFunc
+//#### LexComment is called when lexer.Buffered()='/' and rune='/' or '*'
+
 // LexComment lexes a c style comment.
 func LexComment(x *Lexer) *Token {
 	if x.Buffered() != "/" {
-		//panic("needs to buffer a '/' for lex comment")
-		fmt.Printf("x.Buffered()= %s \n", x.Buffered())
+		panic("needs to buffer a '/' for lex comment")
 	}
 
 	if x.Rune() == '/' {

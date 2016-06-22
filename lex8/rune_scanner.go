@@ -42,9 +42,9 @@ func (s *runeScanner) scan() bool {
 	s.Rune, _, s.Err = s.r.ReadRune()
 
 	if s.Err != nil {
-		if s.Err == io.EOF {
-			s.Err = nil
-		}
+		// if s.Err == io.EOF {
+		// 	s.Err = nil
+		// }
 		s.closed = true
 		return false
 	}

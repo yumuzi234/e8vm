@@ -1,8 +1,8 @@
 package lex8
 
 import (
-	"testing"
 	"strings"
+	"testing"
 )
 
 func TestWordLexer(t *testing.T) {
@@ -37,7 +37,7 @@ func TestWordLexer(t *testing.T) {
 	}
 
 	x = NewWordLexer("t2.txt", strings.NewReader("123	#a $%\n\rd^"))
-	toks=nil
+	toks = nil
 	for {
 		t := x.Token()
 		toks = append(toks, t)

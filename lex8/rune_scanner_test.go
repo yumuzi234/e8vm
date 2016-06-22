@@ -49,8 +49,8 @@ func TestRuneScanner(t *testing.T) {
 	if !s.closed {
 		t.Error("s close got false, want true")
 	}
-	if s.Err != nil {
-		t.Errorf("expected error %v", s.Err)
+	if s.Err != io.EOF {
+		t.Errorf("unexpected error %v", s.Err)
 	}
 }
 
