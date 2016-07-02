@@ -18,6 +18,18 @@ func newPage() *page {
 
 func (p *page) trackDirty() { p.dirty = make(map[uint32]bool) }
 
+func (p *page) dirtyBytes() map[uint32]byte {
+	if p.dirty == nil {
+		return nil
+	}
+	ret := make(map[uint32]byte)
+	for off := range p.dirty {
+		b := p.ReadByte(off)
+		ret[off] = b
+	}
+	return ret
+}
+
 // ReadByte reads a byte at the particular offset.
 // When offset is larger than offset, it uses the modular.
 func (p *page) ReadByte(offset uint32) byte {
