@@ -6,6 +6,7 @@ const PageSize = 4096
 // Page is a memory addressable area of PageSize bytes
 type page struct {
 	uints []uint32
+	dirty map[uint32]bool
 }
 
 // NewPage creates a new empty page.
@@ -14,6 +15,8 @@ func newPage() *page {
 		uints: make([]uint32, PageSize/4),
 	}
 }
+
+func (p *page) trackDirty() { p.dirty = make(map[uint32]bool) }
 
 // ReadByte reads a byte at the particular offset.
 // When offset is larger than offset, it uses the modular.
@@ -35,6 +38,10 @@ func (p *page) WriteByte(offset uint32, b byte) {
 	u &= ^(uint32(0xff) << shift)
 	u |= uint32(b) << shift
 	p.uints[pos] = u
+
+	if p.dirty != nil {
+		p.dirty[offset] = true
+	}
 }
 
 // ReadWord reads the word at the particular offset.
@@ -49,6 +56,13 @@ func (p *page) ReadWord(offset uint32) uint32 {
 // When offset is not 4-byte aligned, it aligns down.
 func (p *page) WriteWord(offset uint32, w uint32) {
 	p.uints[(offset%PageSize)/4] = w
+
+	if p.dirty != nil {
+		p.dirty[offset] = true
+		p.dirty[offset+1] = true
+		p.dirty[offset+2] = true
+		p.dirty[offset+3] = true
+	}
 }
 
 // WriteAt writes a series of bytes starting at offset
