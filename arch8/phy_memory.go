@@ -15,8 +15,10 @@ const (
 	pageInterrupt = 1
 	pageBasicIO   = 2
 
-	pageSysInfo   = 7
-	pageBootImage = 8
+	pageScreenText  = 5
+	pageScreenColor = 6
+	pageSysInfo     = 7
+	pageBootImage   = 8
 )
 
 // NewPhyMemory creates a physical memory of size bytes.

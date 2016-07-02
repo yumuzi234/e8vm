@@ -16,6 +16,7 @@ type Machine struct {
 	cores   *multiCore
 	serial  *serial
 	console *console
+	screen  *screen
 	ticker  *ticker
 	rom     *rom
 
@@ -46,9 +47,14 @@ func NewMachine(memSize uint32, ncore int) *Machine {
 	ret.console = newConsole(p, ret.cores)
 	ret.ticker = newTicker(ret.cores)
 
+	p1 := ret.phyMem.Page(pageScreenText)
+	p2 := ret.phyMem.Page(pageScreenColor)
+	ret.screen = newScreen(p1, p2)
+
 	ret.addDevice(ret.ticker)
 	ret.addDevice(ret.serial)
 	ret.addDevice(ret.console)
+	ret.addDevice(ret.screen)
 
 	sys := ret.phyMem.Page(pageSysInfo)
 	sys.WriteWord(0, ret.phyMem.npage)
