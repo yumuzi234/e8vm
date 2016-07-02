@@ -27,8 +27,18 @@ var (
 )
 
 func run(bs []byte) (int, error) {
+	if *bootArg > math.MaxUint32 {
+		log.Fatalf("boot arg(%d) is too large", *bootArg)
+	}
+
 	// create a single core machine
-	m := arch8.NewMachine(uint32(*memSize), 1)
+	m := arch8.NewMachine(&arch8.Config{
+		MemSize:  uint32(*memSize),
+		ROM:      *romRoot,
+		RandSeed: *randSeed,
+		BootArg:  uint32(*bootArg),
+	})
+
 	secs, err := e8.Read(bytes.NewReader(bs))
 	if err != nil {
 		return 0, err
@@ -36,20 +46,6 @@ func run(bs []byte) (int, error) {
 
 	if err := m.LoadSections(secs); err != nil {
 		return 0, err
-	}
-
-	if *bootArg > math.MaxUint32 {
-		log.Fatalf("boot arg(%d) is too large", *bootArg)
-	}
-	if err := m.WriteWord(arch8.AddrBootArg, uint32(*bootArg)); err != nil {
-		return 0, err
-	}
-
-	if *romRoot != "" {
-		m.MountROM(*romRoot)
-	}
-	if *randSeed != 0 {
-		m.RandSeed(*randSeed)
 	}
 
 	ret, exp := m.Run(*ncycle)

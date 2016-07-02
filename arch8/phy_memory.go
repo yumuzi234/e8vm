@@ -19,6 +19,8 @@ const (
 	pageScreenColor = 6
 	pageSysInfo     = 7
 	pageBootImage   = 8
+
+	pageMin = 16
 )
 
 // NewPhyMemory creates a physical memory of size bytes.
@@ -29,9 +31,13 @@ func newPhyMemory(size uint32) *phyMemory {
 
 	ret := new(phyMemory)
 	ret.pages = make(map[uint32]*page)
-	ret.npage = size / PageSize
-	if size == 0 {
+	if size > 0 {
+		ret.npage = size / PageSize
+	} else {
 		ret.npage = (math.MaxUint32 + 1) / PageSize
+	}
+	if ret.npage < 16 {
+		ret.npage = 16
 	}
 
 	return ret

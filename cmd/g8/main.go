@@ -81,7 +81,7 @@ func runImage(bs []byte, dasm bool, n int) {
 		return
 	}
 
-	m := arch8.NewMachine(0, 1)
+	m := arch8.NewMachine(new(arch8.Config))
 	if err := m.LoadImageBytes(bs); err != nil {
 		fmt.Println(err)
 		return

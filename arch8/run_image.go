@@ -13,7 +13,7 @@ func RunImageFile(path string) error {
 		return err
 	}
 
-	m := NewMachine(0, 1)
+	m := NewMachine(new(Config))
 	if err := m.LoadImage(f); err != nil {
 		return err
 	}
@@ -25,11 +25,10 @@ func RunImageFile(path string) error {
 }
 
 func runImageArg(bs []byte, arg uint32, n int) (int, error) {
-	m := NewMachine(0, 1)
+	m := NewMachine(&Config{
+		BootArg: arg,
+	})
 	if err := m.LoadImageBytes(bs); err != nil {
-		return 0, err
-	}
-	if err := m.WriteWord(AddrBootArg, arg); err != nil {
 		return 0, err
 	}
 
@@ -57,13 +56,13 @@ func RunImageArg(bs []byte, arg uint32, n int) (int, error) {
 // RunImageOutput runs a image. It is similar to RunImage() but also returns
 // the output.
 func RunImageOutput(bs []byte, n int) (int, string, error) {
-	m := NewMachine(0, 1)
+	out := new(bytes.Buffer)
+	m := NewMachine(&Config{
+		Output: out,
+	})
 	if err := m.LoadImageBytes(bs); err != nil {
 		return 0, "", err
 	}
-
-	out := new(bytes.Buffer)
-	m.SetOutput(out)
 
 	ret, exp := m.Run(n)
 	if exp == nil {

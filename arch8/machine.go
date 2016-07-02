@@ -34,11 +34,14 @@ const (
 
 // NewMachine creates a machine with memory and cores.
 // 0 memSize for full 4GB memory.
-func NewMachine(memSize uint32, ncore int) *Machine {
+func NewMachine(c *Config) *Machine {
+	if c.Ncore == 0 {
+		c.Ncore = 1
+	}
 	ret := new(Machine)
-	ret.phyMem = newPhyMemory(memSize)
+	ret.phyMem = newPhyMemory(c.MemSize)
 	ret.inst = new(instArch8)
-	ret.cores = newMultiCore(ncore, ret.phyMem, ret.inst)
+	ret.cores = newMultiCore(c.Ncore, ret.phyMem, ret.inst)
 
 	// hook-up devices
 	p := ret.phyMem.Page(pageBasicIO)
@@ -58,40 +61,50 @@ func NewMachine(memSize uint32, ncore int) *Machine {
 
 	sys := ret.phyMem.Page(pageSysInfo)
 	sys.WriteWord(0, ret.phyMem.npage)
-	sys.WriteWord(4, uint32(ncore))
+	sys.WriteWord(4, uint32(c.Ncore))
 
-	ret.SetSP(DefaultSPBase, DefaultSPStride)
+	if c.InitSP == 0 {
+		ret.setSP(DefaultSPBase, DefaultSPStride)
+	} else {
+		ret.setSP(c.InitSP, c.StackPerCore)
+	}
+	ret.SetPC(c.InitPC)
+	if c.Output != nil {
+		ret.setOutput(c.Output)
+	}
+	if c.ROM != "" {
+		ret.mountROM(c.ROM)
+	}
+	if c.RandSeed != 0 {
+		ret.randSeed(c.RandSeed)
+	}
+	ret.setBootArg(c.BootArg)
 
 	return ret
 }
 
-// MountROM mounts the root of the read-only disk.
-func (m *Machine) MountROM(root string) {
+func (m *Machine) mountROM(root string) {
 	p := m.phyMem.Page(pageBasicIO)
 	m.rom = newROM(p, m.phyMem, m.cores, root)
 	m.addDevice(m.rom)
 }
 
-// WriteByte writes the byte at a particular physical address.
-func (m *Machine) WriteByte(phyAddr uint32, b byte) error {
-	exp := m.phyMem.WriteByte(phyAddr, b)
+func expToError(exp *Excep) error {
 	if exp == nil {
 		return nil
 	}
 	return exp
 }
 
-// WriteWord writes the word at a particular physical address.
-// The address must be word aligned.
-func (m *Machine) WriteWord(phyAddr uint32, v uint32) error {
-	exp := m.phyMem.WriteWord(phyAddr, v)
-	if exp == nil {
-		return nil
-	}
-	return exp
+func (m *Machine) writePhyWord(phyAddr uint32, v uint32) error {
+	return expToError(m.phyMem.WriteWord(phyAddr, v))
 }
 
-// ReadWord reads the word at particular virtual address of a particular core.
+func (m *Machine) setBootArg(arg uint32) error {
+	return m.writePhyWord(AddrBootArg, arg)
+}
+
+// ReadWord reads a word from the virtual address space.
 func (m *Machine) ReadWord(core byte, virtAddr uint32) (uint32, error) {
 	return m.cores.readWord(core, virtAddr)
 }
@@ -101,24 +114,18 @@ func (m *Machine) DumpRegs(core byte) []uint32 {
 	return m.cores.dumpRegs(core)
 }
 
-// SetOutput sets the output writer of the machine's serial
-// console.
-func (m *Machine) SetOutput(w io.Writer) {
+func (m *Machine) setOutput(w io.Writer) {
 	m.serial.Output = w
 	m.console.Output = w
 }
 
-// AddDevice adds a devices to the machine.
-func (m *Machine) addDevice(d device) {
-	m.devices = append(m.devices, d)
-}
+func (m *Machine) addDevice(d device) { m.devices = append(m.devices, d) }
 
 // Tick proceeds the simulation by one tick.
 func (m *Machine) Tick() *CoreExcep {
 	for _, d := range m.devices {
 		d.Tick()
 	}
-
 	return m.cores.Tick()
 }
 
@@ -162,8 +169,7 @@ func (m *Machine) WriteBytes(r io.Reader, offset uint32) error {
 	return nil
 }
 
-// RandSeed sets the random seed of the ticker.
-func (m *Machine) RandSeed(s int64) {
+func (m *Machine) randSeed(s int64) {
 	m.ticker.Rand = rand.New(rand.NewSource(s))
 }
 
@@ -211,8 +217,7 @@ func (m *Machine) SetPC(pc uint32) {
 	}
 }
 
-// SetSP sets the stack pointer.
-func (m *Machine) SetSP(sp, stackSize uint32) {
+func (m *Machine) setSP(sp, stackSize uint32) {
 	for i, cpu := range m.cores.cores {
 		cpu.regs[SP] = sp + uint32(i+1)*stackSize
 	}
@@ -233,6 +238,4 @@ func (m *Machine) LoadImageBytes(bs []byte) error {
 }
 
 // PrintCoreStatus prints the cpu statuses.
-func (m *Machine) PrintCoreStatus() {
-	m.cores.PrintStatus()
-}
+func (m *Machine) PrintCoreStatus() { m.cores.PrintStatus() }

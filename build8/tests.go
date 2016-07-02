@@ -72,12 +72,10 @@ func runTests(
 
 	for _, test := range testNames {
 		arg := tests[test]
-		m := arch8.NewMachine(0, 1)
+		m := arch8.NewMachine(&arch8.Config{
+			BootArg: arg,
+		})
 		if err := m.LoadImageBytes(img); err != nil {
-			report(test, 0, false, m, err)
-			continue
-		}
-		if err := m.WriteWord(arch8.AddrBootArg, arg); err != nil {
 			report(test, 0, false, m, err)
 			continue
 		}

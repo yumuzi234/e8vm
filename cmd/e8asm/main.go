@@ -23,13 +23,12 @@ var (
 
 func run(bs []byte) (int, error) {
 	// create a single core machine
-	m := arch8.NewMachine(uint32(*memSize), 1)
+	m := arch8.NewMachine(&arch8.Config{
+		MemSize:  uint32(*memSize),
+		RandSeed: *randSeed,
+	})
 	if err := m.LoadImageBytes(bs); err != nil {
 		return 0, err
-	}
-
-	if *randSeed != 0 {
-		m.RandSeed(*randSeed)
 	}
 
 	ret, exp := m.Run(*ncycle)
