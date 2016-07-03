@@ -139,6 +139,7 @@ func (m *Machine) Run(nticks int) (int, *CoreExcep) {
 		e := m.Tick()
 		n++
 		if e != nil {
+			m.FlushScreen()
 			return n, e
 		}
 	}
@@ -241,3 +242,11 @@ func (m *Machine) LoadImageBytes(bs []byte) error {
 
 // PrintCoreStatus prints the cpu statuses.
 func (m *Machine) PrintCoreStatus() { m.cores.PrintStatus() }
+
+// FlushScreen flushes updates in the frame buffer to the
+// screen device, even if the device has not asked for an update.
+func (m *Machine) FlushScreen() {
+	if m.screen != nil {
+		m.screen.flush()
+	}
+}

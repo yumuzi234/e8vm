@@ -24,14 +24,7 @@ func newScreen(ptext, pcolor *page, s Screen) *screen {
 	}
 }
 
-func (s *screen) Tick() {
-	if s.s == nil { // headless
-		return
-	}
-	if !s.s.NeedUpdate() { // not refreshed yet
-		return
-	}
-
+func (s *screen) flush() {
 	if len(s.ptext.dirty) > 0 {
 		s.s.UpdateText(s.ptext.dirtyBytes())
 		s.ptext.trackDirty()
@@ -41,4 +34,14 @@ func (s *screen) Tick() {
 		s.s.UpdateColor(s.pcolor.dirtyBytes())
 		s.pcolor.trackDirty()
 	}
+}
+
+func (s *screen) Tick() {
+	if s.s == nil { // headless
+		return
+	}
+	if !s.s.NeedUpdate() { // not refreshed yet
+		return
+	}
+	s.flush()
 }
