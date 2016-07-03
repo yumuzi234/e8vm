@@ -10,7 +10,7 @@ type Config struct {
 	Ncore   int
 
 	Output   io.Writer
-	Monitor  Monitor
+	Screen   Screen
 	RandSeed int64
 
 	InitPC       uint32

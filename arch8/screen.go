@@ -1,7 +1,8 @@
 package arch8
 
-// Monitor is an interface for drawing characters.
-type Monitor interface {
+// Screen is an interface for drawing characters.
+type Screen interface {
+	NeedUpdate() bool
 	UpdateText(m map[uint32]byte)
 	UpdateColor(m map[uint32]byte)
 }
@@ -9,31 +10,35 @@ type Monitor interface {
 type screen struct {
 	ptext  *page
 	pcolor *page
-	m      Monitor
+	s      Screen
 }
 
-func newScreen(ptext, pcolor *page) *screen {
+func newScreen(ptext, pcolor *page, s Screen) *screen {
 	ptext.trackDirty()
 	pcolor.trackDirty()
 
 	return &screen{
 		ptext:  ptext,
 		pcolor: pcolor,
+		s:      s,
 	}
 }
 
 func (s *screen) Tick() {
-	if s.m == nil {
+	if s.s == nil { // headless
+		return
+	}
+	if !s.s.NeedUpdate() { // not refreshed yet
 		return
 	}
 
 	if len(s.ptext.dirty) > 0 {
-		s.m.UpdateText(s.ptext.dirtyBytes())
+		s.s.UpdateText(s.ptext.dirtyBytes())
 		s.ptext.trackDirty()
 	}
 
 	if len(s.pcolor.dirty) > 0 {
-		s.m.UpdateColor(s.pcolor.dirtyBytes())
+		s.s.UpdateColor(s.pcolor.dirtyBytes())
 		s.pcolor.trackDirty()
 	}
 }

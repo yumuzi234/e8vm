@@ -170,7 +170,7 @@ func (s *serial) flush() {
 		}
 	}
 
-	if s.Output != nil {
+	if s.Output != nil && buf.Len() > 0 {
 		_, e := s.Output.Write(buf.Bytes())
 		if e != nil {
 			log.Print(e)
