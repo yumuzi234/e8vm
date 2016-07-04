@@ -12,6 +12,7 @@ var (
 		"halt":    arch8.HALT,
 		"syscall": arch8.SYSCALL,
 		"iret":    arch8.IRET,
+		"sleep":   arch8.SLEEP,
 	}
 
 	// op reg

@@ -37,6 +37,7 @@ const (
 	ErrPageFault    = 6
 	ErrPageReadonly = 7
 	ErrPanic        = 8
+	ErrSleep        = 9
 
 	IntSerial = 16
 	IntROM    = 17
@@ -50,6 +51,7 @@ var (
 
 	errMisalign = newExcep(ErrMisalign, "address misalign")
 	errPanic    = newExcep(ErrPanic, "panic")
+	errSleep    = newExcep(ErrSleep, "sleep")
 )
 
 func newPageFault(va uint32) *Excep {
