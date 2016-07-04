@@ -16,7 +16,7 @@ type clicks struct {
 	intBus intBus
 }
 
-const clicksBase = 8
+const clicksBase = 0x10
 
 func newClicks(p *page, i intBus) *clicks {
 	return &clicks{
@@ -55,8 +55,6 @@ func (c *clicks) Tick() {
 	pos := front.Value.(*click)
 	c.q.Remove(front)
 
-	c.p.writeByte(0, 1)
-	c.p.writeByte(1, 0)
-	c.p.writeByte(2, pos.line)
-	c.p.writeByte(3, pos.line)
+	buf := []byte{0, 1, pos.line, pos.col}
+	c.p.writeWord(0, Endian.Uint32(buf))
 }
