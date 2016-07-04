@@ -11,7 +11,7 @@ var (
 		arch8.HALT:    "halt",
 		arch8.SYSCALL: "syscall",
 		arch8.IRET:    "iret",
-		arch8.PANIC:   "panic",
+		arch8.SLEEP:   "sleep",
 	}
 
 	opSys1Map = map[uint32]string{

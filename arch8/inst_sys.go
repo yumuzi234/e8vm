@@ -48,6 +48,8 @@ func (i *instSys) I(cpu *cpu, in uint32) *Excep {
 		return cpu.Iret()
 	case SYSINFO:
 		v1, v2 = sysInfo(cpu, v1)
+	case SLEEP:
+		return errSleep
 	default:
 		return errInvalidInst
 	}
