@@ -22,6 +22,8 @@ type serial struct {
 }
 
 const (
+	serialBase = 128
+
 	serialInHead   = iota * 4 // updated by hardware
 	serialInTail              // updated by cpu
 	serialInWait              // cycles to wait to raise an interrupt
@@ -42,7 +44,6 @@ const (
 func newSerial(p *page, i intBus) *serial {
 	ret := new(serial)
 	ret.intBus = i
-	const serialBase = 128
 	ret.p = &pageOffset{p, serialBase}
 
 	// default interrupts

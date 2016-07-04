@@ -14,8 +14,9 @@ type Machine struct {
 	phyMem  *phyMemory
 	inst    inst
 	cores   *multiCore
-	serial  *serial
 	console *console
+	clicks  *clicks
+	serial  *serial
 	screen  *screen
 	ticker  *ticker
 	rom     *rom
@@ -46,13 +47,15 @@ func NewMachine(c *Config) *Machine {
 	// hook-up devices
 	p := ret.phyMem.Page(pageBasicIO)
 
-	ret.serial = newSerial(p, ret.cores)
 	ret.console = newConsole(p, ret.cores)
+	ret.clicks = newClicks(p, ret.cores)
+	ret.serial = newSerial(p, ret.cores)
 	ret.ticker = newTicker(ret.cores)
 
 	ret.addDevice(ret.ticker)
 	ret.addDevice(ret.serial)
 	ret.addDevice(ret.console)
+	ret.addDevice(ret.clicks)
 
 	if c.Screen != nil {
 		p1 := ret.phyMem.Page(pageScreenText)
