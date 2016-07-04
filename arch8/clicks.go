@@ -55,6 +55,6 @@ func (c *clicks) Tick() {
 	pos := front.Value.(*click)
 	c.q.Remove(front)
 
-	buf := []byte{0, 1, pos.line, pos.col}
+	buf := []byte{1, 0, pos.line, pos.col}
 	c.p.writeWord(0, Endian.Uint32(buf))
 }

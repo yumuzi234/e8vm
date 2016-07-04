@@ -253,3 +253,6 @@ func (m *Machine) FlushScreen() {
 		m.screen.flush()
 	}
 }
+
+// Click sends in a mouse click at the particular location.
+func (m *Machine) Click(line, col uint8) { m.clicks.addClick(line, col) }
