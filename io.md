@@ -1,5 +1,4 @@
-```
-IO memory mapping
+# IO memory mapping
 
 ## Page 0: reserved
 
