@@ -94,3 +94,32 @@ func runTests(
 		}
 	}
 }
+
+func runPkgTests(c *context, p *pkg) []*lex8.Error {
+	lib := p.pkg.Lib
+	tests := p.pkg.Tests
+	testMain := p.pkg.TestMain
+	if testMain != "" && lib.HasFunc(testMain) {
+		log := lex8.NewErrorList()
+		if len(tests) > 0 {
+			bs := new(bytes.Buffer)
+			lex8.LogError(log, link(c, bs, p, testMain))
+			fout := c.output.TestBin(p.path)
+
+			img := bs.Bytes()
+			_, err := fout.Write(img)
+			lex8.LogError(log, err)
+			lex8.LogError(log, fout.Close())
+			if es := log.Errs(); es != nil {
+				return es
+			}
+
+			runTests(log, tests, img, c.Options)
+			if es := log.Errs(); es != nil {
+				return es
+			}
+		}
+	}
+
+	return nil
+}
