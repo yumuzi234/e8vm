@@ -12,4 +12,3 @@
 - currently we load all packages in one step, rather than in two steps.
 - this is probably not the best way
 - like golang also has a loader
-- 
