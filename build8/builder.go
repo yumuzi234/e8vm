@@ -44,3 +44,13 @@ func (b *Builder) BuildPrefix(repo string) []*lex8.Error {
 
 // BuildAll builds all packages.
 func (b *Builder) BuildAll() []*lex8.Error { return b.BuildPrefix("") }
+
+// LoadedPkgs is a loaded set of packages that is ready for building.
+type LoadedPkgs struct {
+	Targets []string
+}
+
+// Load loads a set of pckages that is ready for building.
+func (b *Builder) Load(pkgs []string) *LoadedPkgs {
+	panic("todo")
+}
