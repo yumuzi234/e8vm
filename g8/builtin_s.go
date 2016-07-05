@@ -106,6 +106,11 @@ func Panic {
 	panic
 }
 
+// Sleep suspends the machine
+func Sleep {
+	sleep
+}
+
 // Assert panics if the condition is not met
 func Assert {
 	bne r1 r0 .ret

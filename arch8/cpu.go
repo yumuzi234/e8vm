@@ -235,5 +235,9 @@ func (c *cpu) Tick() *Excep {
 
 	// the interrupt handler is not handling it
 	// this fault will be thrown out to the simulator
+	if e.Code == ErrSleep {
+		// Prepare for resume
+		c.regs[PC] += 4
+	}
 	return e
 }

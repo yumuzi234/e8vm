@@ -77,6 +77,9 @@ func IsHalt(e error) bool { return IsErr(e, ErrHalt) }
 // IsPanic returns true only when the error is a panic exception
 func IsPanic(e error) bool { return IsErr(e, ErrPanic) }
 
+// IsSleep checks if the error is a sleep exception
+func IsSleep(e error) bool { return IsErr(e, ErrSleep) }
+
 // IsErr checks if the error is of a particular error code
 func IsErr(e error, code byte) bool {
 	if e == nil {
