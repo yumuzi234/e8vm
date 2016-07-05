@@ -1,6 +1,15 @@
-- for handling keyboard inputs, the vm needs to be able to enter a suspending
-state
-- when an input comes, the vm continues running
-- does this thing has anything to do with interrupt?
-- no, it does not have to...
-- wake-up events can be: keyboard input, mouse input, network input.
+- to build with repos, we need to dynamically load imported repos.
+- this requires some support from the build system.
+- because loading frmo repos is an async procedure.
+- unless we parse the import structure on the backend, which includes parsing
+- not really, it only parse the import.g file or the only file in the repository
+- so, what we need is a build.Home built from the repo content.
+- and parse out the building tree based on the database.
+- the package dependency graph.
+- after that, we can then send the snapshot of all the packages required back to the frontend
+
+- asm/builtin should always be builtin, even when it is provided as a file.
+- currently we load all packages in one step, rather than in two steps.
+- this is probably not the best way
+- like golang also has a loader
+- 
