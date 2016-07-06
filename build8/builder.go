@@ -3,6 +3,7 @@ package build8
 import (
 	"fmt"
 
+	"e8vm.io/e8vm/dagvis"
 	"e8vm.io/e8vm/debug8"
 	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/link8"
@@ -52,12 +53,21 @@ func (b *Builder) BuildPrefix(repo string) []*lex8.Error {
 // BuildAll builds all packages.
 func (b *Builder) BuildAll() []*lex8.Error { return b.BuildPrefix("") }
 
-// LoadedPkgs is a loaded set of packages that is ready for building.
-type LoadedPkgs struct {
-	Targets []string
-}
+// Plan returns all the packages required for building the specified
+// target packages.
+func (b *Builder) Plan(pkgs []string) ([]string, []*lex8.Error) {
+	for _, p := range pkgs {
+		if _, es := prepare(b.context, p); es != nil {
+			return nil, es
+		}
+	}
 
-// Load loads a set of pckages that is ready for building.
-func (b *Builder) Load(pkgs []string) *LoadedPkgs {
-	panic("todo")
+	g := &dagvis.Graph{b.deps}
+	g = g.Reverse()
+
+	ret, err := dagvis.TopoSort(g)
+	if err != nil {
+		return nil, lex8.SingleErr(err)
+	}
+	return ret, nil
 }

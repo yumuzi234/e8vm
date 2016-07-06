@@ -6,9 +6,8 @@ import (
 )
 
 type context struct {
-	input   Input
-	output  Output
-	targets []string
+	input  Input
+	output Output
 	*Options
 
 	pkgs map[string]*pkg
