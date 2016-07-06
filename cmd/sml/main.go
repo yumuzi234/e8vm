@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strings"
 
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/build8"
@@ -14,25 +13,10 @@ import (
 
 var (
 	runTests = flag.Bool("test", true, "run tests")
-	pkg      = flag.String("pkg", "", "package to build")
+	pkg      = flag.String("pkg", "/...", "package to build")
 	homeDir  = flag.String("home", ".", "the home directory")
 	plan     = flag.Bool("plan", false, "plan only")
 )
-
-func selectPkgs(h *home8.Home, s string) ([]string, error) {
-	if s == "" {
-		return h.Pkgs("/"), nil
-	}
-	if strings.HasSuffix(s, "...") {
-		prefix := strings.TrimSuffix(s, "...")
-		return h.Pkgs(prefix), nil
-	}
-
-	if !h.HasPkg(s) {
-		return nil, fmt.Errorf("package %q not found", s)
-	}
-	return []string{s}, nil
-}
 
 func handleErrs(errs []*lex8.Error) {
 	if errs == nil {
@@ -53,7 +37,7 @@ func main() {
 	b.InitPC = arch8.InitPC
 	b.RunTests = *runTests
 
-	pkgs, err := selectPkgs(home, *pkg)
+	pkgs, err := build8.SelectPkgs(home, *pkg)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(-1)
