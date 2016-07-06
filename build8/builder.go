@@ -1,6 +1,8 @@
 package build8
 
 import (
+	"fmt"
+
 	"e8vm.io/e8vm/debug8"
 	"e8vm.io/e8vm/lex8"
 	"e8vm.io/e8vm/link8"
@@ -33,6 +35,11 @@ func (b *Builder) BuildPkgs(pkgs []string) []*lex8.Error {
 
 // Build builds a package.
 func (b *Builder) Build(p string) []*lex8.Error {
+	if !b.input.HasPkg(p) {
+		return lex8.SingleErr(fmt.Errorf(
+			"package %q not found", p,
+		))
+	}
 	return b.BuildPkgs([]string{p})
 }
 

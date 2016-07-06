@@ -27,7 +27,7 @@ func NewHome(path string, std string) *Home {
 	if std == "" {
 		std = "/smallrepo/std"
 	}
-	if strings.HasPrefix(std, "/") {
+	if !strings.HasPrefix(std, "/") {
 		std = "/" + std
 	}
 

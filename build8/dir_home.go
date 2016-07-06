@@ -181,8 +181,9 @@ func (h *DirHome) Src(p string) map[string]*File {
 
 	files, found := h.fileList[p]
 	if !found {
-		files, e := listSrcFiles(p, lang)
-		if e != nil {
+		var err error
+		files, err = listSrcFiles(p, lang)
+		if err != nil {
 			return nil
 		}
 
