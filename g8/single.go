@@ -15,7 +15,7 @@ func MakeMemHome(lang build8.Lang) *build8.MemHome {
 	home := build8.NewMemHome(lang)
 	home.AddLang("asm", asm8.Lang())
 	builtin := home.NewPkg("asm/builtin")
-	builtin.AddFile("", "builtin.s", builtInSrc)
+	builtin.AddFile("", "builtin.s", BuiltInSrc)
 
 	return home
 }

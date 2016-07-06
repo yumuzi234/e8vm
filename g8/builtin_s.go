@@ -1,6 +1,7 @@
 package g8
 
-const builtInSrc = `
+// BuiltInSrc is the file that needs to be presented as asm/builtin/builtin.s
+const BuiltInSrc = `
 // a char is sent in via r1
 func PrintChar {
 	// use r2 and r3
