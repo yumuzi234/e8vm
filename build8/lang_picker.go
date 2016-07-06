@@ -20,15 +20,15 @@ func newLangPicker(def Lang) *langPicker {
 	return ret
 }
 
-func (pick *langPicker) addLang(prefix string, lang Lang) {
+func (pick *langPicker) addLang(key string, lang Lang) {
 	if lang == nil {
 		panic("language must not be nil")
 	}
 
-	if prefix == "" {
+	if key == "" {
 		pick.defaultLang = lang
 	}
-	pick.langs[prefix] = lang
+	pick.langs[key] = lang
 }
 
 func (pick *langPicker) lang(path string) Lang {
@@ -36,20 +36,12 @@ func (pick *langPicker) lang(path string) Lang {
 		panic("not package path")
 	}
 
-	nmax := -1
-	var ret Lang
-	for prefix, lang := range pick.langs {
-		n := len(prefix)
-		if n < nmax || !strings.HasPrefix(path, prefix) {
-			continue
+	pkgs := strings.Split(path, "/")
+	for _, pkg := range pkgs {
+		if ret, ok := pick.langs[pkg]; ok {
+			return ret
 		}
-
-		nmax = n
-		ret = lang
 	}
 
-	if ret == nil {
-		ret = pick.defaultLang
-	}
-	return ret
+	return pick.defaultLang
 }

@@ -99,9 +99,8 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 	t("bool", types.Bool)
 	t("float", types.Float32)
 	t("string", types.String)
-	// t("ptr", &types.Pointer{types.Uint8})
+	t("uintptr", types.Uint)
 	// t("float32", types.Float32)
-	// t("string", types.String)
 }
 
 func isBasicType(t string) bool {

@@ -76,8 +76,8 @@ func (h *DirHome) ClearCache() {
 }
 
 // AddLang registers a language with a particular path prefix
-func (h *DirHome) AddLang(prefix string, lang Lang) {
-	h.langs.addLang(prefix, lang)
+func (h *DirHome) AddLang(keyword string, lang Lang) {
+	h.langs.addLang(keyword, lang)
 }
 
 // HasPkg checks if a package exists.
@@ -113,7 +113,7 @@ func (h *DirHome) HasPkg(p string) bool {
 	return false
 }
 
-// Pkgs lists all the packages inside this home folder.
+// Pkgs lists all the packages with a particular prefix.
 func (h *DirHome) Pkgs(prefix string) []string {
 	root := h.path
 	start := filepath.Join(root, prefix)
@@ -222,7 +222,7 @@ func (h *DirHome) TestBin(p string) io.WriteCloser {
 	return newDirFile(h.out("test", p+".e8"))
 }
 
-// Output returns the debug output writer for the particular name.
+// Output returns the debug output writer for a particular name.
 func (h *DirHome) Output(p, name string) io.WriteCloser {
 	if !isPkgPath(p) {
 		panic("not package path")
