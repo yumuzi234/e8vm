@@ -7,6 +7,7 @@ import (
 )
 
 func isPkgPath(p string) bool {
+	p = strings.TrimPrefix(p, "/") // might have a leading slash
 	if p == "" {
 		return false
 	}
