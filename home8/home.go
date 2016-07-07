@@ -4,6 +4,7 @@ package home8
 
 import (
 	"io"
+	"io/ioutil"
 	"path"
 	"strings"
 
@@ -74,18 +75,12 @@ func (h *Home) Pkgs(prefix string) []string {
 	return ret
 }
 
-type noopCloser struct{ io.Reader }
-
-func (c *noopCloser) Close() error { return nil }
-
 func builtinSrc() map[string]*build8.File {
 	return map[string]*build8.File{
 		"builtin.s": {
-			Name: "builtin.s",
-			Path: "<internal>/asm/builtin/builtin.s",
-			ReadCloser: &noopCloser{
-				Reader: strings.NewReader(g8.BuiltInSrc),
-			},
+			Name:       "builtin.s",
+			Path:       "<internal>/asm/builtin/builtin.s",
+			ReadCloser: ioutil.NopCloser(strings.NewReader(g8.BuiltInSrc)),
 		},
 	}
 }
