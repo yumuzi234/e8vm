@@ -37,7 +37,7 @@ func (h *MemHome) HasPkg(p string) bool {
 func (h *MemHome) Pkgs(prefix string) []string {
 	var ret []string
 	for p := range h.pkgs {
-		if prefix == "" || IsSubPkg(prefix, p) {
+		if IsParentPkg(prefix, p) {
 			ret = append(ret, p)
 		}
 	}

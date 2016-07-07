@@ -20,10 +20,16 @@ func isPkgPath(p string) bool {
 	return true
 }
 
-// IsSubPkg checks if a package is a subpackage of another package.
-func IsSubPkg(p, sub string) bool {
+// IsParentPkg checks if a package is a subpackage of another package.
+func IsParentPkg(p, sub string) bool {
+	if p == "" {
+		return true
+	}
 	if p == sub {
 		return true
+	}
+	if p == "/" {
+		return strings.HasPrefix(sub, "/")
 	}
 	return strings.HasPrefix(sub, p+"/")
 }
