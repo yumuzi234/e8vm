@@ -4,7 +4,6 @@ import (
 	"io"
 	"path"
 	"sort"
-	"strings"
 )
 
 // MemHome is a memory based building home.
@@ -38,7 +37,7 @@ func (h *MemHome) HasPkg(p string) bool {
 func (h *MemHome) Pkgs(prefix string) []string {
 	var ret []string
 	for p := range h.pkgs {
-		if strings.HasPrefix(p, prefix) {
+		if prefix == "" || IsSubPkg(prefix, p) {
 			ret = append(ret, p)
 		}
 	}
