@@ -36,7 +36,7 @@ func listSrcFiles(dir string, lang Lang) ([]string, error) {
 // DirHome is a file system basd building home.
 type DirHome struct {
 	path  string
-	langs *langPicker
+	langs *LangPicker
 
 	fileList map[string][]string
 
@@ -53,7 +53,7 @@ func NewDirHome(path string, lang Lang) *DirHome {
 	ret := new(DirHome)
 	ret.path = path
 	ret.fileList = make(map[string][]string)
-	ret.langs = newLangPicker(lang)
+	ret.langs = NewLangPicker(lang)
 
 	return ret
 }
@@ -77,7 +77,7 @@ func (h *DirHome) ClearCache() {
 
 // AddLang registers a language with a particular path prefix
 func (h *DirHome) AddLang(keyword string, lang Lang) {
-	h.langs.addLang(keyword, lang)
+	h.langs.AddLang(keyword, lang)
 }
 
 // HasPkg checks if a package exists.
@@ -233,4 +233,4 @@ func (h *DirHome) Output(p, name string) io.WriteCloser {
 
 // Lang returns the language for the particular path.
 // It searches for the longest prefix match
-func (h *DirHome) Lang(p string) Lang { return h.langs.lang(p) }
+func (h *DirHome) Lang(p string) Lang { return h.langs.Lang(p) }

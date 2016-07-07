@@ -10,15 +10,15 @@ import (
 // MemHome is a memory based building home.
 type MemHome struct {
 	pkgs  map[string]*MemPkg
-	langs *langPicker
+	langs *LangPicker
 }
 
 // NewMemHome creates a new memory-based home
 func NewMemHome(lang Lang) *MemHome {
-	ret := new(MemHome)
-	ret.pkgs = make(map[string]*MemPkg)
-	ret.langs = newLangPicker(lang)
-	return ret
+	return &MemHome{
+		pkgs:  make(map[string]*MemPkg),
+		langs: NewLangPicker(lang),
+	}
 }
 
 // NewPkg creates (or replaces) a package of a particular path in this home.
@@ -141,11 +141,11 @@ func (h *MemHome) OutputBytes(p, name string) []byte {
 }
 
 // Lang returns the language for path
-func (h *MemHome) Lang(path string) Lang { return h.langs.lang(path) }
+func (h *MemHome) Lang(path string) Lang { return h.langs.Lang(path) }
 
 // AddLang adds a language to a prefix
 func (h *MemHome) AddLang(prefix string, lang Lang) {
-	h.langs.addLang(prefix, lang)
+	h.langs.AddLang(prefix, lang)
 }
 
 // AddFiles adds a set of files into mem home.

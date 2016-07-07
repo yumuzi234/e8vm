@@ -4,23 +4,27 @@ import (
 	"strings"
 )
 
-type langPicker struct {
+// LangPicker is a utility that picks a language based on a keyword.
+type LangPicker struct {
 	defaultLang Lang
 	langs       map[string]Lang
 }
 
-func newLangPicker(def Lang) *langPicker {
+// NewLangPicker creates a new picker with a default language.
+func NewLangPicker(def Lang) *LangPicker {
 	if def == nil {
 		panic("default language must not be nil")
 	}
 
-	ret := new(langPicker)
-	ret.defaultLang = def
-	ret.langs = make(map[string]Lang)
-	return ret
+	return &LangPicker{
+		defaultLang: def,
+		langs:       make(map[string]Lang),
+	}
 }
 
-func (pick *langPicker) addLang(key string, lang Lang) {
+// AddLang adds a language that has a certain keyword.
+// When key is empty, it replaces the default language.
+func (pick *LangPicker) AddLang(key string, lang Lang) {
 	if lang == nil {
 		panic("language must not be nil")
 	}
@@ -31,7 +35,8 @@ func (pick *langPicker) addLang(key string, lang Lang) {
 	pick.langs[key] = lang
 }
 
-func (pick *langPicker) lang(path string) Lang {
+// Lang picks the language for a particular path.
+func (pick *LangPicker) Lang(path string) Lang {
 	if !isPkgPath(path) {
 		panic("not package path")
 	}
