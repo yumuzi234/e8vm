@@ -95,8 +95,10 @@ func buildPkg(c *context, pkg *pkg) []*lex8.Error {
 
 func build(c *context, pkgs []string) []*lex8.Error {
 	for _, p := range pkgs {
-		if _, es := prepare(c, p); es != nil {
+		if pkg, es := prepare(c, p); es != nil {
 			return es
+		} else if pkg.err != nil {
+			return lex8.SingleErr(pkg.err)
 		}
 	}
 

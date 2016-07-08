@@ -57,8 +57,10 @@ func (b *Builder) BuildAll() []*lex8.Error { return b.BuildPrefix("") }
 // target packages.
 func (b *Builder) Plan(pkgs []string) ([]string, []*lex8.Error) {
 	for _, p := range pkgs {
-		if _, es := prepare(b.context, p); es != nil {
+		if pkg, es := prepare(b.context, p); es != nil {
 			return nil, es
+		} else if pkg.err != nil {
+			return nil, lex8.SingleErr(pkg.err)
 		}
 	}
 

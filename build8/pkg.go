@@ -33,7 +33,7 @@ func newPkg(in Input, out Output, p string) *pkg {
 	lang := in.Lang(p)
 	if lang == nil {
 		return newErrPkg(fmt.Errorf("invalid pacakge: %q", p))
-	} else if in.Src(p) == nil {
+	} else if !in.HasPkg(p) {
 		return newErrPkg(fmt.Errorf("package not found: %q", p))
 	}
 
