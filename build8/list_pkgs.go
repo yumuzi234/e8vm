@@ -17,7 +17,6 @@ func ListPkgs(input Input, selectors []string) []string {
 	}
 
 	for _, s := range selectors {
-		println(s)
 		if s == "*" {
 			add(input.Pkgs(""))
 		} else if path.Base(s) == "..." {
@@ -27,7 +26,6 @@ func ListPkgs(input Input, selectors []string) []string {
 			}
 			add(input.Pkgs(pre))
 		} else if input.HasPkg(s) {
-			println(s)
 			add([]string{s})
 		}
 	}
