@@ -60,6 +60,9 @@ func (h *Home) dirPath(p string) string {
 
 // HasPkg checks if a package exists
 func (h *Home) HasPkg(p string) bool {
+	if p == "asm/builtin" {
+		return true
+	}
 	return h.home.HasPkg(h.dirPath(p))
 }
 
