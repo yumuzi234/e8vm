@@ -31,7 +31,7 @@ func handleErrs(errs []*lex8.Error) {
 func main() {
 	flag.Parse()
 
-	home := home8.NewHome(*homeDir, "")
+	home := home8.NewDirHome(*homeDir, "")
 	b := build8.NewBuilder(home, home)
 	b.Verbose = true
 	b.InitPC = arch8.InitPC

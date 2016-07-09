@@ -15,16 +15,23 @@ import (
 
 // Home provides the default building home.
 type Home struct {
-	g       build8.Lang
-	asm     build8.Lang
-	dirHome *build8.DirHome
+	home build8.Home
 
 	path string
 	std  string
 }
 
-// NewHome creates a new default home based on a particular directory.
-func NewHome(path string, std string) *Home {
+// NewDirHome creates a new default home based on a particular directory.
+func NewDirHome(path string, std string) *Home {
+	lang := g8.Lang(false)
+	dirHome := build8.NewDirHome(path, lang)
+	dirHome.AddLang("asm", asm8.Lang())
+
+	return NewHome(std, dirHome)
+}
+
+// NewHome wraps an home with the specified std path.
+func NewHome(std string, h build8.Home) *Home {
 	if std == "" {
 		std = "/smallrepo/std"
 	}
@@ -32,16 +39,9 @@ func NewHome(path string, std string) *Home {
 		std = "/" + std
 	}
 
-	lang := g8.Lang(false)
-	dirHome := build8.NewDirHome(path, lang)
-	dirHome.AddLang("asm", asm8.Lang())
-
 	return &Home{
-		g:       lang,
-		asm:     asm8.Lang(),
-		path:    path,
-		std:     std,
-		dirHome: dirHome,
+		std:  std,
+		home: h,
 	}
 }
 
@@ -60,13 +60,13 @@ func (h *Home) dirPath(p string) string {
 
 // HasPkg checks if a package exists
 func (h *Home) HasPkg(p string) bool {
-	return h.dirHome.HasPkg(h.dirPath(p))
+	return h.home.HasPkg(h.dirPath(p))
 }
 
 // Pkgs lists all the packages with a particular prefix
 func (h *Home) Pkgs(prefix string) []string {
 	prefix = h.dirPath(prefix)
-	pkgs := h.dirHome.Pkgs(prefix)
+	pkgs := h.home.Pkgs(prefix)
 	var ret []string
 	for _, p := range pkgs {
 		p = strings.TrimPrefix("/"+p, h.std)
@@ -91,27 +91,27 @@ func (h *Home) Src(p string) map[string]*build8.File {
 		return builtinSrc()
 	}
 
-	return h.dirHome.Src(h.dirPath(p))
+	return h.home.Src(h.dirPath(p))
 }
 
 // Bin returns the wirter to write the binary image.
 func (h *Home) Bin(p string) io.WriteCloser {
-	return h.dirHome.Bin(h.dirPath(p))
+	return h.home.Bin(h.dirPath(p))
 }
 
 // TestBin returns the writer to write the test binary image.
 func (h *Home) TestBin(p string) io.WriteCloser {
-	return h.dirHome.Bin(h.dirPath(p))
+	return h.home.Bin(h.dirPath(p))
 }
 
 // Output returns the debug output writer for a particular name.
 func (h *Home) Output(p, name string) io.WriteCloser {
-	return h.dirHome.Output(h.dirPath(p), name)
+	return h.home.Output(h.dirPath(p), name)
 }
 
 // Lang returns the langauge for the particular path.
 // It returns assembly when any of the package name in the path
 // is "asm".
 func (h *Home) Lang(p string) build8.Lang {
-	return h.dirHome.Lang(h.dirPath(p))
+	return h.home.Lang(h.dirPath(p))
 }

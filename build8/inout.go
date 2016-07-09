@@ -31,3 +31,9 @@ type Output interface {
 	// for testing.
 	TestBin(path string) io.WriteCloser
 }
+
+// Home is an interface that provides both input and output.
+type Home interface {
+	Input
+	Output
+}
