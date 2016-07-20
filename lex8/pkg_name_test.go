@@ -11,7 +11,7 @@ func TestIsPkgName(t *testing.T) {
 			t.Errorf("%v should be a package name", name)
 		}
 	}
-	testName = []string{"aB", "1abc", "", "  ", "a~", "%a", "A1", "$abc1"}
+	testName = []string{"aB", "1abc", "", "  ", "a~", "%a", "A1", "TBC", "$abc1"}
 	for _, name := range testName {
 		if IsPkgName(name) {
 			t.Errorf("%v should not be a package name", name)
