@@ -46,8 +46,8 @@ func (b *Builder) Build(p string) []*lex8.Error {
 
 // BuildPrefix builds packages with a particular prefix.
 // in the path.
-func (b *Builder) BuildPrefix(repo string) []*lex8.Error {
-	return b.BuildPkgs(b.input.Pkgs(repo))
+func (b *Builder) BuildPrefix(prefix string) []*lex8.Error {
+	return b.BuildPkgs(b.input.Pkgs(prefix))
 }
 
 // BuildAll builds all packages.
