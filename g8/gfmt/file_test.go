@@ -120,6 +120,13 @@ func TestFormatFile(t *testing.T) {
 			/* some comment */
 		}
 	`)
+	o(`
+        import ( "something" )
+        `, `
+        import (
+            "something"
+        )
+    `)
 	/*
 		o(`
 			func main() {

@@ -22,7 +22,7 @@ func printTopDecl(f *formatter, d ast.Decl) {
 func printFile(f *formatter, file *ast.File) {
 	if file.Imports != nil {
 		printImportDecls(f, file.Imports)
-		f.printEndlPlus(true, true)
+		f.printEndlPlus(len(file.Decls) > 0, true)
 	}
 
 	for i, decl := range file.Decls {
