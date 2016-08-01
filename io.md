@@ -19,12 +19,17 @@ c-10: syscall SP
 4: console input byte
 5: is console input byte valid
 
-8-10: boot arg
+8-c: boot arg
 
 10: mouse click input valid
 11: mouse click signal
 12: mouse click line
 13: mouse click col
+
+20: read flags
+24: rand number
+28: time high
+2c: time low
 
 80-84: serial input head
 84-88: serial input tail

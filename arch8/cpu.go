@@ -1,6 +1,8 @@
 package arch8
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // Inst is an interface for executing one single instruction
 type inst interface {
