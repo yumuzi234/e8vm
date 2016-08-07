@@ -105,11 +105,13 @@ func PrintInt32 {
 // Panic halts the system immediately with panic exception
 func Panic {
 	panic
+	mov pc ret
 }
 
 // Sleep suspends the machine
 func Sleep {
 	sleep
+	mov pc ret
 }
 
 // Assert panics if the condition is not met
