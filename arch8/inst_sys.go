@@ -49,7 +49,11 @@ func (i *instSys) I(cpu *cpu, in uint32) *Excep {
 	case SYSINFO:
 		v1, v2 = sysInfo(cpu, v1)
 	case SLEEP:
-		return errSleep
+		if !cpu.sleeping {
+			cpu.sleeping = true
+			return errSleep
+		}
+		return nil
 	default:
 		return errInvalidInst
 	}

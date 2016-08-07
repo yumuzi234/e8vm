@@ -18,9 +18,10 @@ type cpu struct {
 	virtMem   *virtMemory
 	interrupt *interrupt
 
-	inst   inst
-	index  byte
-	ncycle uint64
+	inst     inst
+	index    byte
+	ncycle   uint64
+	sleeping bool
 }
 
 // newCPU creates a CPU with memroy and instruction binding
@@ -237,9 +238,5 @@ func (c *cpu) Tick() *Excep {
 
 	// the interrupt handler is not handling it
 	// this fault will be thrown out to the simulator
-	if e.Code == ErrSleep {
-		// Prepare for resume
-		c.regs[PC] += 4
-	}
 	return e
 }
