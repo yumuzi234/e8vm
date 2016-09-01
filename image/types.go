@@ -1,5 +1,5 @@
-// Package e8 defines the file format that saves an executable file.
-package e8
+// Package image defines the file format that saves an executable file.
+package image
 
 // Section types
 const (

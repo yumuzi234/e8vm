@@ -3,12 +3,12 @@ package sempass
 import (
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/sym8"
 )
 
 func declareVar(
-	b *builder, tok *lex8.Token, t types.T, used bool,
+	b *builder, tok *lexing.Token, t types.T, used bool,
 ) *sym8.Symbol {
 	name := tok.Lit
 	s := sym8.Make(b.path, name, tast.SymVar, nil, t, tok.Pos)
@@ -25,7 +25,7 @@ func declareVar(
 }
 
 func declareVars(
-	b *builder, ids []*lex8.Token, t types.T, used bool,
+	b *builder, ids []*lexing.Token, t types.T, used bool,
 ) []*sym8.Symbol {
 	var syms []*sym8.Symbol
 	for _, id := range ids {

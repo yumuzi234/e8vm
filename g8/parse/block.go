@@ -2,7 +2,7 @@ package parse
 
 import (
 	"e8vm.io/e8vm/g8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func parseBlock(p *parser) *ast.Block {
@@ -12,7 +12,7 @@ func parseBlock(p *parser) *ast.Block {
 		return ret
 	}
 
-	for !(p.SeeOp("}") || p.See(lex8.EOF)) {
+	for !(p.SeeOp("}") || p.See(lexing.EOF)) {
 		if stmt := p.parseStmt(); stmt != nil {
 			ret.Stmts = append(ret.Stmts, stmt)
 		}

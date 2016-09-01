@@ -2,7 +2,7 @@ package asm8
 
 import (
 	"e8vm.io/e8vm/asm8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 type funcDecl struct {
@@ -11,7 +11,7 @@ type funcDecl struct {
 	stmts []*funcStmt
 }
 
-func resolveFunc(log lex8.Logger, f *ast.Func) *funcDecl {
+func resolveFunc(log lexing.Logger, f *ast.Func) *funcDecl {
 	ret := new(funcDecl)
 	ret.Func = f
 

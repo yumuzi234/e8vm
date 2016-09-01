@@ -1,4 +1,4 @@
-package lex8
+package lexing
 
 // IsPkgName checks if a literal is a valid package name.
 func IsPkgName(s string) bool {

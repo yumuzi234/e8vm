@@ -1,7 +1,7 @@
 package parse
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // The token types used by the parser.
@@ -18,8 +18,8 @@ const (
 )
 
 // Types provides a type name querier
-var Types = func() *lex8.Types {
-	ret := lex8.NewTypes()
+var Types = func() *lexing.Types {
+	ret := lexing.NewTypes()
 	o := func(t int, name string) {
 		ret.Register(t, name)
 	}

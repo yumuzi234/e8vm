@@ -3,13 +3,13 @@ package sempass
 import (
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/tast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/sym8"
 )
 
 // BuildBareFunc build a list of statements.
 func BuildBareFunc(scope *sym8.Scope, stmts []ast.Stmt) (
-	[]tast.Stmt, []*lex8.Error,
+	[]tast.Stmt, []*lexing.Error,
 ) {
 	b := makeBuilder("_", scope)
 	b.scope.Push()

@@ -1,4 +1,4 @@
-package lex8
+package lexing
 
 import (
 	"io"

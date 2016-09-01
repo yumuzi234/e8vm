@@ -5,13 +5,13 @@ import (
 	"io"
 
 	"e8vm.io/e8vm/g8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 type parser struct {
 	f string
-	x lex8.Tokener
-	*lex8.Parser
+	x lexing.Tokener
+	*lexing.Parser
 
 	exprFunc    func(p *parser) ast.Expr
 	typeFunc    func(p *parser) ast.Expr
@@ -23,13 +23,13 @@ type parser struct {
 }
 
 func makeTokener(f string, r io.Reader, golike bool) (
-	lex8.Tokener, *lex8.Recorder,
+	lexing.Tokener, *lexing.Recorder,
 ) {
-	var x lex8.Tokener = newLexer(f, r)
+	var x lexing.Tokener = newLexer(f, r)
 
 	x = newSemiInserter(x)
 
-	kw := lex8.NewKeyworder(x)
+	kw := lexing.NewKeyworder(x)
 	kw.Ident = Ident
 	kw.Keyword = Keyword
 	if !golike {
@@ -38,17 +38,17 @@ func makeTokener(f string, r io.Reader, golike bool) (
 		kw.Keywords = golikeKeywords
 	}
 
-	rec := lex8.NewRecorder(kw)
-	return lex8.NewCommentRemover(rec), rec
+	rec := lexing.NewRecorder(kw)
+	return lexing.NewCommentRemover(rec), rec
 }
 
-func newParser(f string, r io.Reader, golike bool) (*parser, *lex8.Recorder) {
+func newParser(f string, r io.Reader, golike bool) (*parser, *lexing.Recorder) {
 	ret := new(parser)
 	ret.f = f
 	ret.golike = golike
 	x, rec := makeTokener(f, r, golike)
 	ret.x = x
-	ret.Parser = lex8.NewParser(ret.x, Types)
+	ret.Parser = lexing.NewParser(ret.x, Types)
 	return ret, rec
 }
 
@@ -90,7 +90,7 @@ func (p *parser) SeeOp(ops ...string) bool {
 	return false
 }
 
-func (p *parser) typeStr(t *lex8.Token) string {
+func (p *parser) typeStr(t *lexing.Token) string {
 	if t.Type == Operator {
 		return fmt.Sprintf("'%s'", t.Lit)
 	} else if t.Type == Semi {
@@ -99,7 +99,7 @@ func (p *parser) typeStr(t *lex8.Token) string {
 	return TypeStr(t.Type)
 }
 
-func (p *parser) AcceptSemi() *lex8.Token {
+func (p *parser) AcceptSemi() *lexing.Token {
 	if p.InError() {
 		return nil
 	}
@@ -126,7 +126,7 @@ func (p *parser) SeeSemi() bool {
 	return false
 }
 
-func (p *parser) ExpectSemi() *lex8.Token {
+func (p *parser) ExpectSemi() *lexing.Token {
 	if p.InError() {
 		return nil
 	}
@@ -150,7 +150,7 @@ func (p *parser) skipErrStmt() bool {
 
 	for {
 		t := p.Token()
-		if t.Type == Semi || t.Type == lex8.EOF {
+		if t.Type == Semi || t.Type == lexing.EOF {
 			break
 		} else if p.SeeOp("}") {
 			break
@@ -177,7 +177,7 @@ func (p *parser) SeeKeyword(kw string) bool {
 	return p.SeeLit(Keyword, kw)
 }
 
-func (p *parser) ExpectOp(op string) *lex8.Token {
+func (p *parser) ExpectOp(op string) *lexing.Token {
 	if p.InError() {
 		return nil
 	}
@@ -190,7 +190,7 @@ func (p *parser) ExpectOp(op string) *lex8.Token {
 	return p.Shift()
 }
 
-func (p *parser) ExpectKeyword(kw string) *lex8.Token {
+func (p *parser) ExpectKeyword(kw string) *lexing.Token {
 	if !p.SeeLit(Keyword, kw) {
 		p.ErrorfHere("expect keyword '%s', got %s",
 			kw, p.typeStr(p.Token()),

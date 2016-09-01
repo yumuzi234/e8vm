@@ -1,13 +1,13 @@
 package asm8
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/sym8"
 )
 
 // Builder manipulates an AST, checks its syntax, and builds the assembly
 type builder struct {
-	*lex8.ErrorList
+	*lexing.ErrorList
 	scope *sym8.Scope
 	path  string
 
@@ -19,7 +19,7 @@ type builder struct {
 
 func newBuilder(path string) *builder {
 	return &builder{
-		ErrorList: lex8.NewErrorList(),
+		ErrorList: lexing.NewErrorList(),
 		scope:     sym8.NewScope(),
 		path:      path,
 		imports:   make(map[string]string),
@@ -28,7 +28,7 @@ func newBuilder(path string) *builder {
 }
 
 // Errs returns the building errors.
-func (b *builder) Errs() []*lex8.Error {
+func (b *builder) Errs() []*lexing.Error {
 	return b.ErrorList.Errs()
 }
 

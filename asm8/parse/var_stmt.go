@@ -2,10 +2,10 @@ package parse
 
 import (
 	"e8vm.io/e8vm/asm8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
-func parseArgs(p *parser) (typ *lex8.Token, args []*lex8.Token) {
+func parseArgs(p *parser) (typ *lexing.Token, args []*lexing.Token) {
 	typ = p.Expect(Operand)
 	if typ == nil {
 		p.skipErrStmt()
@@ -23,7 +23,7 @@ func parseArgs(p *parser) (typ *lex8.Token, args []*lex8.Token) {
 				)
 			}
 		}
-		if p.See(lex8.EOF) {
+		if p.See(lexing.EOF) {
 			break
 		}
 		p.Next()

@@ -3,7 +3,7 @@ package codegen
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // Func is an IR function. It consists of a bunch of named
@@ -12,7 +12,7 @@ import (
 type Func struct {
 	pkg  string
 	name string
-	pos  *lex8.Pos
+	pos  *lexing.Pos
 	sig  *FuncSig
 
 	savedRegs []*Var
@@ -27,7 +27,7 @@ type Func struct {
 	frameSize int32
 }
 
-func newFunc(pkg, name string, pos *lex8.Pos, sig *FuncSig) *Func {
+func newFunc(pkg, name string, pos *lexing.Pos, sig *FuncSig) *Func {
 	ret := &Func{
 		pkg:  pkg,
 		name: name,

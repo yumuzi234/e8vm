@@ -6,7 +6,7 @@ import (
 
 	"e8vm.io/e8vm/asm8/ast"
 	"e8vm.io/e8vm/build8"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 type importStmt struct {
@@ -18,18 +18,18 @@ type importStmt struct {
 	pkg *build8.Package
 }
 
-func importPos(i *ast.ImportStmt) *lex8.Pos {
+func importPos(i *ast.ImportStmt) *lexing.Pos {
 	if i.As == nil {
 		return i.Path.Pos
 	}
 	return i.As.Pos
 }
 
-func (s *importStmt) pos() *lex8.Pos {
+func (s *importStmt) pos() *lexing.Pos {
 	return importPos(s.ImportStmt)
 }
 
-func resolveImportStmt(log lex8.Logger, imp *ast.ImportStmt) *importStmt {
+func resolveImportStmt(log lexing.Logger, imp *ast.ImportStmt) *importStmt {
 	ret := new(importStmt)
 	ret.ImportStmt = imp
 

@@ -3,7 +3,7 @@ package build8
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 type pkg struct {
@@ -48,7 +48,7 @@ func newPkg(in Input, out Output, p string) *pkg {
 
 func (p *pkg) srcMap() map[string]*File { return p.input.Src(p.path) }
 
-func (p *pkg) Import(name, path string, pos *lex8.Pos) {
+func (p *pkg) Import(name, path string, pos *lexing.Pos) {
 	p.imports[name] = &Import{Path: path, Pos: pos}
 }
 

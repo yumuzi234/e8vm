@@ -1,10 +1,10 @@
 package build8
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
-func prepare(c *context, p string) (*pkg, []*lex8.Error) {
+func prepare(c *context, p string) (*pkg, []*lexing.Error) {
 	saved := c.pkgs[p]
 	if saved != nil {
 		return saved, nil // already prepared
@@ -28,7 +28,7 @@ func prepare(c *context, p string) (*pkg, []*lex8.Error) {
 		}
 
 		if impPkg.err != nil {
-			return pkg, []*lex8.Error{{
+			return pkg, []*lexing.Error{{
 				Pos: imp.Pos,
 				Err: impPkg.err,
 			}}

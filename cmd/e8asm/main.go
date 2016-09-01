@@ -10,7 +10,7 @@ import (
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/asm8"
 	"e8vm.io/e8vm/dasm8"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 var (
@@ -57,7 +57,7 @@ func main() {
 		log.Fatalf("open: %s", e)
 	}
 
-	var es []*lex8.Error
+	var es []*lexing.Error
 	if strings.HasSuffix(fname, "_bare.s") {
 		bs, es = asm8.BuildBareFunc(fname, f)
 	} else {

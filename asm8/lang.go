@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"e8vm.io/e8vm/build8"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/sym8"
 )
 
@@ -17,7 +17,7 @@ func (lang) IsSrc(filename string) bool {
 
 func (lang) Prepare(
 	src map[string]*build8.File, imp build8.Importer,
-) []*lex8.Error {
+) []*lexing.Error {
 	if f := build8.OnlyFile(src); f != nil {
 		return listImport(f.Path, f, imp)
 	}
@@ -40,7 +40,7 @@ func buildSymTable(p *lib) *sym8.Table {
 }
 
 func (lang) Compile(pinfo *build8.PkgInfo) (
-	*build8.Package, []*lex8.Error,
+	*build8.Package, []*lexing.Error,
 ) {
 	// resolve pass, will also parse the files
 	pkg, es := resolvePkg(pinfo.Path, pinfo.Src)
@@ -49,7 +49,7 @@ func (lang) Compile(pinfo *build8.PkgInfo) (
 	}
 
 	// import
-	errs := lex8.NewErrorList()
+	errs := lexing.NewErrorList()
 	if pkg.imports != nil {
 		for _, stmt := range pkg.imports.stmts {
 			imp := pinfo.Import[stmt.as]

@@ -2,7 +2,7 @@ package asm8
 
 import (
 	"e8vm.io/e8vm/asm8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 type file struct {
@@ -13,7 +13,7 @@ type file struct {
 	imports *importDecl
 }
 
-func resolveFile(log lex8.Logger, f *ast.File) *file {
+func resolveFile(log lexing.Logger, f *ast.File) *file {
 	ret := new(file)
 	ret.File = f
 

@@ -3,23 +3,23 @@ package parse
 import (
 	"io"
 
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // Parser parses a file input stream into top-level syntax blocks.
 type parser struct {
-	x lex8.Tokener
-	*lex8.Parser
+	x lexing.Tokener
+	*lexing.Parser
 }
 
-func newParser(f string, r io.Reader) (*parser, *lex8.Recorder) {
+func newParser(f string, r io.Reader) (*parser, *lexing.Recorder) {
 	ret := new(parser)
 
-	var x lex8.Tokener = newLexer(f, r)
+	var x lexing.Tokener = newLexer(f, r)
 	x = newSemiInserter(x)
-	rec := lex8.NewRecorder(x)
-	ret.x = lex8.NewCommentRemover(rec)
-	ret.Parser = lex8.NewParser(ret.x, Types)
+	rec := lexing.NewRecorder(x)
+	ret.x = lexing.NewCommentRemover(rec)
+	ret.Parser = lexing.NewParser(ret.x, Types)
 	return ret, rec
 }
 
@@ -27,7 +27,7 @@ func (p *parser) SeeKeyword(kw string) bool {
 	return p.SeeLit(Keyword, kw)
 }
 
-func (p *parser) ExpectKeyword(kw string) *lex8.Token {
+func (p *parser) ExpectKeyword(kw string) *lexing.Token {
 	return p.ExpectLit(Keyword, kw)
 }
 

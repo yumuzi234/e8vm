@@ -7,7 +7,7 @@ import (
 
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/asm8/parse"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func nbitAlign(nbit int) uint32 {
@@ -26,7 +26,7 @@ const (
 	modeFloat  = 0x4
 )
 
-func parseDataNums(p lex8.Logger, args []*lex8.Token, mode int) (
+func parseDataNums(p lexing.Logger, args []*lexing.Token, mode int) (
 	[]byte, uint32,
 ) {
 	if !checkTypeAll(p, args, parse.Operand) {

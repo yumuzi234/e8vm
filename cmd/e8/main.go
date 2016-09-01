@@ -13,7 +13,7 @@ import (
 	"e8vm.io/e8vm/asm8"
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/g8"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 var (
@@ -63,7 +63,7 @@ func main() {
 	b.RunTests = *runTests
 	b.StaticOnly = *staticOnly
 
-	var es []*lex8.Error
+	var es []*lexing.Error
 	if *pkg == "" {
 		es = b.BuildAll()
 	} else if strings.HasSuffix(*pkg, "...") {

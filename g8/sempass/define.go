@@ -5,7 +5,7 @@ import (
 	"e8vm.io/e8vm/g8/parse"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/sym8"
 )
 
@@ -13,7 +13,7 @@ import (
 // implicit type casts if needed. Only literay expression list needs alloc
 // prepare.
 func allocPrepare(
-	b *builder, toks []*lex8.Token, lst *tast.ExprList,
+	b *builder, toks []*lexing.Token, lst *tast.ExprList,
 ) *tast.ExprList {
 	ret := tast.NewExprList()
 	for i, tok := range toks {
@@ -39,7 +39,7 @@ func allocPrepare(
 }
 
 func define(
-	b *builder, ids []*lex8.Token, expr tast.Expr, eq *lex8.Token,
+	b *builder, ids []*lexing.Token, expr tast.Expr, eq *lexing.Token,
 ) *tast.Define {
 	// check count matching
 	r := expr.R()
@@ -75,9 +75,9 @@ func define(
 }
 
 func buildIdentExprList(b *builder, list *ast.ExprList) (
-	idents []*lex8.Token, firstError ast.Expr,
+	idents []*lexing.Token, firstError ast.Expr,
 ) {
-	ret := make([]*lex8.Token, 0, list.Len())
+	ret := make([]*lexing.Token, 0, list.Len())
 	for _, expr := range list.Exprs {
 		op, ok := expr.(*ast.Operand)
 		if !ok {

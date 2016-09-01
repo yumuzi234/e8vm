@@ -2,7 +2,7 @@ package parse
 
 import (
 	"e8vm.io/e8vm/asm8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func parseImportStmt(p *parser) *ast.ImportStmt {
@@ -33,7 +33,7 @@ func parseImports(p *parser) *ast.Import {
 		return ret
 	}
 
-	for !p.See(Rbrace) && !p.See(lex8.EOF) {
+	for !p.See(Rbrace) && !p.See(lexing.EOF) {
 		imp := parseImportStmt(p)
 		if imp != nil {
 			ret.Stmts = append(ret.Stmts, imp)

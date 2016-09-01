@@ -2,7 +2,7 @@ package tast
 
 import (
 	"e8vm.io/e8vm/g8/types"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/sym8"
 )
 
@@ -33,7 +33,7 @@ func NewCast(from Expr, to types.T) *Cast {
 
 // Ident is an identifier.
 type Ident struct {
-	Token *lex8.Token
+	Token *lexing.Token
 	*Ref
 	Symbol *sym8.Symbol
 }
@@ -41,7 +41,7 @@ type Ident struct {
 // MemberExpr is an expression of "a.b"
 type MemberExpr struct {
 	Expr Expr
-	Sub  *lex8.Token
+	Sub  *lexing.Token
 	*Ref
 	Symbol *sym8.Symbol
 }
@@ -49,7 +49,7 @@ type MemberExpr struct {
 // OpExpr is an expression likfe "a+b"
 type OpExpr struct {
 	A  Expr
-	Op *lex8.Token
+	Op *lexing.Token
 	B  Expr
 	*Ref
 }

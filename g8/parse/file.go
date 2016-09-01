@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 
 	"e8vm.io/e8vm/g8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/textbox"
 )
 
@@ -64,7 +64,7 @@ func parseFile(p *parser) *ast.File {
 		ret.Imports = parseImports(p)
 	}
 
-	for !p.See(lex8.EOF) {
+	for !p.See(lexing.EOF) {
 		decl := parseTopDecl(p)
 		if decl != nil {
 			ret.Decls = append(ret.Decls, decl)
@@ -88,11 +88,11 @@ const (
 
 // File parses a file.
 func File(f string, r io.Reader, golike bool) (
-	*ast.File, *lex8.Recorder, []*lex8.Error,
+	*ast.File, *lexing.Recorder, []*lexing.Error,
 ) {
 	bs, err := ioutil.ReadAll(r)
 	if err != nil {
-		return nil, nil, lex8.SingleErr(err)
+		return nil, nil, lexing.SingleErr(err)
 	}
 
 	es := textbox.CheckRect(f, bytes.NewReader(bs), MaxLine, MaxCol)

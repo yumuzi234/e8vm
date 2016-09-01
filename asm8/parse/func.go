@@ -4,11 +4,11 @@ import (
 	"io"
 
 	"e8vm.io/e8vm/asm8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func parseFuncStmts(p *parser, f *ast.Func) {
-	for !(p.See(Rbrace) || p.See(lex8.EOF)) {
+	for !(p.See(Rbrace) || p.See(lexing.EOF)) {
 		stmt := parseFuncStmt(p)
 		if stmt != nil {
 			f.Stmts = append(f.Stmts, stmt)
@@ -18,7 +18,7 @@ func parseFuncStmts(p *parser, f *ast.Func) {
 
 func parseBareFunc(p *parser) *ast.Func {
 	ret := new(ast.Func)
-	ret.Name = &lex8.Token{
+	ret.Name = &lexing.Token{
 		Type: Operand,
 		Lit:  "_",
 		Pos:  nil,
@@ -28,7 +28,7 @@ func parseBareFunc(p *parser) *ast.Func {
 }
 
 // BareFunc parses a file as a bare function.
-func BareFunc(f string, rc io.ReadCloser) (*ast.Func, []*lex8.Error) {
+func BareFunc(f string, rc io.ReadCloser) (*ast.Func, []*lexing.Error) {
 	p, _ := newParser(f, rc)
 	fn := parseBareFunc(p)
 	if es := p.Errs(); es != nil {

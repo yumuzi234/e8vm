@@ -4,7 +4,7 @@ import (
 	"e8vm.io/e8vm/asm8/ast"
 	"e8vm.io/e8vm/asm8/parse"
 	"e8vm.io/e8vm/build8"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 type pkg struct {
@@ -14,15 +14,15 @@ type pkg struct {
 	imports *importDecl
 }
 
-func resolvePkg(p string, src map[string]*build8.File) (*pkg, []*lex8.Error) {
-	log := lex8.NewErrorList()
+func resolvePkg(p string, src map[string]*build8.File) (*pkg, []*lexing.Error) {
+	log := lexing.NewErrorList()
 	ret := new(pkg)
 	ret.path = p
 
 	asts := make(map[string]*ast.File)
 
 	// parse all the files first
-	var parseErrs []*lex8.Error
+	var parseErrs []*lexing.Error
 	for name, f := range src {
 		astFile, es := parse.File(f.Path, f)
 		if es != nil {

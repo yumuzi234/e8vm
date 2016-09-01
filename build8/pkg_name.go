@@ -3,7 +3,7 @@ package build8
 import (
 	"strings"
 
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func isPkgPath(p string) bool {
@@ -13,7 +13,7 @@ func isPkgPath(p string) bool {
 	}
 	subs := strings.Split(p, "/")
 	for _, sub := range subs {
-		if !lex8.IsPkgName(sub) {
+		if !lexing.IsPkgName(sub) {
 			return false
 		}
 	}

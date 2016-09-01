@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"sort"
 
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func listSrcFiles(dir string, lang Lang) ([]string, error) {
@@ -94,7 +94,7 @@ func (h *DirHome) HasPkg(p string) bool {
 	}
 
 	base := filepath.Base(p)
-	if !lex8.IsPkgName(base) {
+	if !lexing.IsPkgName(base) {
 		return false
 	}
 
@@ -137,7 +137,7 @@ func (h *DirHome) Pkgs(prefix string) []string {
 		base := filepath.Base(path)
 		if !info.IsDir() {
 			return nil
-		} else if !lex8.IsPkgName(base) {
+		} else if !lexing.IsPkgName(base) {
 			return filepath.SkipDir
 		}
 

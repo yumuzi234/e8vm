@@ -1,10 +1,10 @@
 package parse
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
-func lexOperator(x *lex8.Lexer, r rune) *lex8.Token {
+func lexOperator(x *lexing.Lexer, r rune) *lexing.Token {
 	switch r {
 	case ';':
 		return x.MakeToken(Semi)
@@ -13,7 +13,7 @@ func lexOperator(x *lex8.Lexer, r rune) *lex8.Token {
 	case '/':
 		r2 := x.Rune()
 		if r2 == '/' || r2 == '*' {
-			return lex8.LexComment(x)
+			return lexing.LexComment(x)
 		} else if r2 == '=' {
 			x.Next()
 		}

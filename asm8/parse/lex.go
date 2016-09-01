@@ -3,10 +3,10 @@ package parse
 import (
 	"io"
 
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
-func lexAsm8(x *lex8.Lexer) *lex8.Token {
+func lexAsm8(x *lexing.Lexer) *lexing.Token {
 	r := x.Rune()
 	if x.IsWhite(r) {
 		panic("incorrect token start")
@@ -24,9 +24,9 @@ func lexAsm8(x *lex8.Lexer) *lex8.Token {
 		return x.MakeToken(Rbrace)
 	case '/':
 		x.Next()
-		return lex8.LexComment(x)
+		return lexing.LexComment(x)
 	case '"':
-		return lex8.LexString(x, String, '"')
+		return lexing.LexString(x, String, '"')
 	}
 
 	if isOperandChar(r) {
@@ -35,17 +35,17 @@ func lexAsm8(x *lex8.Lexer) *lex8.Token {
 
 	x.Errorf("illegal char %q", r)
 	x.Next()
-	return x.MakeToken(lex8.Illegal)
+	return x.MakeToken(lexing.Illegal)
 }
 
-func newLexer(file string, r io.Reader) *lex8.Lexer {
-	return lex8.MakeLexer(file, r, lexAsm8)
+func newLexer(file string, r io.Reader) *lexing.Lexer {
+	return lexing.MakeLexer(file, r, lexAsm8)
 }
 
 // Tokens parses a file in a token array
-func Tokens(f string, r io.Reader) ([]*lex8.Token, []*lex8.Error) {
+func Tokens(f string, r io.Reader) ([]*lexing.Token, []*lexing.Error) {
 	x := newLexer(f, r)
-	toks := lex8.TokenAll(x)
+	toks := lexing.TokenAll(x)
 	if es := x.Errs(); es != nil {
 		return nil, es
 	}

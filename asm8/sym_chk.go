@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"e8vm.io/e8vm/asm8/parse"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // mightBeSymbol just looks at the first rune and see
@@ -23,7 +23,7 @@ func mightBeSymbol(sym string) bool {
 	return false
 }
 
-func parseSym(p lex8.Logger, t *lex8.Token) (pack, sym string) {
+func parseSym(p lexing.Logger, t *lexing.Token) (pack, sym string) {
 	if t.Type != parse.Operand {
 		panic("symbol not an operand")
 	}
@@ -34,7 +34,7 @@ func parseSym(p lex8.Logger, t *lex8.Token) (pack, sym string) {
 		pack, sym = sym[:dot], sym[dot+1:]
 	}
 
-	if dot >= 0 && !lex8.IsPkgName(pack) {
+	if dot >= 0 && !lexing.IsPkgName(pack) {
 		p.Errorf(t.Pos, "invalid package name: %q", pack)
 	} else if !parse.IsIdent(sym) {
 		p.Errorf(t.Pos, "invalid symbol: %q", t.Lit)

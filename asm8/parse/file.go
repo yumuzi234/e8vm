@@ -5,7 +5,7 @@ import (
 	"io"
 
 	"e8vm.io/e8vm/asm8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func parseFile(p *parser) *ast.File {
@@ -17,7 +17,7 @@ func parseFile(p *parser) *ast.File {
 		}
 	}
 
-	for !p.See(lex8.EOF) {
+	for !p.See(lexing.EOF) {
 		if p.SeeKeyword("func") {
 			if f := parseFunc(p); f != nil {
 				ret.Decls = append(ret.Decls, f)
@@ -44,17 +44,17 @@ func parseFile(p *parser) *ast.File {
 // Result is a file parsing result
 type Result struct {
 	File   *ast.File
-	Tokens []*lex8.Token
+	Tokens []*lexing.Token
 }
 
 // FileResult returns a parsing result.
-func FileResult(f string, rc io.ReadCloser) (*Result, []*lex8.Error) {
+func FileResult(f string, rc io.ReadCloser) (*Result, []*lexing.Error) {
 	p, rec := newParser(f, rc)
 	parsed := parseFile(p)
 	e := rc.Close()
 
 	if e != nil {
-		return nil, lex8.SingleErr(e)
+		return nil, lexing.SingleErr(e)
 	}
 	if es := p.Errs(); es != nil {
 		return nil, es
@@ -68,7 +68,7 @@ func FileResult(f string, rc io.ReadCloser) (*Result, []*lex8.Error) {
 }
 
 // File function parses a file into an AST.
-func File(f string, rc io.ReadCloser) (*ast.File, []*lex8.Error) {
+func File(f string, rc io.ReadCloser) (*ast.File, []*lexing.Error) {
 	res, es := FileResult(f, rc)
 	if es != nil {
 		return nil, es

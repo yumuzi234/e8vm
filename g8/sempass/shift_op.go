@@ -2,10 +2,10 @@ package sempass
 
 import (
 	"e8vm.io/e8vm/g8/types"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
-func canShift(b *builder, atyp, btyp types.T, pos *lex8.Pos, op string) bool {
+func canShift(b *builder, atyp, btyp types.T, pos *lexing.Pos, op string) bool {
 	if !types.IsInteger(atyp) {
 		b.Errorf(pos, "%q on %s", op, atyp)
 		return false

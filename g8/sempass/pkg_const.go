@@ -4,14 +4,14 @@ import (
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/sym8"
 	"e8vm.io/e8vm/toposort"
 )
 
 type pkgConst struct {
 	sym  *sym8.Symbol
-	tok  *lex8.Token
+	tok  *lexing.Token
 	expr ast.Expr
 	deps []string
 }

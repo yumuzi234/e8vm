@@ -2,7 +2,7 @@ package asm8
 
 import (
 	"e8vm.io/e8vm/asm8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 type importDecl struct {
@@ -11,7 +11,7 @@ type importDecl struct {
 	stmts map[string]*importStmt
 }
 
-func resolveImportDecl(log lex8.Logger, imp *ast.Import) *importDecl {
+func resolveImportDecl(log lexing.Logger, imp *ast.Import) *importDecl {
 	ret := new(importDecl)
 	ret.Import = imp
 	ret.stmts = make(map[string]*importStmt)

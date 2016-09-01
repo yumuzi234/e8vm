@@ -3,10 +3,10 @@ package parse
 import (
 	"io"
 
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
-func lexG8(x *lex8.Lexer) *lex8.Token {
+func lexG8(x *lexing.Lexer) *lexing.Token {
 	r := x.Rune()
 	if x.IsWhite(r) {
 		panic("incorrect token start")
@@ -17,12 +17,12 @@ func lexG8(x *lex8.Lexer) *lex8.Token {
 		x.Next()
 		return x.MakeToken(Endl)
 	case '"':
-		return lex8.LexString(x, String, '"')
+		return lexing.LexString(x, String, '"')
 	case '\'':
-		return lex8.LexString(x, Char, '\'')
+		return lexing.LexString(x, Char, '\'')
 	}
 
-	if lex8.IsDigit(r) {
+	if lexing.IsDigit(r) {
 		return lexNumber(x)
 	} else if isLetter(r) {
 		return lexIdent(x)
@@ -36,9 +36,9 @@ func lexG8(x *lex8.Lexer) *lex8.Token {
 	}
 
 	x.Errorf("illegal char %q", r)
-	return x.MakeToken(lex8.Illegal)
+	return x.MakeToken(lexing.Illegal)
 }
 
-func newLexer(file string, r io.Reader) *lex8.Lexer {
-	return lex8.MakeLexer(file, r, lexG8)
+func newLexer(file string, r io.Reader) *lexing.Lexer {
+	return lexing.MakeLexer(file, r, lexG8)
 }

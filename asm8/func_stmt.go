@@ -2,7 +2,7 @@ package asm8
 
 import (
 	"e8vm.io/e8vm/asm8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 type funcStmt struct {
@@ -13,7 +13,7 @@ type funcStmt struct {
 	offset uint32
 }
 
-func resolveFuncStmt(log lex8.Logger, s *ast.FuncStmt) *funcStmt {
+func resolveFuncStmt(log lexing.Logger, s *ast.FuncStmt) *funcStmt {
 	ops := s.Ops
 	op0 := ops[0]
 	lead := op0.Lit

@@ -1,4 +1,4 @@
-package lex8
+package lexing
 
 // Remover removes a particular type of token from a token stream
 type Remover struct {

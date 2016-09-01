@@ -8,7 +8,7 @@ import (
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/home8"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 var (
@@ -18,7 +18,7 @@ var (
 	plan     = flag.Bool("plan", false, "plan only")
 )
 
-func handleErrs(errs []*lex8.Error) {
+func handleErrs(errs []*lexing.Error) {
 	if errs == nil {
 		return
 	}

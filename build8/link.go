@@ -5,7 +5,7 @@ import (
 
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/debug8"
-	"e8vm.io/e8vm/e8"
+	"e8vm.io/e8vm/image"
 	"e8vm.io/e8vm/link8"
 )
 
@@ -44,5 +44,5 @@ func link(c *context, out io.Writer, p *pkg, main string) error {
 		return err
 	}
 	secs = append(secs, debugSec)
-	return e8.Write(out, secs)
+	return image.Write(out, secs)
 }

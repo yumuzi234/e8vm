@@ -6,7 +6,7 @@ import (
 
 	"e8vm.io/e8vm/asm8"
 	"e8vm.io/e8vm/build8"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // MakeMemHome makes a memory home for compiling.
@@ -21,7 +21,7 @@ func MakeMemHome(lang build8.Lang) *build8.MemHome {
 }
 
 func buildMainPkg(home *build8.MemHome, opt *build8.Options) (
-	image []byte, errs []*lex8.Error, log []byte,
+	image []byte, errs []*lexing.Error, log []byte,
 ) {
 	b := build8.NewBuilder(home, home)
 	if opt != nil {
@@ -35,7 +35,7 @@ func buildMainPkg(home *build8.MemHome, opt *build8.Options) (
 	log = home.OutputBytes("main", "ir")
 	if image == nil {
 		err := errors.New("missing main() function, no binary created")
-		return nil, lex8.SingleErr(err), log
+		return nil, lexing.SingleErr(err), log
 	}
 
 	return image, nil, log
@@ -44,7 +44,7 @@ func buildMainPkg(home *build8.MemHome, opt *build8.Options) (
 func buildSingle(
 	f, s string, lang build8.Lang, opt *build8.Options,
 ) (
-	image []byte, errs []*lex8.Error, log []byte,
+	image []byte, errs []*lexing.Error, log []byte,
 ) {
 	home := MakeMemHome(lang)
 
@@ -57,7 +57,7 @@ func buildSingle(
 
 // CompileSingle compiles a file into a bare-metal E8 image
 func CompileSingle(fname, s string, golike bool) (
-	[]byte, []*lex8.Error, []byte,
+	[]byte, []*lexing.Error, []byte,
 ) {
 	return buildSingle(fname, s, Lang(golike), new(build8.Options))
 }
@@ -65,7 +65,7 @@ func CompileSingle(fname, s string, golike bool) (
 // CompileAndTestSingle compiles a file into a bare-metal E8 image and
 // runs the tests.
 func CompileAndTestSingle(fname, s string, golike bool, testCycles int) (
-	[]byte, []*lex8.Error, []byte,
+	[]byte, []*lexing.Error, []byte,
 ) {
 	return buildSingle(fname, s, Lang(golike), &build8.Options{
 		RunTests:   true,

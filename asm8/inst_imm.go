@@ -5,7 +5,7 @@ import (
 
 	"e8vm.io/e8vm/arch8"
 	asminst "e8vm.io/e8vm/asm8/inst"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 var (
@@ -37,7 +37,7 @@ var (
 )
 
 // parseImu parses an unsigned 16-bit immediate
-func parseImu(p lex8.Logger, op *lex8.Token) uint32 {
+func parseImu(p lexing.Logger, op *lexing.Token) uint32 {
 	ret, e := strconv.ParseUint(op.Lit, 0, 32)
 	if e != nil {
 		p.Errorf(op.Pos, "invalid unsigned immediate %q: %s", op.Lit, e)
@@ -53,7 +53,7 @@ func parseImu(p lex8.Logger, op *lex8.Token) uint32 {
 }
 
 // parseIms parses an unsigned 16-bit immediate
-func parseIms(p lex8.Logger, op *lex8.Token) uint32 {
+func parseIms(p lexing.Logger, op *lexing.Token) uint32 {
 	ret, e := strconv.ParseInt(op.Lit, 0, 32)
 	if e != nil {
 		p.Errorf(op.Pos, "invalid signed immediate %q: %s", op.Lit, e)
@@ -69,7 +69,7 @@ func parseIms(p lex8.Logger, op *lex8.Token) uint32 {
 }
 
 // parseImm parses an unsigned 16-bit immediate
-func parseImm(p lex8.Logger, op *lex8.Token) uint32 {
+func parseImm(p lexing.Logger, op *lexing.Token) uint32 {
 	ret, e := strconv.ParseInt(op.Lit, 0, 32)
 	if e != nil {
 		p.Errorf(op.Pos, "invalid signed immediate %q: %s", op.Lit, e)
@@ -89,7 +89,7 @@ func makeInstImm(op, d, s, im uint32) *inst {
 	return &inst{inst: ret}
 }
 
-func resolveInstImm(p lex8.Logger, ops []*lex8.Token) (*inst, bool) {
+func resolveInstImm(p lexing.Logger, ops []*lexing.Token) (*inst, bool) {
 	op0 := ops[0]
 	opName := op0.Lit
 	args := ops[1:]
@@ -98,7 +98,7 @@ func resolveInstImm(p lex8.Logger, ops []*lex8.Token) (*inst, bool) {
 		op, d, s, im uint32
 		pack, sym    string
 		fill         int
-		symTok       *lex8.Token
+		symTok       *lexing.Token
 	)
 
 	argCount := func(n int) bool {
@@ -111,7 +111,10 @@ func resolveInstImm(p lex8.Logger, ops []*lex8.Token) (*inst, bool) {
 		return true
 	}
 
-	parseSym := func(t *lex8.Token, f func(lex8.Logger, *lex8.Token) uint32) {
+	parseSym := func(
+		t *lexing.Token,
+		f func(lexing.Logger, *lexing.Token) uint32,
+	) {
 		if mightBeSymbol(t.Lit) {
 			pack, sym = parseSym(p, t)
 			fill = fillLow

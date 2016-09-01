@@ -6,7 +6,7 @@ import (
 
 	"e8vm.io/e8vm/dasm8"
 	"e8vm.io/e8vm/fmt8"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func printBlock(p *fmt8.Printer, b *Block) {
@@ -90,7 +90,7 @@ func PrintPkg(out io.Writer, pkg *Pkg) error {
 }
 
 // AddDebug adds debug symbols via the add function.
-func AddDebug(p *Pkg, add func(f string, pos *lex8.Pos, frame uint32)) {
+func AddDebug(p *Pkg, add func(f string, pos *lexing.Pos, frame uint32)) {
 	for _, f := range p.funcs {
 		add(f.name, f.pos, uint32(f.frameSize))
 	}

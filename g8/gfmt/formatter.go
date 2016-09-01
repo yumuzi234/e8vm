@@ -8,29 +8,29 @@ import (
 	"e8vm.io/e8vm/fmt8"
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/parse"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 type formatter struct {
 	*fmt8.Printer
 	toks *tokens
-	err  *lex8.Error
+	err  *lexing.Error
 
 	exprFunc func(f *formatter, expr ast.Expr)
 }
 
-func (f *formatter) errs() []*lex8.Error {
+func (f *formatter) errs() []*lexing.Error {
 	if f.err != nil {
-		return []*lex8.Error{f.err}
+		return []*lexing.Error{f.err}
 	}
 	return nil
 }
 
-func (f *formatter) errorf(pos *lex8.Pos, s string, args ...interface{}) {
+func (f *formatter) errorf(pos *lexing.Pos, s string, args ...interface{}) {
 	if f.err != nil {
 		return
 	}
-	f.err = &lex8.Error{
+	f.err = &lexing.Error{
 		Pos: pos,
 		Err: fmt.Errorf(s, args...),
 	}
@@ -46,7 +46,7 @@ func (f *formatter) printExprs(args ...interface{}) {
 	}
 }
 
-func newFormatter(out io.Writer, toks []*lex8.Token) *formatter {
+func newFormatter(out io.Writer, toks []*lexing.Token) *formatter {
 	p := fmt8.NewPrinter(out)
 	return &formatter{
 		Printer: p,
@@ -58,7 +58,7 @@ func (f *formatter) printStr(s string) { fmt.Fprint(f.Printer, s) }
 func (f *formatter) printSpace()       { f.printStr(" ") }
 func (f *formatter) printEndl()        { fmt.Fprintln(f.Printer) }
 
-func (f *formatter) peek() *lex8.Token {
+func (f *formatter) peek() *lexing.Token {
 	for {
 		cur := f.toks.peek()
 		if cur == nil {
@@ -72,14 +72,14 @@ func (f *formatter) peek() *lex8.Token {
 	}
 }
 
-func (f *formatter) cue() *lex8.Token {
+func (f *formatter) cue() *lexing.Token {
 	for {
 		cur := f.peek()
 		if cur == nil {
 			return nil
 		}
 
-		if cur.Type == lex8.Comment {
+		if cur.Type == lexing.Comment {
 			f.printStr(formatComment(cur.Lit))
 			f.toks.shift()
 			f.printEndlPlus(true, false)
@@ -90,14 +90,14 @@ func (f *formatter) cue() *lex8.Token {
 	}
 }
 
-func (f *formatter) cueTo(token *lex8.Token) {
+func (f *formatter) cueTo(token *lexing.Token) {
 	cur := f.cue()
 	if cur != token {
 		f.errorf(token.Pos, "unmatched token %v, got %v", token, cur)
 	}
 }
 
-func (f *formatter) expect(token *lex8.Token) {
+func (f *formatter) expect(token *lexing.Token) {
 	f.cueTo(token)
 	f.toks.shift()
 }
@@ -121,13 +121,13 @@ func (f *formatter) printEndlPlus(plus, paraGap bool) {
 	}
 }
 
-func (f *formatter) printToken(t *lex8.Token) {
+func (f *formatter) printToken(t *lexing.Token) {
 	f.expect(t)
 	f.printStr(t.Lit)
 	f.printSameLineComments(t.Pos.Line)
 }
 
-func (f *formatter) omitToken(t *lex8.Token) {
+func (f *formatter) omitToken(t *lexing.Token) {
 	f.expect(t)
 	f.printSameLineComments(t.Pos.Line)
 }
@@ -139,7 +139,7 @@ func (f *formatter) printSameLineComments(line int) {
 			break
 		}
 
-		if !(tok.Type == lex8.Comment && tok.Pos.Line == line) {
+		if !(tok.Type == lexing.Comment && tok.Pos.Line == line) {
 			return
 		}
 
@@ -154,7 +154,7 @@ func (f *formatter) printSameLineComments(line int) {
 
 func (f *formatter) finish() {
 	tok := f.cue()
-	if tok.Type != lex8.EOF {
+	if tok.Type != lexing.EOF {
 		f.errorf(tok.Pos, "unmatched token: got %v, expected EOF", tok)
 		return
 	}

@@ -6,13 +6,13 @@ import (
 	"e8vm.io/e8vm/g8/codegen"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/sym8"
 )
 
 // builder builds a package
 type builder struct {
-	*lex8.ErrorList
+	*lexing.ErrorList
 	path  string
 	scope *sym8.Scope
 
@@ -36,7 +36,7 @@ type builder struct {
 func newBuilder(path string) *builder {
 	s := sym8.NewScope()
 	return &builder{
-		ErrorList: lex8.NewErrorList(),
+		ErrorList: lexing.NewErrorList(),
 		path:      path,
 		p:         codegen.NewPkg(path),
 		scope:     s, // package scope

@@ -3,12 +3,12 @@
 package toposort
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 type node struct {
 	name string
-	tok  *lex8.Token
+	tok  *lexing.Token
 	deps []string
 
 	queuing bool
@@ -29,7 +29,7 @@ func NewSorter(t string) *Sorter {
 }
 
 // AddNode addes a new node
-func (s *Sorter) AddNode(name string, tok *lex8.Token, deps []string) {
+func (s *Sorter) AddNode(name string, tok *lexing.Token, deps []string) {
 	if _, found := s.m[name]; found {
 		panic("duplicate node")
 	}
@@ -37,7 +37,7 @@ func (s *Sorter) AddNode(name string, tok *lex8.Token, deps []string) {
 	s.m[name] = &node{name: name, tok: tok, deps: deps}
 }
 
-func (s *Sorter) push(log lex8.Logger, node *node) {
+func (s *Sorter) push(log lexing.Logger, node *node) {
 	node.queuing = true
 	name := node.name
 
@@ -73,7 +73,7 @@ func (s *Sorter) push(log lex8.Logger, node *node) {
 }
 
 // Sort sorts the added nodes and returns the node order
-func (s *Sorter) Sort(log lex8.Logger) []string {
+func (s *Sorter) Sort(log lexing.Logger) []string {
 	s.order = nil
 	s.err = false
 	for _, node := range s.m {

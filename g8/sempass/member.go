@@ -5,12 +5,12 @@ import (
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/sym8"
 )
 
 func findPackageSym(
-	b *builder, sub *lex8.Token, pkg *types.Pkg,
+	b *builder, sub *lexing.Token, pkg *types.Pkg,
 ) *sym8.Symbol {
 	sym := pkg.Syms.Query(sub.Lit)
 	if sym == nil {

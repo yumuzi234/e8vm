@@ -1,7 +1,7 @@
 package asm8
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/link8"
 	"e8vm.io/e8vm/sym8"
 )
@@ -57,7 +57,7 @@ func setOffsets(b *builder, f *funcDecl) {
 
 // fillDelta will fill the particular instruction
 // with a jumping/branching offset d.
-func fillDelta(b *builder, t *lex8.Token, inst *uint32, d uint32) {
+func fillDelta(b *builder, t *lexing.Token, inst *uint32, d uint32) {
 	if isJump(*inst) {
 		*inst |= d & 0x3fffffff
 	} else {
@@ -102,7 +102,7 @@ func fillLabels(b *builder, f *funcDecl) {
 	}
 }
 
-func findImport(b *builder, t *lex8.Token, pkg string) *importStmt {
+func findImport(b *builder, t *lexing.Token, pkg string) *importStmt {
 	sym := b.scope.Query(pkg)
 	if sym == nil {
 		b.Errorf(t.Pos, "package %q not found", pkg)

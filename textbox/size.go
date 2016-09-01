@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"io"
 
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // TabSize is the indent size for each tab
@@ -58,14 +58,14 @@ func Rect(r io.Reader) (nline, maxWidth int, e error) {
 }
 
 // CheckRect checks if a program is within a rectangular area.
-func CheckRect(file string, r io.Reader, h, w int) []*lex8.Error {
+func CheckRect(file string, r io.Reader, h, w int) []*lexing.Error {
 	br := bufio.NewReader(r)
 	row := 0
 	col := 0
 
-	errs := lex8.NewErrorList()
+	errs := lexing.NewErrorList()
 
-	pos := func() *lex8.Pos { return &lex8.Pos{file, row + 1, col + 1} }
+	pos := func() *lexing.Pos { return &lexing.Pos{file, row + 1, col + 1} }
 	newLine := func() {
 		if col > w {
 			errs.Errorf(pos(), "line too wide")
@@ -81,7 +81,7 @@ func CheckRect(file string, r io.Reader, h, w int) []*lex8.Error {
 				newLine()
 			}
 			break
-		} else if lex8.LogError(errs, e) {
+		} else if lexing.LogError(errs, e) {
 			break
 		}
 

@@ -1,35 +1,35 @@
 package ast
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // FuncRecv is the receiver of a struct method
 type FuncRecv struct {
-	Lparen     *lex8.Token
-	Recv       *lex8.Token
-	Star       *lex8.Token
-	StructName *lex8.Token
-	Rparen     *lex8.Token
+	Lparen     *lexing.Token
+	Recv       *lexing.Token
+	Star       *lexing.Token
+	StructName *lexing.Token
+	Rparen     *lexing.Token
 }
 
 // FuncAlias is for aliasing an imported function
 type FuncAlias struct {
-	Eq   *lex8.Token
-	Pkg  *lex8.Token
-	Dot  *lex8.Token
-	Name *lex8.Token
+	Eq   *lexing.Token
+	Pkg  *lexing.Token
+	Dot  *lexing.Token
+	Name *lexing.Token
 }
 
 // Func is a function
 type Func struct {
-	Kw   *lex8.Token
-	Name *lex8.Token
+	Kw   *lexing.Token
+	Name *lexing.Token
 
 	Recv *FuncRecv
 	*FuncSig
 
 	Alias *FuncAlias
 	Body  *Block
-	Semi  *lex8.Token
+	Semi  *lexing.Token
 }

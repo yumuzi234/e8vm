@@ -8,7 +8,7 @@ import (
 	"e8vm.io/e8vm/g8/codegen"
 	"e8vm.io/e8vm/g8/parse"
 	"e8vm.io/e8vm/g8/sempass"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // because bare function also uses builtin functions that comes from the
@@ -22,12 +22,12 @@ func BareFunc() build8.Lang { return bareFunc{new(lang)} }
 
 func (bareFunc) Prepare(
 	src map[string]*build8.File, importer build8.Importer,
-) []*lex8.Error {
+) []*lexing.Error {
 	importer.Import("$", "asm/builtin", nil)
 	return nil
 }
 
-func buildBareFunc(b *builder, stmts []ast.Stmt) []*lex8.Error {
+func buildBareFunc(b *builder, stmts []ast.Stmt) []*lexing.Error {
 	tstmts, errs := sempass.BuildBareFunc(b.scope, stmts)
 	if errs != nil {
 		return errs
@@ -57,12 +57,12 @@ func findTheFile(pinfo *build8.PkgInfo) (*build8.File, error) {
 }
 
 func (bare bareFunc) Compile(pinfo *build8.PkgInfo) (
-	pkg *build8.Package, es []*lex8.Error,
+	pkg *build8.Package, es []*lexing.Error,
 ) {
 	// parsing
 	theFile, e := findTheFile(pinfo)
 	if e != nil {
-		return nil, lex8.SingleErr(e)
+		return nil, lexing.SingleErr(e)
 	}
 	stmts, es := parse.Stmts(theFile.Path, theFile)
 	if es != nil {
@@ -82,7 +82,7 @@ func (bare bareFunc) Compile(pinfo *build8.PkgInfo) (
 	}
 
 	if e := outputIr(pinfo, b); e != nil {
-		return nil, lex8.SingleErr(e)
+		return nil, lexing.SingleErr(e)
 	}
 
 	// codegen
@@ -100,7 +100,7 @@ func (bare bareFunc) Compile(pinfo *build8.PkgInfo) (
 }
 
 // CompileBareFunc compiles a bare function into a bare-metal E8 image
-func CompileBareFunc(fname, s string) ([]byte, []*lex8.Error, []byte) {
+func CompileBareFunc(fname, s string) ([]byte, []*lexing.Error, []byte) {
 	lang := BareFunc()
 	return buildSingle(fname, s, lang, new(build8.Options))
 }

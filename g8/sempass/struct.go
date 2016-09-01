@@ -4,13 +4,13 @@ import (
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/sym8"
 	"e8vm.io/e8vm/toposort"
 )
 
 type pkgStruct struct {
-	name *lex8.Token
+	name *lexing.Token
 	ast  *ast.Struct    // the struct AST node
 	sym  *sym8.Symbol   // the symbol
 	t    *types.Struct  // type

@@ -1,7 +1,7 @@
 package parse
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func isOperandChar(r rune) bool {
@@ -32,7 +32,7 @@ func isKeyword(lit string) bool {
 	return false
 }
 
-func lexOperand(x *lex8.Lexer) *lex8.Token {
+func lexOperand(x *lexing.Lexer) *lexing.Token {
 	if !isOperandChar(x.Rune()) {
 		panic("incorrect operand start")
 	}

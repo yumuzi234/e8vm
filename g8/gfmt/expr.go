@@ -2,14 +2,14 @@ package gfmt
 
 import (
 	"e8vm.io/e8vm/g8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func printExpr(f *formatter, expr ast.Expr) {
 	switch expr := expr.(type) {
 	case string:
 		f.printStr(expr)
-	case *lex8.Token:
+	case *lexing.Token:
 		f.printToken(expr)
 	case *ast.Operand:
 		f.printToken(expr.Token)

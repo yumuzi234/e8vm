@@ -3,20 +3,20 @@ package sempass
 import (
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/parse"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 type symUses struct {
-	uses map[string]*lex8.Token
+	uses map[string]*lexing.Token
 }
 
 func newSymUses() *symUses {
 	return &symUses{
-		uses: make(map[string]*lex8.Token),
+		uses: make(map[string]*lexing.Token),
 	}
 }
 
-func (u *symUses) add(tok *lex8.Token) {
+func (u *symUses) add(tok *lexing.Token) {
 	name := tok.Lit
 	if _, found := u.uses[name]; !found {
 		u.uses[name] = tok

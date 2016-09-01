@@ -5,14 +5,14 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func tstr(t int) string {
 	switch t {
-	case lex8.EOF:
+	case lexing.EOF:
 		return "eof"
-	case lex8.Comment:
+	case lexing.Comment:
 		return "cm"
 	case Keyword:
 		return "kw"
@@ -26,7 +26,7 @@ func tstr(t int) string {
 		return "rb"
 	case Endl:
 		return "endl"
-	case lex8.Illegal:
+	case lexing.Illegal:
 		return "!"
 	}
 	return fmt.Sprintf("!%d", t)
@@ -44,7 +44,7 @@ func o(s string) {
 		fmt.Printf("%d error(s)\n", len(errs))
 	} else {
 		for _, t := range toks {
-			if t.Type == lex8.EOF || t.Type == Endl ||
+			if t.Type == lexing.EOF || t.Type == Endl ||
 				t.Type == Lbrace || t.Type == Rbrace {
 				fmt.Printf("%s:%d: %s\n", t.Pos.File, t.Pos.Line,
 					tstr(t.Type))

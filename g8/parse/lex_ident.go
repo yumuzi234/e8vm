@@ -1,18 +1,18 @@
 package parse
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func isLetter(r rune) bool {
-	return r == '_' || lex8.IsLetter(r)
+	return r == '_' || lexing.IsLetter(r)
 }
 
-func lexNumber(x *lex8.Lexer) *lex8.Token {
+func lexNumber(x *lexing.Lexer) *lexing.Token {
 	// TODO: lex floating point as well
 
 	start := x.Rune()
-	if !lex8.IsDigit(start) {
+	if !lexing.IsDigit(start) {
 		panic("not starting with a number")
 	}
 
@@ -22,18 +22,18 @@ func lexNumber(x *lex8.Lexer) *lex8.Token {
 	if start == '0' && r == 'x' {
 		x.Next()
 
-		for lex8.IsHexDigit(x.Rune()) {
+		for lexing.IsHexDigit(x.Rune()) {
 			x.Next()
 		}
 	} else {
-		for lex8.IsDigit(x.Rune()) {
+		for lexing.IsDigit(x.Rune()) {
 			x.Next()
 		}
 	}
 	return x.MakeToken(Int)
 }
 
-func lexIdent(x *lex8.Lexer) *lex8.Token {
+func lexIdent(x *lexing.Lexer) *lexing.Token {
 	r := x.Rune()
 	if !isLetter(r) {
 		panic("must start with letter")
@@ -42,7 +42,7 @@ func lexIdent(x *lex8.Lexer) *lex8.Token {
 	for {
 		x.Next()
 		r := x.Rune()
-		if !isLetter(r) && !lex8.IsDigit(r) {
+		if !isLetter(r) && !lexing.IsDigit(r) {
 			break
 		}
 	}

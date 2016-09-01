@@ -1,4 +1,4 @@
-package lex8
+package lexing
 
 // Parser provides the common parser functions for parsing.
 // It does NOT provide a working parser for any grammar.

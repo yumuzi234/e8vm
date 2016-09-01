@@ -7,7 +7,7 @@ import (
 	"sort"
 
 	"e8vm.io/e8vm/debug8"
-	"e8vm.io/e8vm/e8"
+	"e8vm.io/e8vm/image"
 )
 
 type funcEntry struct {
@@ -75,9 +75,9 @@ func findFunc(fs []*funcEntry, pc uint32, t *debug8.Table) (
 	return fs[left].name, f
 }
 
-func debugSection(secs []*e8.Section) *e8.Section {
+func debugSection(secs []*image.Section) *image.Section {
 	for _, sec := range secs {
-		if sec.Type == e8.Debug {
+		if sec.Type == image.Debug {
 			return sec
 		}
 	}

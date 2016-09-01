@@ -4,7 +4,7 @@ import (
 	"io"
 
 	"e8vm.io/e8vm/g8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func parseStmt(p *parser) ast.Stmt {
@@ -41,7 +41,7 @@ func parseStmt(p *parser) ast.Stmt {
 }
 
 func makeParser(f string, r io.Reader, golike bool) (
-	*parser, *lex8.Recorder,
+	*parser, *lexing.Recorder,
 ) {
 	p, rec := newParser(f, r, golike)
 	p.exprFunc = parseExpr
@@ -53,11 +53,11 @@ func makeParser(f string, r io.Reader, golike bool) (
 
 // Stmts parses a file input stream as a list of statements,
 // like a bare function body.
-func Stmts(f string, r io.Reader) ([]ast.Stmt, []*lex8.Error) {
+func Stmts(f string, r io.Reader) ([]ast.Stmt, []*lexing.Error) {
 	p, _ := makeParser(f, r, false)
 
 	var ret []ast.Stmt
-	for !p.See(lex8.EOF) {
+	for !p.See(lexing.EOF) {
 		if stmt := p.parseStmt(); stmt != nil {
 			ret = append(ret, stmt)
 		}

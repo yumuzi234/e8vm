@@ -1,7 +1,7 @@
 package tast
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/sym8"
 )
 
@@ -13,7 +13,7 @@ type ExprStmt struct {
 // AssignStmt is an assignment statement, like "a,b=x,y".
 type AssignStmt struct {
 	Left  Expr
-	Op    *lex8.Token
+	Op    *lexing.Token
 	Right Expr
 }
 
@@ -31,7 +31,7 @@ type Block struct {
 // IncStmt is an "i++" or "i--".
 type IncStmt struct {
 	Expr Expr
-	Op   *lex8.Token
+	Op   *lexing.Token
 }
 
 // ContinueStmt is a "continue"

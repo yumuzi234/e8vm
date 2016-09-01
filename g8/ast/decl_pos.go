@@ -3,11 +3,11 @@ package ast
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // DeclPos returns the keyword position of a top-level declaration.
-func DeclPos(d Decl) *lex8.Pos {
+func DeclPos(d Decl) *lexing.Pos {
 	switch d := d.(type) {
 	case *VarDecls:
 		return d.Kw.Pos

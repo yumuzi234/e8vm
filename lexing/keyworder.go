@@ -1,4 +1,4 @@
-package lex8
+package lexing
 
 // Keyworder contains idents into keywords
 type Keyworder struct {

@@ -4,14 +4,14 @@ import (
 	"bytes"
 	"fmt"
 
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // Func saves the debug information of a function
 type Func struct {
 	// compiler filled information
 	Frame uint32
-	Pos   *lex8.Pos
+	Pos   *lexing.Pos
 
 	// linker filled information
 	Start uint32

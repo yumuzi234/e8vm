@@ -2,11 +2,11 @@ package parse
 
 import (
 	"e8vm.io/e8vm/asm8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func parseVarStmts(p *parser, v *ast.Var) {
-	for !(p.See(Rbrace) || p.See(lex8.EOF)) {
+	for !(p.See(Rbrace) || p.See(lexing.EOF)) {
 		stmt := parseVarStmt(p)
 		if stmt != nil {
 			v.Stmts = append(v.Stmts, stmt)

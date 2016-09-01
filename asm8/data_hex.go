@@ -5,10 +5,10 @@ import (
 	"strconv"
 
 	"e8vm.io/e8vm/asm8/parse"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
-func parseDataHex(p lex8.Logger, args []*lex8.Token) ([]byte, uint32) {
+func parseDataHex(p lexing.Logger, args []*lexing.Token) ([]byte, uint32) {
 	if !checkTypeAll(p, args, parse.Operand) {
 		return nil, 0
 	}

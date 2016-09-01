@@ -1,31 +1,31 @@
 package parse
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // a pipe that replaces end-lines with semicolons
 type semiInserter struct {
-	x          lex8.Tokener
-	save       *lex8.Token
+	x          lexing.Tokener
+	save       *lexing.Token
 	insertSemi bool
 }
 
 // newSemiInserter creates a new statement lexer that inserts
 // semicolons into a token stream.
-func newSemiInserter(x lex8.Tokener) *semiInserter {
+func newSemiInserter(x lexing.Tokener) *semiInserter {
 	ret := new(semiInserter)
 	ret.x = x
 
 	return ret
 }
 
-func makeSemi(p *lex8.Pos, lit string) *lex8.Token {
-	return &lex8.Token{Pos: p, Lit: lit, Type: Semi}
+func makeSemi(p *lexing.Pos, lit string) *lexing.Token {
+	return &lexing.Token{Pos: p, Lit: lit, Type: Semi}
 }
 
 // Token returns the next token of lexing
-func (sx *semiInserter) Token() *lex8.Token {
+func (sx *semiInserter) Token() *lexing.Token {
 	if sx.save != nil {
 		ret := sx.save
 		sx.save = nil
@@ -44,7 +44,7 @@ func (sx *semiInserter) Token() *lex8.Token {
 			default:
 				sx.insertSemi = false
 			}
-		case lex8.EOF:
+		case lexing.EOF:
 			if sx.insertSemi {
 				sx.insertSemi = false
 				sx.save = t
@@ -56,7 +56,7 @@ func (sx *semiInserter) Token() *lex8.Token {
 				return makeSemi(t.Pos, "\n")
 			}
 			continue // ignore this end line
-		case lex8.Comment:
+		case lexing.Comment:
 			// do nothing
 		default:
 			sx.insertSemi = true
@@ -67,6 +67,6 @@ func (sx *semiInserter) Token() *lex8.Token {
 }
 
 // Errs returns the list of lexing errors.
-func (sx *semiInserter) Errs() []*lex8.Error {
+func (sx *semiInserter) Errs() []*lexing.Error {
 	return sx.x.Errs()
 }

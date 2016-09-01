@@ -6,18 +6,18 @@ import (
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/parse"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 type importDecl struct {
 	as   string
 	path string
-	pos  *lex8.Pos
+	pos  *lexing.Pos
 }
 
 func listImport(
 	f string, rc io.ReadCloser, imp build8.Importer, golike bool,
-) []*lex8.Error {
+) []*lexing.Error {
 	fast, _, es := parse.File(f, rc, golike)
 	if es != nil {
 		return es
@@ -28,7 +28,7 @@ func listImport(
 	}
 
 	m := make(map[string]*importDecl)
-	log := lex8.NewErrorList()
+	log := lexing.NewErrorList()
 
 	for _, d := range fast.Imports.Decls {
 		p, as, e := ast.ImportPathAs(d)

@@ -2,7 +2,7 @@ package asm8
 
 import (
 	"e8vm.io/e8vm/asm8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 type varStmt struct {
@@ -12,14 +12,14 @@ type varStmt struct {
 	data  []byte
 }
 
-func resolveVarStmt(log lex8.Logger, v *ast.VarStmt) *varStmt {
+func resolveVarStmt(log lexing.Logger, v *ast.VarStmt) *varStmt {
 	ret := new(varStmt)
 	ret.VarStmt = v
 	ret.data, ret.align = resolveData(log, v.Type, v.Args)
 	return ret
 }
 
-func resolveData(p lex8.Logger, t *lex8.Token, args []*lex8.Token) (
+func resolveData(p lexing.Logger, t *lexing.Token, args []*lexing.Token) (
 	[]byte, uint32,
 ) {
 	switch t.Lit {

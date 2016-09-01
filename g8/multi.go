@@ -2,13 +2,13 @@ package g8
 
 import (
 	"e8vm.io/e8vm/build8"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func buildMulti(
 	lang build8.Lang, files map[string]string, opt *build8.Options,
 ) (
-	image []byte, errs []*lex8.Error, log []byte,
+	image []byte, errs []*lexing.Error, log []byte,
 ) {
 	home := MakeMemHome(lang)
 	home.AddFiles(files)
@@ -19,7 +19,7 @@ func buildMulti(
 func CompileMulti(
 	files map[string]string, golike bool, opt *build8.Options,
 ) (
-	[]byte, []*lex8.Error,
+	[]byte, []*lexing.Error,
 ) {
 	lang := Lang(golike)
 	image, errs, _ := buildMulti(lang, files, opt)

@@ -14,7 +14,7 @@ import (
 	"e8vm.io/e8vm/g8/sempass"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/sym8"
 )
 
@@ -33,7 +33,7 @@ func newPkg(asts map[string]*ast.File) *pkg {
 	return ret
 }
 
-func (p *pkg) build(b *builder, pinfo *build8.PkgInfo) []*lex8.Error {
+func (p *pkg) build(b *builder, pinfo *build8.PkgInfo) []*lexing.Error {
 	tops, deps, tests, errs := buildPkg(b, p.files, pinfo)
 	p.tops = tops
 	p.testNames = tests
@@ -153,7 +153,7 @@ func buildPkg(
 	b *builder, files map[string]*ast.File, pinfo *build8.PkgInfo,
 ) (
 	syms *sym8.Table, deps *dagvis.Graph,
-	testNames []string, errs []*lex8.Error,
+	testNames []string, errs []*lexing.Error,
 ) {
 	imports := make(map[string]*build8.Package)
 	for as, imp := range pinfo.Import {

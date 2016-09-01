@@ -12,7 +12,7 @@ import (
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/codegen"
 	"e8vm.io/e8vm/g8/parse"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 type lang struct {
@@ -33,7 +33,7 @@ func (l *lang) IsSrc(filename string) bool {
 
 func (l *lang) Prepare(
 	src map[string]*build8.File, importer build8.Importer,
-) []*lex8.Error {
+) []*lexing.Error {
 	importer.Import("$", "asm/builtin", nil)
 	if f := build8.OnlyFile(src); f != nil {
 		return listImport(f.Path, f, importer, l.golike)
@@ -67,9 +67,9 @@ func initBuilder(b *builder, imp map[string]*build8.Import) {
 
 // parse all files
 func (l *lang) parsePkg(pinfo *build8.PkgInfo) (
-	map[string]*ast.File, []*lex8.Error,
+	map[string]*ast.File, []*lexing.Error,
 ) {
-	var parseErrs []*lex8.Error
+	var parseErrs []*lexing.Error
 	asts := make(map[string]*ast.File)
 	for name, src := range pinfo.Src {
 		if filepath.Base(src.Path) != name {
@@ -81,7 +81,7 @@ func (l *lang) parsePkg(pinfo *build8.PkgInfo) (
 			parseErrs = append(parseErrs, es...)
 		}
 		if err := src.Close(); err != nil {
-			parseErrs = append(parseErrs, &lex8.Error{Err: err})
+			parseErrs = append(parseErrs, &lexing.Error{Err: err})
 		}
 
 		if pinfo.ParseOutput != nil {
@@ -159,7 +159,7 @@ func (l *lang) outputDeps(pinfo *build8.PkgInfo, p *pkg) error {
 }
 
 func (l *lang) Compile(pinfo *build8.PkgInfo) (
-	*build8.Package, []*lex8.Error,
+	*build8.Package, []*lexing.Error,
 ) {
 	ret := &build8.Package{
 		Lang:     "g8",
@@ -194,7 +194,7 @@ func (l *lang) Compile(pinfo *build8.PkgInfo) (
 
 	// check deps
 	if err := l.outputDeps(pinfo, p); err != nil {
-		return nil, lex8.SingleErr(err)
+		return nil, lexing.SingleErr(err)
 	}
 
 	ret.Symbols = p.tops
@@ -202,7 +202,7 @@ func (l *lang) Compile(pinfo *build8.PkgInfo) (
 		return ret, nil
 	}
 
-	var errs []*lex8.Error
+	var errs []*lexing.Error
 	if ret.Lib, errs = codegen.BuildPkg(b.p); errs != nil {
 		return nil, errs
 	}
@@ -213,7 +213,7 @@ func (l *lang) Compile(pinfo *build8.PkgInfo) (
 
 	// IR logging
 	if err := outputIr(pinfo, b); err != nil {
-		return nil, lex8.SingleErr(err)
+		return nil, lexing.SingleErr(err)
 	}
 
 	return ret, nil

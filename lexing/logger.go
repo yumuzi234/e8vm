@@ -1,4 +1,4 @@
-package lex8
+package lexing
 
 // Logger is an error logging interface
 type Logger interface {

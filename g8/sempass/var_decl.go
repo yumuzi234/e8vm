@@ -4,11 +4,11 @@ import (
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func varDeclPrepare(
-	b *builder, toks []*lex8.Token, lst *tast.ExprList, t types.T,
+	b *builder, toks []*lexing.Token, lst *tast.ExprList, t types.T,
 ) *tast.ExprList {
 	ret := tast.NewExprList()
 	for i, tok := range toks {

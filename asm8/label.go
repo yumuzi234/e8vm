@@ -2,7 +2,7 @@ package asm8
 
 import (
 	"e8vm.io/e8vm/asm8/parse"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func isLabelStart(s string) bool {
@@ -32,7 +32,7 @@ func isLabel(s string) bool {
 	return true
 }
 
-func checkLabel(log lex8.Logger, t *lex8.Token) bool {
+func checkLabel(log lexing.Logger, t *lexing.Token) bool {
 	if t.Type != parse.Operand {
 		panic("not an operand")
 	}

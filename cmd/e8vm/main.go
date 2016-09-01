@@ -12,7 +12,7 @@ import (
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/dasm8"
 	"e8vm.io/e8vm/debug8"
-	"e8vm.io/e8vm/e8"
+	"e8vm.io/e8vm/image"
 )
 
 var (
@@ -39,7 +39,7 @@ func run(bs []byte) (int, error) {
 		BootArg:  uint32(*bootArg),
 	})
 
-	secs, err := e8.Read(bytes.NewReader(bs))
+	secs, err := image.Read(bytes.NewReader(bs))
 	if err != nil {
 		return 0, err
 	}
@@ -89,13 +89,13 @@ func main() {
 		f, err := os.Open(fname)
 		defer f.Close()
 
-		secs, err := e8.Read(f)
+		secs, err := image.Read(f)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		for _, sec := range secs {
-			if sec.Type != e8.Debug {
+			if sec.Type != image.Debug {
 				continue
 			}
 

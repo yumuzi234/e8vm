@@ -2,7 +2,7 @@ package parse
 
 import (
 	"e8vm.io/e8vm/g8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func parseImports(p *parser) *ast.ImportDecls {
@@ -15,7 +15,7 @@ func parseImports(p *parser) *ast.ImportDecls {
 		Lparen: p.ExpectOp("("),
 	}
 
-	for !p.SeeOp(")", "}") && !p.See(lex8.EOF) {
+	for !p.SeeOp(")", "}") && !p.See(lexing.EOF) {
 		imp := new(ast.ImportDecl)
 		if p.See(Ident) {
 			imp.As = p.Shift()

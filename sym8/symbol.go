@@ -1,7 +1,7 @@
 package sym8
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // Symbol is a data structure for saving a symbol.
@@ -12,7 +12,7 @@ type Symbol struct {
 	Type    int
 	Obj     interface{}
 	ObjType interface{}
-	Pos     *lex8.Pos
+	Pos     *lexing.Pos
 	Used    bool
 }
 
@@ -34,7 +34,7 @@ func (s *Symbol) Clone(item interface{}) *Symbol {
 func Make(
 	pkg, name string, t int,
 	obj, objType interface{},
-	pos *lex8.Pos,
+	pos *lexing.Pos,
 ) *Symbol {
 	return &Symbol{pkg, name, t, obj, objType, pos, false}
 }

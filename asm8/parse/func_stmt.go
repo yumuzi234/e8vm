@@ -2,10 +2,10 @@ package parse
 
 import (
 	"e8vm.io/e8vm/asm8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
-func parseOps(p *parser) (ops []*lex8.Token) {
+func parseOps(p *parser) (ops []*lexing.Token) {
 	for !p.Accept(Semi) {
 		t := p.Expect(Operand)
 		if t == nil {

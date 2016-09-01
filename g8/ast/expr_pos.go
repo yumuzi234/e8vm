@@ -3,11 +3,11 @@ package ast
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // ExprPos returns the starting position of an expression.
-func ExprPos(e Expr) *lex8.Pos {
+func ExprPos(e Expr) *lexing.Pos {
 	switch e := e.(type) {
 	case *Operand:
 		return e.Token.Pos

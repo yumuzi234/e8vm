@@ -1,18 +1,18 @@
 package ast
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // Import is an import declaration block
 type Import struct {
 	Stmts []*ImportStmt
 
-	Kw, Lbrace, Rbrace, Semi *lex8.Token
+	Kw, Lbrace, Rbrace, Semi *lexing.Token
 }
 
 // ImportStmt is an import statement
 type ImportStmt struct {
-	Path *lex8.Token
-	As   *lex8.Token
+	Path *lexing.Token
+	As   *lexing.Token
 }

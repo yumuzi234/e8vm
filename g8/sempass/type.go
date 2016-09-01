@@ -4,7 +4,7 @@ import (
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/sym8"
 )
 
@@ -78,7 +78,7 @@ func buildArrayType(b *builder, expr *ast.ArrayTypeExpr) types.T {
 	return nil
 }
 
-func buildPkgRef(b *builder, ident *lex8.Token) *types.Pkg {
+func buildPkgRef(b *builder, ident *lexing.Token) *types.Pkg {
 	s := b.scope.Query(ident.Lit)
 	if s == nil {
 		b.Errorf(ident.Pos, "undefined identifier %s", ident.Lit)

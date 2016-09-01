@@ -1,4 +1,4 @@
-package lex8
+package lexing
 
 // Recorder is a token filter that records all the token
 // a tokener generates

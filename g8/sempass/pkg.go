@@ -7,7 +7,7 @@ import (
 	"e8vm.io/e8vm/dagvis"
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/tast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/sym8"
 )
 
@@ -113,7 +113,7 @@ func (p *Pkg) buildImports(
 
 // Build builds a package from an set of file AST's to a typed-AST.
 func (p *Pkg) Build(scope *sym8.Scope) (
-	*tast.Pkg, *dagvis.Graph, []*lex8.Error,
+	*tast.Pkg, *dagvis.Graph, []*lexing.Error,
 ) {
 	b := makeBuilder(p.Path, scope)
 	b.initDeps(p.Files)

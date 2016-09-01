@@ -1,4 +1,4 @@
-package lex8
+package lexing
 
 // IsLetter returns true if the rune is in a-z or A-Z
 func IsLetter(r rune) bool {

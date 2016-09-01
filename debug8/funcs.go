@@ -1,7 +1,7 @@
 package debug8
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // Funcs saves all the debug symbols for all functions.
@@ -19,7 +19,7 @@ func symKey(pkg, name string) string {
 }
 
 // Add adds a function into the debug table.
-func (fs *Funcs) Add(pkg, name string, pos *lex8.Pos, frameSize uint32) {
+func (fs *Funcs) Add(pkg, name string, pos *lexing.Pos, frameSize uint32) {
 	key := symKey(pkg, name)
 	if _, found := fs.funcs[key]; found {
 		panic("bug")

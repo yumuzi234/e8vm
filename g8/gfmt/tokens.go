@@ -1,19 +1,19 @@
 package gfmt
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 type tokens struct {
-	toks []*lex8.Token
+	toks []*lexing.Token
 	cur  int
 }
 
-func newTokens(toks []*lex8.Token) *tokens {
+func newTokens(toks []*lexing.Token) *tokens {
 	return &tokens{toks: toks}
 }
 
-func (t *tokens) get(i int) *lex8.Token {
+func (t *tokens) get(i int) *lexing.Token {
 	if i < 0 {
 		return nil
 	}
@@ -23,11 +23,11 @@ func (t *tokens) get(i int) *lex8.Token {
 	return t.toks[i]
 }
 
-func (t *tokens) peek() *lex8.Token {
+func (t *tokens) peek() *lexing.Token {
 	return t.get(t.cur)
 }
 
-func (t *tokens) shift() *lex8.Token {
+func (t *tokens) shift() *lexing.Token {
 	ret := t.get(t.cur)
 	if ret == nil {
 		return nil
@@ -36,7 +36,7 @@ func (t *tokens) shift() *lex8.Token {
 	return ret
 }
 
-func (t *tokens) see(tok *lex8.Token) bool {
+func (t *tokens) see(tok *lexing.Token) bool {
 	return t.peek() == tok
 }
 

@@ -2,7 +2,7 @@ package asm8
 
 import (
 	"e8vm.io/e8vm/asm8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 type varDecl struct {
@@ -11,7 +11,7 @@ type varDecl struct {
 	stmts []*varStmt
 }
 
-func resolveVar(log lex8.Logger, v *ast.Var) *varDecl {
+func resolveVar(log lexing.Logger, v *ast.Var) *varDecl {
 	ret := new(varDecl)
 
 	ret.Var = v

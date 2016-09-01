@@ -2,7 +2,7 @@ package asm8
 
 import (
 	"e8vm.io/e8vm/asm8/parse"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 var regNameMap = map[string]uint32{
@@ -20,7 +20,7 @@ var regNameMap = map[string]uint32{
 	"pc":  7,
 }
 
-func resolveReg(p lex8.Logger, op *lex8.Token) uint32 {
+func resolveReg(p lexing.Logger, op *lexing.Token) uint32 {
 	if op.Type != parse.Operand {
 		panic("not an operand")
 	}

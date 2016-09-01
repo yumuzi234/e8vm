@@ -4,25 +4,25 @@ import (
 	"fmt"
 	"io"
 
-	"e8vm.io/e8vm/e8"
+	"e8vm.io/e8vm/image"
 )
 
 // DumpImage disassembles an image.
 func DumpImage(r io.ReadSeeker, out io.Writer) error {
-	secs, err := e8.Read(r)
+	secs, err := image.Read(r)
 	if err != nil {
 		return err
 	}
 
 	for _, sec := range secs {
 		switch sec.Type {
-		case e8.Code:
+		case image.Code:
 			fmt.Fprintln(out, "[code section]")
 			lines := Dasm(sec.Bytes, sec.Addr)
 			for _, line := range lines {
 				fmt.Fprintln(out, line)
 			}
-		case e8.Data:
+		case image.Data:
 			fmt.Fprintf(out, "[data of %d bytes at %08x]\n",
 				sec.Size, sec.Addr,
 			)
@@ -30,11 +30,11 @@ func DumpImage(r io.ReadSeeker, out io.Writer) error {
 			for _, line := range lines {
 				fmt.Fprintln(out, line)
 			}
-		case e8.Zeros:
+		case image.Zeros:
 			fmt.Fprintf(out, "[zeros of %d bytes at %08x]\n",
 				sec.Size, sec.Addr,
 			)
-		case e8.Debug:
+		case image.Debug:
 			fmt.Fprintf(out, "[debug of %d bytes]\n", sec.Size)
 		}
 	}

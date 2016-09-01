@@ -6,7 +6,7 @@ import (
 	"io"
 	"math/rand"
 
-	"e8vm.io/e8vm/e8"
+	"e8vm.io/e8vm/image"
 )
 
 // Machine is a multicore shared memory simulated arch8 machine.
@@ -24,7 +24,7 @@ type Machine struct {
 	devices []device
 
 	// Sections that are loaded into the machine
-	Sections []*e8.Section
+	Sections []*image.Section
 }
 
 // Default SP settings.
@@ -179,9 +179,9 @@ func (m *Machine) randSeed(s int64) {
 	m.ticker.Rand = rand.New(rand.NewSource(s))
 }
 
-func findCodeStart(secs []*e8.Section) (uint32, bool) {
+func findCodeStart(secs []*image.Section) (uint32, bool) {
 	for _, s := range secs {
-		if s.Type == e8.Code {
+		if s.Type == image.Code {
 			return s.Addr, true
 		}
 	}
@@ -189,15 +189,15 @@ func findCodeStart(secs []*e8.Section) (uint32, bool) {
 }
 
 // LoadSections loads a list of sections into the machine.
-func (m *Machine) LoadSections(secs []*e8.Section) error {
+func (m *Machine) LoadSections(secs []*image.Section) error {
 	for _, s := range secs {
 		var buf io.Reader
 		switch s.Type {
-		case e8.Zeros:
+		case image.Zeros:
 			buf = &zeroReader{s.Header.Size}
-		case e8.Code, e8.Data:
+		case image.Code, image.Data:
 			buf = bytes.NewReader(s.Bytes)
-		case e8.None, e8.Debug, e8.Comment:
+		case image.None, image.Debug, image.Comment:
 			continue
 		default:
 			return fmt.Errorf("unknown section type: %d", s.Type)
@@ -231,7 +231,7 @@ func (m *Machine) setSP(sp, stackSize uint32) {
 
 // LoadImage loads an e8 image into the machine.
 func (m *Machine) LoadImage(r io.ReadSeeker) error {
-	secs, err := e8.Read(r)
+	secs, err := image.Read(r)
 	if err != nil {
 		return err
 	}

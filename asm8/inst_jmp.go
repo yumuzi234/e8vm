@@ -3,7 +3,7 @@ package asm8
 import (
 	"e8vm.io/e8vm/arch8"
 	asminst "e8vm.io/e8vm/asm8/inst"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 var opJmpMap = map[string]uint32{
@@ -15,7 +15,7 @@ func isValidSymbol(sym string) bool {
 	return true
 }
 
-func resolveInstJmp(p lex8.Logger, ops []*lex8.Token) (*inst, bool) {
+func resolveInstJmp(p lexing.Logger, ops []*lexing.Token) (*inst, bool) {
 	op0 := ops[0]
 	opName := op0.Lit
 	var op uint32
@@ -32,7 +32,7 @@ func resolveInstJmp(p lex8.Logger, ops []*lex8.Token) (*inst, bool) {
 
 	var pack, sym string
 	var fill int
-	var symTok *lex8.Token
+	var symTok *lexing.Token
 
 	if argCount(p, ops, 1) {
 		symTok = ops[1]

@@ -2,7 +2,7 @@ package parse
 
 import (
 	"e8vm.io/e8vm/g8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func parsePara(p *parser) *ast.Para {
@@ -31,7 +31,7 @@ func parseParaList(p *parser) *ast.ParaList {
 		return ret
 	}
 
-	for !p.See(lex8.EOF) {
+	for !p.See(lexing.EOF) {
 		para := parsePara(p)
 		if p.InError() {
 			return nil

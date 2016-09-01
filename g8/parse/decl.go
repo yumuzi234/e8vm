@@ -2,7 +2,7 @@ package parse
 
 import (
 	"e8vm.io/e8vm/g8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func parseIdentList(p *parser) *ast.IdentList {
@@ -32,7 +32,7 @@ func parseConstDecls(p *parser) *ast.ConstDecls {
 
 	if p.SeeOp("(") {
 		ret.Lparen = p.Shift()
-		for !p.See(lex8.EOF) && !p.SeeOp(")", "}") {
+		for !p.See(lexing.EOF) && !p.SeeOp(")", "}") {
 			if !p.See(Ident) {
 				p.Expect(Ident)
 				p.skipErrStmt()
@@ -119,7 +119,7 @@ func parseVarDecls(p *parser) *ast.VarDecls {
 
 	if p.SeeOp("(") {
 		ret.Lparen = p.Shift()
-		for !p.See(lex8.EOF) && !p.SeeOp(")", "}") {
+		for !p.See(lexing.EOF) && !p.SeeOp(")", "}") {
 			if !p.See(Ident) {
 				p.Expect(Ident)
 				p.skipErrStmt()

@@ -2,7 +2,7 @@ package parse
 
 import (
 	"e8vm.io/e8vm/g8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func parseStruct(p *parser) *ast.Struct {
@@ -42,7 +42,7 @@ func parseStruct(p *parser) *ast.Struct {
 		}
 	}
 
-	for !p.SeeOp("}") && !p.See(lex8.EOF) {
+	for !p.SeeOp("}") && !p.See(lexing.EOF) {
 		if p.SeeKeyword("func") && !p.golike {
 			break
 		}

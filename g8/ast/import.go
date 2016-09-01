@@ -4,27 +4,27 @@ import (
 	"path"
 	"strconv"
 
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // ImportDecl is a import declare line
 type ImportDecl struct {
-	As   *lex8.Token // optional
-	Path *lex8.Token
-	Semi *lex8.Token
+	As   *lexing.Token // optional
+	Path *lexing.Token
+	Semi *lexing.Token
 }
 
 // ImportDecls is a top-level import declaration block
 type ImportDecls struct {
-	Kw     *lex8.Token
-	Lparen *lex8.Token
+	Kw     *lexing.Token
+	Lparen *lexing.Token
 	Decls  []*ImportDecl
-	Rparen *lex8.Token
-	Semi   *lex8.Token
+	Rparen *lexing.Token
+	Semi   *lexing.Token
 }
 
 // ImportPos returns the position of the import symbol
-func ImportPos(d *ImportDecl) *lex8.Pos {
+func ImportPos(d *ImportDecl) *lexing.Pos {
 	if d.As == nil {
 		return d.Path.Pos
 	}

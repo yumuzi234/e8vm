@@ -1,10 +1,10 @@
 package asm8
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
-func argCount(log lex8.Logger, ops []*lex8.Token, n int) bool {
+func argCount(log lexing.Logger, ops []*lexing.Token, n int) bool {
 	if len(ops) == n+1 {
 		return true
 	}

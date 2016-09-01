@@ -3,7 +3,7 @@ package codegen
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/link8"
 )
 
@@ -35,7 +35,7 @@ func NewPkg(path string) *Pkg {
 }
 
 // NewFunc creates a new function for the package.
-func (p *Pkg) NewFunc(name string, pos *lex8.Pos, sig *FuncSig) *Func {
+func (p *Pkg) NewFunc(name string, pos *lexing.Pos, sig *FuncSig) *Func {
 	ret := newFunc(p.path, name, pos, sig)
 	p.lib.DeclareFunc(ret.name)
 	p.funcs = append(p.funcs, ret)

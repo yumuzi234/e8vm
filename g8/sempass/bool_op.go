@@ -3,10 +3,10 @@ package sempass
 import (
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
-func unaryOpBool(b *builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
+func unaryOpBool(b *builder, opTok *lexing.Token, B tast.Expr) tast.Expr {
 	op := opTok.Lit
 	if op == "!" {
 		t := B.R().T
@@ -17,7 +17,7 @@ func unaryOpBool(b *builder, opTok *lex8.Token, B tast.Expr) tast.Expr {
 	return nil
 }
 
-func binaryOpBool(b *builder, opTok *lex8.Token, A, B tast.Expr) tast.Expr {
+func binaryOpBool(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 	op := opTok.Lit
 	switch op {
 	case "==", "!=", "&&", "||":

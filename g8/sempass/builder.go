@@ -5,12 +5,12 @@ import (
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/sym8"
 )
 
 type builder struct {
-	*lex8.ErrorList
+	*lexing.ErrorList
 	path string
 
 	scope *sym8.Scope
@@ -37,7 +37,7 @@ type builder struct {
 
 func newBuilder(path string, scope *sym8.Scope) *builder {
 	return &builder{
-		ErrorList: lex8.NewErrorList(),
+		ErrorList: lexing.NewErrorList(),
 		path:      path,
 		scope:     scope,
 	}
@@ -75,7 +75,7 @@ func (b *builder) buildStmt(stmt ast.Stmt) tast.Stmt {
 	return b.stmtFunc(b, stmt)
 }
 
-func (b *builder) refSym(sym *sym8.Symbol, pos *lex8.Pos) {
+func (b *builder) refSym(sym *sym8.Symbol, pos *lexing.Pos) {
 	if !b.lhs {
 		sym.Used = true
 	}

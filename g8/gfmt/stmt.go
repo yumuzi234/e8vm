@@ -2,10 +2,10 @@ package gfmt
 
 import (
 	"e8vm.io/e8vm/g8/ast"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
-func sameLine(t1, t2 *lex8.Token) bool {
+func sameLine(t1, t2 *lexing.Token) bool {
 	return t1.Pos.Line == t2.Pos.Line
 }
 

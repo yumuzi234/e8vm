@@ -5,13 +5,13 @@ import (
 	"io"
 
 	"e8vm.io/e8vm/build8"
-	"e8vm.io/e8vm/e8"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/image"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/link8"
 )
 
 // BuildSingleFile builds a package named "main" from a single file.
-func BuildSingleFile(f string, rc io.ReadCloser) ([]byte, []*lex8.Error) {
+func BuildSingleFile(f string, rc io.ReadCloser) ([]byte, []*lexing.Error) {
 	path := "_"
 
 	pinfo := build8.SimplePkg(path, f, rc)
@@ -23,12 +23,12 @@ func BuildSingleFile(f string, rc io.ReadCloser) ([]byte, []*lex8.Error) {
 
 	secs, err := link8.LinkSinglePkg(pkg.Lib, pkg.Main)
 	if err != nil {
-		return nil, lex8.SingleErr(err)
+		return nil, lexing.SingleErr(err)
 	}
 
 	buf := new(bytes.Buffer)
-	if err := e8.Write(buf, secs); err != nil {
-		return nil, lex8.SingleErr(err)
+	if err := image.Write(buf, secs); err != nil {
+		return nil, lexing.SingleErr(err)
 	}
 	return buf.Bytes(), nil
 }

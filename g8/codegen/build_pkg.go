@@ -1,12 +1,12 @@
 package codegen
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/link8"
 )
 
 // BuildPkg builds a package and returns the built lib
-func BuildPkg(p *Pkg) (*link8.Pkg, []*lex8.Error) {
+func BuildPkg(p *Pkg) (*link8.Pkg, []*lexing.Error) {
 	p.strPool.declare(p.lib)
 	p.datPool.declare(p.lib)
 

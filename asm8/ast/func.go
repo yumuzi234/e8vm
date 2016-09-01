@@ -1,19 +1,19 @@
 package ast
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // Func is an assembly function.
 type Func struct {
 	Stmts []*FuncStmt
 
-	Kw, Name             *lex8.Token
-	Lbrace, Rbrace, Semi *lex8.Token
+	Kw, Name             *lexing.Token
+	Lbrace, Rbrace, Semi *lexing.Token
 }
 
 // FuncStmt is a statement in a assembly function.
 // It is either a instruction or a label.
 type FuncStmt struct {
-	Ops []*lex8.Token
+	Ops []*lexing.Token
 }

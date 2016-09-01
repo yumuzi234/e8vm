@@ -4,11 +4,11 @@ import (
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/sym8"
 )
 
-func declareConst(b *builder, tok *lex8.Token, t types.T) *sym8.Symbol {
+func declareConst(b *builder, tok *lexing.Token, t types.T) *sym8.Symbol {
 	name := tok.Lit
 	s := sym8.Make(b.path, name, tast.SymConst, nil, t, tok.Pos)
 	conflict := b.scope.Declare(s)

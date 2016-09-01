@@ -3,7 +3,7 @@
 package ast
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // File represents a file.
@@ -11,7 +11,7 @@ type File struct {
 	Imports *Import
 
 	Decls    []interface{}
-	Comments []*lex8.Token
+	Comments []*lexing.Token
 }
 
 // a listing of possible declarations

@@ -5,7 +5,7 @@ import (
 
 	"e8vm.io/e8vm/arch8"
 	asminst "e8vm.io/e8vm/asm8/inst"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 var (
@@ -52,7 +52,7 @@ var (
 	}
 )
 
-func parseShift(p lex8.Logger, op *lex8.Token) uint32 {
+func parseShift(p lexing.Logger, op *lexing.Token) uint32 {
 	ret, e := strconv.ParseUint(op.Lit, 0, 32)
 	if e != nil {
 		p.Errorf(op.Pos, "invalid shift %q: %s", op.Lit, e)
@@ -72,7 +72,7 @@ func makeInstReg(fn, d, s1, s2, sh, isFloat uint32) *inst {
 	return &inst{inst: ret}
 }
 
-func resolveInstReg(log lex8.Logger, ops []*lex8.Token) (*inst, bool) {
+func resolveInstReg(log lexing.Logger, ops []*lexing.Token) (*inst, bool) {
 	op0 := ops[0]
 	opName := op0.Lit
 	args := ops[1:]

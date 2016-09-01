@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"e8vm.io/e8vm/arch8"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 var errTimeOut = errors.New("time out")
@@ -21,7 +21,7 @@ func cycleStr(n int) string {
 }
 
 func runTests(
-	log lex8.Logger, tests map[string]uint32, img []byte, opt *Options,
+	log lexing.Logger, tests map[string]uint32, img []byte, opt *Options,
 ) {
 	logln := func(s string) {
 		if opt.LogLine == nil {
@@ -48,7 +48,7 @@ func runTests(
 		if err == nil {
 			err = errTimeOut
 		}
-		lex8.LogError(log, fmt.Errorf("%s failed: got %s", name, err))
+		lexing.LogError(log, fmt.Errorf("%s failed: got %s", name, err))
 		if opt.Verbose {
 			logln(fmt.Sprintf(
 				"  - %s: FAILED (%s, got %s)",
@@ -95,21 +95,21 @@ func runTests(
 	}
 }
 
-func runPkgTests(c *context, p *pkg) []*lex8.Error {
+func runPkgTests(c *context, p *pkg) []*lexing.Error {
 	lib := p.pkg.Lib
 	tests := p.pkg.Tests
 	testMain := p.pkg.TestMain
 	if testMain != "" && lib.HasFunc(testMain) {
-		log := lex8.NewErrorList()
+		log := lexing.NewErrorList()
 		if len(tests) > 0 {
 			bs := new(bytes.Buffer)
-			lex8.LogError(log, link(c, bs, p, testMain))
+			lexing.LogError(log, link(c, bs, p, testMain))
 			fout := c.output.TestBin(p.path)
 
 			img := bs.Bytes()
 			_, err := fout.Write(img)
-			lex8.LogError(log, err)
-			lex8.LogError(log, fout.Close())
+			lexing.LogError(log, err)
+			lexing.LogError(log, fout.Close())
 			if es := log.Errs(); es != nil {
 				return es
 			}

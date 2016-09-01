@@ -5,7 +5,7 @@ import (
 
 	"e8vm.io/e8vm/dagvis"
 	"e8vm.io/e8vm/debug8"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/link8"
 )
 
@@ -30,14 +30,14 @@ func NewBuilder(input Input, output Output) *Builder {
 }
 
 // BuildPkgs builds a list of packages
-func (b *Builder) BuildPkgs(pkgs []string) []*lex8.Error {
+func (b *Builder) BuildPkgs(pkgs []string) []*lexing.Error {
 	return build(b.context, pkgs)
 }
 
 // Build builds a package.
-func (b *Builder) Build(p string) []*lex8.Error {
+func (b *Builder) Build(p string) []*lexing.Error {
 	if !b.input.HasPkg(p) {
-		return lex8.SingleErr(fmt.Errorf(
+		return lexing.SingleErr(fmt.Errorf(
 			"package %q not found", p,
 		))
 	}
@@ -46,21 +46,21 @@ func (b *Builder) Build(p string) []*lex8.Error {
 
 // BuildPrefix builds packages with a particular prefix.
 // in the path.
-func (b *Builder) BuildPrefix(prefix string) []*lex8.Error {
+func (b *Builder) BuildPrefix(prefix string) []*lexing.Error {
 	return b.BuildPkgs(b.input.Pkgs(prefix))
 }
 
 // BuildAll builds all packages.
-func (b *Builder) BuildAll() []*lex8.Error { return b.BuildPrefix("") }
+func (b *Builder) BuildAll() []*lexing.Error { return b.BuildPrefix("") }
 
 // Plan returns all the packages required for building the specified
 // target packages.
-func (b *Builder) Plan(pkgs []string) ([]string, []*lex8.Error) {
+func (b *Builder) Plan(pkgs []string) ([]string, []*lexing.Error) {
 	for _, p := range pkgs {
 		if pkg, es := prepare(b.context, p); es != nil {
 			return nil, es
 		} else if pkg.err != nil {
-			return nil, lex8.SingleErr(pkg.err)
+			return nil, lexing.SingleErr(pkg.err)
 		}
 	}
 
@@ -69,7 +69,7 @@ func (b *Builder) Plan(pkgs []string) ([]string, []*lex8.Error) {
 
 	ret, err := dagvis.TopoSort(g)
 	if err != nil {
-		return nil, lex8.SingleErr(err)
+		return nil, lexing.SingleErr(err)
 	}
 	return ret, nil
 }

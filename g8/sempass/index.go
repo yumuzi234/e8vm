@@ -4,7 +4,7 @@ import (
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func buildIndexExpr(b *builder, expr *ast.IndexExpr) tast.Expr {
@@ -39,7 +39,7 @@ func elementType(t types.T) types.T {
 	return nil
 }
 
-func checkArrayIndex(b *builder, index tast.Expr, pos *lex8.Pos) tast.Expr {
+func checkArrayIndex(b *builder, index tast.Expr, pos *lexing.Pos) tast.Expr {
 	t := index.R().T
 	if v, ok := types.NumConst(t); ok {
 		if v < 0 {
@@ -55,7 +55,7 @@ func checkArrayIndex(b *builder, index tast.Expr, pos *lex8.Pos) tast.Expr {
 	return index
 }
 
-func buildArrayIndex(b *builder, expr ast.Expr, pos *lex8.Pos) tast.Expr {
+func buildArrayIndex(b *builder, expr ast.Expr, pos *lexing.Pos) tast.Expr {
 	ret := b.buildExpr(expr)
 	if ret == nil {
 		return nil

@@ -11,7 +11,7 @@ import (
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/dasm8"
 	"e8vm.io/e8vm/g8"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 func exit(e error) {
@@ -21,7 +21,7 @@ func exit(e error) {
 	os.Exit(-1)
 }
 
-func printErrs(es []*lex8.Error) {
+func printErrs(es []*lexing.Error) {
 	if len(es) == 0 {
 		return
 	}

@@ -3,7 +3,7 @@ package asm8
 import (
 	"e8vm.io/e8vm/arch8"
 	asminst "e8vm.io/e8vm/asm8/inst"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 var (
@@ -19,7 +19,7 @@ func makeInstBr(op, s1, s2 uint32) *inst {
 	return &inst{inst: ret}
 }
 
-func resolveInstBr(p lex8.Logger, ops []*lex8.Token) (*inst, bool) {
+func resolveInstBr(p lexing.Logger, ops []*lexing.Token) (*inst, bool) {
 	op0 := ops[0]
 	opName := op0.Lit
 	args := ops[1:]
@@ -27,7 +27,7 @@ func resolveInstBr(p lex8.Logger, ops []*lex8.Token) (*inst, bool) {
 	var (
 		op, s1, s2 uint32
 		lab        string
-		symTok     *lex8.Token
+		symTok     *lexing.Token
 
 		found bool
 	)

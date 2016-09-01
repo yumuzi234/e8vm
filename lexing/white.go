@@ -1,4 +1,4 @@
-package lex8
+package lexing
 
 // WhiteFunc is a function type that checks if a rune is white space.
 type WhiteFunc func(r rune) bool

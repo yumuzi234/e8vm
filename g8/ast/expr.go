@@ -1,45 +1,45 @@
 package ast
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // Operand is an operand expression
 type Operand struct {
-	*lex8.Token
+	*lexing.Token
 }
 
 // MemberExpr is an expression of form A.B
 type MemberExpr struct {
 	Expr Expr
-	Dot  *lex8.Token
-	Sub  *lex8.Token
+	Dot  *lexing.Token
+	Sub  *lexing.Token
 }
 
 // OpExpr is a binary or unary operation that uses an operator
 type OpExpr struct {
 	A  Expr
-	Op *lex8.Token
+	Op *lexing.Token
 	B  Expr
 }
 
 // StarExpr is an expression after a '*'
 type StarExpr struct {
-	Star *lex8.Token
+	Star *lexing.Token
 	Expr Expr
 }
 
 // ParenExpr is an expression in a pair of parenthesis
 type ParenExpr struct {
-	Lparen *lex8.Token
+	Lparen *lexing.Token
 	Expr
-	Rparen *lex8.Token
+	Rparen *lexing.Token
 }
 
 // ExprList is a list of expressions
 type ExprList struct {
 	Exprs  []Expr
-	Commas []*lex8.Token
+	Commas []*lexing.Token
 }
 
 // Len returns the length of the expression list
@@ -53,39 +53,39 @@ func (list *ExprList) Len() int {
 // CallExpr is a function call expression
 type CallExpr struct {
 	Func   Expr
-	Lparen *lex8.Token
+	Lparen *lexing.Token
 	Args   *ExprList
-	Rparen *lex8.Token
+	Rparen *lexing.Token
 }
 
 // IndexExpr is fetching an element in an array or slice
 type IndexExpr struct {
 	Array    Expr
-	Lbrack   *lex8.Token
+	Lbrack   *lexing.Token
 	Index    Expr
-	Colon    *lex8.Token
+	Colon    *lexing.Token
 	IndexEnd Expr
-	Rbrack   *lex8.Token
+	Rbrack   *lexing.Token
 }
 
 // ArrayTypeExpr is the type expression of an array or a slice
 type ArrayTypeExpr struct {
-	Lbrack *lex8.Token
+	Lbrack *lexing.Token
 	Len    Expr // optional
-	Rbrack *lex8.Token
+	Rbrack *lexing.Token
 	Type   Expr
 }
 
 // ArrayLiteral is an array or slice literal
 type ArrayLiteral struct {
 	Type   *ArrayTypeExpr
-	Lbrace *lex8.Token
+	Lbrace *lexing.Token
 	Exprs  *ExprList
-	Rbrace *lex8.Token
+	Rbrace *lexing.Token
 }
 
 // FuncTypeExpr is the type expression of a function pointer
 type FuncTypeExpr struct {
-	Kw      *lex8.Token
+	Kw      *lexing.Token
 	FuncSig *FuncSig
 }

@@ -1,28 +1,28 @@
 package ast
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // Field is a member variable of a struct
 type Field struct {
 	Idents *IdentList
 	Type   Expr
-	Semi   *lex8.Token
+	Semi   *lexing.Token
 }
 
 // Struct declares a structure type
 type Struct struct {
-	Kw      *lex8.Token
-	Name    *lex8.Token
-	KwAfter *lex8.Token
-	Lbrace  *lex8.Token
+	Kw      *lexing.Token
+	Name    *lexing.Token
+	KwAfter *lexing.Token
+	Lbrace  *lexing.Token
 
 	Fields  []*Field
 	Methods []*Func
 
-	Rbrace *lex8.Token
-	Semi   *lex8.Token
+	Rbrace *lexing.Token
+	Semi   *lexing.Token
 }
 
 // Interface is an interface type

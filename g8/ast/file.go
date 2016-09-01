@@ -1,15 +1,15 @@
 package ast
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // PackageTitle is the package clause at the very top.
 // It is only required in go-like mode.
 type PackageTitle struct {
-	Kw   *lex8.Token
-	Name *lex8.Token
-	Semi *lex8.Token
+	Kw   *lexing.Token
+	Name *lexing.Token
+	Semi *lexing.Token
 }
 
 // File is a group of declarations

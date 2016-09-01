@@ -8,10 +8,10 @@ import (
 	"e8vm.io/e8vm/g8/parse"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
-func buildInt(b *builder, op *lex8.Token) tast.Expr {
+func buildInt(b *builder, op *lexing.Token) tast.Expr {
 	ret, e := strconv.ParseInt(op.Lit, 0, 64)
 	if e != nil {
 		b.Errorf(op.Pos, "invalid integer: %s", e)
@@ -30,7 +30,7 @@ func buildInt(b *builder, op *lex8.Token) tast.Expr {
 	return &tast.Const{ref}
 }
 
-func buildChar(b *builder, op *lex8.Token) tast.Expr {
+func buildChar(b *builder, op *lexing.Token) tast.Expr {
 	v, e := strconv.Unquote(op.Lit)
 	if e != nil {
 		b.Errorf(op.Pos, "invalid char: %s", e)
@@ -43,7 +43,7 @@ func buildChar(b *builder, op *lex8.Token) tast.Expr {
 	return &tast.Const{ref}
 }
 
-func buildString(b *builder, op *lex8.Token) tast.Expr {
+func buildString(b *builder, op *lexing.Token) tast.Expr {
 	v, e := strconv.Unquote(op.Lit)
 	if e != nil {
 		b.Errorf(op.Pos, "invalid string: %s", e)
@@ -53,7 +53,7 @@ func buildString(b *builder, op *lex8.Token) tast.Expr {
 	return &tast.Const{ref}
 }
 
-func buildIdent(b *builder, ident *lex8.Token) tast.Expr {
+func buildIdent(b *builder, ident *lexing.Token) tast.Expr {
 	s := b.scope.Query(ident.Lit)
 	if s == nil {
 		b.Errorf(ident.Pos, "undefined identifier %s", ident.Lit)
@@ -88,7 +88,7 @@ func buildIdent(b *builder, ident *lex8.Token) tast.Expr {
 	}
 }
 
-func buildConstIdent(b *builder, ident *lex8.Token) tast.Expr {
+func buildConstIdent(b *builder, ident *lexing.Token) tast.Expr {
 	s := b.scope.Query(ident.Lit)
 	if s == nil {
 		b.Errorf(ident.Pos, "undefined identifier %s", ident.Lit)

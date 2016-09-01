@@ -1,7 +1,7 @@
 package asm8
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 var insts = []instResolver{
@@ -12,6 +12,6 @@ var insts = []instResolver{
 	resolveInstSys,
 }
 
-func resolveInst(log lex8.Logger, ops []*lex8.Token) *inst {
+func resolveInst(log lexing.Logger, ops []*lexing.Token) *inst {
 	return instResolvers(insts).resolve(log, ops)
 }

@@ -3,7 +3,7 @@ package asm8
 import (
 	"e8vm.io/e8vm/arch8"
 	asminst "e8vm.io/e8vm/asm8/inst"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 var (
@@ -31,7 +31,7 @@ func makeInstSys(op, reg1, reg2 uint32) *inst {
 	return &inst{inst: asminst.Sys(op, reg1, reg2)}
 }
 
-func resolveInstSys(p lex8.Logger, ops []*lex8.Token) (*inst, bool) {
+func resolveInstSys(p lexing.Logger, ops []*lexing.Token) (*inst, bool) {
 	op0 := ops[0]
 	opName := op0.Lit
 	args := ops[1:]

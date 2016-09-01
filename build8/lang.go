@@ -3,7 +3,7 @@ package build8
 import (
 	"io"
 
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/link8"
 	"e8vm.io/e8vm/sym8"
 )
@@ -18,7 +18,7 @@ type File struct {
 // Import is an import identity
 type Import struct {
 	Path string
-	Pos  *lex8.Pos
+	Pos  *lexing.Pos
 	*Package
 }
 
@@ -49,7 +49,7 @@ type Package struct {
 
 // Importer is an interface for importing required packages for compiling
 type Importer interface {
-	Import(name, path string, pos *lex8.Pos) // imports a package
+	Import(name, path string, pos *lexing.Pos) // imports a package
 }
 
 // Flags contains the flags for compiling a package
@@ -68,10 +68,10 @@ type PkgInfo struct {
 	Output func(name string) io.WriteCloser
 
 	// ParseOutput saves all the tokens of a file.
-	ParseOutput func(file string, tokens []*lex8.Token)
+	ParseOutput func(file string, tokens []*lexing.Token)
 
 	// AddFuncDebug adds debug information for a linking function.
-	AddFuncDebug func(name string, pos *lex8.Pos, frameSize uint32)
+	AddFuncDebug func(name string, pos *lexing.Pos, frameSize uint32)
 }
 
 // Lang is a language compiler interface
@@ -80,8 +80,8 @@ type Lang interface {
 	IsSrc(filename string) bool
 
 	// Prepare issues import requests
-	Prepare(src map[string]*File, importer Importer) []*lex8.Error
+	Prepare(src map[string]*File, importer Importer) []*lexing.Error
 
 	// Compile compiles a list of source files into a compiled linkable
-	Compile(pinfo *PkgInfo) (*Package, []*lex8.Error)
+	Compile(pinfo *PkgInfo) (*Package, []*lexing.Error)
 }

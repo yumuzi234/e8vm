@@ -1,21 +1,21 @@
 package ast
 
 import (
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
 // Para is a function parameter
 type Para struct {
-	Ident *lex8.Token
+	Ident *lexing.Token
 	Type  Expr // when Type is missing, Ident also might be the type
 }
 
 // ParaList is a parameter list
 type ParaList struct {
-	Lparen *lex8.Token
+	Lparen *lexing.Token
 	Paras  []*Para
-	Commas []*lex8.Token
-	Rparen *lex8.Token
+	Commas []*lexing.Token
+	Rparen *lexing.Token
 }
 
 // Named checks if the parameter list is a named list

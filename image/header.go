@@ -1,4 +1,4 @@
-package e8
+package image
 
 import (
 	"encoding/binary"

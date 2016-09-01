@@ -4,10 +4,10 @@ import (
 	"e8vm.io/e8vm/g8/ast"
 	"e8vm.io/e8vm/g8/tast"
 	"e8vm.io/e8vm/g8/types"
-	"e8vm.io/e8vm/lex8"
+	"e8vm.io/e8vm/lexing"
 )
 
-func assign(b *builder, dest, src tast.Expr, op *lex8.Token) tast.Stmt {
+func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 	destRef := dest.R()
 	srcRef := src.R()
 
@@ -62,7 +62,7 @@ func parseAssignOp(op string) string {
 	return op[:opLen-1]
 }
 
-func opAssign(b *builder, dest, src tast.Expr, op *lex8.Token) tast.Stmt {
+func opAssign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 	destRef := dest.R()
 	srcRef := src.R()
 	if !destRef.IsSingle() || !srcRef.IsSingle() {

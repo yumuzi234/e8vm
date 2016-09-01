@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"e8vm.io/e8vm/arch8"
-	"e8vm.io/e8vm/e8"
+	"e8vm.io/e8vm/image"
 )
 
 // Job is a linking job.
@@ -27,19 +27,19 @@ func NewJob(pkgs map[string]*Pkg, funcs []*PkgSym) *Job {
 }
 
 // LinkMain is a short hand for NewJob(pkgs, path, start).Link(out)
-func LinkMain(pkgs map[string]*Pkg, funcs []*PkgSym) ([]*e8.Section, error) {
+func LinkMain(pkgs map[string]*Pkg, funcs []*PkgSym) ([]*image.Section, error) {
 	return NewJob(pkgs, funcs).Link()
 }
 
 // LinkSinglePkg call LinkMain with only one single package.
-func LinkSinglePkg(pkg *Pkg, start string) ([]*e8.Section, error) {
+func LinkSinglePkg(pkg *Pkg, start string) ([]*image.Section, error) {
 	path := pkg.Path()
 	pkgs := map[string]*Pkg{path: pkg}
 	return LinkMain(pkgs, []*PkgSym{{path, start}})
 }
 
 // Link performs the linking job and writes the output to out.
-func (j *Job) Link() ([]*e8.Section, error) {
+func (j *Job) Link() ([]*image.Section, error) {
 	pkgs := j.Pkgs
 	used := traceUsed(pkgs, j.Funcs)
 	main := wrapMain(j.Funcs)
@@ -48,7 +48,7 @@ func (j *Job) Link() ([]*e8.Section, error) {
 		return nil, err
 	}
 
-	var secs []*e8.Section
+	var secs []*image.Section
 	buf := new(bytes.Buffer)
 	w := newWriter(pkgs, buf)
 	w.writeFunc(main)
@@ -64,9 +64,9 @@ func (j *Job) Link() ([]*e8.Section, error) {
 	}
 
 	if buf.Len() > 0 {
-		secs = append(secs, &e8.Section{
-			Header: &e8.Header{
-				Type: e8.Code,
+		secs = append(secs, &image.Section{
+			Header: &image.Header{
+				Type: image.Code,
 				Addr: j.InitPC,
 			},
 			Bytes: buf.Bytes(),
@@ -84,9 +84,9 @@ func (j *Job) Link() ([]*e8.Section, error) {
 		}
 
 		if buf.Len() > 0 {
-			secs = append(secs, &e8.Section{
-				Header: &e8.Header{
-					Type: e8.Data,
+			secs = append(secs, &image.Section{
+				Header: &image.Header{
+					Type: image.Data,
 					Addr: pkgVar(pkgs, vars[0]).addr,
 				},
 				Bytes: buf.Bytes(),
@@ -98,9 +98,9 @@ func (j *Job) Link() ([]*e8.Section, error) {
 		start := pkgVar(pkgs, zeros[0]).addr
 		lastVar := pkgVar(pkgs, zeros[len(zeros)-1])
 		end := lastVar.addr + lastVar.Size()
-		secs = append(secs, &e8.Section{
-			Header: &e8.Header{
-				Type: e8.Zeros,
+		secs = append(secs, &image.Section{
+			Header: &image.Header{
+				Type: image.Zeros,
 				Addr: start,
 				Size: end - start,
 			},
@@ -123,17 +123,17 @@ func LinkBareFunc(f *Func) ([]byte, error) {
 		return nil, err
 	}
 
-	image := new(bytes.Buffer)
-	sec := &e8.Section{
-		Header: &e8.Header{
-			Type: e8.Code,
+	im := new(bytes.Buffer)
+	sec := &image.Section{
+		Header: &image.Header{
+			Type: image.Code,
 			Addr: arch8.InitPC,
 		},
 		Bytes: buf.Bytes(),
 	}
-	if err := e8.Write(image, []*e8.Section{sec}); err != nil {
+	if err := image.Write(im, []*image.Section{sec}); err != nil {
 		return nil, err
 	}
 
-	return image.Bytes(), nil
+	return im.Bytes(), nil
 }
