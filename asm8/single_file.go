@@ -21,7 +21,7 @@ func BuildSingleFile(f string, rc io.ReadCloser) ([]byte, []*lexing.Error) {
 		return nil, errs
 	}
 
-	secs, err := link.LinkSinglePkg(pkg.Lib, pkg.Main)
+	secs, err := link.SinglePkg(pkg.Lib, pkg.Main)
 	if err != nil {
 		return nil, lexing.SingleErr(err)
 	}

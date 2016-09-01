@@ -26,16 +26,16 @@ func NewJob(pkgs map[string]*Pkg, funcs []*PkgSym) *Job {
 	}
 }
 
-// LinkMain is a short hand for NewJob(pkgs, path, start).Link(out)
-func LinkMain(pkgs map[string]*Pkg, funcs []*PkgSym) ([]*image.Section, error) {
+// Main is a short hand for NewJob(pkgs, path, start).Link(out)
+func Main(pkgs map[string]*Pkg, funcs []*PkgSym) ([]*image.Section, error) {
 	return NewJob(pkgs, funcs).Link()
 }
 
-// LinkSinglePkg call LinkMain with only one single package.
-func LinkSinglePkg(pkg *Pkg, start string) ([]*image.Section, error) {
+// SinglePkg call LinkMain with only one single package.
+func SinglePkg(pkg *Pkg, start string) ([]*image.Section, error) {
 	path := pkg.Path()
 	pkgs := map[string]*Pkg{path: pkg}
-	return LinkMain(pkgs, []*PkgSym{{path, start}})
+	return Main(pkgs, []*PkgSym{{path, start}})
 }
 
 // Link performs the linking job and writes the output to out.
@@ -110,8 +110,8 @@ func (j *Job) Link() ([]*image.Section, error) {
 	return secs, nil
 }
 
-// LinkBareFunc produces a image of a single function that has no links.
-func LinkBareFunc(f *Func) ([]byte, error) {
+// BareFunc produces a image of a single function that has no links.
+func BareFunc(f *Func) ([]byte, error) {
 	if f.TooLarge() {
 		return nil, fmt.Errorf("code section too large")
 	}

@@ -29,7 +29,7 @@ func BuildBareFunc(f string, rc io.ReadCloser) ([]byte, []*lexing.Error) {
 		return nil, es
 	}
 
-	ret, e := link.LinkBareFunc(fobj)
+	ret, e := link.BareFunc(fobj)
 	if e != nil {
 		return nil, lexing.SingleErr(e)
 	}
