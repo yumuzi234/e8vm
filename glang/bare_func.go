@@ -3,7 +3,7 @@ package glang
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/build8"
+	"e8vm.io/e8vm/builds"
 	"e8vm.io/e8vm/glang/ast"
 	"e8vm.io/e8vm/glang/codegen"
 	"e8vm.io/e8vm/glang/parse"
@@ -18,10 +18,10 @@ import (
 type bareFunc struct{ *lang }
 
 // BareFunc is a language where it only contains an implicit main function.
-func BareFunc() build8.Lang { return bareFunc{new(lang)} }
+func BareFunc() builds.Lang { return bareFunc{new(lang)} }
 
 func (bareFunc) Prepare(
-	src map[string]*build8.File, importer build8.Importer,
+	src map[string]*builds.File, importer builds.Importer,
 ) []*lexing.Error {
 	importer.Import("$", "asm/builtin", nil)
 	return nil
@@ -43,7 +43,7 @@ func buildBareFunc(b *builder, stmts []ast.Stmt) []*lexing.Error {
 	return nil
 }
 
-func findTheFile(pinfo *build8.PkgInfo) (*build8.File, error) {
+func findTheFile(pinfo *builds.PkgInfo) (*builds.File, error) {
 	if len(pinfo.Src) == 0 {
 		panic("no source file")
 	} else if len(pinfo.Src) > 1 {
@@ -56,8 +56,8 @@ func findTheFile(pinfo *build8.PkgInfo) (*build8.File, error) {
 	panic("unreachable")
 }
 
-func (bare bareFunc) Compile(pinfo *build8.PkgInfo) (
-	pkg *build8.Package, es []*lexing.Error,
+func (bare bareFunc) Compile(pinfo *builds.PkgInfo) (
+	pkg *builds.Package, es []*lexing.Error,
 ) {
 	// parsing
 	theFile, e := findTheFile(pinfo)
@@ -91,7 +91,7 @@ func (bare bareFunc) Compile(pinfo *build8.PkgInfo) (
 		return nil, errs
 	}
 
-	ret := &build8.Package{
+	ret := &builds.Package{
 		Lang: "g8-barefunc",
 		Main: startName,
 		Lib:  lib,
@@ -102,5 +102,5 @@ func (bare bareFunc) Compile(pinfo *build8.PkgInfo) (
 // CompileBareFunc compiles a bare function into a bare-metal E8 image
 func CompileBareFunc(fname, s string) ([]byte, []*lexing.Error, []byte) {
 	lang := BareFunc()
-	return buildSingle(fname, s, lang, new(build8.Options))
+	return buildSingle(fname, s, lang, new(builds.Options))
 }

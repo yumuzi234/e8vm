@@ -1,4 +1,4 @@
-package build8
+package builds
 
 // MemPkg is a package in memory
 type MemPkg struct {

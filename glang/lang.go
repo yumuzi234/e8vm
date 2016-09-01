@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"e8vm.io/e8vm/build8"
+	"e8vm.io/e8vm/builds"
 	"e8vm.io/e8vm/dagvis"
 	"e8vm.io/e8vm/glang/ast"
 	"e8vm.io/e8vm/glang/codegen"
@@ -20,10 +20,10 @@ type lang struct {
 }
 
 // Lang returns the G language builder for the building system
-func Lang(golike bool) build8.Lang { return &lang{golike: golike} }
+func Lang(golike bool) builds.Lang { return &lang{golike: golike} }
 
 // LangGoLike returns the G lauguage that uses a subset of golang AST.
-func LangGoLike() build8.Lang {
+func LangGoLike() builds.Lang {
 	return &lang{golike: true}
 }
 
@@ -32,10 +32,10 @@ func (l *lang) IsSrc(filename string) bool {
 }
 
 func (l *lang) Prepare(
-	src map[string]*build8.File, importer build8.Importer,
+	src map[string]*builds.File, importer builds.Importer,
 ) []*lexing.Error {
 	importer.Import("$", "asm/builtin", nil)
-	if f := build8.OnlyFile(src); f != nil {
+	if f := builds.OnlyFile(src); f != nil {
 		return listImport(f.Path, f, importer, l.golike)
 	}
 
@@ -46,13 +46,13 @@ func (l *lang) Prepare(
 	return listImport(f.Path, f, importer, l.golike)
 }
 
-func makeBuilder(pinfo *build8.PkgInfo) *builder {
+func makeBuilder(pinfo *builds.PkgInfo) *builder {
 	b := newBuilder(pinfo.Path)
 	initBuilder(b, pinfo.Import)
 	return b
 }
 
-func initBuilder(b *builder, imp map[string]*build8.Import) {
+func initBuilder(b *builder, imp map[string]*builds.Import) {
 	b.exprFunc = buildExpr2
 	b.stmtFunc = buildStmt
 
@@ -66,7 +66,7 @@ func initBuilder(b *builder, imp map[string]*build8.Import) {
 }
 
 // parse all files
-func (l *lang) parsePkg(pinfo *build8.PkgInfo) (
+func (l *lang) parsePkg(pinfo *builds.PkgInfo) (
 	map[string]*ast.File, []*lexing.Error,
 ) {
 	var parseErrs []*lexing.Error
@@ -105,13 +105,13 @@ func output(w io.WriteCloser, f func(w io.Writer) error) error {
 	return w.Close()
 }
 
-func outputIr(pinfo *build8.PkgInfo, b *builder) error {
+func outputIr(pinfo *builds.PkgInfo, b *builder) error {
 	return output(pinfo.Output("ir"), func(w io.Writer) error {
 		return codegen.PrintPkg(w, b.p)
 	})
 }
 
-func outputDeps(pinfo *build8.PkgInfo, g *dagvis.Graph) error {
+func outputDeps(pinfo *builds.PkgInfo, g *dagvis.Graph) error {
 	bs, err := json.MarshalIndent(g.Nodes, "", "    ")
 	if err != nil {
 		panic(err)
@@ -123,14 +123,14 @@ func outputDeps(pinfo *build8.PkgInfo, g *dagvis.Graph) error {
 	})
 }
 
-func outputDepMap(pinfo *build8.PkgInfo, deps []byte) error {
+func outputDepMap(pinfo *builds.PkgInfo, deps []byte) error {
 	return output(pinfo.Output("depmap"), func(w io.Writer) error {
 		_, err := w.Write(deps)
 		return err
 	})
 }
 
-func (l *lang) outputDeps(pinfo *build8.PkgInfo, p *pkg) error {
+func (l *lang) outputDeps(pinfo *builds.PkgInfo, p *pkg) error {
 	g := p.deps
 	g, err := g.Rename(func(name string) (string, error) {
 		if strings.HasSuffix(name, ".g") {
@@ -158,10 +158,10 @@ func (l *lang) outputDeps(pinfo *build8.PkgInfo, p *pkg) error {
 	return err
 }
 
-func (l *lang) Compile(pinfo *build8.PkgInfo) (
-	*build8.Package, []*lexing.Error,
+func (l *lang) Compile(pinfo *builds.PkgInfo) (
+	*builds.Package, []*lexing.Error,
 ) {
-	ret := &build8.Package{
+	ret := &builds.Package{
 		Lang:     "g8",
 		Init:     initName,
 		Main:     startName,

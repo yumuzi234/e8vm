@@ -9,13 +9,13 @@ import (
 	"strings"
 
 	"e8vm.io/e8vm/asm"
-	"e8vm.io/e8vm/build8"
+	"e8vm.io/e8vm/builds"
 	"e8vm.io/e8vm/glang"
 )
 
 // Home provides the default building home.
 type Home struct {
-	home build8.Home
+	home builds.Home
 
 	path string
 	std  string
@@ -24,14 +24,14 @@ type Home struct {
 // NewDirHome creates a new default home based on a particular directory.
 func NewDirHome(path string, std string) *Home {
 	lang := glang.Lang(false)
-	dirHome := build8.NewDirHome(path, lang)
+	dirHome := builds.NewDirHome(path, lang)
 	dirHome.AddLang("asm", asm.Lang())
 
 	return NewHome(std, dirHome)
 }
 
 // NewHome wraps an home with the specified std path.
-func NewHome(std string, h build8.Home) *Home {
+func NewHome(std string, h builds.Home) *Home {
 	if std == "" {
 		std = "/smallrepo/std"
 	}
@@ -78,8 +78,8 @@ func (h *Home) Pkgs(prefix string) []string {
 	return ret
 }
 
-func builtinSrc() map[string]*build8.File {
-	return map[string]*build8.File{
+func builtinSrc() map[string]*builds.File {
+	return map[string]*builds.File{
 		"builtin.s": {
 			Name:       "builtin.s",
 			Path:       "<internal>/asm/builtin/builtin.s",
@@ -89,7 +89,7 @@ func builtinSrc() map[string]*build8.File {
 }
 
 // Src lists all the source files inside a package.
-func (h *Home) Src(p string) map[string]*build8.File {
+func (h *Home) Src(p string) map[string]*builds.File {
 	if p == "asm/builtin" {
 		return builtinSrc()
 	}
@@ -115,6 +115,6 @@ func (h *Home) Output(p, name string) io.WriteCloser {
 // Lang returns the langauge for the particular path.
 // It returns assembly when any of the package name in the path
 // is "asm".
-func (h *Home) Lang(p string) build8.Lang {
+func (h *Home) Lang(p string) builds.Lang {
 	return h.home.Lang(h.dirPath(p))
 }

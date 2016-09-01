@@ -1,4 +1,4 @@
-package build8
+package builds
 
 // OnlyFile returns the only file in the map. The map of files must have
 // exactly one file, otherwise returns nil.

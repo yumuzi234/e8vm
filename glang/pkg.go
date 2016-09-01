@@ -7,7 +7,7 @@ import (
 	"math/rand"
 	"time"
 
-	"e8vm.io/e8vm/build8"
+	"e8vm.io/e8vm/builds"
 	"e8vm.io/e8vm/dagvis"
 	"e8vm.io/e8vm/glang/ast"
 	"e8vm.io/e8vm/glang/codegen"
@@ -33,7 +33,7 @@ func newPkg(asts map[string]*ast.File) *pkg {
 	return ret
 }
 
-func (p *pkg) build(b *builder, pinfo *build8.PkgInfo) []*lexing.Error {
+func (p *pkg) build(b *builder, pinfo *builds.PkgInfo) []*lexing.Error {
 	tops, deps, tests, errs := buildPkg(b, p.files, pinfo)
 	p.tops = tops
 	p.testNames = tests
@@ -150,12 +150,12 @@ func buildFuncs(b *builder, funcs []*tast.Func) {
 }
 
 func buildPkg(
-	b *builder, files map[string]*ast.File, pinfo *build8.PkgInfo,
+	b *builder, files map[string]*ast.File, pinfo *builds.PkgInfo,
 ) (
 	tops *syms.Table, deps *dagvis.Graph,
 	testNames []string, errs []*lexing.Error,
 ) {
-	imports := make(map[string]*build8.Package)
+	imports := make(map[string]*builds.Package)
 	for as, imp := range pinfo.Import {
 		imports[as] = imp.Package
 	}

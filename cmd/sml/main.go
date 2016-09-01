@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"e8vm.io/e8vm/arch8"
-	"e8vm.io/e8vm/build8"
+	"e8vm.io/e8vm/builds"
 	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/srchome"
 )
@@ -32,12 +32,12 @@ func main() {
 	flag.Parse()
 
 	home := srchome.NewDirHome(*homeDir, "")
-	b := build8.NewBuilder(home, home)
+	b := builds.NewBuilder(home, home)
 	b.Verbose = true
 	b.InitPC = arch8.InitPC
 	b.RunTests = *runTests
 
-	pkgs, err := build8.SelectPkgs(home, *pkg)
+	pkgs, err := builds.SelectPkgs(home, *pkg)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(-1)

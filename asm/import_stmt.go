@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"e8vm.io/e8vm/asm/ast"
-	"e8vm.io/e8vm/build8"
+	"e8vm.io/e8vm/builds"
 	"e8vm.io/e8vm/lexing"
 )
 
@@ -15,7 +15,7 @@ type importStmt struct {
 	as   string
 	path string
 
-	pkg *build8.Package
+	pkg *builds.Package
 }
 
 func importPos(i *ast.ImportStmt) *lexing.Pos {

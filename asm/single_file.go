@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"io"
 
-	"e8vm.io/e8vm/build8"
+	"e8vm.io/e8vm/builds"
 	"e8vm.io/e8vm/image"
 	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/link"
@@ -14,7 +14,7 @@ import (
 func BuildSingleFile(f string, rc io.ReadCloser) ([]byte, []*lexing.Error) {
 	path := "_"
 
-	pinfo := build8.SimplePkg(path, f, rc)
+	pinfo := builds.SimplePkg(path, f, rc)
 
 	pkg, errs := Lang().Compile(pinfo)
 	if errs != nil {

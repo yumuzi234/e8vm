@@ -1,7 +1,7 @@
 package sempass
 
 import (
-	"e8vm.io/e8vm/build8"
+	"e8vm.io/e8vm/builds"
 	"e8vm.io/e8vm/glang/ast"
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/glang/types"
@@ -9,7 +9,7 @@ import (
 )
 
 func buildImports(
-	b *builder, f *ast.File, imps map[string]*build8.Package,
+	b *builder, f *ast.File, imps map[string]*builds.Package,
 ) []*syms.Symbol {
 	if f.Imports == nil {
 		return nil

@@ -3,7 +3,7 @@ package glang
 import (
 	"io"
 
-	"e8vm.io/e8vm/build8"
+	"e8vm.io/e8vm/builds"
 	"e8vm.io/e8vm/glang/ast"
 	"e8vm.io/e8vm/glang/parse"
 	"e8vm.io/e8vm/lexing"
@@ -16,7 +16,7 @@ type importDecl struct {
 }
 
 func listImport(
-	f string, rc io.ReadCloser, imp build8.Importer, golike bool,
+	f string, rc io.ReadCloser, imp builds.Importer, golike bool,
 ) []*lexing.Error {
 	fast, _, es := parse.File(f, rc, golike)
 	if es != nil {

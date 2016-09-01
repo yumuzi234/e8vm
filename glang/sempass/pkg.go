@@ -3,7 +3,7 @@ package sempass
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/build8"
+	"e8vm.io/e8vm/builds"
 	"e8vm.io/e8vm/dagvis"
 	"e8vm.io/e8vm/glang/ast"
 	"e8vm.io/e8vm/glang/tast"
@@ -25,7 +25,7 @@ func makeBuilder(path string, scope *syms.Scope) *builder {
 type Pkg struct {
 	Path    string
 	Files   map[string]*ast.File
-	Imports map[string]*build8.Package
+	Imports map[string]*builds.Package
 }
 
 type symbols struct {
@@ -81,7 +81,7 @@ func (p *Pkg) onlyFile() *ast.File {
 }
 
 func (p *Pkg) buildImports(
-	b *builder, imps map[string]*build8.Package,
+	b *builder, imps map[string]*builds.Package,
 ) []*syms.Symbol {
 	if f := p.onlyFile(); f != nil {
 		return buildImports(b, f, imps)

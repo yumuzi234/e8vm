@@ -1,4 +1,4 @@
-package build8
+package builds
 
 import (
 	"os"

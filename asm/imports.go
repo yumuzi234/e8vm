@@ -4,12 +4,12 @@ import (
 	"io"
 
 	"e8vm.io/e8vm/asm/parse"
-	"e8vm.io/e8vm/build8"
+	"e8vm.io/e8vm/builds"
 	"e8vm.io/e8vm/lexing"
 )
 
 func listImport(
-	f string, rc io.ReadCloser, imp build8.Importer,
+	f string, rc io.ReadCloser, imp builds.Importer,
 ) []*lexing.Error {
 	astFile, es := parse.File(f, rc)
 	if es != nil {

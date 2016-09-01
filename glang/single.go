@@ -5,14 +5,14 @@ import (
 	"path/filepath"
 
 	"e8vm.io/e8vm/asm"
-	"e8vm.io/e8vm/build8"
+	"e8vm.io/e8vm/builds"
 	"e8vm.io/e8vm/lexing"
 )
 
 // MakeMemHome makes a memory home for compiling.
 // It contains the basic built-in packages.
-func MakeMemHome(lang build8.Lang) *build8.MemHome {
-	home := build8.NewMemHome(lang)
+func MakeMemHome(lang builds.Lang) *builds.MemHome {
+	home := builds.NewMemHome(lang)
 	home.AddLang("asm", asm.Lang())
 	builtin := home.NewPkg("asm/builtin")
 	builtin.AddFile("", "builtin.s", BuiltInSrc)
@@ -20,10 +20,10 @@ func MakeMemHome(lang build8.Lang) *build8.MemHome {
 	return home
 }
 
-func buildMainPkg(home *build8.MemHome, opt *build8.Options) (
+func buildMainPkg(home *builds.MemHome, opt *builds.Options) (
 	image []byte, errs []*lexing.Error, log []byte,
 ) {
-	b := build8.NewBuilder(home, home)
+	b := builds.NewBuilder(home, home)
 	if opt != nil {
 		b.Options = opt
 	}
@@ -42,7 +42,7 @@ func buildMainPkg(home *build8.MemHome, opt *build8.Options) (
 }
 
 func buildSingle(
-	f, s string, lang build8.Lang, opt *build8.Options,
+	f, s string, lang builds.Lang, opt *builds.Options,
 ) (
 	image []byte, errs []*lexing.Error, log []byte,
 ) {
@@ -59,7 +59,7 @@ func buildSingle(
 func CompileSingle(fname, s string, golike bool) (
 	[]byte, []*lexing.Error, []byte,
 ) {
-	return buildSingle(fname, s, Lang(golike), new(build8.Options))
+	return buildSingle(fname, s, Lang(golike), new(builds.Options))
 }
 
 // CompileAndTestSingle compiles a file into a bare-metal E8 image and
@@ -67,7 +67,7 @@ func CompileSingle(fname, s string, golike bool) (
 func CompileAndTestSingle(fname, s string, golike bool, testCycles int) (
 	[]byte, []*lexing.Error, []byte,
 ) {
-	return buildSingle(fname, s, Lang(golike), &build8.Options{
+	return buildSingle(fname, s, Lang(golike), &builds.Options{
 		RunTests:   true,
 		TestCycles: testCycles,
 	})

@@ -1,12 +1,12 @@
 package glang
 
 import (
-	"e8vm.io/e8vm/build8"
+	"e8vm.io/e8vm/builds"
 	"e8vm.io/e8vm/lexing"
 )
 
 func buildMulti(
-	lang build8.Lang, files map[string]string, opt *build8.Options,
+	lang builds.Lang, files map[string]string, opt *builds.Options,
 ) (
 	image []byte, errs []*lexing.Error, log []byte,
 ) {
@@ -17,7 +17,7 @@ func buildMulti(
 
 // CompileMulti compiles a set of files into a bare-metal E8 image
 func CompileMulti(
-	files map[string]string, golike bool, opt *build8.Options,
+	files map[string]string, golike bool, opt *builds.Options,
 ) (
 	[]byte, []*lexing.Error,
 ) {

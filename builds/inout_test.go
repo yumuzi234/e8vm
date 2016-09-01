@@ -1,4 +1,4 @@
-package build8
+package builds
 
 // satisfying the interface
 var _ Input = new(MemHome)

@@ -3,7 +3,7 @@ package asm
 import (
 	"e8vm.io/e8vm/asm/ast"
 	"e8vm.io/e8vm/asm/parse"
-	"e8vm.io/e8vm/build8"
+	"e8vm.io/e8vm/builds"
 	"e8vm.io/e8vm/lexing"
 )
 
@@ -14,7 +14,7 @@ type pkg struct {
 	imports *importDecl
 }
 
-func resolvePkg(p string, src map[string]*build8.File) (*pkg, []*lexing.Error) {
+func resolvePkg(p string, src map[string]*builds.File) (*pkg, []*lexing.Error) {
 	log := lexing.NewErrorList()
 	ret := new(pkg)
 	ret.path = p

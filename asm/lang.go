@@ -4,7 +4,7 @@ package asm
 import (
 	"strings"
 
-	"e8vm.io/e8vm/build8"
+	"e8vm.io/e8vm/builds"
 	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/syms"
 )
@@ -16,9 +16,9 @@ func (lang) IsSrc(filename string) bool {
 }
 
 func (lang) Prepare(
-	src map[string]*build8.File, imp build8.Importer,
+	src map[string]*builds.File, imp builds.Importer,
 ) []*lexing.Error {
-	if f := build8.OnlyFile(src); f != nil {
+	if f := builds.OnlyFile(src); f != nil {
 		return listImport(f.Path, f, imp)
 	}
 
@@ -39,8 +39,8 @@ func buildSymTable(p *lib) *syms.Table {
 	return t
 }
 
-func (lang) Compile(pinfo *build8.PkgInfo) (
-	*build8.Package, []*lexing.Error,
+func (lang) Compile(pinfo *builds.PkgInfo) (
+	*builds.Package, []*lexing.Error,
 ) {
 	// resolve pass, will also parse the files
 	pkg, es := resolvePkg(pinfo.Path, pinfo.Src)
@@ -81,7 +81,7 @@ func (lang) Compile(pinfo *build8.PkgInfo) (
 		return nil, es
 	}
 
-	ret := &build8.Package{
+	ret := &builds.Package{
 		Lang:    "asm8",
 		Lib:     lib.Pkg,
 		Main:    "main",
@@ -91,4 +91,4 @@ func (lang) Compile(pinfo *build8.PkgInfo) (
 }
 
 // Lang returns the assembly language builder for the building system
-func Lang() build8.Lang { return lang{} }
+func Lang() builds.Lang { return lang{} }
