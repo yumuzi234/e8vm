@@ -1,6 +1,6 @@
 // Package home8 provides the default build homing for building
 // G language programs
-package home8
+package srchome
 
 import (
 	"io"

@@ -7,8 +7,8 @@ import (
 
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/build8"
-	"e8vm.io/e8vm/home8"
 	"e8vm.io/e8vm/lexing"
+	"e8vm.io/e8vm/srchome"
 )
 
 var (
@@ -31,7 +31,7 @@ func handleErrs(errs []*lexing.Error) {
 func main() {
 	flag.Parse()
 
-	home := home8.NewDirHome(*homeDir, "")
+	home := srchome.NewDirHome(*homeDir, "")
 	b := build8.NewBuilder(home, home)
 	b.Verbose = true
 	b.InitPC = arch8.InitPC
