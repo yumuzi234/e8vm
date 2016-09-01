@@ -10,7 +10,7 @@ import (
 
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/dasm8"
-	"e8vm.io/e8vm/g8"
+	"e8vm.io/e8vm/glang"
 	"e8vm.io/e8vm/lexing"
 )
 
@@ -55,12 +55,12 @@ func main() {
 	}
 
 	if *bare {
-		bs, es, irLog := g8.CompileBareFunc(fname, string(input))
+		bs, es, irLog := glang.CompileBareFunc(fname, string(input))
 		printErrs(es)
 		printIRLog(irLog, *ir)
 		runImage(bs, *dasm, *ncycle)
 	} else {
-		bs, es, irLog := g8.CompileAndTestSingle(
+		bs, es, irLog := glang.CompileAndTestSingle(
 			fname, string(input), *golike, *ncycleTest,
 		)
 		printErrs(es)
