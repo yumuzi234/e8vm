@@ -5,11 +5,11 @@ import (
 
 	"strings"
 
-	"e8vm.io/e8vm/fmt8"
+	"e8vm.io/e8vm/fmtutil"
 )
 
 func formatProg(s string) string {
-	s = fmt8.BoxSpaceIndent(s)
+	s = fmtutil.BoxSpaceIndent(s)
 	if strings.HasPrefix(s, "\n") {
 		s = s[1:]
 	}

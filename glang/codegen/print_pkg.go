@@ -5,11 +5,11 @@ import (
 	"io"
 
 	"e8vm.io/e8vm/dasm"
-	"e8vm.io/e8vm/fmt8"
+	"e8vm.io/e8vm/fmtutil"
 	"e8vm.io/e8vm/lexing"
 )
 
-func printBlock(p *fmt8.Printer, b *Block) {
+func printBlock(p *fmtutil.Printer, b *Block) {
 	fmt.Fprintf(p, "%s:\n", b)
 	p.Tab()
 	for _, op := range b.ops {
@@ -19,7 +19,7 @@ func printBlock(p *fmt8.Printer, b *Block) {
 	p.ShiftTab()
 }
 
-func printBlockInsts(p *fmt8.Printer, b *Block) {
+func printBlockInsts(p *fmtutil.Printer, b *Block) {
 	fmt.Fprintf(p, "%s:\n", b)
 	p.Tab()
 	for _, inst := range b.insts {
@@ -31,7 +31,7 @@ func printBlockInsts(p *fmt8.Printer, b *Block) {
 	p.ShiftTab()
 }
 
-func printVars(p *fmt8.Printer, seg string, vars []*Var) {
+func printVars(p *fmtutil.Printer, seg string, vars []*Var) {
 	if len(vars) == 0 {
 		return
 	}
@@ -50,7 +50,7 @@ func printVars(p *fmt8.Printer, seg string, vars []*Var) {
 	}
 }
 
-func printFunc(p *fmt8.Printer, f *Func) {
+func printFunc(p *fmtutil.Printer, f *Func) {
 	fmt.Fprintf(p, "func %s {\n", f.name)
 	p.Tab()
 
@@ -73,7 +73,7 @@ func printFunc(p *fmt8.Printer, f *Func) {
 	fmt.Fprintln(p, "}")
 }
 
-func printPkg(p *fmt8.Printer, pkg *Pkg) {
+func printPkg(p *fmtutil.Printer, pkg *Pkg) {
 	fmt.Fprintf(p, "package %s\n", pkg.path)
 
 	for _, f := range pkg.funcs {
@@ -84,7 +84,7 @@ func printPkg(p *fmt8.Printer, pkg *Pkg) {
 
 // PrintPkg prints a the content of a IR package
 func PrintPkg(out io.Writer, pkg *Pkg) error {
-	p := fmt8.NewPrinter(out)
+	p := fmtutil.NewPrinter(out)
 	printPkg(p, pkg)
 	return p.Err()
 }

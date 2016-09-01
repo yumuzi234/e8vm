@@ -1,7 +1,7 @@
 package tast
 
 import (
-	"e8vm.io/e8vm/fmt8"
+	"e8vm.io/e8vm/fmtutil"
 	"e8vm.io/e8vm/glang/types"
 )
 
@@ -81,7 +81,7 @@ func (r *Ref) String() string {
 	if len(r.List) == 0 {
 		return r.T.String()
 	}
-	return fmt8.Join(r.List, ",")
+	return fmtutil.Join(r.List, ",")
 }
 
 // Len returns the number of refs in this ref bundle.

@@ -3,7 +3,7 @@ package asm
 import (
 	"strconv"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 	asminst "e8vm.io/e8vm/asm/inst"
 	"e8vm.io/e8vm/lexing"
 )
@@ -11,28 +11,28 @@ import (
 var (
 	// op reg reg imm(signed)
 	opImsMap = map[string]uint32{
-		"addi": arch8.ADDI,
-		"slti": arch8.SLTI,
+		"addi": arch.ADDI,
+		"slti": arch.SLTI,
 	}
 
 	opMemMap = map[string]uint32{
-		"lw":  arch8.LW,
-		"lb":  arch8.LB,
-		"lbu": arch8.LBU,
-		"sw":  arch8.SW,
-		"sb":  arch8.SB,
+		"lw":  arch.LW,
+		"lb":  arch.LB,
+		"lbu": arch.LBU,
+		"sw":  arch.SW,
+		"sb":  arch.SB,
 	}
 
 	// op reg reg imm(unsigned)
 	opImuMap = map[string]uint32{
-		"andi": arch8.ANDI,
-		"ori":  arch8.ORI,
-		"xori": arch8.XORI,
+		"andi": arch.ANDI,
+		"ori":  arch.ORI,
+		"xori": arch.XORI,
 	}
 
 	// op reg imm(signed or unsigned)
 	opImmMap = map[string]uint32{
-		"lui": arch8.LUI,
+		"lui": arch.LUI,
 	}
 )
 

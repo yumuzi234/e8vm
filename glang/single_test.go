@@ -6,7 +6,7 @@ import (
 	"errors"
 	"strings"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 )
 
 var errRunFailed = errors.New("test run failed")
@@ -22,7 +22,7 @@ func singleTestRun(t *testing.T, input string, N int) (string, error) {
 		return "", errRunFailed
 	}
 
-	ncycle, out, err := arch8.RunImageOutput(bs, N)
+	ncycle, out, err := arch.RunImageOutput(bs, N)
 	if ncycle == N {
 		t.Log(input)
 		t.Error("running out of time")
@@ -40,7 +40,7 @@ func TestSingleFile(t *testing.T) {
 			t.Error(err)
 			return
 		}
-		if !arch8.IsHalt(err) {
+		if !arch.IsHalt(err) {
 			t.Log(input)
 			t.Log(err)
 			t.Error("did not halt gracefully")

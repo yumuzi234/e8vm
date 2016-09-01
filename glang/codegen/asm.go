@@ -1,7 +1,7 @@
 package codegen
 
 import (
-	A "e8vm.io/e8vm/arch8"
+	A "e8vm.io/e8vm/arch"
 	S "e8vm.io/e8vm/asm/inst"
 )
 

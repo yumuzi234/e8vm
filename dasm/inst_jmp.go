@@ -3,13 +3,13 @@ package dasm
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 )
 
 var (
 	opJmpMap = map[uint32]string{
-		arch8.J:   "j",
-		arch8.JAL: "jal",
+		arch.J:   "j",
+		arch.JAL: "jal",
 	}
 )
 

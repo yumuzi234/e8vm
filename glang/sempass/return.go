@@ -1,7 +1,7 @@
 package sempass
 
 import (
-	"e8vm.io/e8vm/fmt8"
+	"e8vm.io/e8vm/fmtutil"
 	"e8vm.io/e8vm/glang/ast"
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/glang/types"
@@ -13,7 +13,7 @@ func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {
 		if b.retType == nil || b.retNamed {
 			return &tast.ReturnStmt{}
 		}
-		b.Errorf(pos, "expects return %s", fmt8.Join(b.retType, ","))
+		b.Errorf(pos, "expects return %s", fmtutil.Join(b.retType, ","))
 		return nil
 	}
 
@@ -32,7 +32,7 @@ func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {
 	nsrc := srcRef.Len()
 	if nret != nsrc {
 		b.Errorf(pos, "expect (%s), returning (%s)",
-			fmt8.Join(b.retType, ","), srcRef,
+			fmtutil.Join(b.retType, ","), srcRef,
 		)
 		return nil
 	}
@@ -42,7 +42,7 @@ func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {
 		srcType := srcRef.At(i).Type()
 		if !types.CanAssign(t, srcType) {
 			b.Errorf(pos, "expect (%s), returning (%s)",
-				fmt8.Join(b.retType, ","), srcRef,
+				fmtutil.Join(b.retType, ","), srcRef,
 			)
 			return nil
 		}

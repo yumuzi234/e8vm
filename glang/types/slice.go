@@ -1,7 +1,7 @@
 package types
 
 import (
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 )
 
 // Slice is a slice type
@@ -13,7 +13,7 @@ func (t *Slice) String() string { return "[]" + t.T.String() }
 // Size returns the size of the slice.
 // It contains the start address of the slice,
 // and the number of elements of the slice.
-func (t *Slice) Size() int32 { return arch8.RegSize * 2 }
+func (t *Slice) Size() int32 { return arch.RegSize * 2 }
 
 // SliceOf returns the internal type of the slice.
 // If the type is not a slice, it returns nil.

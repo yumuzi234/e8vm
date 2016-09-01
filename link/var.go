@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"math"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 )
 
 // Var reprsents a variable object
@@ -73,11 +73,11 @@ func (v *Var) WriteLink(pkg, sym string) error {
 		panic("cannot write link to zeros section")
 	}
 
-	if v.align%arch8.RegSize != 0 {
+	if v.align%arch.RegSize != 0 {
 		return fmt.Errorf("align %d, not register size aligned", v.align)
 	}
 	offset := uint32(v.buf.Len())
-	if offset%arch8.RegSize != 0 {
+	if offset%arch.RegSize != 0 {
 		return fmt.Errorf("offset %d, not register size aligned", offset)
 	}
 
@@ -86,7 +86,7 @@ func (v *Var) WriteLink(pkg, sym string) error {
 		PkgSym: &PkgSym{pkg, sym},
 	}
 	v.links = append(v.links, lnk)
-	v.Pad(arch8.RegSize) // symbol has a size of a register
+	v.Pad(arch.RegSize) // symbol has a size of a register
 	return nil
 }
 

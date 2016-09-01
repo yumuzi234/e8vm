@@ -3,42 +3,42 @@ package dasm
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 )
 
 var (
 	opShiftMap = map[uint32]string{
-		arch8.SLL: "sll",
-		arch8.SRL: "srl",
-		arch8.SRA: "sra",
+		arch.SLL: "sll",
+		arch.SRL: "srl",
+		arch.SRA: "sra",
 	}
 
 	opReg3Map = map[uint32]string{
-		arch8.SLLV: "sllv",
-		arch8.SRLV: "srlv",
-		arch8.SRLA: "srla",
-		arch8.ADD:  "add",
-		arch8.SUB:  "sub",
-		arch8.AND:  "and",
-		arch8.OR:   "or",
-		arch8.XOR:  "xor",
-		arch8.NOR:  "nor",
-		arch8.SLT:  "slt",
-		arch8.SLTU: "sltu",
-		arch8.MUL:  "mul",
-		arch8.MULU: "mulu",
-		arch8.DIV:  "div",
-		arch8.DIVU: "divu",
-		arch8.MOD:  "mod",
-		arch8.MODU: "modu",
+		arch.SLLV: "sllv",
+		arch.SRLV: "srlv",
+		arch.SRLA: "srla",
+		arch.ADD:  "add",
+		arch.SUB:  "sub",
+		arch.AND:  "and",
+		arch.OR:   "or",
+		arch.XOR:  "xor",
+		arch.NOR:  "nor",
+		arch.SLT:  "slt",
+		arch.SLTU: "sltu",
+		arch.MUL:  "mul",
+		arch.MULU: "mulu",
+		arch.DIV:  "div",
+		arch.DIVU: "divu",
+		arch.MOD:  "mod",
+		arch.MODU: "modu",
 	}
 
 	opFloatMap = map[uint32]string{
-		arch8.FADD: "fadd",
-		arch8.FSUB: "fsub",
-		arch8.FMUL: "fmul",
-		arch8.FDIV: "fdiv",
-		arch8.FINT: "fint",
+		arch.FADD: "fadd",
+		arch.FSUB: "fsub",
+		arch.FMUL: "fmul",
+		arch.FDIV: "fdiv",
+		arch.FINT: "fint",
 	}
 )
 
@@ -56,9 +56,9 @@ func instReg(addr uint32, in uint32) *Line {
 
 	var s string
 	if isFloat == 0 {
-		if funct == arch8.PANIC {
+		if funct == arch.PANIC {
 			s = fmt.Sprintf("panic")
-		} else if funct == arch8.SLLV && shift == 0 {
+		} else if funct == arch.SLLV && shift == 0 {
 			s = fmt.Sprintf("mov %s %s", dest, src1)
 		} else if opStr, found := opShiftMap[funct]; found {
 			s = fmt.Sprintf("%s %s %s %d", opStr, dest, src1, shift)

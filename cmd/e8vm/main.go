@@ -9,7 +9,7 @@ import (
 	"math"
 	"os"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 	"e8vm.io/e8vm/dasm"
 	"e8vm.io/e8vm/debug"
 	"e8vm.io/e8vm/image"
@@ -32,7 +32,7 @@ func run(bs []byte) (int, error) {
 	}
 
 	// create a single core machine
-	m := arch8.NewMachine(&arch8.Config{
+	m := arch.NewMachine(&arch.Config{
 		MemSize:  uint32(*memSize),
 		ROM:      *romRoot,
 		RandSeed: *randSeed,
@@ -53,9 +53,9 @@ func run(bs []byte) (int, error) {
 		m.PrintCoreStatus()
 	}
 
-	if !arch8.IsHalt(exp) {
+	if !arch.IsHalt(exp) {
 		fmt.Println(exp)
-		err := arch8.FprintStack(os.Stdout, m, exp)
+		err := arch.FprintStack(os.Stdout, m, exp)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -114,7 +114,7 @@ func main() {
 		n, e := run(bs)
 		fmt.Printf("(%d cycles)\n", n)
 		if e != nil {
-			if !arch8.IsHalt(e) {
+			if !arch.IsHalt(e) {
 				fmt.Println(e)
 			}
 		} else {

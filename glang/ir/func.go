@@ -1,7 +1,7 @@
 package ir
 
 import (
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 )
 
 // FuncSig is a function signature
@@ -25,8 +25,8 @@ type FuncSym struct {
 }
 
 var funcAttr = &Attribute{
-	Size:  arch8.RegSize,
-	Align: arch8.RegSize,
+	Size:  arch.RegSize,
+	Align: arch.RegSize,
 }
 
 // Attr returns the attribute of a function symbol

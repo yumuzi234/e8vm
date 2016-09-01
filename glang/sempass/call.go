@@ -1,7 +1,7 @@
 package sempass
 
 import (
-	"e8vm.io/e8vm/fmt8"
+	"e8vm.io/e8vm/fmtutil"
 	"e8vm.io/e8vm/glang/ast"
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/glang/types"
@@ -146,7 +146,7 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 	nargs := argsRef.Len()
 	if nargs != len(funcType.Args) {
 		b.Errorf(ast.ExprPos(expr), "argument expects (%s), got (%s)",
-			fmt8.Join(funcType.Args, ","), args,
+			fmtutil.Join(funcType.Args, ","), args,
 		)
 		return nil
 	}

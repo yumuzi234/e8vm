@@ -5,7 +5,7 @@ import (
 
 	"strings"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 )
 
 func bareTestRun(t *testing.T, input string, N int) (out string, e error) {
@@ -19,7 +19,7 @@ func bareTestRun(t *testing.T, input string, N int) (out string, e error) {
 		return "", errRunFailed
 	}
 
-	ncycle, out, e := arch8.RunImageOutput(bs, N)
+	ncycle, out, e := arch.RunImageOutput(bs, N)
 	if ncycle == N {
 		t.Log(input)
 		t.Error("running out of time")
@@ -36,7 +36,7 @@ func TestBareFunc_good(t *testing.T) {
 			t.Error(e)
 			return
 		}
-		if !arch8.IsHalt(e) {
+		if !arch.IsHalt(e) {
 			t.Log(input)
 			t.Log(e)
 			t.Error("did not halt gracefully")
@@ -241,7 +241,7 @@ func TestBareFunc_panic(t *testing.T) {
 	const N = 100000
 	o := func(input string) {
 		_, e := bareTestRun(t, input, N)
-		if !arch8.IsErr(e, arch8.ErrPanic) {
+		if !arch.IsErr(e, arch.ErrPanic) {
 			t.Log(input)
 			t.Log(e)
 			t.Error("should panic")

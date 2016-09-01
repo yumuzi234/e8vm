@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 )
 
 func multiTestRun(t *testing.T, fs map[string]string, N int) (
@@ -20,7 +20,7 @@ func multiTestRun(t *testing.T, fs map[string]string, N int) (
 		return "", errRunFailed
 	}
 
-	ncycle, out, err := arch8.RunImageOutput(bs, N)
+	ncycle, out, err := arch.RunImageOutput(bs, N)
 	if ncycle == N {
 		t.Log(fs)
 		t.Error("running out of time")
@@ -39,7 +39,7 @@ func TestMultiFile(t *testing.T) {
 			return
 		}
 
-		if !arch8.IsHalt(err) {
+		if !arch.IsHalt(err) {
 			t.Log(fs)
 			t.Log(err)
 			t.Error("did not halt gracefully")

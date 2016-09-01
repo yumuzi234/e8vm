@@ -3,31 +3,31 @@ package dasm
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 )
 
 var (
 	opImsMap = map[uint32]string{
-		arch8.ADDI: "addi",
-		arch8.SLTI: "slti",
+		arch.ADDI: "addi",
+		arch.SLTI: "slti",
 	}
 
 	opMemMap = map[uint32]string{
-		arch8.LW:  "lw",
-		arch8.LB:  "lb",
-		arch8.LBU: "lbu",
-		arch8.SW:  "sw",
-		arch8.SB:  "sb",
+		arch.LW:  "lw",
+		arch.LB:  "lb",
+		arch.LBU: "lbu",
+		arch.SW:  "sw",
+		arch.SB:  "sb",
 	}
 
 	opImuMap = map[uint32]string{
-		arch8.ANDI: "andi",
-		arch8.ORI:  "ori",
-		arch8.XORI: "xori",
+		arch.ANDI: "andi",
+		arch.ORI:  "ori",
+		arch.XORI: "xori",
 	}
 
 	opImu2Map = map[uint32]string{
-		arch8.LUI: "lui",
+		arch.LUI: "lui",
 	}
 )
 

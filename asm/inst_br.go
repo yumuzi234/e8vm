@@ -1,7 +1,7 @@
 package asm
 
 import (
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 	asminst "e8vm.io/e8vm/asm/inst"
 	"e8vm.io/e8vm/lexing"
 )
@@ -9,8 +9,8 @@ import (
 var (
 	// op reg reg label
 	opBrMap = map[string]uint32{
-		"bne": arch8.BNE,
-		"beq": arch8.BEQ,
+		"bne": arch.BNE,
+		"beq": arch.BEQ,
 	}
 )
 

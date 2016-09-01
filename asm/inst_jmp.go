@@ -1,7 +1,7 @@
 package asm
 
 import (
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 	asminst "e8vm.io/e8vm/asm/inst"
 	"e8vm.io/e8vm/lexing"
 )
@@ -23,9 +23,9 @@ func resolveInstJmp(p lexing.Logger, ops []*lexing.Token) (*inst, bool) {
 	// op sym
 	switch opName {
 	case "j":
-		op = arch8.J
+		op = arch.J
 	case "jal":
-		op = arch8.JAL
+		op = arch.JAL
 	default:
 		return nil, false
 	}

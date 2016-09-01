@@ -9,7 +9,7 @@ import (
 	"runtime/pprof"
 	"strings"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 	"e8vm.io/e8vm/asm"
 	"e8vm.io/e8vm/builds"
 	"e8vm.io/e8vm/glang"
@@ -20,7 +20,7 @@ var (
 	golike     = flag.Bool("golike", false, "uses go-like syntax")
 	runTests   = flag.Bool("test", true, "also run tests")
 	staticOnly = flag.Bool("static", false, "do static analysis only")
-	initPC     = flag.Uint("initpc", arch8.InitPC,
+	initPC     = flag.Uint("initpc", arch.InitPC,
 		"the starting address of the image",
 	)
 	cpuProfile = flag.String("profile", "", "cpu profile output")
@@ -33,7 +33,7 @@ func checkInitPC() {
 		fmt.Fprintln(os.Stderr, "init pc out of range")
 		os.Exit(-1)
 	}
-	if *initPC%arch8.RegSize != 0 {
+	if *initPC%arch.RegSize != 0 {
 		fmt.Fprintln(os.Stderr, "init pc not aligned")
 		os.Exit(-1)
 	}

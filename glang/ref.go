@@ -1,7 +1,7 @@
 package glang
 
 import (
-	"e8vm.io/e8vm/fmt8"
+	"e8vm.io/e8vm/fmtutil"
 	"e8vm.io/e8vm/glang/codegen"
 	"e8vm.io/e8vm/glang/types"
 )
@@ -124,7 +124,7 @@ func (r *ref) String() string {
 		return r.typ.String()
 	}
 
-	return fmt8.Join(r.TypeList(), ",")
+	return fmtutil.Join(r.TypeList(), ",")
 }
 
 func (r *ref) IsBool() bool {

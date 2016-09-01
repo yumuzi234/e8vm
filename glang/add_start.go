@@ -1,7 +1,7 @@
 package glang
 
 import (
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 	"e8vm.io/e8vm/glang/codegen"
 	"e8vm.io/e8vm/glang/types"
 )
@@ -48,10 +48,10 @@ func addTestStart(b *builder, testList codegen.Ref, n int) {
 	b.f = b.p.NewFunc(testStartName, nil, codegen.VoidFuncSig)
 	b.b = b.f.NewBlock(nil)
 
-	argAddr := codegen.Num(arch8.AddrBootArg) // the arg
-	index := b.newTempIR(types.Uint)          // to save the index
+	argAddr := codegen.Num(arch.AddrBootArg) // the arg
+	index := b.newTempIR(types.Uint)         // to save the index
 	b.b.Assign(index, codegen.NewAddrRef(
-		argAddr, arch8.RegSize, 0, false, true,
+		argAddr, arch.RegSize, 0, false, true,
 	))
 
 	size := codegen.Num(uint32(n))
@@ -60,12 +60,12 @@ func addTestStart(b *builder, testList codegen.Ref, n int) {
 	base := b.newPtr()
 	b.b.Arith(base, nil, "&", testList)
 	addr := b.newPtr()
-	b.b.Arith(addr, index, "*", codegen.Num(arch8.RegSize))
+	b.b.Arith(addr, index, "*", codegen.Num(arch.RegSize))
 	b.b.Arith(addr, base, "+", addr)
 
 	f := codegen.NewFuncPtr(
 		codegen.VoidFuncSig,
-		codegen.NewAddrRef(addr, arch8.RegSize, 0, false, true),
+		codegen.NewAddrRef(addr, arch.RegSize, 0, false, true),
 	)
 
 	testMain := findFunc(b, "testMain", testMainFuncType)

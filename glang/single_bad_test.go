@@ -3,7 +3,7 @@ package glang
 import (
 	"testing"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 )
 
 func TestSingleFileBad(t *testing.T) {
@@ -79,7 +79,7 @@ func TestSingleFilePanic(t *testing.T) {
 	const N = 100000
 	o := func(input string) {
 		_, e := singleTestRun(t, input, N)
-		if !arch8.IsErr(e, arch8.ErrPanic) {
+		if !arch.IsErr(e, arch.ErrPanic) {
 			t.Log(input)
 			t.Log(e)
 			t.Error("should panic")

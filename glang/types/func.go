@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"fmt"
 
-	"e8vm.io/e8vm/arch8"
-	"e8vm.io/e8vm/fmt8"
+	"e8vm.io/e8vm/arch"
+	"e8vm.io/e8vm/fmtutil"
 )
 
 // Arg is a function argument or return value
@@ -91,7 +91,7 @@ var VoidFunc = NewVoidFunc()
 func (t *Func) String() string {
 	// TODO: this is kind of ugly, need some refactoring
 	buf := new(bytes.Buffer)
-	fmt.Fprintf(buf, "func (%s)", fmt8.Join(t.Args, ","))
+	fmt.Fprintf(buf, "func (%s)", fmtutil.Join(t.Args, ","))
 	if len(t.Rets) > 1 {
 		fmt.Fprintf(buf, " (")
 		for i, ret := range t.Rets {
@@ -115,7 +115,7 @@ func (t *Func) String() string {
 
 // Size returns the size of a function pointer,
 // which is equivalent to the size of a register.
-func (t *Func) Size() int32 { return arch8.RegSize }
+func (t *Func) Size() int32 { return arch.RegSize }
 
 // RegSizeAlign returns true. Function pointer is always word aligned.
 func (t *Func) RegSizeAlign() bool { return true }

@@ -3,7 +3,7 @@ package codegen
 import (
 	"math"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 )
 
 /**
@@ -57,7 +57,7 @@ func layoutLocals(f *Func) {
 	// layout the variables in the function
 	f.frameSize = f.sig.frameSize
 	f.retAddr = NewVar(regSize, "", false, true)
-	f.retAddr.ViaReg = arch8.RET // the return address
+	f.retAddr.ViaReg = arch.RET // the return address
 
 	// if all args and rets are via register
 	// then f.retAddr.offset should be -4 (offset=4), it is the nearest to SP
@@ -112,7 +112,7 @@ func makeEpilogue(g *gener, f *Func) {
 
 func genFunc(g *gener, f *Func) {
 	layoutLocals(f)
-	if f.frameSize > arch8.PageSize {
+	if f.frameSize > arch.PageSize {
 		g.Errorf(f.pos, "stack too large in function %s", f.name)
 		return
 	}

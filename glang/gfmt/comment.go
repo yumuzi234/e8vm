@@ -3,7 +3,7 @@ package gfmt
 import (
 	"strings"
 
-	"e8vm.io/e8vm/fmt8"
+	"e8vm.io/e8vm/fmtutil"
 )
 
 func formatComment(c string) string {
@@ -18,6 +18,6 @@ func formatComment(c string) string {
 	// block comment here
 	body := strings.TrimPrefix(c, "/*")
 	body = strings.TrimSuffix(body, "*/")
-	body = fmt8.BoxSpaceIndent(body)
+	body = fmtutil.BoxSpaceIndent(body)
 	return "/*" + body + "*/"
 }

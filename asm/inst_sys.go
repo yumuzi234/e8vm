@@ -1,7 +1,7 @@
 package asm
 
 import (
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 	asminst "e8vm.io/e8vm/asm/inst"
 	"e8vm.io/e8vm/lexing"
 )
@@ -9,21 +9,21 @@ import (
 var (
 	// op
 	opSysMap = map[string]uint32{
-		"halt":    arch8.HALT,
-		"syscall": arch8.SYSCALL,
-		"iret":    arch8.IRET,
-		"sleep":   arch8.SLEEP,
+		"halt":    arch.HALT,
+		"syscall": arch.SYSCALL,
+		"iret":    arch.IRET,
+		"sleep":   arch.SLEEP,
 	}
 
 	// op reg
 	opSys1Map = map[string]uint32{
-		"jruser": arch8.JRUSER,
-		"vtable": arch8.VTABLE,
+		"jruser": arch.JRUSER,
+		"vtable": arch.VTABLE,
 	}
 
 	// op reg reg
 	opSys2Map = map[string]uint32{
-		"sysinfo": arch8.SYSINFO,
+		"sysinfo": arch.SYSINFO,
 	}
 )
 

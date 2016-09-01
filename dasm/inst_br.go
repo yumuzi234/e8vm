@@ -3,13 +3,13 @@ package dasm
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 )
 
 var (
 	opBrMap = map[uint32]string{
-		arch8.BNE: "bne",
-		arch8.BEQ: "beq",
+		arch.BNE: "bne",
+		arch.BEQ: "beq",
 	}
 )
 

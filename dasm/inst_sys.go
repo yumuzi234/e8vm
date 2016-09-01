@@ -3,24 +3,24 @@ package dasm
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 )
 
 var (
 	opSysMap = map[uint32]string{
-		arch8.HALT:    "halt",
-		arch8.SYSCALL: "syscall",
-		arch8.IRET:    "iret",
-		arch8.SLEEP:   "sleep",
+		arch.HALT:    "halt",
+		arch.SYSCALL: "syscall",
+		arch.IRET:    "iret",
+		arch.SLEEP:   "sleep",
 	}
 
 	opSys1Map = map[uint32]string{
-		arch8.JRUSER: "jruser",
-		arch8.VTABLE: "vtable",
+		arch.JRUSER: "jruser",
+		arch.VTABLE: "vtable",
 	}
 
 	opSys2Map = map[uint32]string{
-		arch8.SYSINFO: "sysinfo",
+		arch.SYSINFO: "sysinfo",
 	}
 )
 

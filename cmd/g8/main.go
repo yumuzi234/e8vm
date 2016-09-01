@@ -8,7 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 	"e8vm.io/e8vm/dasm"
 	"e8vm.io/e8vm/glang"
 	"e8vm.io/e8vm/lexing"
@@ -81,7 +81,7 @@ func runImage(bs []byte, doDasm bool, n int) {
 		return
 	}
 
-	m := arch8.NewMachine(new(arch8.Config))
+	m := arch.NewMachine(new(arch.Config))
 	if err := m.LoadImageBytes(bs); err != nil {
 		fmt.Println(err)
 		return
@@ -90,9 +90,9 @@ func runImage(bs []byte, doDasm bool, n int) {
 	ncycle, exp := m.Run(n)
 	fmt.Printf("(%d cycles)\n", ncycle)
 	if exp != nil {
-		if !arch8.IsHalt(exp) {
+		if !arch.IsHalt(exp) {
 			fmt.Println(exp)
-			err := arch8.FprintStack(os.Stdout, m, exp)
+			err := arch.FprintStack(os.Stdout, m, exp)
 			if err != nil {
 				fmt.Println(err)
 			}

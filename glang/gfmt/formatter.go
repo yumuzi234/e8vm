@@ -5,14 +5,14 @@ import (
 	"io"
 	"strings"
 
-	"e8vm.io/e8vm/fmt8"
+	"e8vm.io/e8vm/fmtutil"
 	"e8vm.io/e8vm/glang/ast"
 	"e8vm.io/e8vm/glang/parse"
 	"e8vm.io/e8vm/lexing"
 )
 
 type formatter struct {
-	*fmt8.Printer
+	*fmtutil.Printer
 	toks *tokens
 	err  *lexing.Error
 
@@ -47,7 +47,7 @@ func (f *formatter) printExprs(args ...interface{}) {
 }
 
 func newFormatter(out io.Writer, toks []*lexing.Token) *formatter {
-	p := fmt8.NewPrinter(out)
+	p := fmtutil.NewPrinter(out)
 	return &formatter{
 		Printer: p,
 		toks:    newTokens(toks),

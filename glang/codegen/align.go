@@ -1,10 +1,10 @@
 package codegen
 
 import (
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 )
 
-const regSize = arch8.RegSize
+const regSize = arch.RegSize
 
 func alignUp(size, align int32) int32 {
 	mod := size % align

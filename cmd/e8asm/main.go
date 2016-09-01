@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 	"e8vm.io/e8vm/asm"
 	"e8vm.io/e8vm/dasm"
 	"e8vm.io/e8vm/lexing"
@@ -23,7 +23,7 @@ var (
 
 func run(bs []byte) (int, error) {
 	// create a single core machine
-	m := arch8.NewMachine(&arch8.Config{
+	m := arch.NewMachine(&arch.Config{
 		MemSize:  uint32(*memSize),
 		RandSeed: *randSeed,
 	})
@@ -73,7 +73,7 @@ func main() {
 	}
 
 	if *doDasm {
-		lines := dasm.Dasm(bs, arch8.InitPC)
+		lines := dasm.Dasm(bs, arch.InitPC)
 		for _, line := range lines {
 			fmt.Println(line)
 		}
@@ -81,7 +81,7 @@ func main() {
 		n, e := run(bs)
 		fmt.Printf("(%d cycles)\n", n)
 		if e != nil {
-			if !arch8.IsHalt(e) {
+			if !arch.IsHalt(e) {
 				fmt.Println(e)
 			}
 		} else {

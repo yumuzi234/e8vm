@@ -1,16 +1,16 @@
 package types
 
 import (
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 )
 
 // RegSizeAlignUp aligns a size up to multiples of the register size.
 func RegSizeAlignUp(size int32) int32 {
-	mod := size % arch8.RegSize
+	mod := size % arch.RegSize
 	if mod == 0 {
 		return size
 	}
-	return size + arch8.RegSize - mod
+	return size + arch.RegSize - mod
 }
 
 // Pointer is a pointer type
@@ -23,7 +23,7 @@ func NewPointer(t T) *Pointer { return &Pointer{t} }
 func (t *Pointer) String() string { return "*" + t.T.String() }
 
 // Size returns the address length of the architecture.
-func (t *Pointer) Size() int32 { return arch8.RegSize }
+func (t *Pointer) Size() int32 { return arch.RegSize }
 
 // RegSizeAlign returns true. Pointer is always word aligned.
 func (t *Pointer) RegSizeAlign() bool { return true }

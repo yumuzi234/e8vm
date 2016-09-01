@@ -3,7 +3,7 @@ package builds
 import (
 	"io"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 	"e8vm.io/e8vm/debug"
 	"e8vm.io/e8vm/image"
 	"e8vm.io/e8vm/link"
@@ -29,7 +29,7 @@ func linkPkg(c *context, out io.Writer, p *pkg, main string) error {
 	job := link.NewJob(c.linkPkgs, funcs)
 	job.InitPC = c.InitPC
 	if job.InitPC == 0 {
-		job.InitPC = arch8.InitPC
+		job.InitPC = arch.InitPC
 	}
 	job.FuncDebug = func(pkg, name string, addr, size uint32) {
 		debugTable.LinkFunc(c.debugFuncs, pkg, name, addr, size)

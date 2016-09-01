@@ -7,7 +7,7 @@ import (
 	"sort"
 	"strings"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 	"e8vm.io/e8vm/lexing"
 )
 
@@ -34,7 +34,7 @@ func runTests(
 	// TODO(h8liu): this reporting should go with JSON for better formatting.
 	report := func(
 		name string, ncycle int, pass bool,
-		m *arch8.Machine, err error,
+		m *arch.Machine, err error,
 	) {
 		if pass {
 			if opt.Verbose {
@@ -55,10 +55,10 @@ func runTests(
 				name, cycleStr(ncycle), err,
 			))
 			// TODO(h8liu): this is too ugly here...
-			excep, ok := err.(*arch8.CoreExcep)
-			if !arch8.IsHalt(err) && ok {
+			excep, ok := err.(*arch.CoreExcep)
+			if !arch.IsHalt(err) && ok {
 				stackTrace := new(bytes.Buffer)
-				arch8.FprintStack(stackTrace, m, excep)
+				arch.FprintStack(stackTrace, m, excep)
 				logln(stackTrace.String())
 			}
 		}
@@ -72,7 +72,7 @@ func runTests(
 
 	for _, test := range testNames {
 		arg := tests[test]
-		m := arch8.NewMachine(&arch8.Config{
+		m := arch.NewMachine(&arch.Config{
 			BootArg: arg,
 		})
 		if err := m.LoadImageBytes(img); err != nil {
@@ -88,9 +88,9 @@ func runTests(
 			err = excep
 		}
 		if strings.HasPrefix(test, "TestBad") {
-			report(test, n, arch8.IsPanic(err), m, err)
+			report(test, n, arch.IsPanic(err), m, err)
 		} else {
-			report(test, n, arch8.IsHalt(err), m, err)
+			report(test, n, arch.IsHalt(err), m, err)
 		}
 	}
 }

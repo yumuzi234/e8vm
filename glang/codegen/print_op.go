@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"e8vm.io/e8vm/fmt8"
+	"e8vm.io/e8vm/fmtutil"
 )
 
 func printOp(p io.Writer, op Op) {
@@ -28,7 +28,7 @@ func printOp(p io.Writer, op Op) {
 	case *CallOp:
 		var args string
 		if op.Args != nil {
-			args = fmt8.Join(op.Args, ",")
+			args = fmtutil.Join(op.Args, ",")
 		}
 		fmt.Fprintf(p, "%s = %s(%s)\n", op.Dest, op.F, args)
 	default:

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 	"e8vm.io/e8vm/builds"
 	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/srchome"
@@ -34,7 +34,7 @@ func main() {
 	home := srchome.NewDirHome(*homeDir, "")
 	b := builds.NewBuilder(home, home)
 	b.Verbose = true
-	b.InitPC = arch8.InitPC
+	b.InitPC = arch.InitPC
 	b.RunTests = *runTests
 
 	pkgs, err := builds.SelectPkgs(home, *pkg)

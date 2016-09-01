@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 	"e8vm.io/e8vm/image"
 )
 
@@ -22,7 +22,7 @@ func NewJob(pkgs map[string]*Pkg, funcs []*PkgSym) *Job {
 	return &Job{
 		Pkgs:   pkgs,
 		Funcs:  funcs,
-		InitPC: arch8.InitPC,
+		InitPC: arch.InitPC,
 	}
 }
 
@@ -127,7 +127,7 @@ func BareFunc(f *Func) ([]byte, error) {
 	sec := &image.Section{
 		Header: &image.Header{
 			Type: image.Code,
-			Addr: arch8.InitPC,
+			Addr: arch.InitPC,
 		},
 		Bytes: buf.Bytes(),
 	}

@@ -1,4 +1,4 @@
-// Package home8 provides the default build homing for building
+// Package srchome provides the default build homing for building
 // G language programs
 package srchome
 

@@ -1,7 +1,7 @@
 package glang
 
 import (
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 	"e8vm.io/e8vm/glang/codegen"
 	"e8vm.io/e8vm/glang/types"
 )
@@ -46,7 +46,7 @@ func buildCast(b *builder, from *ref, t types.T) *ref {
 
 	if types.IsNil(srcType) {
 		size := t.Size()
-		if size == arch8.RegSize {
+		if size == arch.RegSize {
 			return newRef(t, codegen.Num(0))
 		}
 		if _, ok := t.(*types.Slice); !ok {

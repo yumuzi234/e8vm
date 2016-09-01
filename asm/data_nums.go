@@ -5,7 +5,7 @@ import (
 	"math"
 	"strconv"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 	"e8vm.io/e8vm/asm/parse"
 	"e8vm.io/e8vm/lexing"
 )
@@ -64,7 +64,7 @@ func parseDataNums(p lexing.Logger, args []*lexing.Token, mode int) (
 			buf.WriteByte(byte(ui))
 		} else if nbit == 32 {
 			var bs [4]byte
-			arch8.Endian.PutUint32(bs[:], ui)
+			arch.Endian.PutUint32(bs[:], ui)
 			buf.Write(bs[:])
 		}
 	}

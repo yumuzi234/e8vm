@@ -3,7 +3,7 @@ package asm
 import (
 	"strconv"
 
-	"e8vm.io/e8vm/arch8"
+	"e8vm.io/e8vm/arch"
 	asminst "e8vm.io/e8vm/asm/inst"
 	"e8vm.io/e8vm/lexing"
 )
@@ -11,44 +11,44 @@ import (
 var (
 	// op reg reg shift
 	opShiftMap = map[string]uint32{
-		"sll": arch8.SLL,
-		"srl": arch8.SRL,
-		"sra": arch8.SRA,
+		"sll": arch.SLL,
+		"srl": arch.SRL,
+		"sra": arch.SRA,
 	}
 
 	// op reg reg reg
 	opReg3Map = map[string]uint32{
-		"sllv": arch8.SLLV,
-		"srlv": arch8.SRLV,
-		"srla": arch8.SRLA,
-		"add":  arch8.ADD,
-		"sub":  arch8.SUB,
-		"and":  arch8.AND,
-		"or":   arch8.OR,
-		"xor":  arch8.XOR,
-		"nor":  arch8.NOR,
-		"slt":  arch8.SLT,
-		"sltu": arch8.SLTU,
-		"mul":  arch8.MUL,
-		"mulu": arch8.MULU,
-		"div":  arch8.DIV,
-		"divu": arch8.DIVU,
-		"mod":  arch8.MOD,
-		"modu": arch8.MODU,
+		"sllv": arch.SLLV,
+		"srlv": arch.SRLV,
+		"srla": arch.SRLA,
+		"add":  arch.ADD,
+		"sub":  arch.SUB,
+		"and":  arch.AND,
+		"or":   arch.OR,
+		"xor":  arch.XOR,
+		"nor":  arch.NOR,
+		"slt":  arch.SLT,
+		"sltu": arch.SLTU,
+		"mul":  arch.MUL,
+		"mulu": arch.MULU,
+		"div":  arch.DIV,
+		"divu": arch.DIVU,
+		"mod":  arch.MOD,
+		"modu": arch.MODU,
 	}
 
 	// op reg reg
 	opReg2Map = map[string]uint32{
-		"mov": arch8.SLL,
+		"mov": arch.SLL,
 	}
 
 	// op reg reg reg
 	opFloatMap = map[string]uint32{
-		"fadd": arch8.FADD,
-		"fsub": arch8.FSUB,
-		"fmul": arch8.FMUL,
-		"fdiv": arch8.FDIV,
-		"fint": arch8.FINT,
+		"fadd": arch.FADD,
+		"fsub": arch.FSUB,
+		"fmul": arch.FMUL,
+		"fdiv": arch.FDIV,
+		"fint": arch.FINT,
 	}
 )
 
