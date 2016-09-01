@@ -4,7 +4,7 @@ import (
 	"errors"
 	"path/filepath"
 
-	"e8vm.io/e8vm/asm8"
+	"e8vm.io/e8vm/asm"
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/lexing"
 )
@@ -13,7 +13,7 @@ import (
 // It contains the basic built-in packages.
 func MakeMemHome(lang build8.Lang) *build8.MemHome {
 	home := build8.NewMemHome(lang)
-	home.AddLang("asm", asm8.Lang())
+	home.AddLang("asm", asm.Lang())
 	builtin := home.NewPkg("asm/builtin")
 	builtin.AddFile("", "builtin.s", BuiltInSrc)
 

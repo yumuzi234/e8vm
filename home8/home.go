@@ -8,7 +8,7 @@ import (
 	"path"
 	"strings"
 
-	"e8vm.io/e8vm/asm8"
+	"e8vm.io/e8vm/asm"
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/glang"
 )
@@ -25,7 +25,7 @@ type Home struct {
 func NewDirHome(path string, std string) *Home {
 	lang := glang.Lang(false)
 	dirHome := build8.NewDirHome(path, lang)
-	dirHome.AddLang("asm", asm8.Lang())
+	dirHome.AddLang("asm", asm.Lang())
 
 	return NewHome(std, dirHome)
 }

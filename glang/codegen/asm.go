@@ -2,7 +2,7 @@ package codegen
 
 import (
 	A "e8vm.io/e8vm/arch8"
-	S "e8vm.io/e8vm/asm8/inst"
+	S "e8vm.io/e8vm/asm/inst"
 )
 
 // go lint (stupidly) forbids import with .

@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"e8vm.io/e8vm/arch8"
-	"e8vm.io/e8vm/asm8"
+	"e8vm.io/e8vm/asm"
 	"e8vm.io/e8vm/dasm"
 	"e8vm.io/e8vm/lexing"
 )
@@ -59,9 +59,9 @@ func main() {
 
 	var es []*lexing.Error
 	if strings.HasSuffix(fname, "_bare.s") {
-		bs, es = asm8.BuildBareFunc(fname, f)
+		bs, es = asm.BuildBareFunc(fname, f)
 	} else {
-		bs, es = asm8.BuildSingleFile(fname, f)
+		bs, es = asm.BuildSingleFile(fname, f)
 	}
 
 	if len(es) > 0 {

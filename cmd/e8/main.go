@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"e8vm.io/e8vm/arch8"
-	"e8vm.io/e8vm/asm8"
+	"e8vm.io/e8vm/asm"
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/glang"
 	"e8vm.io/e8vm/lexing"
@@ -54,7 +54,7 @@ func main() {
 
 	lang := glang.Lang(*golike)
 	home := build8.NewDirHome(*homeDir, lang)
-	home.AddLang("asm", asm8.Lang())
+	home.AddLang("asm", asm.Lang())
 	home.AddLang("bare", glang.BareFunc())
 
 	b := build8.NewBuilder(home, home)

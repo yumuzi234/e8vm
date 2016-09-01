@@ -1,7 +1,7 @@
 package glang
 
 import (
-	"e8vm.io/e8vm/asm8"
+	"e8vm.io/e8vm/asm"
 	"e8vm.io/e8vm/glang/codegen"
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/glang/types"
@@ -11,7 +11,7 @@ func buildPkgSym(b *builder, m *tast.MemberExpr, pkg *types.Pkg) *ref {
 	sym := m.Symbol
 	if pkg.Lang == "asm8" {
 		switch sym.Type {
-		case asm8.SymVar:
+		case asm.SymVar:
 			if m.Type() != types.Uint {
 				panic("bug")
 			}
@@ -19,7 +19,7 @@ func buildPkgSym(b *builder, m *tast.MemberExpr, pkg *types.Pkg) *ref {
 			s := codegen.NewHeapSym(sym.Pkg(), sym.Name(), 0, false, false)
 			b.b.Arith(ptr.IR(), nil, "&", s)
 			return ptr
-		case asm8.SymFunc:
+		case asm.SymFunc:
 			if !types.SameType(m.Type(), types.VoidFunc) {
 				panic("bug")
 			}

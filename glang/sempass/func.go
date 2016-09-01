@@ -1,7 +1,7 @@
 package sempass
 
 import (
-	"e8vm.io/e8vm/asm8"
+	"e8vm.io/e8vm/asm"
 	"e8vm.io/e8vm/glang/ast"
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/glang/types"
@@ -50,7 +50,7 @@ func buildFuncAlias(b *builder, f *ast.Func) *tast.FuncAlias {
 		return nil
 	}
 
-	if sym.Type != asm8.SymFunc {
+	if sym.Type != asm.SymFunc {
 		b.Errorf(alias.Name.Pos, "the symbol is not a function")
 		return nil
 	}

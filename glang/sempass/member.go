@@ -1,7 +1,7 @@
 package sempass
 
 import (
-	"e8vm.io/e8vm/asm8"
+	"e8vm.io/e8vm/asm"
 	"e8vm.io/e8vm/glang/ast"
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/glang/types"
@@ -66,14 +66,14 @@ func buildPkgSym(
 
 	if pkg.Lang == "asm8" {
 		switch sym.Type {
-		case asm8.SymVar:
+		case asm.SymVar:
 			return tast.NewRef(types.Uint), sym
-		case asm8.SymFunc:
+		case asm.SymFunc:
 			return tast.NewRef(types.VoidFunc), sym
 		}
 
 		b.Errorf(m.Sub.Pos, "invalid symbol %s in %s: %s",
-			m.Sub.Lit, pkg, asm8.SymStr(sym.Type),
+			m.Sub.Lit, pkg, asm.SymStr(sym.Type),
 		)
 		return nil, nil
 	}

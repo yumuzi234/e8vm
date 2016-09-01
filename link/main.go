@@ -2,7 +2,7 @@ package link
 
 import (
 	"e8vm.io/e8vm/arch8"
-	"e8vm.io/e8vm/asm8/inst"
+	"e8vm.io/e8vm/asm/inst"
 )
 
 func wrapMain(funcs []*PkgSym) *Func {
