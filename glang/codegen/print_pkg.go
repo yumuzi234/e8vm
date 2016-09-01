@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"e8vm.io/e8vm/dasm8"
+	"e8vm.io/e8vm/dasm"
 	"e8vm.io/e8vm/fmt8"
 	"e8vm.io/e8vm/lexing"
 )
@@ -23,10 +23,10 @@ func printBlockInsts(p *fmt8.Printer, b *Block) {
 	fmt.Fprintf(p, "%s:\n", b)
 	p.Tab()
 	for _, inst := range b.insts {
-		fmt.Fprintln(p, dasm8.LineStr(inst.inst))
+		fmt.Fprintln(p, dasm.LineStr(inst.inst))
 	}
 	if b.jumpInst != nil {
-		fmt.Fprintln(p, dasm8.LineStr(b.jumpInst.inst))
+		fmt.Fprintln(p, dasm.LineStr(b.jumpInst.inst))
 	}
 	p.ShiftTab()
 }

@@ -9,7 +9,7 @@ import (
 
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/asm8"
-	"e8vm.io/e8vm/dasm8"
+	"e8vm.io/e8vm/dasm"
 	"e8vm.io/e8vm/lexing"
 )
 
@@ -73,7 +73,7 @@ func main() {
 	}
 
 	if *doDasm {
-		lines := dasm8.Dasm(bs, arch8.InitPC)
+		lines := dasm.Dasm(bs, arch8.InitPC)
 		for _, line := range lines {
 			fmt.Println(line)
 		}

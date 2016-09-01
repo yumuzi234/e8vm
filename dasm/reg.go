@@ -1,4 +1,4 @@
-package dasm8
+package dasm
 
 func regStr(r uint32) string {
 	switch r {

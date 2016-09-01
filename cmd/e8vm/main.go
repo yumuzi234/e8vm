@@ -10,7 +10,7 @@ import (
 	"os"
 
 	"e8vm.io/e8vm/arch8"
-	"e8vm.io/e8vm/dasm8"
+	"e8vm.io/e8vm/dasm"
 	"e8vm.io/e8vm/debug"
 	"e8vm.io/e8vm/image"
 )
@@ -81,7 +81,7 @@ func main() {
 		f, err := os.Open(fname)
 		defer f.Close()
 
-		err = dasm8.DumpImage(f, os.Stdout)
+		err = dasm.DumpImage(f, os.Stdout)
 		if err != nil {
 			log.Fatal(err)
 		}

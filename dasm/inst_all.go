@@ -1,4 +1,4 @@
-package dasm8
+package dasm
 
 // NewLine disassembles one instrcution at address addr.
 func NewLine(addr uint32, in uint32) *Line {

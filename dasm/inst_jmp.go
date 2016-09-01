@@ -1,4 +1,4 @@
-package dasm8
+package dasm
 
 import (
 	"fmt"

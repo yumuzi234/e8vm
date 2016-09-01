@@ -9,7 +9,7 @@ import (
 	"os"
 
 	"e8vm.io/e8vm/arch8"
-	"e8vm.io/e8vm/dasm8"
+	"e8vm.io/e8vm/dasm"
 	"e8vm.io/e8vm/glang"
 	"e8vm.io/e8vm/lexing"
 )
@@ -34,7 +34,7 @@ func printErrs(es []*lexing.Error) {
 var (
 	bare       = flag.Bool("bare", false, "parse as bare function")
 	ir         = flag.Bool("ir", false, "prints out the IR")
-	dasm       = flag.Bool("d", false, "deassemble the image")
+	doDasm     = flag.Bool("d", false, "deassemble the image")
 	ncycle     = flag.Int("n", 100000, "maximum number of cycles")
 	ncycleTest = flag.Int("ntest", 0, "maximum number of cycles for tests")
 	verbose    = flag.Bool("v", false, "verbose")
@@ -58,20 +58,20 @@ func main() {
 		bs, es, irLog := glang.CompileBareFunc(fname, string(input))
 		printErrs(es)
 		printIRLog(irLog, *ir)
-		runImage(bs, *dasm, *ncycle)
+		runImage(bs, *doDasm, *ncycle)
 	} else {
 		bs, es, irLog := glang.CompileAndTestSingle(
 			fname, string(input), *golike, *ncycleTest,
 		)
 		printErrs(es)
 		printIRLog(irLog, *ir)
-		runImage(bs, *dasm, *ncycle)
+		runImage(bs, *doDasm, *ncycle)
 	}
 }
 
-func runImage(bs []byte, dasm bool, n int) {
-	if dasm {
-		err := dasm8.DumpImage(bytes.NewReader(bs), os.Stdout)
+func runImage(bs []byte, doDasm bool, n int) {
+	if doDasm {
+		err := dasm.DumpImage(bytes.NewReader(bs), os.Stdout)
 		if err != nil {
 			fmt.Println(err)
 		}
