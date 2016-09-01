@@ -1,4 +1,4 @@
-package sym8
+package syms
 
 // Table save the symbol
 type Table struct {

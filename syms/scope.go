@@ -1,4 +1,4 @@
-package sym8
+package syms
 
 // Scope is a stack of symbol tables.
 type Scope struct {

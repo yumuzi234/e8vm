@@ -2,18 +2,18 @@ package tast
 
 import (
 	"e8vm.io/e8vm/glang/types"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
 // Func is a function.
 type Func struct {
-	Sym *sym8.Symbol // function symbol
+	Sym *syms.Symbol // function symbol
 
 	This     *types.Pointer
-	Receiver *sym8.Symbol // explicit receiver
+	Receiver *syms.Symbol // explicit receiver
 
-	Args      []*sym8.Symbol
-	NamedRets []*sym8.Symbol
+	Args      []*syms.Symbol
+	NamedRets []*syms.Symbol
 
 	Body []Stmt
 }
@@ -25,6 +25,6 @@ func (f *Func) IsMethod() bool {
 
 // FuncAlias is a function alias.
 type FuncAlias struct {
-	Sym *sym8.Symbol
-	Of  *sym8.Symbol
+	Sym *syms.Symbol
+	Of  *syms.Symbol
 }

@@ -1,19 +1,19 @@
 package tast
 
 import (
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
 // Import is an import statement
 type Import struct {
-	Sym *sym8.Symbol
+	Sym *syms.Symbol
 }
 
 // Pkg is a package of imports, consts, structs, vars and funcs.
 type Pkg struct {
-	Imports []*sym8.Symbol
-	Consts  []*sym8.Symbol
-	Structs []*sym8.Symbol
+	Imports []*syms.Symbol
+	Consts  []*syms.Symbol
+	Structs []*syms.Symbol
 
 	Vars        []*Define
 	FuncAliases []*FuncAlias

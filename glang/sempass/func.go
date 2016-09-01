@@ -5,19 +5,19 @@ import (
 	"e8vm.io/e8vm/glang/ast"
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/glang/types"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
 type pkgFunc struct {
-	sym *sym8.Symbol
+	sym *syms.Symbol
 	f   *ast.Func
 
 	recv *pkgStruct
 }
 
-func declareFuncSym(b *builder, f *ast.Func, t types.T) *sym8.Symbol {
+func declareFuncSym(b *builder, f *ast.Func, t types.T) *syms.Symbol {
 	name := f.Name.Lit
-	s := sym8.Make(b.path, name, tast.SymFunc, nil, t, f.Name.Pos)
+	s := syms.Make(b.path, name, tast.SymFunc, nil, t, f.Name.Pos)
 	conflict := b.scope.Declare(s)
 	if conflict != nil {
 		b.Errorf(f.Name.Pos, "%q already defined as a %s",
@@ -83,8 +83,8 @@ func declareFunc(b *builder, f *ast.Func) *pkgFunc {
 
 func declareParas(
 	b *builder, lst *ast.ParaList, ts []*types.Arg,
-) []*sym8.Symbol {
-	var ret []*sym8.Symbol
+) []*syms.Symbol {
+	var ret []*syms.Symbol
 	paras := lst.Paras
 
 	for i, t := range ts {
@@ -92,7 +92,7 @@ func declareParas(
 			panic("trying to declare <this>")
 		}
 
-		var s *sym8.Symbol
+		var s *syms.Symbol
 		if t.Name != "" {
 			s = declareVar(b, paras[i].Ident, t.T, true)
 		}
@@ -176,7 +176,7 @@ func declareMethod(b *builder, ps *pkgStruct, f *ast.Func) *pkgFunc {
 	}
 
 	name := f.Name.Lit
-	sym := sym8.Make(b.path, name, tast.SymFunc, nil, t, f.Name.Pos)
+	sym := syms.Make(b.path, name, tast.SymFunc, nil, t, f.Name.Pos)
 	conflict := ps.t.Syms.Declare(sym)
 	if conflict != nil {
 		b.Errorf(f.Name.Pos, "member %s already defined", name)

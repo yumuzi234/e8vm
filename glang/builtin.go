@@ -5,7 +5,7 @@ import (
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/glang/types"
 	"e8vm.io/e8vm/link8"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
 var (
@@ -34,7 +34,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 
 		ref := codegen.NewFuncSym(path, name, makeFuncSig(t))
 		obj := &objFunc{name: as, ref: newRef(t, ref)}
-		s := sym8.Make(b.path, as, tast.SymFunc, obj, t, nil)
+		s := syms.Make(b.path, as, tast.SymFunc, obj, t, nil)
 		pre := b.scope.Declare(s)
 		if pre != nil {
 			b.Errorf(nil, "builtin symbol %s declare failed", name)
@@ -56,7 +56,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 	bi := func(name string) {
 		t := types.NewBuiltInFunc(name)
 		obj := &objFunc{name: name, ref: newRef(t, nil)}
-		s := sym8.Make(b.path, name, tast.SymFunc, obj, t, nil)
+		s := syms.Make(b.path, name, tast.SymFunc, obj, t, nil)
 		pre := b.scope.Declare(s)
 		if pre != nil {
 			b.Errorf(nil, "builtin symbol %s declare failed", name)
@@ -69,7 +69,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 	c := func(name string, r *ref) {
 		// TODO: declare these as typed consts
 		obj := &objConst{name, r}
-		s := sym8.Make(b.path, name, tast.SymConst, obj, r.Type(), nil)
+		s := syms.Make(b.path, name, tast.SymConst, obj, r.Type(), nil)
 		pre := b.scope.Declare(s)
 		if pre != nil {
 			b.Errorf(nil, "builtin symbol %s declare failed", name)
@@ -81,7 +81,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 	c("nil", refNil)
 
 	t := func(name string, t types.T) {
-		s := sym8.Make(b.path, name, tast.SymType, nil, &types.Type{t}, nil)
+		s := syms.Make(b.path, name, tast.SymType, nil, &types.Type{t}, nil)
 		pre := b.scope.Declare(s)
 		if pre != nil {
 			b.Errorf(nil, "builtin symbol %s declare failed", name)

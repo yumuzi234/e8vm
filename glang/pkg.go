@@ -15,13 +15,13 @@ import (
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/glang/types"
 	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
 type pkg struct {
 	files map[string]*ast.File
 
-	tops      *sym8.Table
+	tops      *syms.Table
 	testNames []string
 	deps      *dagvis.Graph
 }
@@ -53,7 +53,7 @@ func newRand() *rand.Rand {
 	return rand.New(rand.NewSource(seed))
 }
 
-func buildTests(b *builder, tops *sym8.Table) (
+func buildTests(b *builder, tops *syms.Table) (
 	testList codegen.Ref, testNames []string,
 ) {
 	tests := listTests(tops)
@@ -81,7 +81,7 @@ func buildTests(b *builder, tops *sym8.Table) (
 	return b.p.NewTestList(":tests", irs), names
 }
 
-func fillConsts(consts []*sym8.Symbol) {
+func fillConsts(consts []*syms.Symbol) {
 	for _, c := range consts {
 		name := c.Name()
 		t := c.ObjType.(types.T)
@@ -152,7 +152,7 @@ func buildFuncs(b *builder, funcs []*tast.Func) {
 func buildPkg(
 	b *builder, files map[string]*ast.File, pinfo *build8.PkgInfo,
 ) (
-	syms *sym8.Table, deps *dagvis.Graph,
+	tops *syms.Table, deps *dagvis.Graph,
 	testNames []string, errs []*lexing.Error,
 ) {
 	imports := make(map[string]*build8.Package)
@@ -166,7 +166,7 @@ func buildPkg(
 		Imports: imports,
 	}
 
-	tops := sym8.NewTable()
+	tops = syms.NewTable()
 	b.scope.PushTable(tops)
 	defer b.scope.Pop()
 

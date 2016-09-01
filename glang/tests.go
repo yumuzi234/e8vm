@@ -5,7 +5,7 @@ import (
 
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/glang/types"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
 func isTestName(name string) bool {
@@ -22,7 +22,7 @@ func isTestName(name string) bool {
 	return true
 }
 
-func listTests(tops *sym8.Table) []*objFunc {
+func listTests(tops *syms.Table) []*objFunc {
 	var list []*objFunc
 
 	syms := tops.List()

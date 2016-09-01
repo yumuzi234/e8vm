@@ -5,12 +5,12 @@ import (
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/glang/types"
 	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
-func declareConst(b *builder, tok *lexing.Token, t types.T) *sym8.Symbol {
+func declareConst(b *builder, tok *lexing.Token, t types.T) *syms.Symbol {
 	name := tok.Lit
-	s := sym8.Make(b.path, name, tast.SymConst, nil, t, tok.Pos)
+	s := syms.Make(b.path, name, tast.SymConst, nil, t, tok.Pos)
 	conflict := b.scope.Declare(s)
 	if conflict != nil {
 		b.Errorf(tok.Pos, "%q already declared as a %s",
@@ -43,7 +43,7 @@ func buildConstDecl(b *builder, d *ast.ConstDecl) *tast.Define {
 		return nil
 	}
 
-	var syms []*sym8.Symbol
+	var ret []*syms.Symbol
 	for i, ident := range idents {
 		t := right.R().At(i).Type()
 		if !types.IsConst(t) {
@@ -55,10 +55,10 @@ func buildConstDecl(b *builder, d *ast.ConstDecl) *tast.Define {
 		if sym == nil {
 			return nil
 		}
-		syms = append(syms, sym)
+		ret = append(ret, sym)
 	}
 
-	return &tast.Define{syms, right}
+	return &tast.Define{ret, right}
 }
 
 func buildConstDecls(b *builder, decls *ast.ConstDecls) tast.Stmt {

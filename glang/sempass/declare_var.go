@@ -4,14 +4,14 @@ import (
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/glang/types"
 	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
 func declareVar(
 	b *builder, tok *lexing.Token, t types.T, used bool,
-) *sym8.Symbol {
+) *syms.Symbol {
 	name := tok.Lit
-	s := sym8.Make(b.path, name, tast.SymVar, nil, t, tok.Pos)
+	s := syms.Make(b.path, name, tast.SymVar, nil, t, tok.Pos)
 	conflict := b.scope.Declare(s)
 	if conflict != nil {
 		b.Errorf(tok.Pos, "%q already defined as a %s",
@@ -26,14 +26,14 @@ func declareVar(
 
 func declareVars(
 	b *builder, ids []*lexing.Token, t types.T, used bool,
-) []*sym8.Symbol {
-	var syms []*sym8.Symbol
+) []*syms.Symbol {
+	var ret []*syms.Symbol
 	for _, id := range ids {
 		s := declareVar(b, id, t, used)
 		if s == nil {
 			return nil
 		}
-		syms = append(syms, s)
+		ret = append(ret, s)
 	}
-	return syms
+	return ret
 }

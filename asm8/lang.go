@@ -6,7 +6,7 @@ import (
 
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
 type lang struct{}
@@ -29,8 +29,8 @@ func (lang) Prepare(
 	return listImport(f.Path, f, imp)
 }
 
-func buildSymTable(p *lib) *sym8.Table {
-	t := sym8.NewTable()
+func buildSymTable(p *lib) *syms.Table {
+	t := syms.NewTable()
 	for _, sym := range p.symbols {
 		if sym.Type == SymFunc || sym.Type == SymVar {
 			t.Declare(sym)

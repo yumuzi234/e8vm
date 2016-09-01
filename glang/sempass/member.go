@@ -6,12 +6,12 @@ import (
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/glang/types"
 	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
 func findPackageSym(
 	b *builder, sub *lexing.Token, pkg *types.Pkg,
-) *sym8.Symbol {
+) *syms.Symbol {
 	sym := pkg.Syms.Query(sub.Lit)
 	if sym == nil {
 		b.Errorf(sub.Pos, "%s has no symbol named %s",
@@ -20,7 +20,7 @@ func findPackageSym(
 		return nil
 	}
 	name := sym.Name()
-	if !sym8.IsPublic(name) && sym.Pkg() != b.path {
+	if !syms.IsPublic(name) && sym.Pkg() != b.path {
 		b.Errorf(sub.Pos, "symbol %s is not public", name)
 		return nil
 	}
@@ -58,7 +58,7 @@ func buildConstMember(b *builder, m *ast.MemberExpr) tast.Expr {
 
 func buildPkgSym(
 	b *builder, m *ast.MemberExpr, pkg *types.Pkg,
-) (*tast.Ref, *sym8.Symbol) {
+) (*tast.Ref, *syms.Symbol) {
 	sym := findPackageSym(b, m.Sub, pkg)
 	if sym == nil {
 		return nil, nil
@@ -139,7 +139,7 @@ func buildMember(b *builder, m *ast.MemberExpr) tast.Expr {
 			tstruct, name,
 		)
 		return nil
-	} else if !sym8.IsPublic(name) && sym.Pkg() != b.path {
+	} else if !syms.IsPublic(name) && sym.Pkg() != b.path {
 		b.Errorf(m.Sub.Pos, "symbol %s is not public", name)
 		return nil
 	}

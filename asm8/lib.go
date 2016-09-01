@@ -2,7 +2,7 @@ package asm8
 
 import (
 	"e8vm.io/e8vm/link8"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
 // Lib is the compiler output of a package
@@ -10,18 +10,18 @@ import (
 // and also the symbols for importing
 type lib struct {
 	*link8.Pkg
-	symbols map[string]*sym8.Symbol
+	symbols map[string]*syms.Symbol
 }
 
 // NewPkgObj creates a new package compile object
 func newLib(p string) *lib {
 	ret := new(lib)
 	ret.Pkg = link8.NewPkg(p)
-	ret.symbols = make(map[string]*sym8.Symbol)
+	ret.symbols = make(map[string]*syms.Symbol)
 	return ret
 }
 
-func (lib *lib) declare(s *sym8.Symbol) {
+func (lib *lib) declare(s *syms.Symbol) {
 	_, found := lib.symbols[s.Name()]
 	if found {
 		panic("redeclare")
@@ -43,7 +43,7 @@ func (lib *lib) declare(s *sym8.Symbol) {
 // query returns the symbol declared by name and its symbol index
 // if the symbol is a function or variable. It returns nil, 0 when
 // the symbol of name is not found.
-func (lib *lib) query(name string) *sym8.Symbol {
+func (lib *lib) query(name string) *syms.Symbol {
 	ret, found := lib.symbols[name]
 	if !found {
 		return nil

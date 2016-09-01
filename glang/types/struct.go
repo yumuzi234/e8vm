@@ -1,7 +1,7 @@
 package types
 
 import (
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
 // Field is a named field in a struct
@@ -19,7 +19,7 @@ func (f *Field) Offset() int32 { return f.offset }
 
 // Struct is the type of a structure
 type Struct struct {
-	Syms *sym8.Table
+	Syms *syms.Table
 
 	name         string
 	size         int32
@@ -30,7 +30,7 @@ type Struct struct {
 func NewStruct(name string) *Struct {
 	ret := new(Struct)
 	ret.name = name
-	ret.Syms = sym8.NewTable()
+	ret.Syms = syms.NewTable()
 
 	return ret
 }

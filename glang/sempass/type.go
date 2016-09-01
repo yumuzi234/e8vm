@@ -5,7 +5,7 @@ import (
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/glang/types"
 	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
 const thisName = "<this>"
@@ -142,7 +142,7 @@ func buildType(b *builder, expr ast.Expr) types.T {
 			b.Errorf(expr.Sub.Pos, "symbol %s not found", name)
 			return nil
 		}
-		if !sym8.IsPublic(name) && s.Pkg() != b.path {
+		if !syms.IsPublic(name) && s.Pkg() != b.path {
 			b.Errorf(expr.Sub.Pos, "symbol %s is not public", name)
 			return nil
 		}

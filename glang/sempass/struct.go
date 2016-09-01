@@ -5,14 +5,14 @@ import (
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/glang/types"
 	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 	"e8vm.io/e8vm/toposort"
 )
 
 type pkgStruct struct {
 	name *lexing.Token
 	ast  *ast.Struct    // the struct AST node
-	sym  *sym8.Symbol   // the symbol
+	sym  *syms.Symbol   // the symbol
 	t    *types.Struct  // type
 	pt   *types.Pointer // pointer type
 	deps []string       // depending identifiers
@@ -36,7 +36,7 @@ func declareStruct(b *builder, s *ast.Struct) *pkgStruct {
 	name := ret.name.Lit
 	pos := ret.name.Pos
 	t := &types.Type{ret.t}
-	sym := sym8.Make(b.path, name, tast.SymStruct, nil, t, pos)
+	sym := syms.Make(b.path, name, tast.SymStruct, nil, t, pos)
 	conflict := b.scope.Declare(sym)
 	if conflict != nil {
 		b.Errorf(pos, "%s already defined", name)
@@ -77,7 +77,7 @@ func buildFields(b *builder, ps *pkgStruct) {
 		for _, id := range f.Idents.Idents {
 			name := id.Lit
 			field := &types.Field{Name: name, T: ft}
-			sym := sym8.Make(b.path, name, tast.SymField, field, ft, id.Pos)
+			sym := syms.Make(b.path, name, tast.SymField, field, ft, id.Pos)
 			conflict := t.Syms.Declare(sym)
 			if conflict != nil {
 				b.Errorf(id.Pos, "field %s already defined", id.Lit)

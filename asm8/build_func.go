@@ -3,7 +3,7 @@ package asm8
 import (
 	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/link8"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
 // buildFunc builds a function object from a function AST node.
@@ -31,7 +31,7 @@ func declareLabels(b *builder, f *funcDecl) {
 
 		lab := stmt.label
 		op := stmt.Ops[0]
-		sym := sym8.Make(b.path, lab, SymLabel, stmt, nil, op.Pos)
+		sym := syms.Make(b.path, lab, SymLabel, stmt, nil, op.Pos)
 		decl := b.scope.Declare(sym)
 		if decl != nil {
 			b.Errorf(op.Pos, "%q already declared", lab)
@@ -197,7 +197,7 @@ func linkSymbol(b *builder, s *funcStmt, f *link8.Func) {
 	if s.fill == fillLink && typ != SymFunc {
 		b.Errorf(t.Pos, "%s %q is not a function", SymStr(typ), t.Lit)
 		return
-	} else if pkg != b.curPkg.Path() && !sym8.IsPublic(s.sym) {
+	} else if pkg != b.curPkg.Path() && !syms.IsPublic(s.sym) {
 		// for imported package, check if it is public
 		b.Errorf(t.Pos, "%q is not public", t.Lit)
 		return

@@ -6,7 +6,7 @@ import (
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/glang/types"
 	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
 // allocPrepare checks if the provided types are all allocable, and insert
@@ -61,17 +61,17 @@ func define(
 		expr = exprList
 	}
 
-	var syms []*sym8.Symbol
+	var ret []*syms.Symbol
 	ts := expr.R().TypeList()
 	for i, tok := range ids {
 		s := declareVar(b, tok, ts[i], false)
 		if s == nil {
 			return nil
 		}
-		syms = append(syms, s)
+		ret = append(ret, s)
 	}
 
-	return &tast.Define{syms, expr}
+	return &tast.Define{ret, expr}
 }
 
 func buildIdentExprList(b *builder, list *ast.ExprList) (

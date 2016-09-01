@@ -5,12 +5,12 @@ import (
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/glang/types"
 	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 	"e8vm.io/e8vm/toposort"
 )
 
 type pkgConst struct {
-	sym  *sym8.Symbol
+	sym  *syms.Symbol
 	tok  *lexing.Token
 	expr ast.Expr
 	deps []string
@@ -69,7 +69,7 @@ func sortPkgConsts(b *builder, consts []*pkgConst) []*pkgConst {
 	return ret
 }
 
-func buildPkgConst(b *builder, c *pkgConst) *sym8.Symbol {
+func buildPkgConst(b *builder, c *pkgConst) *syms.Symbol {
 	right := b.buildConstExpr(c.expr)
 	if right == nil {
 		return nil
@@ -86,7 +86,7 @@ func buildPkgConst(b *builder, c *pkgConst) *sym8.Symbol {
 	return c.sym
 }
 
-func buildPkgConsts(b *builder, consts []*ast.ConstDecls) []*sym8.Symbol {
+func buildPkgConsts(b *builder, consts []*ast.ConstDecls) []*syms.Symbol {
 	var res []*pkgConst
 	for _, c := range consts {
 		for _, d := range c.Decls {
@@ -97,7 +97,7 @@ func buildPkgConsts(b *builder, consts []*ast.ConstDecls) []*sym8.Symbol {
 		}
 	}
 
-	var ret []*sym8.Symbol
+	var ret []*syms.Symbol
 	res = sortPkgConsts(b, res)
 	for _, c := range res {
 		s := buildPkgConst(b, c)

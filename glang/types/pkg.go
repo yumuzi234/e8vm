@@ -3,14 +3,14 @@ package types
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
 // Pkg represents a package import.
 type Pkg struct {
 	As   string
 	Lang string
-	Syms *sym8.Table
+	Syms *syms.Table
 }
 
 // Size will panic.

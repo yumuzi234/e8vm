@@ -2,7 +2,7 @@ package tast
 
 import (
 	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
 // ExprStmt is a statement with just an expression.
@@ -19,7 +19,7 @@ type AssignStmt struct {
 
 // Define is a define statement, like "a,b:=x,y".
 type Define struct {
-	Left  []*sym8.Symbol
+	Left  []*syms.Symbol
 	Right Expr // zero out Left if Right==nil
 }
 

@@ -4,11 +4,11 @@ import (
 	"e8vm.io/e8vm/glang/ast"
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
 // BuildBareFunc build a list of statements.
-func BuildBareFunc(scope *sym8.Scope, stmts []ast.Stmt) (
+func BuildBareFunc(scope *syms.Scope, stmts []ast.Stmt) (
 	[]tast.Stmt, []*lexing.Error,
 ) {
 	b := makeBuilder("_", scope)

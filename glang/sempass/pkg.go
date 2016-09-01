@@ -8,10 +8,10 @@ import (
 	"e8vm.io/e8vm/glang/ast"
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
-func makeBuilder(path string, scope *sym8.Scope) *builder {
+func makeBuilder(path string, scope *syms.Scope) *builder {
 	ret := newBuilder(path, scope)
 	ret.exprFunc = buildExpr
 	ret.constFunc = buildConstExpr
@@ -63,8 +63,8 @@ func (p *Pkg) symbols() *symbols {
 	return ret
 }
 
-func structSyms(pkgStructs []*pkgStruct) []*sym8.Symbol {
-	ret := make([]*sym8.Symbol, 0, len(pkgStructs))
+func structSyms(pkgStructs []*pkgStruct) []*syms.Symbol {
+	ret := make([]*syms.Symbol, 0, len(pkgStructs))
 	for _, ps := range pkgStructs {
 		ret = append(ret, ps.sym)
 	}
@@ -82,12 +82,12 @@ func (p *Pkg) onlyFile() *ast.File {
 
 func (p *Pkg) buildImports(
 	b *builder, imps map[string]*build8.Package,
-) []*sym8.Symbol {
+) []*syms.Symbol {
 	if f := p.onlyFile(); f != nil {
 		return buildImports(b, f, imps)
 	}
 
-	var ret []*sym8.Symbol
+	var ret []*syms.Symbol
 	for name, f := range p.Files {
 		if name == "import.g" {
 			if len(f.Decls) > 0 {
@@ -112,7 +112,7 @@ func (p *Pkg) buildImports(
 }
 
 // Build builds a package from an set of file AST's to a typed-AST.
-func (p *Pkg) Build(scope *sym8.Scope) (
+func (p *Pkg) Build(scope *syms.Scope) (
 	*tast.Pkg, *dagvis.Graph, []*lexing.Error,
 ) {
 	b := makeBuilder(p.Path, scope)

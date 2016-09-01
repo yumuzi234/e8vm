@@ -6,14 +6,14 @@ import (
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/glang/types"
 	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
 type builder struct {
 	*lexing.ErrorList
 	path string
 
-	scope *sym8.Scope
+	scope *syms.Scope
 
 	exprFunc  func(b *builder, expr ast.Expr) tast.Expr
 	constFunc func(b *builder, expr ast.Expr) tast.Expr
@@ -35,7 +35,7 @@ type builder struct {
 	lhs bool
 }
 
-func newBuilder(path string, scope *sym8.Scope) *builder {
+func newBuilder(path string, scope *syms.Scope) *builder {
 	return &builder{
 		ErrorList: lexing.NewErrorList(),
 		path:      path,
@@ -75,7 +75,7 @@ func (b *builder) buildStmt(stmt ast.Stmt) tast.Stmt {
 	return b.stmtFunc(b, stmt)
 }
 
-func (b *builder) refSym(sym *sym8.Symbol, pos *lexing.Pos) {
+func (b *builder) refSym(sym *syms.Symbol, pos *lexing.Pos) {
 	if !b.lhs {
 		sym.Used = true
 	}

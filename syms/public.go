@@ -1,4 +1,4 @@
-package sym8
+package syms
 
 // IsPublic checks if a symbol name is public.
 func IsPublic(name string) bool {

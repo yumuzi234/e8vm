@@ -5,17 +5,17 @@ import (
 	"e8vm.io/e8vm/glang/ast"
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/glang/types"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
 func buildImports(
 	b *builder, f *ast.File, imps map[string]*build8.Package,
-) []*sym8.Symbol {
+) []*syms.Symbol {
 	if f.Imports == nil {
 		return nil
 	}
 
-	var ret []*sym8.Symbol
+	var ret []*syms.Symbol
 	for _, d := range f.Imports.Decls {
 		_, as, e := ast.ImportPathAs(d)
 		if e != nil {
@@ -38,7 +38,7 @@ func buildImports(
 		}
 
 		t := &types.Pkg{as, p.Lang, p.Symbols}
-		sym := sym8.Make(b.path, as, tast.SymImport, nil, t, pos)
+		sym := syms.Make(b.path, as, tast.SymImport, nil, t, pos)
 		conflict := b.scope.Declare(sym)
 		if conflict != nil {
 			b.Errorf(pos, "%s already imported", as)

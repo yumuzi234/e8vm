@@ -3,7 +3,7 @@ package tast
 import (
 	"e8vm.io/e8vm/glang/types"
 	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
 // This is the this pointer.
@@ -35,7 +35,7 @@ func NewCast(from Expr, to types.T) *Cast {
 type Ident struct {
 	Token *lexing.Token
 	*Ref
-	Symbol *sym8.Symbol
+	Symbol *syms.Symbol
 }
 
 // MemberExpr is an expression of "a.b"
@@ -43,7 +43,7 @@ type MemberExpr struct {
 	Expr Expr
 	Sub  *lexing.Token
 	*Ref
-	Symbol *sym8.Symbol
+	Symbol *syms.Symbol
 }
 
 // OpExpr is an expression likfe "a+b"

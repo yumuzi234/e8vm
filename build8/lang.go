@@ -5,7 +5,7 @@ import (
 
 	"e8vm.io/e8vm/lexing"
 	"e8vm.io/e8vm/link8"
-	"e8vm.io/e8vm/sym8"
+	"e8vm.io/e8vm/syms"
 )
 
 // File is a file in a package.
@@ -41,7 +41,7 @@ type Package struct {
 	Tests map[string]uint32
 
 	// Symbols stores all the symbols of this package.
-	Symbols *sym8.Table
+	Symbols *syms.Table
 
 	// Lib is the linkable library.
 	Lib *link8.Pkg
