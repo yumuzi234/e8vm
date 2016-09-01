@@ -1,7 +1,7 @@
 package build8
 
 import (
-	"e8vm.io/e8vm/debug8"
+	"e8vm.io/e8vm/debug"
 	link8 "e8vm.io/e8vm/link"
 )
 
@@ -14,5 +14,5 @@ type context struct {
 	deps map[string][]string
 
 	linkPkgs   map[string]*link8.Pkg
-	debugFuncs *debug8.Funcs
+	debugFuncs *debug.Funcs
 }

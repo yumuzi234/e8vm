@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"math"
 
-	"e8vm.io/e8vm/debug8"
+	"e8vm.io/e8vm/debug"
 	"e8vm.io/e8vm/image"
 )
 
-func debugSection(tab *debug8.Table) (*image.Section, error) {
+func debugSection(tab *debug.Table) (*image.Section, error) {
 	bs := tab.Marshal()
 	if len(bs) > math.MaxInt32-1 {
 		return nil, fmt.Errorf("debug section too large")

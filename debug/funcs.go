@@ -1,4 +1,4 @@
-package debug8
+package debug
 
 import (
 	"e8vm.io/e8vm/lexing"

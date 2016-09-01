@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"testing"
 
-	"e8vm.io/e8vm/debug8"
+	"e8vm.io/e8vm/debug"
 )
 
 func TestFindFunc(t *testing.T) {
@@ -15,13 +15,13 @@ func TestFindFunc(t *testing.T) {
 		}
 	}
 
-	tbl := debug8.NewTable()
+	tbl := debug.NewTable()
 	funcs := sortTable(tbl)
 	_, f := findFunc(funcs, 1, tbl)
 	eo(f != nil, "func not found")
 
-	tbl = &debug8.Table{
-		Funcs: map[string]*debug8.Func{
+	tbl = &debug.Table{
+		Funcs: map[string]*debug.Func{
 			"f1": {Size: 20, Start: 0},
 		},
 	}
@@ -31,8 +31,8 @@ func TestFindFunc(t *testing.T) {
 	_, f = findFunc(funcs, 10, tbl)
 	eo(f.Start != 0, "findFunc error")
 
-	tbl = &debug8.Table{
-		Funcs: map[string]*debug8.Func{
+	tbl = &debug.Table{
+		Funcs: map[string]*debug.Func{
 			"f1": {Size: 20, Start: 0},
 			"f2": {Size: 1, Start: 25},
 			"f3": {Size: 20, Start: 27},
@@ -47,12 +47,12 @@ func TestFindFunc(t *testing.T) {
 	_, f = findFunc(funcs, 50, tbl)
 	eo(f != nil, "findFunc error")
 
-	tbl = debug8.NewTable()
+	tbl = debug.NewTable()
 	var sum uint32
 	for i := 0; i < 100; i++ {
 		name := "f" + strconv.Itoa(i)
 		size := rand.Uint32()
-		tbl.Funcs[name] = &debug8.Func{Size: size, Start: sum}
+		tbl.Funcs[name] = &debug.Func{Size: size, Start: sum}
 		sum = sum + size + 1
 	}
 	pc := rand.Uint32()

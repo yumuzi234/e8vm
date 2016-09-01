@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"e8vm.io/e8vm/dagvis"
-	"e8vm.io/e8vm/debug8"
+	"e8vm.io/e8vm/debug"
 	"e8vm.io/e8vm/lexing"
 	link8 "e8vm.io/e8vm/link"
 )
@@ -23,7 +23,7 @@ func NewBuilder(input Input, output Output) *Builder {
 			pkgs:       make(map[string]*pkg),
 			deps:       make(map[string][]string),
 			linkPkgs:   make(map[string]*link8.Pkg),
-			debugFuncs: debug8.NewFuncs(),
+			debugFuncs: debug.NewFuncs(),
 			Options:    new(Options),
 		},
 	}

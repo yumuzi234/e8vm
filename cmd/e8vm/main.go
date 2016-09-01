@@ -11,7 +11,7 @@ import (
 
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/dasm8"
-	"e8vm.io/e8vm/debug8"
+	"e8vm.io/e8vm/debug"
 	"e8vm.io/e8vm/image"
 )
 
@@ -99,7 +99,7 @@ func main() {
 				continue
 			}
 
-			tab, err := debug8.UnmarshalTable(sec.Bytes)
+			tab, err := debug.UnmarshalTable(sec.Bytes)
 			if err != nil {
 				log.Fatal(err)
 			}

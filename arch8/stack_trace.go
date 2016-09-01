@@ -6,7 +6,7 @@ import (
 	"io"
 	"sort"
 
-	"e8vm.io/e8vm/debug8"
+	"e8vm.io/e8vm/debug"
 	"e8vm.io/e8vm/image"
 )
 
@@ -27,7 +27,7 @@ func (f byStart) Less(i int, j int) bool {
 	return f[i].start < f[j].start
 }
 
-func sortTable(t *debug8.Table) []*funcEntry {
+func sortTable(t *debug.Table) []*funcEntry {
 	var funcs []*funcEntry
 	for name, f := range t.Funcs {
 		funcs = append(funcs, &funcEntry{
@@ -39,8 +39,8 @@ func sortTable(t *debug8.Table) []*funcEntry {
 	return funcs
 }
 
-func findFunc(fs []*funcEntry, pc uint32, t *debug8.Table) (
-	string, *debug8.Func,
+func findFunc(fs []*funcEntry, pc uint32, t *debug.Table) (
+	string, *debug.Func,
 ) {
 	if len(fs) == 0 {
 		return "", nil
@@ -92,7 +92,7 @@ func FprintStack(w io.Writer, m *Machine, excep *CoreExcep) error {
 		return errors.New("debug section not found")
 	}
 
-	t, err := debug8.UnmarshalTable(sec.Bytes)
+	t, err := debug.UnmarshalTable(sec.Bytes)
 	if err != nil {
 		return err
 	}
