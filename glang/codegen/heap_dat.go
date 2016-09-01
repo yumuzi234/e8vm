@@ -3,7 +3,7 @@ package codegen
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/link8"
+	"e8vm.io/e8vm/link"
 )
 
 type heapDat struct {
@@ -49,7 +49,7 @@ func (p *datPool) addDat(bs []byte, unit int32, regSizeAlign bool) *heapDat {
 	return d
 }
 
-func (p *datPool) declare(lib *link8.Pkg) {
+func (p *datPool) declare(lib *link.Pkg) {
 	if lib.Path() != p.pkg {
 		panic("package name mismatch")
 	}
@@ -66,7 +66,7 @@ func (p *datPool) declare(lib *link8.Pkg) {
 		if d.regSizeAlign {
 			align = regSize
 		}
-		v := link8.NewVar(align)
+		v := link.NewVar(align)
 		v.Write(d.bs)
 
 		lib.DeclareVar(d.name)

@@ -37,7 +37,7 @@ func buildMain(c *context, p *pkg) []*lexing.Error {
 	log := lexing.NewErrorList()
 
 	fout := c.output.Bin(p.path)
-	lexing.LogError(log, link(c, fout, p, main))
+	lexing.LogError(log, linkPkg(c, fout, p, main))
 	lexing.LogError(log, fout.Close())
 
 	return log.Errs()

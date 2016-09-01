@@ -2,11 +2,11 @@ package codegen
 
 import (
 	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/link8"
+	"e8vm.io/e8vm/link"
 )
 
 // BuildPkg builds a package and returns the built lib
-func BuildPkg(p *Pkg) (*link8.Pkg, []*lexing.Error) {
+func BuildPkg(p *Pkg) (*link.Pkg, []*lexing.Error) {
 	p.strPool.declare(p.lib)
 	p.datPool.declare(p.lib)
 
@@ -15,7 +15,7 @@ func BuildPkg(p *Pkg) (*link8.Pkg, []*lexing.Error) {
 		if v.size <= 1 {
 			align = 1
 		}
-		obj := link8.NewVar(align)
+		obj := link.NewVar(align)
 		obj.Zeros(uint32(v.size))
 		p.lib.DefineVar(v.name, obj)
 	}
@@ -32,7 +32,7 @@ func BuildPkg(p *Pkg) (*link8.Pkg, []*lexing.Error) {
 	}
 
 	if p.tests != nil {
-		v := link8.NewVar(regSize)
+		v := link.NewVar(regSize)
 		for _, f := range p.tests.funcs {
 			if err := v.WriteLink(p.path, f.name); err != nil {
 				panic(err)

@@ -1,4 +1,4 @@
-package link8
+package link
 
 import (
 	"e8vm.io/e8vm/lexing"

@@ -1,7 +1,7 @@
 package asm8
 
 import (
-	"e8vm.io/e8vm/link8"
+	"e8vm.io/e8vm/link"
 )
 
 // Symbol types
@@ -20,9 +20,9 @@ func init() {
 			panic("bug")
 		}
 	}
-	as(SymNone == link8.SymNone)
-	as(SymFunc == link8.SymFunc)
-	as(SymVar == link8.SymVar)
+	as(SymNone == link.SymNone)
+	as(SymFunc == link.SymFunc)
+	as(SymVar == link.SymVar)
 }
 
 // SymStr describes the symbol type in a string.

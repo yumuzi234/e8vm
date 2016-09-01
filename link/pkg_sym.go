@@ -1,4 +1,4 @@
-package link8
+package link
 
 // PkgSym is a link to a symbol in a particular package
 type PkgSym struct {

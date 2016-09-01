@@ -4,7 +4,7 @@ import (
 	"e8vm.io/e8vm/glang/codegen"
 	"e8vm.io/e8vm/glang/tast"
 	"e8vm.io/e8vm/glang/types"
-	"e8vm.io/e8vm/link8"
+	"e8vm.io/e8vm/link"
 	"e8vm.io/e8vm/syms"
 )
 
@@ -14,7 +14,7 @@ var (
 	refNil   = newRef(types.Nil(), nil)
 )
 
-func declareBuiltin(b *builder, builtin *link8.Pkg) {
+func declareBuiltin(b *builder, builtin *link.Pkg) {
 	path := builtin.Path()
 	e := b.p.HookBuiltin(builtin)
 	if e != nil {
@@ -27,7 +27,7 @@ func declareBuiltin(b *builder, builtin *link8.Pkg) {
 		if sym == nil {
 			b.Errorf(nil, "builtin symbol %s missing", name)
 			return nil
-		} else if sym.Type != link8.SymFunc {
+		} else if sym.Type != link.SymFunc {
 			b.Errorf(nil, "builtin symbol %s is not a function", name)
 			return nil
 		}

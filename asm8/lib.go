@@ -1,7 +1,7 @@
 package asm8
 
 import (
-	"e8vm.io/e8vm/link8"
+	"e8vm.io/e8vm/link"
 	"e8vm.io/e8vm/syms"
 )
 
@@ -9,14 +9,14 @@ import (
 // it contains the package for linking,
 // and also the symbols for importing
 type lib struct {
-	*link8.Pkg
+	*link.Pkg
 	symbols map[string]*syms.Symbol
 }
 
 // NewPkgObj creates a new package compile object
 func newLib(p string) *lib {
 	ret := new(lib)
-	ret.Pkg = link8.NewPkg(p)
+	ret.Pkg = link.NewPkg(p)
 	ret.symbols = make(map[string]*syms.Symbol)
 	return ret
 }

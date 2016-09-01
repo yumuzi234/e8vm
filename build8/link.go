@@ -6,16 +6,16 @@ import (
 	"e8vm.io/e8vm/arch8"
 	"e8vm.io/e8vm/debug8"
 	"e8vm.io/e8vm/image"
-	"e8vm.io/e8vm/link8"
+	"e8vm.io/e8vm/link"
 )
 
-func link(c *context, out io.Writer, p *pkg, main string) error {
-	var funcs []*link8.PkgSym
+func linkPkg(c *context, out io.Writer, p *pkg, main string) error {
+	var funcs []*link.PkgSym
 
 	addInit := func(p *pkg) {
 		name := p.pkg.Init
 		if name != "" && p.pkg.Lib.HasFunc(name) {
-			funcs = append(funcs, &link8.PkgSym{p.path, name})
+			funcs = append(funcs, &link.PkgSym{p.path, name})
 		}
 	}
 
@@ -23,10 +23,10 @@ func link(c *context, out io.Writer, p *pkg, main string) error {
 		addInit(c.pkgs[dep])
 	}
 	addInit(p)
-	funcs = append(funcs, &link8.PkgSym{p.path, main})
+	funcs = append(funcs, &link.PkgSym{p.path, main})
 
 	debugTable := debug8.NewTable()
-	job := link8.NewJob(c.linkPkgs, funcs)
+	job := link.NewJob(c.linkPkgs, funcs)
 	job.InitPC = c.InitPC
 	if job.InitPC == 0 {
 		job.InitPC = arch8.InitPC

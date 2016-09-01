@@ -3,7 +3,7 @@ package codegen
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/link8"
+	"e8vm.io/e8vm/link"
 )
 
 func loadRetAddr(b *Block, v *Var) {
@@ -118,9 +118,9 @@ func saveRef(b *Block, reg uint32, r Ref, tmpReg uint32) {
 
 func loadSym(b *Block, reg uint32, pkg, sym string) {
 	high := b.inst(asm.lui(reg, 0))
-	high.sym = &linkSym{link8.FillHigh, pkg, sym}
+	high.sym = &linkSym{link.FillHigh, pkg, sym}
 	low := b.inst(asm.ori(reg, reg, 0))
-	low.sym = &linkSym{link8.FillLow, pkg, sym}
+	low.sym = &linkSym{link.FillLow, pkg, sym}
 }
 
 func loadUint32(b *Block, reg uint32, v uint32) {

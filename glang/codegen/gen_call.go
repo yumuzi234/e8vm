@@ -3,7 +3,7 @@ package codegen
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/link8"
+	"e8vm.io/e8vm/link"
 )
 
 func callSig(op *CallOp) *FuncSig {
@@ -40,10 +40,10 @@ func genCallOp(g *gener, b *Block, op *CallOp) {
 	switch f := op.F.(type) {
 	case *FuncSym:
 		jal := b.inst(asm.jal(0))
-		jal.sym = &linkSym{link8.FillLink, f.pkg, f.name}
+		jal.sym = &linkSym{link.FillLink, f.pkg, f.name}
 	case *Func:
 		jal := b.inst(asm.jal(0))
-		jal.sym = &linkSym{link8.FillLink, f.pkg, f.name}
+		jal.sym = &linkSym{link.FillLink, f.pkg, f.name}
 	case *FuncPtr:
 		// function pointer, set PC manually
 		loadRef(b, _r4, f.Ref)
@@ -68,7 +68,7 @@ func genCallOp(g *gener, b *Block, op *CallOp) {
 			loadUint32(b, _r3, uint32(ret.Size()))
 			jal := b.inst(asm.jal(0))
 			f := g.memCopy
-			jal.sym = &linkSym{link8.FillLink, f.pkg, f.name}
+			jal.sym = &linkSym{link.FillLink, f.pkg, f.name}
 		}
 	}
 }

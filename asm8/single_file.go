@@ -7,7 +7,7 @@ import (
 	"e8vm.io/e8vm/build8"
 	"e8vm.io/e8vm/image"
 	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/link8"
+	"e8vm.io/e8vm/link"
 )
 
 // BuildSingleFile builds a package named "main" from a single file.
@@ -21,7 +21,7 @@ func BuildSingleFile(f string, rc io.ReadCloser) ([]byte, []*lexing.Error) {
 		return nil, errs
 	}
 
-	secs, err := link8.LinkSinglePkg(pkg.Lib, pkg.Main)
+	secs, err := link.LinkSinglePkg(pkg.Lib, pkg.Main)
 	if err != nil {
 		return nil, lexing.SingleErr(err)
 	}

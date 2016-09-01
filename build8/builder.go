@@ -6,7 +6,7 @@ import (
 	"e8vm.io/e8vm/dagvis"
 	"e8vm.io/e8vm/debug8"
 	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/link8"
+	link8 "e8vm.io/e8vm/link"
 )
 
 // Builder builds a bunch of packages.

@@ -5,7 +5,7 @@ import (
 
 	"e8vm.io/e8vm/asm8/parse"
 	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/link8"
+	"e8vm.io/e8vm/link"
 )
 
 // BuildBareFunc builds a function body into an image.
@@ -29,7 +29,7 @@ func BuildBareFunc(f string, rc io.ReadCloser) ([]byte, []*lexing.Error) {
 		return nil, es
 	}
 
-	ret, e := link8.LinkBareFunc(fobj)
+	ret, e := link.LinkBareFunc(fobj)
 	if e != nil {
 		return nil, lexing.SingleErr(e)
 	}

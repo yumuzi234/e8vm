@@ -2,7 +2,7 @@ package build8
 
 import (
 	"e8vm.io/e8vm/debug8"
-	"e8vm.io/e8vm/link8"
+	link8 "e8vm.io/e8vm/link"
 )
 
 type context struct {

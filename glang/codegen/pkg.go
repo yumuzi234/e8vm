@@ -4,12 +4,12 @@ import (
 	"fmt"
 
 	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/link8"
+	"e8vm.io/e8vm/link"
 )
 
 // Pkg is a package in its intermediate representation.
 type Pkg struct {
-	lib *link8.Pkg
+	lib *link.Pkg
 
 	path string
 
@@ -27,7 +27,7 @@ type Pkg struct {
 func NewPkg(path string) *Pkg {
 	return &Pkg{
 		path:    path,
-		lib:     link8.NewPkg(path),
+		lib:     link.NewPkg(path),
 		strPool: newStrPool(path),
 		datPool: newDatPool(path),
 		g:       newGener(),
@@ -70,7 +70,7 @@ func (p *Pkg) NewTestList(name string, funcs []*Func) Ref {
 
 // HookBuiltin uses the builtin package that provides neccessary
 // builtin functions for IR generation
-func (p *Pkg) HookBuiltin(pkg *link8.Pkg) error {
+func (p *Pkg) HookBuiltin(pkg *link.Pkg) error {
 	var err error
 	se := func(e error) {
 		if err != nil {
@@ -82,7 +82,7 @@ func (p *Pkg) HookBuiltin(pkg *link8.Pkg) error {
 		sym := pkg.SymbolByName(f)
 		if sym == nil {
 			se(fmt.Errorf("%s missing in builtin", f))
-		} else if sym.Type != link8.SymFunc {
+		} else if sym.Type != link.SymFunc {
 			se(fmt.Errorf("%s is not a function", f))
 		}
 

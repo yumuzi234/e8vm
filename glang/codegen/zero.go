@@ -3,7 +3,7 @@ package codegen
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/link8"
+	"e8vm.io/e8vm/link"
 )
 
 func zeroAddr(g *gener, b *Block, reg uint32, size int32, regSizeAlign bool) {
@@ -21,7 +21,7 @@ func zeroAddr(g *gener, b *Block, reg uint32, size int32, regSizeAlign bool) {
 		loadUint32(b, _r2, uint32(size))
 		jal := b.inst(asm.jal(0))
 		f := g.memClear
-		jal.sym = &linkSym{link8.FillLink, f.pkg, f.name}
+		jal.sym = &linkSym{link.FillLink, f.pkg, f.name}
 	}
 }
 
@@ -42,7 +42,7 @@ func zeroRef(g *gener, b *Block, r Ref) {
 
 			jal := b.inst(asm.jal(0))
 			f := g.memClear
-			jal.sym = &linkSym{link8.FillLink, f.pkg, f.name}
+			jal.sym = &linkSym{link.FillLink, f.pkg, f.name}
 		}
 	case *AddrRef:
 		if r.size == 0 {

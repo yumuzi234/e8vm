@@ -3,7 +3,7 @@ package codegen
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/link8"
+	"e8vm.io/e8vm/link"
 )
 
 func copyRef(g *gener, b *Block, dest, src Ref, isArg bool) {
@@ -39,6 +39,6 @@ func copyRef(g *gener, b *Block, dest, src Ref, isArg bool) {
 
 		jal := b.inst(asm.jal(0))
 		f := g.memCopy
-		jal.sym = &linkSym{link8.FillLink, f.pkg, f.name}
+		jal.sym = &linkSym{link.FillLink, f.pkg, f.name}
 	}
 }

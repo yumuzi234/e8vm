@@ -3,7 +3,7 @@ package codegen
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/link8"
+	"e8vm.io/e8vm/link"
 )
 
 type strConst struct {
@@ -68,7 +68,7 @@ func countDigit(n int) int {
 	return ret
 }
 
-func (p *strPool) declare(lib *link8.Pkg) {
+func (p *strPool) declare(lib *link.Pkg) {
 	if lib.Path() != p.pkg {
 		panic("package name mismatch")
 	}
@@ -83,7 +83,7 @@ func (p *strPool) declare(lib *link8.Pkg) {
 	for i, s := range p.strs {
 		s.name = fmt.Sprintf(nfmt, i)
 		s.pkg = p.pkg
-		v := link8.NewVar(0)
+		v := link.NewVar(0)
 		v.Write([]byte(s.str))
 
 		lib.DeclareVar(s.name)

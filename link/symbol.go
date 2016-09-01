@@ -1,4 +1,4 @@
-package link8
+package link
 
 // Symbol is a linking symbol in an object file
 type Symbol struct {

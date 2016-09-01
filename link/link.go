@@ -1,4 +1,4 @@
-package link8
+package link
 
 // link is symbol to be linked in an instruction in a code section at a
 // particular offset, or in a piece of data in a data section at a particular

@@ -4,7 +4,7 @@ import (
 	"io"
 
 	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/link8"
+	link8 "e8vm.io/e8vm/link"
 	"e8vm.io/e8vm/syms"
 )
 

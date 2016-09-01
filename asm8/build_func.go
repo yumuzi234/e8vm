@@ -2,12 +2,12 @@ package asm8
 
 import (
 	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/link8"
+	"e8vm.io/e8vm/link"
 	"e8vm.io/e8vm/syms"
 )
 
 // buildFunc builds a function object from a function AST node.
-func buildFunc(b *builder, f *funcDecl) *link8.Func {
+func buildFunc(b *builder, f *funcDecl) *link.Func {
 	b.scope.Push()
 	defer b.scope.Pop()
 
@@ -121,9 +121,9 @@ func init() {
 		}
 	}
 	as(fillNone == 0 && fillLabel == 4)
-	as(fillLink == link8.FillLink)
-	as(fillHigh == link8.FillHigh)
-	as(fillLow == link8.FillLow)
+	as(fillLink == link.FillLink)
+	as(fillHigh == link.FillHigh)
+	as(fillLow == link.FillLow)
 }
 
 // resolveSymbol resolves the symbol in the statement,
@@ -147,7 +147,7 @@ func resolveSymbol(b *builder, s *funcStmt) (typ int, pkg, name string) {
 	} else {
 		p := findImport(b, t, s.pkg) // find the package importStmt
 		if p != nil {
-			var sym *link8.Symbol // for saving the linking symbol in the lib
+			var sym *link.Symbol // for saving the linking symbol in the lib
 
 			pkg = b.pkgPath(p.as)        // package index, based on alias
 			b.pkgUsed[p.as] = struct{}{} // mark pkg used
@@ -155,9 +155,9 @@ func resolveSymbol(b *builder, s *funcStmt) (typ int, pkg, name string) {
 			// TODO(h8liu): support consts in assembly
 			sym = p.pkg.Lib.SymbolByName(s.sym) // find the symbol
 			if sym != nil {
-				if sym.Type == link8.SymFunc {
+				if sym.Type == link.SymFunc {
 					typ = SymFunc
-				} else if sym.Type == link8.SymVar {
+				} else if sym.Type == link.SymVar {
 					typ = SymVar
 				} else {
 					b.Errorf(t.Pos, "%q is an invalid linking symbol", t.Lit)
@@ -182,7 +182,7 @@ func resolveSymbol(b *builder, s *funcStmt) (typ int, pkg, name string) {
 	return
 }
 
-func linkSymbol(b *builder, s *funcStmt, f *link8.Func) {
+func linkSymbol(b *builder, s *funcStmt, f *link.Func) {
 	t := s.symTok
 	if b.curPkg == nil {
 		b.Errorf(t.Pos, "no context for resolving %q", t.Lit)
@@ -204,15 +204,15 @@ func linkSymbol(b *builder, s *funcStmt, f *link8.Func) {
 	}
 
 	// save the link
-	f.AddLink(s.fill, &link8.PkgSym{pkg, name})
+	f.AddLink(s.fill, &link.PkgSym{pkg, name})
 }
 
 // makeFuncObj converts a function AST node f into a function object. It
 // resolves the symbols of fillLink, fillHigh and fillLow into <pack, sym>
 // index pairs, using the symbol scope and the curPkg context in the
 // Builder b.
-func makeFuncObj(b *builder, f *funcDecl) *link8.Func {
-	ret := link8.NewFunc()
+func makeFuncObj(b *builder, f *funcDecl) *link.Func {
+	ret := link.NewFunc()
 	for _, s := range f.stmts {
 		if s.isLabel() {
 			continue // skip labels
