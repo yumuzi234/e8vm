@@ -10,7 +10,7 @@ import (
 
 	"e8vm.io/e8vm/asm"
 	"e8vm.io/e8vm/builds"
-	"e8vm.io/e8vm/glang"
+	"e8vm.io/e8vm/pl"
 )
 
 // Home provides the default building home.
@@ -23,7 +23,7 @@ type Home struct {
 
 // NewDirHome creates a new default home based on a particular directory.
 func NewDirHome(path string, std string) *Home {
-	lang := glang.Lang(false)
+	lang := pl.Lang(false)
 	dirHome := builds.NewDirHome(path, lang)
 	dirHome.AddLang("asm", asm.Lang())
 
@@ -83,7 +83,7 @@ func builtinSrc() map[string]*builds.File {
 		"builtin.s": {
 			Name:       "builtin.s",
 			Path:       "<internal>/asm/builtin/builtin.s",
-			ReadCloser: ioutil.NopCloser(strings.NewReader(glang.BuiltInSrc)),
+			ReadCloser: ioutil.NopCloser(strings.NewReader(pl.BuiltInSrc)),
 		},
 	}
 }

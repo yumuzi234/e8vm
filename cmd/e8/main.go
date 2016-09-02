@@ -12,8 +12,8 @@ import (
 	"e8vm.io/e8vm/arch"
 	"e8vm.io/e8vm/asm"
 	"e8vm.io/e8vm/builds"
-	"e8vm.io/e8vm/glang"
 	"e8vm.io/e8vm/lexing"
+	"e8vm.io/e8vm/pl"
 )
 
 var (
@@ -52,10 +52,10 @@ func main() {
 
 	checkInitPC()
 
-	lang := glang.Lang(*golike)
+	lang := pl.Lang(*golike)
 	home := builds.NewDirHome(*homeDir, lang)
 	home.AddLang("asm", asm.Lang())
-	home.AddLang("bare", glang.BareFunc())
+	home.AddLang("bare", pl.BareFunc())
 
 	b := builds.NewBuilder(home, home)
 	b.Verbose = true

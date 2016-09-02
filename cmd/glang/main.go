@@ -10,8 +10,8 @@ import (
 
 	"e8vm.io/e8vm/arch"
 	"e8vm.io/e8vm/dasm"
-	"e8vm.io/e8vm/glang"
 	"e8vm.io/e8vm/lexing"
+	"e8vm.io/e8vm/pl"
 )
 
 func exit(e error) {
@@ -55,12 +55,12 @@ func main() {
 	}
 
 	if *bare {
-		bs, es, irLog := glang.CompileBareFunc(fname, string(input))
+		bs, es, irLog := pl.CompileBareFunc(fname, string(input))
 		printErrs(es)
 		printIRLog(irLog, *ir)
 		runImage(bs, *doDasm, *ncycle)
 	} else {
-		bs, es, irLog := glang.CompileAndTestSingle(
+		bs, es, irLog := pl.CompileAndTestSingle(
 			fname, string(input), *golike, *ncycleTest,
 		)
 		printErrs(es)

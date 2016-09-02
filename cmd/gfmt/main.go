@@ -9,7 +9,7 @@ import (
 	"log"
 	"os"
 
-	"e8vm.io/e8vm/glang/gfmt"
+	"e8vm.io/e8vm/pl/gfmt"
 )
 
 var tempDir = os.TempDir()
