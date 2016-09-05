@@ -55,18 +55,6 @@ e0-100: serial output ring buffer
 110-114: rom number of bytes read
 114-178: rom file name, max 100 chars
 
-## Page 3: simple network
-
-0: if has incoming packet ready
-1: incoming packet flag // reserved
-2-4: incoming packet length
-8: incoming packet payload
-
-800: if has outgoing packet ready
-801: outgoing packet flag // reserved
-802-804: outgoing packet length
-808: outgoing packet payload
-
 ## Page 5: Screen text frame buffer
 
 size 80x24, one byte for each char

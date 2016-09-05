@@ -16,8 +16,6 @@ type clicks struct {
 	intBus intBus
 }
 
-const clicksBase = 0x10
-
 func newClicks(p *page, i intBus) *clicks {
 	return &clicks{
 		q:      list.New(),

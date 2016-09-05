@@ -59,7 +59,7 @@ type rom struct {
 func newROM(p *page, mem *phyMemory, i intBus, root string) *rom {
 	return &rom{
 		intBus: i,
-		p:      &pageOffset{p, 0x100},
+		p:      &pageOffset{p, romBase},
 		mem:    mem,
 		root:   root,
 

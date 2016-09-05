@@ -19,8 +19,6 @@ type console struct {
 	Output io.Writer
 }
 
-const consoleBase = 0
-
 // NewConsole creates a new simple console.
 func newConsole(p *page, i intBus) *console {
 	ret := new(console)

@@ -1,14 +1,18 @@
-- to build with repos, we need to dynamically load imported repos.
-- this requires some support from the build system.
-- because loading frmo repos is an async procedure.
-- unless we parse the import structure on the backend, which includes parsing
-- not really, it only parse the import.g file or the only file in the repository
-- so, what we need is a build.Home built from the repo content.
-- and parse out the building tree based on the database.
-- the package dependency graph.
-- after that, we can then send the snapshot of all the packages required back to the frontend
+- so, instead of wrapping a generic network interface
+- let's provide a generic RPC interface
+- where it is sync RPC interface by default
+- and in the future, it can be just an async RPC interface of some sort.
+- an RPC interface
+- flag, reserve, service.method. payload addr, payload length
+  return addr, return size
 
-- asm/builtin should always be builtin, even when it is provided as a file.
-- currently we load all packages in one step, rather than in two steps.
-- this is probably not the best way
-- like golang also has a loader
+0: flag
+1: error code
+4-6: service id
+6-8: method id
+8-12: request addr
+12-16: request length
+16-20: response addr
+20-24: response length
+24-28: response length (used)
+28-32: reserved
