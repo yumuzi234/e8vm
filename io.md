@@ -44,6 +44,29 @@ c-10: syscall SP
 c0-e0: serial input ring buffer
 e0-100: serial output ring buffer
 
+100: rom command
+101: rom name length
+102: rom state
+103: rom error
+104-108: rom offset to read
+108-10c: rom address to write
+10c-110: rom size of buffer
+
+110-114: rom number of bytes read
+114-178: rom file name, max 100 chars
+
+## Page 3: simple network
+
+0: if has incoming packet ready
+1: incoming packet flag // reserved
+2-4: incoming packet length
+8: incoming packet payload
+
+800: if has outgoing packet ready
+801: outgoing packet flag // reserved
+802-804: outgoing packet length
+808: outgoing packet payload
+
 ## Page 5: Screen text frame buffer
 
 size 80x24, one byte for each char
