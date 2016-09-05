@@ -1,4 +1,4 @@
-package arch
+package vpc
 
 // Request is a generic RPC request issuing from the VM.
 type Request struct {

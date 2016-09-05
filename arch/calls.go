@@ -1,5 +1,9 @@
 package arch
 
+import (
+	"e8vm.io/e8vm/arch/vpc"
+)
+
 const (
 	callsControl = 0x0
 	callsError   = 0x1
@@ -25,18 +29,18 @@ const (
 type calls struct {
 	p        *pageOffset
 	mem      *phyMemory
-	services map[uint32]Service
+	services map[uint32]vpc.Service
 }
 
 func newCalls(p *pageOffset, mem *phyMemory) *calls {
 	return &calls{
 		p:        p,
 		mem:      mem,
-		services: make(map[uint32]Service),
+		services: make(map[uint32]vpc.Service),
 	}
 }
 
-func (c *calls) call(req *Request, resp []byte) (n, res uint32, ok bool) {
+func (c *calls) call(req *vpc.Request, resp []byte) (n, res uint32, ok bool) {
 	s, found := c.services[req.Service]
 	if !found {
 		return 0, 0, false
@@ -77,7 +81,7 @@ func (c *calls) Tick() {
 		}
 	}
 
-	respLen, code, found := c.call(&Request{
+	respLen, code, found := c.call(&vpc.Request{
 		Service: service,
 		Method:  method,
 		Payload: req,
