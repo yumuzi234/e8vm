@@ -37,9 +37,9 @@ type calls struct {
 	enabled  map[uint32]bool
 }
 
-func newCalls(p *pageOffset, mem *phyMemory) *calls {
+func newCalls(p *page, mem *phyMemory) *calls {
 	return &calls{
-		p:        p,
+		p:        &pageOffset{p, 0},
 		mem:      mem,
 		services: make(map[uint32]vpc.Service),
 	}

@@ -13,6 +13,7 @@ import (
 type Machine struct {
 	phyMem  *phyMemory
 	inst    inst
+	calls   *calls
 	cores   *multiCore
 	console *console
 	clicks  *clicks
@@ -52,6 +53,9 @@ func NewMachine(c *Config) *Machine {
 	ret.serial = newSerial(p, ret.cores)
 	ret.ticker = newTicker(ret.cores)
 
+	ret.calls = newCalls(ret.phyMem.Page(pageRPC), ret.phyMem)
+
+	ret.addDevice(ret.calls)
 	ret.addDevice(ret.ticker)
 	ret.addDevice(ret.serial)
 	ret.addDevice(ret.console)
