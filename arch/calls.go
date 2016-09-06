@@ -8,7 +8,6 @@ const (
 	callsControl = 0x0
 	callsError   = 0x1
 	callsService = 0x4
-	callsMethod  = 0x6
 
 	callsRequestAddr  = 0x8
 	callsRequestLen   = 0xc
@@ -40,8 +39,20 @@ func newCalls(p *pageOffset, mem *phyMemory) *calls {
 	}
 }
 
-func (c *calls) call(req *vpc.Request, resp []byte) (n, res uint32, ok bool) {
-	s, found := c.services[req.Service]
+func (c *calls) callHub(req, resp []byte) (n, res uint32) {
+	// TODO:
+	return 0, 0
+}
+
+func (c *calls) call(service uint32, req, resp []byte) (
+	n, res uint32, ok bool,
+) {
+	if service == 0 {
+		n, res = c.callHub(req, resp)
+		return n, res, false
+	}
+
+	s, found := c.services[service]
 	if !found {
 		return 0, 0, false
 	}
@@ -57,7 +68,6 @@ func (c *calls) Tick() {
 	}
 
 	service := c.p.readWord(callsService)
-	method := c.p.readWord(callsMethod)
 
 	reqAddr := c.p.readWord(callsRequestAddr)
 	reqLen := c.p.readWord(callsRequestLen)
@@ -81,11 +91,7 @@ func (c *calls) Tick() {
 		}
 	}
 
-	respLen, code, found := c.call(&vpc.Request{
-		Service: service,
-		Method:  method,
-		Payload: req,
-	}, resp)
+	respLen, code, found := c.call(service, req, resp)
 	if !found {
 		c.p.writeByte(callsError, callsErrServiceNotFound)
 		return
