@@ -121,11 +121,9 @@ func (c *calls) Tick() {
 	if respLen > respSize {
 		respLen = respSize
 	}
-
 	if resp != nil {
 		resp = resp[:respLen]
 	}
-
 	for i := range resp {
 		exp := c.mem.WriteByte(respAddr+uint32(i), resp[i])
 		if exp != nil {
