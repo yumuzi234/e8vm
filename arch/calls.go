@@ -2,6 +2,7 @@ package arch
 
 import (
 	"e8vm.io/e8vm/arch/vpc"
+	"e8vm.io/e8vm/coder"
 )
 
 const (
@@ -25,10 +26,15 @@ const (
 	callsErrMemoryError
 )
 
+const (
+	callsResInvalidRequest = 1 + iota
+)
+
 type calls struct {
 	p        *pageOffset
 	mem      *phyMemory
 	services map[uint32]vpc.Service
+	enabled  map[uint32]bool
 }
 
 func newCalls(p *pageOffset, mem *phyMemory) *calls {
@@ -40,7 +46,22 @@ func newCalls(p *pageOffset, mem *phyMemory) *calls {
 }
 
 func (c *calls) callHub(req, resp []byte) (n, res uint32) {
-	// TODO:
+	dec := coder.NewDecoder(req)
+	cmd, err := dec.U32()
+	if err != nil {
+		return 0, callsResInvalidRequest
+	}
+
+	// TODO
+	switch cmd {
+	case 0: // list services
+
+	case 1: // enable service message
+
+	case 2: // disable service message
+
+	}
+
 	return 0, 0
 }
 
