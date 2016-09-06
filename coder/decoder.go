@@ -7,7 +7,8 @@ import (
 
 // Decoder is a simple binary decoder
 type Decoder struct {
-	r *bytes.Reader
+	r   *bytes.Reader
+	Err error
 }
 
 // NewDecoder creates a new decoder around the buffer.
@@ -18,13 +19,21 @@ func NewDecoder(buf []byte) *Decoder {
 }
 
 // U8 reads a byte out of the decoder.
-func (c *Decoder) U8() (byte, error) { return c.r.ReadByte() }
+func (c *Decoder) U8() byte {
+	ret, err := c.r.ReadByte()
+	if err != nil {
+		c.Err = err
+		return 0
+	}
+	return ret
+}
 
 // U32 reads a word out of the decoder.
-func (c *Decoder) U32() (uint32, error) {
+func (c *Decoder) U32() uint32 {
 	var buf [4]byte
 	if _, err := c.r.Read(buf[:]); err != nil {
-		return 0, err
+		c.Err = err
+		return 0
 	}
-	return binary.LittleEndian.Uint32(buf[:]), nil
+	return binary.LittleEndian.Uint32(buf[:])
 }

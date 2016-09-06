@@ -45,10 +45,10 @@ func newCalls(p *pageOffset, mem *phyMemory) *calls {
 	}
 }
 
-func (c *calls) callHub(req, resp []byte) (n, res uint32) {
+func (c *calls) callControl(req, resp []byte) (n, res uint32) {
 	dec := coder.NewDecoder(req)
-	cmd, err := dec.U32()
-	if err != nil {
+	cmd := dec.U32()
+	if dec.Err != nil {
 		return 0, callsResInvalidRequest
 	}
 
@@ -69,7 +69,7 @@ func (c *calls) call(service uint32, req, resp []byte) (
 	n, res uint32, ok bool,
 ) {
 	if service == 0 {
-		n, res = c.callHub(req, resp)
+		n, res = c.callControl(req, resp)
 		return n, res, false
 	}
 
