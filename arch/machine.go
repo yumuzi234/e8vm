@@ -11,17 +11,18 @@ import (
 
 // Machine is a multicore shared memory simulated arch8 machine.
 type Machine struct {
-	phyMem  *phyMemory
-	inst    inst
-	calls   *calls
-	cores   *multiCore
+	phyMem *phyMemory
+	inst   inst
+	calls  *calls
+
+	devices []device
 	console *console
 	clicks  *clicks
 	screen  *screen
 	ticker  *ticker
 	rom     *rom
 
-	devices []device
+	cores *multiCore
 
 	// Sections that are loaded into the machine
 	Sections []*image.Section
