@@ -45,6 +45,14 @@ func (c *console) interrupt(code byte) {
 	c.intBus.Interrupt(code, c.Core)
 }
 
+func (c *console) Handle(req, resp []byte) (n, res uint32) {
+	_, err := c.Output.Write(req)
+	if err != nil {
+		log.Print(err)
+	}
+	return 0, 0
+}
+
 // Tick flushes the buffered byte to the console.
 func (c *console) Tick() {
 	outValid := c.p.readByte(consoleOutValid)

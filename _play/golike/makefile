@@ -1,14 +1,14 @@
 all:
-	g8 -golike a.g
+	glang -golike a.g
 
 ast:
-	g8 -golike -parse a.g
+	glang -golike -parse a.g
 
 ir:
-	g8 -golike -ir a.g
+	glang -golike -ir a.g
 
 dasm:
-	g8 -golike -d a.g
+	glang -golike -d a.g
 
 old:
-	g8 a.g
+	glang a.g

@@ -12,22 +12,17 @@ type Screen interface {
 }
 
 type screen struct {
-	ptext  *page
-	pcolor *page
-
 	textUpdate  map[uint32]byte
 	colorUpdate map[uint32]byte
-
-	s Screen
+	s           Screen
 }
 
-func newScreen(ptext, pcolor *page, s Screen) *screen {
-	ptext.trackDirty()
-	pcolor.trackDirty()
+func newScreen(s Screen) *screen {
+	if s == nil {
+		panic("creating nil screen")
+	}
 
 	return &screen{
-		ptext:       ptext,
-		pcolor:      pcolor,
 		textUpdate:  make(map[uint32]byte),
 		colorUpdate: make(map[uint32]byte),
 		s:           s,
@@ -36,10 +31,12 @@ func newScreen(ptext, pcolor *page, s Screen) *screen {
 
 func (s *screen) Handle(req, resp []byte) (n, res uint32) {
 	dec := coder.NewDecoder(req)
-	cmd := dec.U32()
+	cmd := dec.U8()
 	if dec.Err != nil {
 		return 0, callsResInvalidRequest
 	}
+
+	const screenWidth = 80
 
 	switch cmd {
 	case 0, 1:
@@ -52,9 +49,9 @@ func (s *screen) Handle(req, resp []byte) (n, res uint32) {
 		}
 
 		if cmd == 0 {
-			s.textUpdate[line*80+col] = c
+			s.textUpdate[line*screenWidth+col] = c
 		} else { // cmd == 1
-			s.colorUpdate[line*80+col] = c
+			s.colorUpdate[line*screenWidth+col] = c
 		}
 	default:
 		return 0, callsResInvalidRequest
@@ -64,16 +61,6 @@ func (s *screen) Handle(req, resp []byte) (n, res uint32) {
 }
 
 func (s *screen) flush() {
-	if len(s.ptext.dirty) > 0 {
-		s.s.UpdateText(s.ptext.dirtyBytes())
-		s.ptext.trackDirty()
-	}
-
-	if len(s.pcolor.dirty) > 0 {
-		s.s.UpdateColor(s.pcolor.dirtyBytes())
-		s.pcolor.trackDirty()
-	}
-
 	if len(s.textUpdate) > 0 {
 		s.s.UpdateText(s.textUpdate)
 		s.textUpdate = make(map[uint32]byte)
@@ -85,11 +72,7 @@ func (s *screen) flush() {
 }
 
 func (s *screen) Tick() {
-	if s.s == nil { // headless
-		return
+	if s.s.NeedUpdate() {
+		s.flush()
 	}
-	if !s.s.NeedUpdate() { // not refreshed yet
-		return
-	}
-	s.flush()
 }

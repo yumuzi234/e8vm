@@ -17,7 +17,6 @@ type Machine struct {
 	cores   *multiCore
 	console *console
 	clicks  *clicks
-	serial  *serial
 	screen  *screen
 	ticker  *ticker
 	rom     *rom
@@ -50,22 +49,21 @@ func NewMachine(c *Config) *Machine {
 
 	ret.console = newConsole(p, ret.cores)
 	ret.clicks = newClicks(p, ret.cores)
-	ret.serial = newSerial(p, ret.cores)
 	ret.ticker = newTicker(ret.cores)
 
 	ret.calls = newCalls(ret.phyMem.Page(pageRPC), ret.phyMem)
+	ret.calls.register(serviceConsole, ret.console)
 
 	ret.addDevice(ret.calls)
 	ret.addDevice(ret.ticker)
-	ret.addDevice(ret.serial)
 	ret.addDevice(ret.console)
 	ret.addDevice(ret.clicks)
 
 	if c.Screen != nil {
-		p1 := ret.phyMem.Page(pageScreenText)
-		p2 := ret.phyMem.Page(pageScreenColor)
-		ret.screen = newScreen(p1, p2, c.Screen)
-		ret.addDevice(ret.screen)
+		s := newScreen(c.Screen)
+		ret.screen = s
+		ret.addDevice(s)
+		ret.calls.register(serviceScreen, s)
 	}
 
 	sys := ret.phyMem.Page(pageSysInfo)
@@ -124,7 +122,6 @@ func (m *Machine) DumpRegs(core byte) []uint32 {
 }
 
 func (m *Machine) setOutput(w io.Writer) {
-	m.serial.Output = w
 	m.console.Output = w
 }
 

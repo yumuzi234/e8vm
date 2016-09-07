@@ -55,14 +55,6 @@ e0-100: serial output ring buffer
 110-114: rom number of bytes read
 114-178: rom file name, max 100 chars
 
-## Page 5: Screen text frame buffer
-
-size 80x24, one byte for each char
-
-## Page 6: Screen color frame buffer
-
-size 80x24, one byte for each char, foreground and background
-
 ## Page 7: System information
 
 0-4: number of pages for the physical memory

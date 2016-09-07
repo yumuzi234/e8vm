@@ -1,4 +1,4 @@
-package glang
+package main
 
 import (
 	"bytes"

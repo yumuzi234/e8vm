@@ -1,17 +1,17 @@
 all:
-	g8 a.g
+	glang a.g
 
 ast:
-	g8 -parse a.g
+	glang -parse a.g
 
 ir:
-	g8 -ir a.g
+	glang -ir a.g
 
 dasm:
-	g8 -d a.g
+	glang -d a.g
 
 old:
-	g8 a.g
+	glang a.g
 
 fmt:
 	gfmt a.g

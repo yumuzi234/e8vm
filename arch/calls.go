@@ -45,6 +45,14 @@ func newCalls(p *page, mem *phyMemory) *calls {
 	}
 }
 
+func (c *calls) register(id uint32, s vpc.Service) {
+	if id == 0 {
+		panic("cannot register service 0")
+	}
+
+	c.services[id] = s
+}
+
 func (c *calls) callControl(req, resp []byte) (n, res uint32) {
 	dec := coder.NewDecoder(req)
 	cmd := dec.U32()
