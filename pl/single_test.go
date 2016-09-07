@@ -266,4 +266,11 @@ func TestSingleFile(t *testing.T) {
 			before := uint(&t2[0]); p(t2[2:5]); after := uint(&t2[0])
 			if before != after { panic() }
 		}`, "")
+
+	// Bugs found on developing shanhu
+	o(` func f(x, y int, c char) {
+			var a [4]byte
+			printInt(int(a[0]))
+		}
+		func main() { f(0, 0, 0) }`, "0")
 }
