@@ -1,3 +1,0 @@
-package arch
-
-var _ device = new(serial)
