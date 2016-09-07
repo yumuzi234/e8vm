@@ -20,14 +20,17 @@ const (
 	callsSize = 0x20
 )
 
+// error codes
 const (
 	callsErrNone = iota
 	callsErrServiceNotFound
 	callsErrMemoryError
 )
 
+// result codes
 const (
-	callsResInvalidRequest = 1 + iota
+	callsResOK = iota
+	callsResInvalidRequest
 )
 
 type calls struct {

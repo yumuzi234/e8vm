@@ -46,8 +46,17 @@ func (c *console) interrupt(code byte) {
 }
 
 func (c *console) Handle(req, resp []byte) (n, res uint32) {
-	_, err := c.Output.Write(req)
-	if err != nil {
+	const maxOutputLen = 128
+
+	m := len(req)
+	if m == 0 {
+		return 0, 0
+	}
+	if m > maxOutputLen {
+		return 0, callsResInvalidRequest
+	}
+
+	if _, err := c.Output.Write(req); err != nil {
 		log.Print(err)
 	}
 	return 0, 0
