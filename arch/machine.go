@@ -40,55 +40,58 @@ func NewMachine(c *Config) *Machine {
 	if c.Ncore == 0 {
 		c.Ncore = 1
 	}
-	ret := new(Machine)
-	ret.phyMem = newPhyMemory(c.MemSize)
-	ret.inst = new(instArch8)
-	ret.cores = newMultiCore(c.Ncore, ret.phyMem, ret.inst)
+	m := new(Machine)
+	m.phyMem = newPhyMemory(c.MemSize)
+	m.inst = new(instArch8)
+	m.cores = newMultiCore(c.Ncore, m.phyMem, m.inst)
 
 	// hook-up devices
-	p := ret.phyMem.Page(pageBasicIO)
+	p := m.phyMem.Page(pageBasicIO)
 
-	ret.console = newConsole(p, ret.cores)
-	ret.clicks = newClicks(p, ret.cores)
-	ret.ticker = newTicker(ret.cores)
+	m.console = newConsole(p, m.cores)
+	m.ticker = newTicker(m.cores)
 
-	ret.calls = newCalls(ret.phyMem.Page(pageRPC), ret.phyMem)
-	ret.calls.register(serviceConsole, ret.console)
+	m.calls = newCalls(m.phyMem.Page(pageRPC), m.phyMem)
+	m.calls.register(serviceConsole, m.console)
 
-	ret.addDevice(ret.calls)
-	ret.addDevice(ret.ticker)
-	ret.addDevice(ret.console)
-	ret.addDevice(ret.clicks)
+	m.addDevice(m.calls)
+	m.addDevice(m.ticker)
+	m.addDevice(m.console)
 
 	if c.Screen != nil {
+		sender := m.calls.sender(serviceScreen)
+		m.clicks = newClicks(p, m.cores, sender)
+		m.addDevice(m.clicks)
+
 		s := newScreen(c.Screen)
-		ret.screen = s
-		ret.addDevice(s)
-		ret.calls.register(serviceScreen, s)
+		m.screen = s
+		m.addDevice(s)
+
+		m.calls.register(serviceScreen, s)
 	}
 
-	sys := ret.phyMem.Page(pageSysInfo)
-	sys.WriteWord(0, ret.phyMem.npage)
+	sys := m.phyMem.Page(pageSysInfo)
+	sys.WriteWord(0, m.phyMem.npage)
 	sys.WriteWord(4, uint32(c.Ncore))
 
 	if c.InitSP == 0 {
-		ret.setSP(DefaultSPBase, DefaultSPStride)
+		m.setSP(DefaultSPBase, DefaultSPStride)
 	} else {
-		ret.setSP(c.InitSP, c.StackPerCore)
+		m.setSP(c.InitSP, c.StackPerCore)
 	}
-	ret.SetPC(c.InitPC)
+	m.SetPC(c.InitPC)
 	if c.Output != nil {
-		ret.setOutput(c.Output)
+		m.setOutput(c.Output)
 	}
 	if c.ROM != "" {
-		ret.mountROM(c.ROM)
+		m.mountROM(c.ROM)
 	}
 	if c.RandSeed != 0 {
-		ret.randSeed(c.RandSeed)
+		m.randSeed(c.RandSeed)
 	}
-	ret.setBootArg(c.BootArg)
+	m.setBootArg(c.BootArg)
 
-	return ret
+	return m
 }
 
 func (m *Machine) mountROM(root string) {

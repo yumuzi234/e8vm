@@ -3,6 +3,8 @@ package arch
 import (
 	"container/list"
 	"fmt"
+
+	"e8vm.io/e8vm/arch/vpc"
 )
 
 type click struct {
@@ -13,13 +15,15 @@ type click struct {
 type clicks struct {
 	q      *list.List
 	p      *pageOffset
+	send   vpc.Sender
 	intBus intBus
 }
 
-func newClicks(p *page, i intBus) *clicks {
+func newClicks(p *page, i intBus, s vpc.Sender) *clicks {
 	return &clicks{
 		q:      list.New(),
 		p:      &pageOffset{p, clicksBase},
+		send:   s,
 		intBus: i,
 	}
 }
@@ -37,6 +41,8 @@ func (c *clicks) addClick(line, col uint8) error {
 	}
 
 	c.q.PushBack(&click{line: line, col: col})
+	c.send.Send([]byte{byte(line), byte(col)})
+
 	return nil
 }
 

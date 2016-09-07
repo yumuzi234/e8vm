@@ -1,6 +1,8 @@
 package arch
 
 import (
+	"container/list"
+
 	"e8vm.io/e8vm/arch/vpc"
 	"e8vm.io/e8vm/coder"
 )
@@ -38,6 +40,7 @@ type calls struct {
 	mem      *phyMemory
 	services map[uint32]vpc.Service
 	enabled  map[uint32]bool
+	queue    *list.List
 }
 
 func newCalls(p *page, mem *phyMemory) *calls {
@@ -45,7 +48,12 @@ func newCalls(p *page, mem *phyMemory) *calls {
 		p:        &pageOffset{p, 0},
 		mem:      mem,
 		services: make(map[uint32]vpc.Service),
+		queue:    list.New(),
 	}
+}
+
+func (c *calls) sender(id uint32) vpc.Sender {
+	return &callsSender{service: id, queue: c.queue}
 }
 
 func (c *calls) register(id uint32, s vpc.Service) {
@@ -65,11 +73,13 @@ func (c *calls) callControl(req, resp []byte) (n, res uint32) {
 
 	// TODO
 	switch cmd {
-	case 0: // list services
+	case 0: // poll message
 
-	case 1: // enable service message
+	case 1: // list services
 
-	case 2: // disable service message
+	case 2: // enable service message
+
+	case 3: // disable service message
 
 	}
 
