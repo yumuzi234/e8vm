@@ -51,7 +51,7 @@ func NewMachine(c *Config) *Machine {
 	m.console = newConsole(p, m.cores)
 	m.ticker = newTicker(m.cores)
 
-	m.calls = newCalls(m.phyMem.Page(pageRPC), m.phyMem, m.cores)
+	m.calls = newCalls(m.phyMem.Page(pageRPC), m.phyMem)
 	m.calls.register(serviceConsole, m.console)
 
 	m.addDevice(m.calls)

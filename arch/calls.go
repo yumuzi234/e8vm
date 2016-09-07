@@ -24,7 +24,6 @@ const (
 type calls struct {
 	p        *pageOffset
 	mem      *phyMemory
-	intBus   intBus
 	services map[uint32]vpc.Service
 	enabled  map[uint32]bool
 	queue    *list.List
@@ -32,11 +31,10 @@ type calls struct {
 	Core byte // core to throw exception
 }
 
-func newCalls(p *page, mem *phyMemory, bus intBus) *calls {
+func newCalls(p *page, mem *phyMemory) *calls {
 	return &calls{
 		p:        &pageOffset{p, 0},
 		mem:      mem,
-		intBus:   bus,
 		services: make(map[uint32]vpc.Service),
 		queue:    list.New(),
 	}
@@ -58,7 +56,6 @@ func (c *calls) callControl(ctrl uint8, req []byte) ([]byte, int32) {
 	switch ctrl {
 	case 1: // poll message
 		if c.queue.Len() == 0 {
-			c.intBus.Interrupt(ErrSleep, c.Core)
 			return nil, vpc.ErrInternal // we will execute again
 		}
 
