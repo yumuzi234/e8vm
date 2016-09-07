@@ -14,7 +14,7 @@ type console struct {
 	intBus intBus
 	p      *pageOffset
 
-	Core   byte
+	Core   byte // Core to throw exception
 	IntIn  byte
 	IntOut byte
 
@@ -47,21 +47,21 @@ func (c *console) interrupt(code byte) {
 	c.intBus.Interrupt(code, c.Core)
 }
 
-func (c *console) Handle(req, resp []byte) (int, int32) {
+func (c *console) Handle(req []byte) ([]byte, int32) {
 	const maxOutputLen = 128
 
 	m := len(req)
 	if m == 0 {
-		return 0, 0
+		return nil, 0
 	}
 	if m > maxOutputLen {
-		return 0, vpc.ErrInvalidArg
+		return nil, vpc.ErrInvalidArg
 	}
 
 	if _, err := c.Output.Write(req); err != nil {
 		log.Print(err)
 	}
-	return 0, 0
+	return nil, 0
 }
 
 // Tick flushes the buffered byte to the console.

@@ -2,9 +2,9 @@ package arch
 
 import (
 	"container/list"
+	"log"
 
 	"e8vm.io/e8vm/arch/vpc"
-	"e8vm.io/e8vm/coder"
 )
 
 const (
@@ -24,15 +24,19 @@ const (
 type calls struct {
 	p        *pageOffset
 	mem      *phyMemory
+	intBus   intBus
 	services map[uint32]vpc.Service
 	enabled  map[uint32]bool
 	queue    *list.List
+
+	Core byte // core to throw exception
 }
 
-func newCalls(p *page, mem *phyMemory) *calls {
+func newCalls(p *page, mem *phyMemory, bus intBus) *calls {
 	return &calls{
 		p:        &pageOffset{p, 0},
 		mem:      mem,
+		intBus:   bus,
 		services: make(map[uint32]vpc.Service),
 		queue:    list.New(),
 	}
@@ -50,38 +54,36 @@ func (c *calls) register(id uint32, s vpc.Service) {
 	c.services[id] = s
 }
 
-func (c *calls) callControl(req, resp []byte) (int, int32) {
-	dec := coder.NewDecoder(req)
-	cmd := dec.U32()
-	if dec.Err != nil {
-		return 0, vpc.ErrInvalidArg
+func (c *calls) callControl(ctrl uint8, req []byte) ([]byte, int32) {
+	switch ctrl {
+	case 1: // poll message
+		if c.queue.Len() == 0 {
+			c.intBus.Interrupt(ErrSleep, c.Core)
+			return nil, vpc.ErrInternal // we will execute again
+		}
+
+		m := c.queue.Front().Value.(*callsMessage)
+		c.p.writeWord(callsService, m.service) // overwrite the service
+		return m.p, 0
+
+	// TODO(lonliu): add other stuff
+	case 2: // list services
+	case 3: // enable/disalbe service message
 	}
 
-	// TODO
-	switch cmd {
-	case 0: // poll message
-
-	case 1: // list services
-
-	case 2: // enable service message
-
-	case 3: // disable service message
-
-	}
-
-	return 0, 0
+	return nil, vpc.ErrInvalidArg
 }
 
-func (c *calls) call(service uint32, req, resp []byte) (int, int32) {
+func (c *calls) call(ctrl uint8, service uint32, req []byte) ([]byte, int32) {
 	if service == 0 {
-		return c.callControl(req, resp)
+		return c.callControl(ctrl, req)
 	}
 
 	s, found := c.services[service]
 	if !found {
-		return 0, vpc.ErrNotFound
+		return nil, vpc.ErrNotFound
 	}
-	return s.Handle(req, resp)
+	return s.Handle(req)
 }
 
 func (c *calls) respondCode(code int32) {
@@ -98,41 +100,47 @@ func (c *calls) Tick() {
 
 	reqAddr := c.p.readWord(callsRequestAddr)
 	reqLen := c.p.readWord(callsRequestLen)
-	respAddr := c.p.readWord(callsResponseAddr)
-	respSize := c.p.readWord(callsResponseSize)
 
-	var req, resp []byte
+	var req []byte
 	if reqLen > 0 {
 		req = make([]byte, reqLen)
-	}
-	if respSize > 0 {
-		resp = make([]byte, respSize)
 	}
 
 	for i := range req {
 		var exp *Excep
 		req[i], exp = c.mem.ReadByte(reqAddr + uint32(i))
 		if exp != nil {
+			log.Println(exp)
 			c.respondCode(vpc.ErrMemory)
 			return
 		}
 	}
 
-	respLen, code := c.call(service, req, resp)
+	resp, code := c.call(control, service, req)
 	if code != 0 {
 		c.respondCode(code)
 		return
 	}
-	if respLen > vpc.MaxLen || uint32(respLen) > respSize {
+
+	respAddr := c.p.readWord(callsResponseAddr)
+	respSize := c.p.readWord(callsResponseSize)
+	respLen := len(resp)
+	if respLen > vpc.MaxLen {
 		c.respondCode(vpc.ErrInternal)
 		return
 	}
 
+	// we will write the response length anyways
+	c.p.writeWord(callsResponseLen, uint32(respLen))
+	if uint32(respLen) > respSize {
+		c.respondCode(vpc.ErrSmallBuf)
+		return
+	}
+
 	if resp != nil {
-		resp = resp[:respLen]
 		for i := range resp {
-			exp := c.mem.WriteByte(respAddr+uint32(i), resp[i])
-			if exp != nil {
+			if exp := c.mem.WriteByte(respAddr+uint32(i), resp[i]); exp != nil {
+				log.Println(exp)
 				c.respondCode(vpc.ErrMemory)
 				return
 			}
@@ -140,6 +148,5 @@ func (c *calls) Tick() {
 	}
 
 	c.respondCode(0)
-	c.p.writeWord(callsResponseLen, uint32(respLen))
 	c.p.writeByte(callsControl, 0)
 }

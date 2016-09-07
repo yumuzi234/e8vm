@@ -29,18 +29,18 @@ func newClicks(p *page, i intBus, s vpc.Sender) *clicks {
 }
 
 func (c *clicks) addClick(line, col uint8) error {
-	if line > 24 {
+	if line > screenHeight {
 		return fmt.Errorf("line too big: %d", line)
 	}
-	if col > 80 {
+	if col > screenWidth {
 		return fmt.Errorf("col too big: %d", col)
 	}
 
 	if c.q.Len() >= 16 {
 		return fmt.Errorf("click event queue full")
 	}
-
 	c.q.PushBack(&click{line: line, col: col})
+
 	c.send.Send([]byte{byte(line), byte(col)})
 
 	return nil

@@ -30,14 +30,17 @@ func newScreen(s Screen) *screen {
 	}
 }
 
-func (s *screen) Handle(req, resp []byte) (int, int32) {
+const (
+	screenWidth  = 80
+	screenHeight = 24
+)
+
+func (s *screen) Handle(req []byte) ([]byte, int32) {
 	dec := coder.NewDecoder(req)
 	cmd := dec.U8()
 	if dec.Err != nil {
-		return 0, vpc.ErrInvalidArg
+		return nil, vpc.ErrInvalidArg
 	}
-
-	const screenWidth = 80
 
 	switch cmd {
 	case 0, 1:
@@ -46,7 +49,7 @@ func (s *screen) Handle(req, resp []byte) (int, int32) {
 		col := uint32(dec.U8())
 
 		if dec.Err != nil {
-			return 0, vpc.ErrInvalidArg
+			return nil, vpc.ErrInvalidArg
 		}
 
 		if cmd == 0 {
@@ -55,10 +58,10 @@ func (s *screen) Handle(req, resp []byte) (int, int32) {
 			s.colorUpdate[line*screenWidth+col] = c
 		}
 	default:
-		return 0, vpc.ErrInvalidArg
+		return nil, vpc.ErrInvalidArg
 	}
 
-	return 0, 0
+	return nil, 0
 }
 
 func (s *screen) flush() {
