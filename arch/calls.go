@@ -9,7 +9,6 @@ import (
 
 const (
 	callsControl = 0x0
-	callsError   = 0x1
 	callsService = 0x4
 
 	callsRequestAddr  = 0x8
@@ -20,19 +19,6 @@ const (
 	callsResponseLen  = 0x1c
 
 	callsSize = 0x20
-)
-
-// error codes
-const (
-	callsErrNone = iota
-	callsErrServiceNotFound
-	callsErrMemoryError
-)
-
-// result codes
-const (
-	callsResOK = iota
-	callsResInvalidRequest
 )
 
 type calls struct {
@@ -64,11 +50,11 @@ func (c *calls) register(id uint32, s vpc.Service) {
 	c.services[id] = s
 }
 
-func (c *calls) callControl(req, resp []byte) (n, res uint32) {
+func (c *calls) callControl(req, resp []byte) (int, int32) {
 	dec := coder.NewDecoder(req)
 	cmd := dec.U32()
 	if dec.Err != nil {
-		return 0, callsResInvalidRequest
+		return 0, vpc.ErrInvalidArg
 	}
 
 	// TODO
@@ -86,21 +72,20 @@ func (c *calls) callControl(req, resp []byte) (n, res uint32) {
 	return 0, 0
 }
 
-func (c *calls) call(service uint32, req, resp []byte) (
-	n, res uint32, ok bool,
-) {
+func (c *calls) call(service uint32, req, resp []byte) (int, int32) {
 	if service == 0 {
-		n, res = c.callControl(req, resp)
-		return n, res, false
+		return c.callControl(req, resp)
 	}
 
 	s, found := c.services[service]
 	if !found {
-		return 0, 0, false
+		return 0, vpc.ErrNotFound
 	}
+	return s.Handle(req, resp)
+}
 
-	n, res = s.Handle(req, resp)
-	return n, res, true
+func (c *calls) respondCode(code int32) {
+	c.p.writeWord(callsResponseCode, uint32(code))
 }
 
 func (c *calls) Tick() {
@@ -128,32 +113,33 @@ func (c *calls) Tick() {
 		var exp *Excep
 		req[i], exp = c.mem.ReadByte(reqAddr + uint32(i))
 		if exp != nil {
-			c.p.writeByte(callsError, callsErrMemoryError)
+			c.respondCode(vpc.ErrMemory)
 			return
 		}
 	}
 
-	respLen, code, found := c.call(service, req, resp)
-	if !found {
-		c.p.writeByte(callsError, callsErrServiceNotFound)
+	respLen, code := c.call(service, req, resp)
+	if code != 0 {
+		c.respondCode(code)
+		return
+	}
+	if respLen > vpc.MaxLen || uint32(respLen) > respSize {
+		c.respondCode(vpc.ErrInternal)
 		return
 	}
 
-	if respLen > respSize {
-		respLen = respSize
-	}
 	if resp != nil {
 		resp = resp[:respLen]
-	}
-	for i := range resp {
-		exp := c.mem.WriteByte(respAddr+uint32(i), resp[i])
-		if exp != nil {
-			c.p.WriteByte(callsError, callsErrMemoryError)
-			return
+		for i := range resp {
+			exp := c.mem.WriteByte(respAddr+uint32(i), resp[i])
+			if exp != nil {
+				c.respondCode(vpc.ErrMemory)
+				return
+			}
 		}
 	}
 
-	c.p.writeWord(callsResponseCode, code)
-	c.p.writeWord(callsResponseLen, respLen)
+	c.respondCode(0)
+	c.p.writeWord(callsResponseLen, uint32(respLen))
 	c.p.writeByte(callsControl, 0)
 }

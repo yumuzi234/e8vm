@@ -1,6 +1,7 @@
 package arch
 
 import (
+	"e8vm.io/e8vm/arch/vpc"
 	"e8vm.io/e8vm/coder"
 )
 
@@ -29,11 +30,11 @@ func newScreen(s Screen) *screen {
 	}
 }
 
-func (s *screen) Handle(req, resp []byte) (n, res uint32) {
+func (s *screen) Handle(req, resp []byte) (int, int32) {
 	dec := coder.NewDecoder(req)
 	cmd := dec.U8()
 	if dec.Err != nil {
-		return 0, callsResInvalidRequest
+		return 0, vpc.ErrInvalidArg
 	}
 
 	const screenWidth = 80
@@ -45,7 +46,7 @@ func (s *screen) Handle(req, resp []byte) (n, res uint32) {
 		col := uint32(dec.U8())
 
 		if dec.Err != nil {
-			return 0, callsResInvalidRequest
+			return 0, vpc.ErrInvalidArg
 		}
 
 		if cmd == 0 {
@@ -54,7 +55,7 @@ func (s *screen) Handle(req, resp []byte) (n, res uint32) {
 			s.colorUpdate[line*screenWidth+col] = c
 		}
 	default:
-		return 0, callsResInvalidRequest
+		return 0, vpc.ErrInvalidArg
 	}
 
 	return 0, 0

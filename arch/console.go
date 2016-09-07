@@ -4,6 +4,8 @@ import (
 	"io"
 	"log"
 	"os"
+
+	"e8vm.io/e8vm/arch/vpc"
 )
 
 // Console is a simple console that can output/input a single
@@ -45,7 +47,7 @@ func (c *console) interrupt(code byte) {
 	c.intBus.Interrupt(code, c.Core)
 }
 
-func (c *console) Handle(req, resp []byte) (n, res uint32) {
+func (c *console) Handle(req, resp []byte) (int, int32) {
 	const maxOutputLen = 128
 
 	m := len(req)
@@ -53,7 +55,7 @@ func (c *console) Handle(req, resp []byte) (n, res uint32) {
 		return 0, 0
 	}
 	if m > maxOutputLen {
-		return 0, callsResInvalidRequest
+		return 0, vpc.ErrInvalidArg
 	}
 
 	if _, err := c.Output.Write(req); err != nil {
