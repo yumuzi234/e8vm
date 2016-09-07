@@ -32,9 +32,11 @@ func zeroRef(g *gener, b *Block, r Ref) {
 			panic("invalid varRef size")
 		}
 
-		switch r.size {
-		case 0: // do nothing
-		case 1, regSize:
+		switch {
+		case r.size == 0:
+		case r.size == 1:
+			saveVar(b, 0, r)
+		case r.size == regSize && r.RegSizeAlign():
 			saveVar(b, 0, r)
 		default:
 			loadAddr(b, _r1, r)
