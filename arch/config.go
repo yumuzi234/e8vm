@@ -2,6 +2,8 @@ package arch
 
 import (
 	"io"
+
+	"e8vm.io/e8vm/arch/screen"
 )
 
 // Config contains config for constructing a machine
@@ -10,7 +12,7 @@ type Config struct {
 	Ncore   int
 
 	Output   io.Writer
-	Screen   Screen
+	Screen   screen.Render
 	RandSeed int64
 
 	InitPC       uint32

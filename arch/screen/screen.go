@@ -1,41 +1,32 @@
-package arch
+package screen
 
 import (
 	"e8vm.io/e8vm/arch/vpc"
 	"e8vm.io/e8vm/coder"
 )
 
-// Screen is an interface for drawing characters.
-type Screen interface {
-	NeedUpdate() bool
-	UpdateText(m map[uint32]byte)
-	UpdateColor(m map[uint32]byte)
-}
-
-type screen struct {
+// Screen is the screen buffer.
+type Screen struct {
 	textUpdate  map[uint32]byte
 	colorUpdate map[uint32]byte
-	s           Screen
+	r           Render
 }
 
-func newScreen(s Screen) *screen {
-	if s == nil {
+// New creates a new screen that renders on the given renderer.
+func New(r Render) *Screen {
+	if r == nil {
 		panic("creating nil screen")
 	}
 
-	return &screen{
+	return &Screen{
 		textUpdate:  make(map[uint32]byte),
 		colorUpdate: make(map[uint32]byte),
-		s:           s,
+		r:           r,
 	}
 }
 
-const (
-	screenWidth  = 80
-	screenHeight = 24
-)
-
-func (s *screen) Handle(req []byte) ([]byte, int32) {
+// Handle handles incoming requirement.
+func (s *Screen) Handle(req []byte) ([]byte, int32) {
 	dec := coder.NewDecoder(req)
 	cmd := dec.U8()
 	if dec.Err != nil {
@@ -53,9 +44,9 @@ func (s *screen) Handle(req []byte) ([]byte, int32) {
 		}
 
 		if cmd == 0 {
-			s.textUpdate[line*screenWidth+col] = c
+			s.textUpdate[line*Width+col] = c
 		} else { // cmd == 1
-			s.colorUpdate[line*screenWidth+col] = c
+			s.colorUpdate[line*Width+col] = c
 		}
 	default:
 		return nil, vpc.ErrInvalidArg
@@ -64,19 +55,21 @@ func (s *screen) Handle(req []byte) ([]byte, int32) {
 	return nil, 0
 }
 
-func (s *screen) flush() {
+// Flush flushes the screen buffer.
+func (s *Screen) Flush() {
 	if len(s.textUpdate) > 0 {
-		s.s.UpdateText(s.textUpdate)
+		s.r.UpdateText(s.textUpdate)
 		s.textUpdate = make(map[uint32]byte)
 	}
 	if len(s.colorUpdate) > 0 {
-		s.s.UpdateColor(s.colorUpdate)
+		s.r.UpdateColor(s.colorUpdate)
 		s.colorUpdate = make(map[uint32]byte)
 	}
 }
 
-func (s *screen) Tick() {
-	if s.s.NeedUpdate() {
-		s.flush()
+// Tick flushes the screen if it needs to.
+func (s *Screen) Tick() {
+	if s.r.NeedUpdate() {
+		s.Flush()
 	}
 }

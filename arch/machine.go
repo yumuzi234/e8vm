@@ -6,6 +6,7 @@ import (
 	"io"
 	"math/rand"
 
+	"e8vm.io/e8vm/arch/screen"
 	"e8vm.io/e8vm/image"
 )
 
@@ -17,8 +18,8 @@ type Machine struct {
 
 	devices []device
 	console *console
-	clicks  *clicks
-	screen  *screen
+	clicks  *screen.Clicks
+	screen  *screen.Screen
 	ticker  *ticker
 	rom     *rom
 
@@ -58,9 +59,9 @@ func NewMachine(c *Config) *Machine {
 	m.addDevice(m.console)
 
 	if c.Screen != nil {
-		m.clicks = newClicks(m.calls.sender(serviceScreen))
+		m.clicks = screen.NewClicks(m.calls.sender(serviceScreen))
 
-		s := newScreen(c.Screen)
+		s := screen.New(c.Screen)
 		m.screen = s
 		m.addDevice(s)
 
@@ -252,9 +253,9 @@ func (m *Machine) PrintCoreStatus() { m.cores.PrintStatus() }
 // screen device, even if the device has not asked for an update.
 func (m *Machine) FlushScreen() {
 	if m.screen != nil {
-		m.screen.flush()
+		m.screen.Flush()
 	}
 }
 
 // Click sends in a mouse click at the particular location.
-func (m *Machine) Click(line, col uint8) { m.clicks.addClick(line, col) }
+func (m *Machine) Click(line, col uint8) { m.clicks.Click(line, col) }
