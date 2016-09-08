@@ -49,28 +49,38 @@ func (c *calls) register(id uint32, s vpc.Service) {
 	c.services[id] = s
 }
 
-func (c *calls) callControl(ctrl uint8, req []byte) ([]byte, int32, *Excep) {
+func (c *calls) system(ctrl uint8, _ []byte, respSize int) (
+	[]byte, int32, *Excep,
+) {
 	switch ctrl {
 	case 1: // poll message
 		if c.queue.Len() == 0 {
 			return nil, vpc.ErrInternal, errSleep // we will execute again
 		}
 
-		m := c.queue.Front().Value.(*callsMessage)
+		front := c.queue.Front()
+		m := front.Value.(*callsMessage)
+		if len(m.p) > respSize {
+			return nil, vpc.ErrSmallBuf, nil
+		}
+
+		c.queue.Remove(front)
 		c.p.writeWord(callsService, m.service) // overwrite the service
 		return m.p, 0, nil
 
 	// TODO(lonliu): add other stuff
 	case 2: // list services
-	case 3: // enable/disalbe service message
+	case 3: // enable/disable service message
 	}
 
 	return nil, vpc.ErrInvalidArg, nil
 }
 
-func (c *calls) call(ctrl uint8, s uint32, req []byte) ([]byte, int32, *Excep) {
+func (c *calls) call(ctrl uint8, s uint32, req []byte, respSize int) (
+	[]byte, int32, *Excep,
+) {
 	if s == 0 {
-		return c.callControl(ctrl, req)
+		return c.system(ctrl, req, respSize)
 	}
 
 	service, found := c.services[s]
@@ -85,7 +95,13 @@ func (c *calls) respondCode(code int32) {
 	c.p.writeWord(callsResponseCode, uint32(code))
 }
 
-func (c *calls) Tick() { c.invoke() }
+func (c *calls) respSize() int {
+	ret := c.p.readWord(callsResponseSize)
+	if ret > vpc.MaxLen {
+		ret = vpc.MaxLen
+	}
+	return int(ret)
+}
 
 func (c *calls) invoke() *Excep {
 	control := c.p.readByte(callsControl)
@@ -110,7 +126,8 @@ func (c *calls) invoke() *Excep {
 		}
 	}
 
-	resp, code, exp := c.call(control, service, req)
+	respSize := c.respSize()
+	resp, code, exp := c.call(control, service, req, respSize)
 	if exp != nil {
 		return exp
 	}
@@ -120,7 +137,6 @@ func (c *calls) invoke() *Excep {
 	}
 
 	respAddr := c.p.readWord(callsResponseAddr)
-	respSize := c.p.readWord(callsResponseSize)
 	respLen := len(resp)
 	if respLen > vpc.MaxLen {
 		c.respondCode(vpc.ErrInternal)
@@ -129,7 +145,7 @@ func (c *calls) invoke() *Excep {
 
 	// we will write the response length anyways
 	c.p.writeWord(callsResponseLen, uint32(respLen))
-	if uint32(respLen) > respSize {
+	if respLen > respSize {
 		c.respondCode(vpc.ErrSmallBuf)
 		return nil
 	}

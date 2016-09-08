@@ -54,14 +54,11 @@ func NewMachine(c *Config) *Machine {
 
 	m.calls.register(serviceConsole, m.console)
 
-	m.addDevice(m.calls)
 	m.addDevice(m.ticker)
 	m.addDevice(m.console)
 
 	if c.Screen != nil {
-		sender := m.calls.sender(serviceScreen)
-		m.clicks = newClicks(p, m.cores, sender)
-		m.addDevice(m.clicks)
+		m.clicks = newClicks(m.calls.sender(serviceScreen))
 
 		s := newScreen(c.Screen)
 		m.screen = s

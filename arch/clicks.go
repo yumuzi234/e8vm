@@ -1,7 +1,6 @@
 package arch
 
 import (
-	"container/list"
 	"fmt"
 
 	"e8vm.io/e8vm/arch/vpc"
@@ -13,18 +12,12 @@ type click struct {
 }
 
 type clicks struct {
-	q      *list.List
-	p      *pageOffset
-	send   vpc.Sender
-	intBus intBus
+	send vpc.Sender
 }
 
-func newClicks(p *page, i intBus, s vpc.Sender) *clicks {
+func newClicks(s vpc.Sender) *clicks {
 	return &clicks{
-		q:      list.New(),
-		p:      &pageOffset{p, clicksBase},
-		send:   s,
-		intBus: i,
+		send: s,
 	}
 }
 
@@ -36,29 +29,6 @@ func (c *clicks) addClick(line, col uint8) error {
 		return fmt.Errorf("col too big: %d", col)
 	}
 
-	if c.q.Len() >= 16 {
-		return fmt.Errorf("click event queue full")
-	}
-	c.q.PushBack(&click{line: line, col: col})
-
 	c.send.Send([]byte{byte(line), byte(col)})
-
 	return nil
-}
-
-func (c *clicks) Tick() {
-	if c.q.Len() == 0 {
-		return
-	}
-
-	if c.p.readByte(0) != 0 {
-		return
-	}
-
-	front := c.q.Front()
-	pos := front.Value.(*click)
-	c.q.Remove(front)
-
-	buf := []byte{1, 0, pos.line, pos.col}
-	c.p.writeWord(0, Endian.Uint32(buf))
 }
