@@ -30,7 +30,7 @@ func TestCPU(t *testing.T) {
 	}
 
 	m := newPhyMemory(PageSize * 32)
-	cpu := newCPU(m, ti1(0), 0)
+	cpu := newCPU(m, nil, ti1(0), 0)
 	e := cpu.Tick()
 	as(e == errHalt, "not halting")
 

@@ -11,6 +11,7 @@ var (
 		arch.HALT:    "halt",
 		arch.SYSCALL: "syscall",
 		arch.IRET:    "iret",
+		arch.IOCALL:  "iocall",
 		arch.SLEEP:   "sleep",
 	}
 

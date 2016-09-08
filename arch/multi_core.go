@@ -11,17 +11,17 @@ type multiCore struct {
 }
 
 // NewMultiCore creates a shared memory multicore processor.
-func newMultiCore(ncore int, mem *phyMemory, i inst) *multiCore {
-	if ncore > 32 {
+func newMultiCore(n int, mem *phyMemory, c *calls, i inst) *multiCore {
+	if n > 32 {
 		panic("too many cores")
 	}
 
 	ret := new(multiCore)
-	ret.cores = make([]*cpu, ncore)
+	ret.cores = make([]*cpu, n)
 	ret.phyMem = mem
 
 	for ind := range ret.cores {
-		ret.cores[ind] = newCPU(mem, i, byte(ind))
+		ret.cores[ind] = newCPU(mem, c, i, byte(ind))
 	}
 
 	return ret

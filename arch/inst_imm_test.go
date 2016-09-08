@@ -8,7 +8,7 @@ import (
 
 func TestInstImm(t *testing.T) {
 	m := newPhyMemory(PageSize * 32)
-	cpu := newCPU(m, new(instImm), 0)
+	cpu := newCPU(m, nil, new(instImm), 0)
 
 	tst := func(op, s, v, im, d, res uint32) {
 		cpu.Reset()

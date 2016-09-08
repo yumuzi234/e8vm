@@ -41,6 +41,14 @@ func (i *instSys) I(cpu *cpu, in uint32) *Excep {
 			return errInvalidInst
 		}
 		cpu.virtMem.SetTable(v1)
+	case IOCALL:
+		if cpu.UserMode() {
+			return errInvalidInst
+		}
+		if cpu.calls == nil {
+			return errInvalidInst
+		}
+		return cpu.calls.invoke()
 	case IRET:
 		if cpu.UserMode() {
 			return errInvalidInst
@@ -53,6 +61,7 @@ func (i *instSys) I(cpu *cpu, in uint32) *Excep {
 			cpu.sleeping = true
 			return errSleep
 		}
+		cpu.sleeping = false
 		return nil
 	default:
 		return errInvalidInst

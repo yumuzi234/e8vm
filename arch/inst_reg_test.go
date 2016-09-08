@@ -9,7 +9,7 @@ import (
 
 func TestInstReg(t *testing.T) {
 	m := newPhyMemory(PageSize * 32)
-	cpu := newCPU(m, new(instReg), 0)
+	cpu := newCPU(m, nil, new(instReg), 0)
 
 	tst := func(op, s1, s2, v1, v2, d, res uint32) {
 		cpu.Reset()

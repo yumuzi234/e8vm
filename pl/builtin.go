@@ -51,6 +51,7 @@ func declareBuiltin(b *builder, builtin *link.Pkg) {
 	o("PrintChar", "printChar", types.NewVoidFunc(types.Int8))
 	b.panicFunc = o("Panic", "panic", types.VoidFunc)
 	o("Sleep", "sleep", types.VoidFunc)
+	o("IOCall", "iocall", types.VoidFunc)
 	o("Assert", "assert", types.NewVoidFunc(types.Bool))
 
 	bi := func(name string) {

@@ -2,7 +2,6 @@ package arch
 
 import (
 	"container/list"
-	"log"
 
 	"e8vm.io/e8vm/arch/vpc"
 )
@@ -27,8 +26,6 @@ type calls struct {
 	services map[uint32]vpc.Service
 	enabled  map[uint32]bool
 	queue    *list.List
-
-	Core byte // core to throw exception
 }
 
 func newCalls(p *page, mem *phyMemory) *calls {
@@ -52,49 +49,51 @@ func (c *calls) register(id uint32, s vpc.Service) {
 	c.services[id] = s
 }
 
-func (c *calls) callControl(ctrl uint8, req []byte) ([]byte, int32) {
+func (c *calls) callControl(ctrl uint8, req []byte) ([]byte, int32, *Excep) {
 	switch ctrl {
 	case 1: // poll message
 		if c.queue.Len() == 0 {
-			return nil, vpc.ErrInternal // we will execute again
+			return nil, vpc.ErrInternal, errSleep // we will execute again
 		}
 
 		m := c.queue.Front().Value.(*callsMessage)
 		c.p.writeWord(callsService, m.service) // overwrite the service
-		return m.p, 0
+		return m.p, 0, nil
 
 	// TODO(lonliu): add other stuff
 	case 2: // list services
 	case 3: // enable/disalbe service message
 	}
 
-	return nil, vpc.ErrInvalidArg
+	return nil, vpc.ErrInvalidArg, nil
 }
 
-func (c *calls) call(ctrl uint8, service uint32, req []byte) ([]byte, int32) {
-	if service == 0 {
+func (c *calls) call(ctrl uint8, s uint32, req []byte) ([]byte, int32, *Excep) {
+	if s == 0 {
 		return c.callControl(ctrl, req)
 	}
 
-	s, found := c.services[service]
+	service, found := c.services[s]
 	if !found {
-		return nil, vpc.ErrNotFound
+		return nil, vpc.ErrNotFound, nil
 	}
-	return s.Handle(req)
+	resp, ret := service.Handle(req)
+	return resp, ret, nil
 }
 
 func (c *calls) respondCode(code int32) {
 	c.p.writeWord(callsResponseCode, uint32(code))
 }
 
-func (c *calls) Tick() {
+func (c *calls) Tick() { c.invoke() }
+
+func (c *calls) invoke() *Excep {
 	control := c.p.readByte(callsControl)
 	if control == 0 {
-		return
+		return nil
 	}
 
 	service := c.p.readWord(callsService)
-
 	reqAddr := c.p.readWord(callsRequestAddr)
 	reqLen := c.p.readWord(callsRequestLen)
 
@@ -107,16 +106,17 @@ func (c *calls) Tick() {
 		var exp *Excep
 		req[i], exp = c.mem.ReadByte(reqAddr + uint32(i))
 		if exp != nil {
-			log.Println(exp)
-			c.respondCode(vpc.ErrMemory)
-			return
+			return exp
 		}
 	}
 
-	resp, code := c.call(control, service, req)
+	resp, code, exp := c.call(control, service, req)
+	if exp != nil {
+		return exp
+	}
 	if code != 0 {
 		c.respondCode(code)
-		return
+		return nil
 	}
 
 	respAddr := c.p.readWord(callsResponseAddr)
@@ -124,26 +124,25 @@ func (c *calls) Tick() {
 	respLen := len(resp)
 	if respLen > vpc.MaxLen {
 		c.respondCode(vpc.ErrInternal)
-		return
+		return nil
 	}
 
 	// we will write the response length anyways
 	c.p.writeWord(callsResponseLen, uint32(respLen))
 	if uint32(respLen) > respSize {
 		c.respondCode(vpc.ErrSmallBuf)
-		return
+		return nil
 	}
 
 	if resp != nil {
 		for i := range resp {
 			if exp := c.mem.WriteByte(respAddr+uint32(i), resp[i]); exp != nil {
-				log.Println(exp)
-				c.respondCode(vpc.ErrMemory)
-				return
+				return exp
 			}
 		}
 	}
 
 	c.respondCode(0)
 	c.p.writeByte(callsControl, 0)
+	return nil
 }

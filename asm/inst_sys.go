@@ -11,6 +11,7 @@ var (
 	opSysMap = map[string]uint32{
 		"halt":    arch.HALT,
 		"syscall": arch.SYSCALL,
+		"iocall":  arch.IOCALL,
 		"iret":    arch.IRET,
 		"sleep":   arch.SLEEP,
 	}

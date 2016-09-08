@@ -114,6 +114,12 @@ func Sleep {
 	mov pc ret
 }
 
+// IOCall performs an IO call
+func IOCall {
+	iocall
+	mov pc ret
+}
+
 // Assert panics if the condition is not met
 func Assert {
 	bne r1 r0 .ret

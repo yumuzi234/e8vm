@@ -17,6 +17,7 @@ type cpu struct {
 	phyMem    *phyMemory
 	virtMem   *virtMemory
 	interrupt *interrupt
+	calls     *calls
 
 	inst     inst
 	index    byte
@@ -25,7 +26,7 @@ type cpu struct {
 }
 
 // newCPU creates a CPU with memroy and instruction binding
-func newCPU(mem *phyMemory, i inst, index byte) *cpu {
+func newCPU(mem *phyMemory, calls *calls, i inst, index byte) *cpu {
 	if index >= 32 {
 		panic("too many cores")
 	}
@@ -34,6 +35,7 @@ func newCPU(mem *phyMemory, i inst, index byte) *cpu {
 	ret.regs = makeRegs()
 	ret.phyMem = mem
 	ret.virtMem = newVirtMemory(ret.phyMem)
+	ret.calls = calls
 	ret.index = index
 
 	intPage := ret.phyMem.Page(pageInterrupt) // page 1 is the interrupt page

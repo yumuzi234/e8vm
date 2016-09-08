@@ -43,7 +43,8 @@ func NewMachine(c *Config) *Machine {
 	m := new(Machine)
 	m.phyMem = newPhyMemory(c.MemSize)
 	m.inst = new(instArch8)
-	m.cores = newMultiCore(c.Ncore, m.phyMem, m.inst)
+	m.calls = newCalls(m.phyMem.Page(pageRPC), m.phyMem)
+	m.cores = newMultiCore(c.Ncore, m.phyMem, m.calls, m.inst)
 
 	// hook-up devices
 	p := m.phyMem.Page(pageBasicIO)
@@ -51,7 +52,6 @@ func NewMachine(c *Config) *Machine {
 	m.console = newConsole(p, m.cores)
 	m.ticker = newTicker(m.cores)
 
-	m.calls = newCalls(m.phyMem.Page(pageRPC), m.phyMem)
 	m.calls.register(serviceConsole, m.console)
 
 	m.addDevice(m.calls)

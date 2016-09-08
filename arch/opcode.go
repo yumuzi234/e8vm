@@ -61,7 +61,8 @@ const (
 	VTABLE  = 67
 	IRET    = 68
 	SYSINFO = 69
-	SLEEP   = 70
+	IOCALL  = 70
+	SLEEP   = 71
 )
 
 // Jump instructions
