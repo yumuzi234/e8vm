@@ -6,6 +6,7 @@ import (
 	"io"
 	"math/rand"
 
+	"e8vm.io/e8vm/arch/misc"
 	"e8vm.io/e8vm/arch/screen"
 	"e8vm.io/e8vm/image"
 )
@@ -20,6 +21,7 @@ type Machine struct {
 	console *console
 	clicks  *screen.Clicks
 	screen  *screen.Screen
+	rand    *misc.Rand
 	ticker  *ticker
 	rom     *rom
 
@@ -52,8 +54,10 @@ func NewMachine(c *Config) *Machine {
 
 	m.console = newConsole(p, m.cores)
 	m.ticker = newTicker(m.cores)
+	m.rand = misc.NewTimeRand()
 
 	m.calls.register(serviceConsole, m.console)
+	m.calls.register(serviceRand, m.rand)
 
 	m.addDevice(m.ticker)
 	m.addDevice(m.console)

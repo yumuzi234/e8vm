@@ -2,6 +2,7 @@ package arch
 
 import (
 	"container/list"
+	"fmt"
 
 	"e8vm.io/e8vm/arch/vpc"
 )
@@ -46,6 +47,7 @@ func (c *calls) register(id uint32, s vpc.Service) {
 		panic("cannot register service 0")
 	}
 
+	fmt.Printf("service %d registered\n", id)
 	c.services[id] = s
 }
 
