@@ -24,4 +24,5 @@ const (
 	serviceConsole = 1 + iota
 	serviceScreen
 	serviceRand
+	serviceClock
 )

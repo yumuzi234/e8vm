@@ -37,6 +37,13 @@ const (
 	DefaultSPStride uint32 = 0x2000
 )
 
+func makeRand(c *Config) *misc.Rand {
+	if c.RandSeed == 0 {
+		return misc.NewTimeRand()
+	}
+	return misc.NewRand(c.RandSeed)
+}
+
 // NewMachine creates a machine with memory and cores.
 // 0 memSize for full 4GB memory.
 func NewMachine(c *Config) *Machine {
@@ -54,10 +61,10 @@ func NewMachine(c *Config) *Machine {
 
 	m.console = newConsole(p, m.cores)
 	m.ticker = newTicker(m.cores)
-	m.rand = misc.NewTimeRand()
 
 	m.calls.register(serviceConsole, m.console)
-	m.calls.register(serviceRand, m.rand)
+	m.calls.register(serviceRand, makeRand(c))
+	m.calls.register(serviceClock, misc.NewClock())
 
 	m.addDevice(m.ticker)
 	m.addDevice(m.console)
