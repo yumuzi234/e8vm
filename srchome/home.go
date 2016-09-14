@@ -38,6 +38,7 @@ func NewHome(std string, h builds.Home) *Home {
 	if !strings.HasPrefix(std, "/") {
 		std = "/" + std
 	}
+	std = strings.TrimSuffix(std, "/")
 
 	return &Home{
 		std:  std,
@@ -72,7 +73,10 @@ func (h *Home) Pkgs(prefix string) []string {
 	pkgs := h.home.Pkgs(prefix)
 	var ret []string
 	for _, p := range pkgs {
-		p = strings.TrimPrefix("/"+p, h.std)
+		p := "/" + p
+		if h.std != "" {
+			p = strings.TrimPrefix(p, h.std+"/")
+		}
 		ret = append(ret, p)
 	}
 	return ret
