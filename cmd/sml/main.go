@@ -16,6 +16,7 @@ var (
 	pkg      = flag.String("pkg", "/...", "package to build")
 	homeDir  = flag.String("home", ".", "the home directory")
 	plan     = flag.Bool("plan", false, "plan only")
+	std      = flag.String("std", "", "standard library directory")
 )
 
 func handleErrs(errs []*lexing.Error) {
@@ -31,7 +32,7 @@ func handleErrs(errs []*lexing.Error) {
 func main() {
 	flag.Parse()
 
-	home := srchome.NewDirHome(*homeDir, "")
+	home := srchome.NewDirHome(*homeDir, *std)
 	b := builds.NewBuilder(home, home)
 	b.Verbose = true
 	b.InitPC = arch.InitPC
