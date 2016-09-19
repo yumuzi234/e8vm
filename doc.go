@@ -1,3 +1,3 @@
-// Package e8vm builds a virtual machine world that aims to provide
+// Package smlvm builds a virtual machine world that aims to provide
 // better code readability.
-package smlvm
+package smlvm // import "shanhu.io/smlvm"
