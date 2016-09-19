@@ -28,8 +28,8 @@ type calls struct {
 	enabled  map[uint32]bool
 	queue    *list.List
 
-	doSleep bool
-	sleep   time.Duration
+	timedSleep bool
+	sleep      time.Duration
 }
 
 func newCalls(p *page, mem *phyMemory) *calls {
@@ -59,14 +59,14 @@ func (c *calls) system(ctrl uint8, in []byte, respSize int) (
 	case 1: // poll message
 		if c.queue.Len() == 0 {
 			if len(in) == 0 {
-				c.doSleep = false
+				c.timedSleep = false
 				return nil, vpc.ErrInternal, errSleep // we will execute again
 			}
 			if len(in) != 8 {
 				return nil, vpc.ErrInvalidArg, nil
 			}
 
-			c.doSleep = true
+			c.timedSleep = true
 			c.sleep = time.Duration(Endian.Uint64(in[:8]))
 			return nil, vpc.ErrInternal, errSleep
 		}
@@ -174,4 +174,8 @@ func (c *calls) invoke() *Excep {
 	c.respondCode(0)
 	c.p.writeByte(callsControl, 0)
 	return nil
+}
+
+func (c *calls) sleepTime() (time.Duration, bool) {
+	return c.sleep, c.timedSleep
 }

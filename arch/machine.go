@@ -255,5 +255,5 @@ func (m *Machine) Click(line, col uint8) { m.clicks.Click(line, col) }
 
 // SleepTime returns the sleeping time required before next execution.
 func (m *Machine) SleepTime() (time.Duration, bool) {
-	return m.calls.sleep, m.calls.doSleep
+	return m.calls.sleepTime()
 }
