@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"math/rand"
+	"time"
 
 	"shanhu.io/smlvm/arch/misc"
 	"shanhu.io/smlvm/arch/screen"
@@ -90,7 +91,7 @@ func NewMachine(c *Config) *Machine {
 	}
 	m.SetPC(c.InitPC)
 	if c.Output != nil {
-		m.setOutput(c.Output)
+		m.console.Output = c.Output
 	}
 	if c.ROM != "" {
 		m.mountROM(c.ROM)
@@ -98,7 +99,7 @@ func NewMachine(c *Config) *Machine {
 	if c.RandSeed != 0 {
 		m.randSeed(c.RandSeed)
 	}
-	m.setBootArg(c.BootArg)
+	m.phyMem.WriteWord(AddrBootArg, c.BootArg) // ignoring write error
 
 	return m
 }
@@ -109,21 +110,6 @@ func (m *Machine) mountROM(root string) {
 	m.addDevice(m.rom)
 }
 
-func expToError(exp *Excep) error {
-	if exp == nil {
-		return nil
-	}
-	return exp
-}
-
-func (m *Machine) writePhyWord(phyAddr uint32, v uint32) error {
-	return expToError(m.phyMem.WriteWord(phyAddr, v))
-}
-
-func (m *Machine) setBootArg(arg uint32) error {
-	return m.writePhyWord(AddrBootArg, arg)
-}
-
 // ReadWord reads a word from the virtual address space.
 func (m *Machine) ReadWord(core byte, virtAddr uint32) (uint32, error) {
 	return m.cores.readWord(core, virtAddr)
@@ -132,10 +118,6 @@ func (m *Machine) ReadWord(core byte, virtAddr uint32) (uint32, error) {
 // DumpRegs returns the values of the current registers of a core.
 func (m *Machine) DumpRegs(core byte) []uint32 {
 	return m.cores.dumpRegs(core)
-}
-
-func (m *Machine) setOutput(w io.Writer) {
-	m.console.Output = w
 }
 
 func (m *Machine) addDevice(d device) { m.devices = append(m.devices, d) }
@@ -270,3 +252,8 @@ func (m *Machine) FlushScreen() {
 
 // Click sends in a mouse click at the particular location.
 func (m *Machine) Click(line, col uint8) { m.clicks.Click(line, col) }
+
+// SleepTime returns the sleeping time required before next execution.
+func (m *Machine) SleepTime() (time.Duration, bool) {
+	return m.calls.sleep, m.calls.doSleep
+}

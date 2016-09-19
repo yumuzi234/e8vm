@@ -2,6 +2,7 @@ package arch
 
 import (
 	"container/list"
+	"time"
 
 	"shanhu.io/smlvm/arch/vpc"
 )
@@ -26,6 +27,9 @@ type calls struct {
 	services map[uint32]vpc.Service
 	enabled  map[uint32]bool
 	queue    *list.List
+
+	doSleep bool
+	sleep   time.Duration
 }
 
 func newCalls(p *page, mem *phyMemory) *calls {
@@ -48,13 +52,23 @@ func (c *calls) register(id uint32, s vpc.Service) {
 	c.services[id] = s
 }
 
-func (c *calls) system(ctrl uint8, _ []byte, respSize int) (
+func (c *calls) system(ctrl uint8, in []byte, respSize int) (
 	[]byte, int32, *Excep,
 ) {
 	switch ctrl {
 	case 1: // poll message
 		if c.queue.Len() == 0 {
-			return nil, vpc.ErrInternal, errSleep // we will execute again
+			if len(in) == 0 {
+				c.doSleep = false
+				return nil, vpc.ErrInternal, errSleep // we will execute again
+			}
+			if len(in) != 8 {
+				return nil, vpc.ErrInvalidArg, nil
+			}
+
+			c.doSleep = true
+			c.sleep = time.Duration(Endian.Uint64(in[:8]))
+			return nil, vpc.ErrInternal, errSleep
 		}
 
 		front := c.queue.Front()
