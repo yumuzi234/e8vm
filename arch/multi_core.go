@@ -92,6 +92,12 @@ func (c *multiCore) dumpRegs(core byte) []uint32 {
 	return ret
 }
 
+func (c *multiCore) setSP(sp, stackSize uint32) {
+	for i, cpu := range c.cores {
+		cpu.regs[SP] = sp + uint32(i+1)*stackSize
+	}
+}
+
 func printCPUStatus(c *cpu) {
 	p := func(name string, reg int) {
 		fmt.Printf(" %3s = 0x%08x %-11d\n",

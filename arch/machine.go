@@ -85,9 +85,9 @@ func NewMachine(c *Config) *Machine {
 	sys.WriteWord(4, uint32(c.Ncore))
 
 	if c.InitSP == 0 {
-		m.setSP(DefaultSPBase, DefaultSPStride)
+		m.cores.setSP(DefaultSPBase, DefaultSPStride)
 	} else {
-		m.setSP(c.InitSP, c.StackPerCore)
+		m.cores.setSP(c.InitSP, c.StackPerCore)
 	}
 	m.SetPC(c.InitPC)
 	if c.Output != nil {
@@ -175,15 +175,6 @@ func (m *Machine) randSeed(s int64) {
 	m.ticker.Rand = rand.New(rand.NewSource(s))
 }
 
-func findCodeStart(secs []*image.Section) (uint32, bool) {
-	for _, s := range secs {
-		if s.Type == image.Code {
-			return s.Addr, true
-		}
-	}
-	return 0, false
-}
-
 // LoadSections loads a list of sections into the machine.
 func (m *Machine) LoadSections(secs []*image.Section) error {
 	for _, s := range secs {
@@ -204,7 +195,7 @@ func (m *Machine) LoadSections(secs []*image.Section) error {
 		}
 	}
 
-	if pc, found := findCodeStart(secs); found {
+	if pc, found := image.CodeStart(secs); found {
 		m.SetPC(pc)
 	}
 	m.Sections = secs
@@ -216,12 +207,6 @@ func (m *Machine) LoadSections(secs []*image.Section) error {
 func (m *Machine) SetPC(pc uint32) {
 	for _, cpu := range m.cores.cores {
 		cpu.regs[PC] = pc
-	}
-}
-
-func (m *Machine) setSP(sp, stackSize uint32) {
-	for i, cpu := range m.cores.cores {
-		cpu.regs[SP] = sp + uint32(i+1)*stackSize
 	}
 }
 
