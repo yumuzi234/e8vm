@@ -1,7 +1,7 @@
 package pl
 
 import (
-	"e8vm.io/e8vm/pl/codegen"
+	"shanhu.io/smlvm/pl/codegen"
 )
 
 func nilPointerPanic(b *builder, pt codegen.Ref) {

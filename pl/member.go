@@ -1,10 +1,10 @@
 package pl
 
 import (
-	"e8vm.io/e8vm/asm"
-	"e8vm.io/e8vm/pl/codegen"
-	"e8vm.io/e8vm/pl/tast"
-	"e8vm.io/e8vm/pl/types"
+	"shanhu.io/smlvm/asm"
+	"shanhu.io/smlvm/pl/codegen"
+	"shanhu.io/smlvm/pl/tast"
+	"shanhu.io/smlvm/pl/types"
 )
 
 func buildPkgSym(b *builder, m *tast.MemberExpr, pkg *types.Pkg) *ref {

@@ -3,7 +3,7 @@ package parse
 import (
 	"io"
 
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/lexing"
 )
 
 // Parser parses a file input stream into top-level syntax blocks.

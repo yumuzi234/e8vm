@@ -1,8 +1,8 @@
 package sempass
 
 import (
-	"e8vm.io/e8vm/pl/ast"
-	"e8vm.io/e8vm/pl/tast"
+	"shanhu.io/smlvm/pl/ast"
+	"shanhu.io/smlvm/pl/tast"
 )
 
 func buildExprList(b *builder, list *ast.ExprList) tast.Expr {

@@ -3,7 +3,7 @@ package codegen
 import (
 	"math"
 
-	"e8vm.io/e8vm/arch"
+	"shanhu.io/smlvm/arch"
 )
 
 /**

@@ -1,7 +1,7 @@
 package pl
 
 import (
-	"e8vm.io/e8vm/pl/ast"
+	"shanhu.io/smlvm/pl/ast"
 )
 
 type objVar struct {

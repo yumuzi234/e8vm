@@ -7,10 +7,10 @@ import (
 	"os"
 	"strings"
 
-	"e8vm.io/e8vm/arch"
-	"e8vm.io/e8vm/asm"
-	"e8vm.io/e8vm/dasm"
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/arch"
+	"shanhu.io/smlvm/asm"
+	"shanhu.io/smlvm/dasm"
+	"shanhu.io/smlvm/lexing"
 )
 
 var (

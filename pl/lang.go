@@ -7,12 +7,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"e8vm.io/e8vm/builds"
-	"e8vm.io/e8vm/dagvis"
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/pl/ast"
-	"e8vm.io/e8vm/pl/codegen"
-	"e8vm.io/e8vm/pl/parse"
+	"shanhu.io/smlvm/builds"
+	"shanhu.io/smlvm/dagvis"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/pl/ast"
+	"shanhu.io/smlvm/pl/codegen"
+	"shanhu.io/smlvm/pl/parse"
 )
 
 type lang struct {

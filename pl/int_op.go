@@ -1,8 +1,8 @@
 package pl
 
 import (
-	"e8vm.io/e8vm/pl/codegen"
-	"e8vm.io/e8vm/pl/types"
+	"shanhu.io/smlvm/pl/codegen"
+	"shanhu.io/smlvm/pl/types"
 )
 
 func buildBasicArith(b *builder, ret, A, B *ref, op string) {

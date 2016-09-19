@@ -3,12 +3,12 @@ package pl
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/builds"
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/pl/ast"
-	"e8vm.io/e8vm/pl/codegen"
-	"e8vm.io/e8vm/pl/parse"
-	"e8vm.io/e8vm/pl/sempass"
+	"shanhu.io/smlvm/builds"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/pl/ast"
+	"shanhu.io/smlvm/pl/codegen"
+	"shanhu.io/smlvm/pl/parse"
+	"shanhu.io/smlvm/pl/sempass"
 )
 
 // because bare function also uses builtin functions that comes from the

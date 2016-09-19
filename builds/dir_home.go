@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"sort"
 
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/lexing"
 )
 
 func listSrcFiles(dir string, lang Lang) ([]string, error) {

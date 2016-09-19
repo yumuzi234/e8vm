@@ -3,7 +3,7 @@
 package tast
 
 import (
-	"e8vm.io/e8vm/pl/types"
+	"shanhu.io/smlvm/pl/types"
 )
 
 // Expr is a generic interface for an expression.

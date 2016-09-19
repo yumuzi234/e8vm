@@ -1,7 +1,7 @@
 package pl
 
 import (
-	"e8vm.io/e8vm/pl/types"
+	"shanhu.io/smlvm/pl/types"
 )
 
 func buildShift(b *builder, ret, A, B *ref, op string) {

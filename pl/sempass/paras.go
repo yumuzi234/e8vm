@@ -1,8 +1,8 @@
 package sempass
 
 import (
-	"e8vm.io/e8vm/pl/ast"
-	"e8vm.io/e8vm/pl/types"
+	"shanhu.io/smlvm/pl/ast"
+	"shanhu.io/smlvm/pl/types"
 )
 
 func buildNamedParaList(b *builder, lst *ast.ParaList) []*types.Arg {

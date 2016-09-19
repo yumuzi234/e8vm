@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"io"
 
-	"e8vm.io/e8vm/builds"
-	"e8vm.io/e8vm/image"
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/link"
+	"shanhu.io/smlvm/builds"
+	"shanhu.io/smlvm/image"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/link"
 )
 
 // BuildSingleFile builds a package named "main" from a single file.

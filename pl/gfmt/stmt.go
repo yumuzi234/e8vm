@@ -1,8 +1,8 @@
 package gfmt
 
 import (
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/pl/ast"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/pl/ast"
 )
 
 func sameLine(t1, t2 *lexing.Token) bool {

@@ -3,7 +3,7 @@ package screen
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/arch/vpc"
+	"shanhu.io/smlvm/arch/vpc"
 )
 
 // Clicks manages clicks on a screen.

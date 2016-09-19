@@ -4,9 +4,9 @@ package asm
 import (
 	"strings"
 
-	"e8vm.io/e8vm/builds"
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/syms"
+	"shanhu.io/smlvm/builds"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/syms"
 )
 
 type lang struct{}

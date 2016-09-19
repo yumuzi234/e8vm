@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"testing"
 
-	"e8vm.io/e8vm/debug"
+	"shanhu.io/smlvm/debug"
 )
 
 func TestFindFunc(t *testing.T) {

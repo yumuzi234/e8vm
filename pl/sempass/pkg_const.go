@@ -1,12 +1,12 @@
 package sempass
 
 import (
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/pl/ast"
-	"e8vm.io/e8vm/pl/tast"
-	"e8vm.io/e8vm/pl/types"
-	"e8vm.io/e8vm/syms"
-	"e8vm.io/e8vm/toposort"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/pl/ast"
+	"shanhu.io/smlvm/pl/tast"
+	"shanhu.io/smlvm/pl/types"
+	"shanhu.io/smlvm/syms"
+	"shanhu.io/smlvm/toposort"
 )
 
 type pkgConst struct {

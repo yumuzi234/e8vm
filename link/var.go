@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"math"
 
-	"e8vm.io/e8vm/arch"
+	"shanhu.io/smlvm/arch"
 )
 
 // Var reprsents a variable object

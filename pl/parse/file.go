@@ -5,9 +5,9 @@ import (
 	"io"
 	"io/ioutil"
 
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/pl/ast"
-	"e8vm.io/e8vm/textbox"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/pl/ast"
+	"shanhu.io/smlvm/textbox"
 )
 
 func parseTopDecl(p *parser) ast.Decl {

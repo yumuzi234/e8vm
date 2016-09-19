@@ -5,9 +5,9 @@ import (
 	"math"
 	"strconv"
 
-	"e8vm.io/e8vm/arch"
-	"e8vm.io/e8vm/asm/parse"
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/arch"
+	"shanhu.io/smlvm/asm/parse"
+	"shanhu.io/smlvm/lexing"
 )
 
 func nbitAlign(nbit int) uint32 {

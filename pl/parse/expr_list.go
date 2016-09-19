@@ -1,7 +1,7 @@
 package parse
 
 import (
-	"e8vm.io/e8vm/pl/ast"
+	"shanhu.io/smlvm/pl/ast"
 )
 
 func parseExprListClosed(p *parser, closeWith string) *ast.ExprList {

@@ -1,8 +1,8 @@
 package tast
 
 import (
-	"e8vm.io/e8vm/fmtutil"
-	"e8vm.io/e8vm/pl/types"
+	"shanhu.io/smlvm/fmtutil"
+	"shanhu.io/smlvm/pl/types"
 )
 
 // Ref is a reference to a evaluatd node.

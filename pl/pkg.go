@@ -7,15 +7,15 @@ import (
 	"math/rand"
 	"time"
 
-	"e8vm.io/e8vm/builds"
-	"e8vm.io/e8vm/dagvis"
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/pl/ast"
-	"e8vm.io/e8vm/pl/codegen"
-	"e8vm.io/e8vm/pl/sempass"
-	"e8vm.io/e8vm/pl/tast"
-	"e8vm.io/e8vm/pl/types"
-	"e8vm.io/e8vm/syms"
+	"shanhu.io/smlvm/builds"
+	"shanhu.io/smlvm/dagvis"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/pl/ast"
+	"shanhu.io/smlvm/pl/codegen"
+	"shanhu.io/smlvm/pl/sempass"
+	"shanhu.io/smlvm/pl/tast"
+	"shanhu.io/smlvm/pl/types"
+	"shanhu.io/smlvm/syms"
 )
 
 type pkg struct {

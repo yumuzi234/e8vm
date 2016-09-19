@@ -3,7 +3,7 @@ package types
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/syms"
+	"shanhu.io/smlvm/syms"
 )
 
 // Pkg represents a package import.

@@ -3,12 +3,12 @@ package sempass
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/builds"
-	"e8vm.io/e8vm/dagvis"
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/pl/ast"
-	"e8vm.io/e8vm/pl/tast"
-	"e8vm.io/e8vm/syms"
+	"shanhu.io/smlvm/builds"
+	"shanhu.io/smlvm/dagvis"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/pl/ast"
+	"shanhu.io/smlvm/pl/tast"
+	"shanhu.io/smlvm/syms"
 )
 
 func makeBuilder(path string, scope *syms.Scope) *builder {

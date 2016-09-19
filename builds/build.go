@@ -4,8 +4,8 @@ import (
 	"io"
 	"path"
 
-	"e8vm.io/e8vm/dagvis"
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/dagvis"
+	"shanhu.io/smlvm/lexing"
 )
 
 func deps(node *dagvis.MapNode) []string {

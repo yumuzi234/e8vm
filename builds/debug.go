@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"math"
 
-	"e8vm.io/e8vm/debug"
-	"e8vm.io/e8vm/image"
+	"shanhu.io/smlvm/debug"
+	"shanhu.io/smlvm/image"
 )
 
 func debugSection(tab *debug.Table) (*image.Section, error) {

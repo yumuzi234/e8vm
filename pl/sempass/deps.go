@@ -3,8 +3,8 @@ package sempass
 import (
 	"path/filepath"
 
-	"e8vm.io/e8vm/dagvis"
-	"e8vm.io/e8vm/pl/ast"
+	"shanhu.io/smlvm/dagvis"
+	"shanhu.io/smlvm/pl/ast"
 )
 
 type deps map[string]map[string]struct{}

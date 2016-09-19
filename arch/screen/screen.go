@@ -1,8 +1,8 @@
 package screen
 
 import (
-	"e8vm.io/e8vm/arch/vpc"
-	"e8vm.io/e8vm/coder"
+	"shanhu.io/smlvm/arch/vpc"
+	"shanhu.io/smlvm/coder"
 )
 
 // Screen is the screen buffer.

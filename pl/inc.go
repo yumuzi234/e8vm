@@ -1,8 +1,8 @@
 package pl
 
 import (
-	"e8vm.io/e8vm/pl/codegen"
-	"e8vm.io/e8vm/pl/tast"
+	"shanhu.io/smlvm/pl/codegen"
+	"shanhu.io/smlvm/pl/tast"
 )
 
 func buildIncStmt(b *builder, stmt *tast.IncStmt) {

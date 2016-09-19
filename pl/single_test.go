@@ -6,7 +6,7 @@ import (
 	"errors"
 	"strings"
 
-	"e8vm.io/e8vm/arch"
+	"shanhu.io/smlvm/arch"
 )
 
 var errRunFailed = errors.New("test run failed")

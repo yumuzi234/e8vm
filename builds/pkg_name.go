@@ -3,7 +3,7 @@ package builds
 import (
 	"strings"
 
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/lexing"
 )
 
 func isPkgPath(p string) bool {

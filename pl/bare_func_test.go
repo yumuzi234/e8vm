@@ -5,7 +5,7 @@ import (
 
 	"strings"
 
-	"e8vm.io/e8vm/arch"
+	"shanhu.io/smlvm/arch"
 )
 
 func bareTestRun(t *testing.T, input string, N int) (out string, e error) {

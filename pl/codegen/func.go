@@ -3,7 +3,7 @@ package codegen
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/lexing"
 )
 
 // Func is an IR function. It consists of a bunch of named

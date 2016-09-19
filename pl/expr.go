@@ -3,8 +3,8 @@ package pl
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/pl/tast"
-	"e8vm.io/e8vm/pl/types"
+	"shanhu.io/smlvm/pl/tast"
+	"shanhu.io/smlvm/pl/types"
 )
 
 // to replace buildExpr in the future

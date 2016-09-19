@@ -1,7 +1,7 @@
 package asm
 
 import (
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/lexing"
 )
 
 func argCount(log lexing.Logger, ops []*lexing.Token, n int) bool {

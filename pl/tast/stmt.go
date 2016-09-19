@@ -1,8 +1,8 @@
 package tast
 
 import (
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/syms"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/syms"
 )
 
 // ExprStmt is a statement with just an expression.

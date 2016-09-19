@@ -1,7 +1,7 @@
 package parse
 
 import (
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/lexing"
 )
 
 // a pipe that replaces end-lines with semicolons

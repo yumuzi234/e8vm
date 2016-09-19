@@ -3,7 +3,7 @@ package parse
 import (
 	"io"
 
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/lexing"
 )
 
 // Tokens parses a file into a token array

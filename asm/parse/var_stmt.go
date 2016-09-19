@@ -1,8 +1,8 @@
 package parse
 
 import (
-	"e8vm.io/e8vm/asm/ast"
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/asm/ast"
+	"shanhu.io/smlvm/lexing"
 )
 
 func parseArgs(p *parser) (typ *lexing.Token, args []*lexing.Token) {

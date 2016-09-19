@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"e8vm.io/e8vm/fmtutil"
+	"shanhu.io/smlvm/fmtutil"
 )
 
 func printOp(p io.Writer, op Op) {

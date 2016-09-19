@@ -1,7 +1,7 @@
 package syms
 
 import (
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/lexing"
 )
 
 // Symbol is a data structure for saving a symbol.

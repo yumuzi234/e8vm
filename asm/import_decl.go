@@ -1,8 +1,8 @@
 package asm
 
 import (
-	"e8vm.io/e8vm/asm/ast"
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/asm/ast"
+	"shanhu.io/smlvm/lexing"
 )
 
 type importDecl struct {

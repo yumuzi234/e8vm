@@ -6,9 +6,9 @@ import (
 	"io"
 	"math/rand"
 
-	"e8vm.io/e8vm/arch/misc"
-	"e8vm.io/e8vm/arch/screen"
-	"e8vm.io/e8vm/image"
+	"shanhu.io/smlvm/arch/misc"
+	"shanhu.io/smlvm/arch/screen"
+	"shanhu.io/smlvm/image"
 )
 
 // Machine is a multicore shared memory simulated arch8 machine.

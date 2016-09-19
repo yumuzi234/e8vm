@@ -1,9 +1,9 @@
 package asm
 
 import (
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/link"
-	"e8vm.io/e8vm/syms"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/link"
+	"shanhu.io/smlvm/syms"
 )
 
 // buildFunc builds a function object from a function AST node.

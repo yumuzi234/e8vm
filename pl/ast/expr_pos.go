@@ -3,7 +3,7 @@ package ast
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/lexing"
 )
 
 // ExprPos returns the starting position of an expression.

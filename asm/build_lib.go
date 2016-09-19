@@ -1,7 +1,7 @@
 package asm
 
 import (
-	"e8vm.io/e8vm/syms"
+	"shanhu.io/smlvm/syms"
 )
 
 func declareSymbol(b *builder, sym *syms.Symbol) bool {

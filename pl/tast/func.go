@@ -1,8 +1,8 @@
 package tast
 
 import (
-	"e8vm.io/e8vm/pl/types"
-	"e8vm.io/e8vm/syms"
+	"shanhu.io/smlvm/pl/types"
+	"shanhu.io/smlvm/syms"
 )
 
 // Func is a function.

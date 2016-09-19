@@ -1,7 +1,7 @@
 package asm
 
 import (
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/lexing"
 )
 
 var insts = []instResolver{

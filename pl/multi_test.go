@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"e8vm.io/e8vm/arch"
+	"shanhu.io/smlvm/arch"
 )
 
 func multiTestRun(t *testing.T, fs map[string]string, N int) (

@@ -9,11 +9,11 @@ import (
 	"runtime/pprof"
 	"strings"
 
-	"e8vm.io/e8vm/arch"
-	"e8vm.io/e8vm/asm"
-	"e8vm.io/e8vm/builds"
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/pl"
+	"shanhu.io/smlvm/arch"
+	"shanhu.io/smlvm/asm"
+	"shanhu.io/smlvm/builds"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/pl"
 )
 
 var (

@@ -3,9 +3,9 @@ package pl
 import (
 	"strings"
 
-	"e8vm.io/e8vm/pl/tast"
-	"e8vm.io/e8vm/pl/types"
-	"e8vm.io/e8vm/syms"
+	"shanhu.io/smlvm/pl/tast"
+	"shanhu.io/smlvm/pl/types"
+	"shanhu.io/smlvm/syms"
 )
 
 func isTestName(name string) bool {

@@ -4,11 +4,11 @@ import (
 	"math"
 	"strconv"
 
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/pl/ast"
-	"e8vm.io/e8vm/pl/parse"
-	"e8vm.io/e8vm/pl/tast"
-	"e8vm.io/e8vm/pl/types"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/pl/ast"
+	"shanhu.io/smlvm/pl/parse"
+	"shanhu.io/smlvm/pl/tast"
+	"shanhu.io/smlvm/pl/types"
 )
 
 func buildInt(b *builder, op *lexing.Token) tast.Expr {

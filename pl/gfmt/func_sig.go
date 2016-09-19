@@ -1,7 +1,7 @@
 package gfmt
 
 import (
-	"e8vm.io/e8vm/pl/ast"
+	"shanhu.io/smlvm/pl/ast"
 )
 
 func printParaList(f *formatter, lst *ast.ParaList) {

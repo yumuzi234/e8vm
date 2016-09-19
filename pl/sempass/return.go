@@ -1,10 +1,10 @@
 package sempass
 
 import (
-	"e8vm.io/e8vm/fmtutil"
-	"e8vm.io/e8vm/pl/ast"
-	"e8vm.io/e8vm/pl/tast"
-	"e8vm.io/e8vm/pl/types"
+	"shanhu.io/smlvm/fmtutil"
+	"shanhu.io/smlvm/pl/ast"
+	"shanhu.io/smlvm/pl/tast"
+	"shanhu.io/smlvm/pl/types"
 )
 
 func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {

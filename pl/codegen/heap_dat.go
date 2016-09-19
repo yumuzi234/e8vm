@@ -3,7 +3,7 @@ package codegen
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/link"
+	"shanhu.io/smlvm/link"
 )
 
 type heapDat struct {

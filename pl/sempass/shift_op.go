@@ -1,8 +1,8 @@
 package sempass
 
 import (
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/pl/types"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/pl/types"
 )
 
 func canShift(b *builder, atyp, btyp types.T, pos *lexing.Pos, op string) bool {

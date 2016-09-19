@@ -3,10 +3,10 @@ package builds
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/dagvis"
-	"e8vm.io/e8vm/debug"
-	"e8vm.io/e8vm/lexing"
-	link8 "e8vm.io/e8vm/link"
+	"shanhu.io/smlvm/dagvis"
+	"shanhu.io/smlvm/debug"
+	"shanhu.io/smlvm/lexing"
+	link8 "shanhu.io/smlvm/link"
 )
 
 // Builder builds a bunch of packages.

@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"os"
 
-	"e8vm.io/e8vm/arch"
-	"e8vm.io/e8vm/builds"
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/srchome"
+	"shanhu.io/smlvm/arch"
+	"shanhu.io/smlvm/builds"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/srchome"
 )
 
 var (

@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"io"
 
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/pl/parse"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/pl/parse"
 )
 
 func makeFormatter(out io.Writer, tokens []*lexing.Token) *formatter {

@@ -1,7 +1,7 @@
 package types
 
 import (
-	"e8vm.io/e8vm/syms"
+	"shanhu.io/smlvm/syms"
 )
 
 // Field is a named field in a struct

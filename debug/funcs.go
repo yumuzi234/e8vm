@@ -1,7 +1,7 @@
 package debug
 
 import (
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/lexing"
 )
 
 // Funcs saves all the debug symbols for all functions.

@@ -3,7 +3,7 @@ package dasm
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/arch"
+	"shanhu.io/smlvm/arch"
 )
 
 var (

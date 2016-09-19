@@ -1,8 +1,8 @@
 package builds
 
 import (
-	"e8vm.io/e8vm/dagvis"
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/dagvis"
+	"shanhu.io/smlvm/lexing"
 )
 
 // Options contains options for building a set of packages.

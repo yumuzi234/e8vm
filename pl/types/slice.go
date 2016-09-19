@@ -1,7 +1,7 @@
 package types
 
 import (
-	"e8vm.io/e8vm/arch"
+	"shanhu.io/smlvm/arch"
 )
 
 // Slice is a slice type

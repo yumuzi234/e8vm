@@ -1,7 +1,7 @@
 package ast
 
 import (
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/lexing"
 )
 
 // Para is a function parameter

@@ -5,7 +5,7 @@ import (
 
 	"strings"
 
-	"e8vm.io/e8vm/pl/ast"
+	"shanhu.io/smlvm/pl/ast"
 )
 
 func TestStmts_good(t *testing.T) {

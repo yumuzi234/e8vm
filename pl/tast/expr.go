@@ -1,9 +1,9 @@
 package tast
 
 import (
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/pl/types"
-	"e8vm.io/e8vm/syms"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/pl/types"
+	"shanhu.io/smlvm/syms"
 )
 
 // This is the this pointer.

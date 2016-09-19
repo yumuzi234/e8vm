@@ -1,8 +1,8 @@
 package codegen
 
 import (
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/link"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/link"
 )
 
 // BuildPkg builds a package and returns the built lib

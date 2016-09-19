@@ -1,8 +1,8 @@
 package asm
 
 import (
-	"e8vm.io/e8vm/link"
-	"e8vm.io/e8vm/syms"
+	"shanhu.io/smlvm/link"
+	"shanhu.io/smlvm/syms"
 )
 
 // Lib is the compiler output of a package

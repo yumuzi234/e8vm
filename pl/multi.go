@@ -1,8 +1,8 @@
 package pl
 
 import (
-	"e8vm.io/e8vm/builds"
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/builds"
+	"shanhu.io/smlvm/lexing"
 )
 
 func buildMulti(

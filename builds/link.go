@@ -3,10 +3,10 @@ package builds
 import (
 	"io"
 
-	"e8vm.io/e8vm/arch"
-	"e8vm.io/e8vm/debug"
-	"e8vm.io/e8vm/image"
-	"e8vm.io/e8vm/link"
+	"shanhu.io/smlvm/arch"
+	"shanhu.io/smlvm/debug"
+	"shanhu.io/smlvm/image"
+	"shanhu.io/smlvm/link"
 )
 
 func linkPkg(c *context, out io.Writer, p *pkg, main string) error {

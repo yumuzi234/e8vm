@@ -3,8 +3,8 @@ package codegen
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/link"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/link"
 )
 
 // Pkg is a package in its intermediate representation.

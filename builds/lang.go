@@ -3,9 +3,9 @@ package builds
 import (
 	"io"
 
-	"e8vm.io/e8vm/lexing"
-	link8 "e8vm.io/e8vm/link"
-	"e8vm.io/e8vm/syms"
+	"shanhu.io/smlvm/lexing"
+	link8 "shanhu.io/smlvm/link"
+	"shanhu.io/smlvm/syms"
 )
 
 // File is a file in a package.

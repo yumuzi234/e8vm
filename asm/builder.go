@@ -1,8 +1,8 @@
 package asm
 
 import (
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/syms"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/syms"
 )
 
 // Builder manipulates an AST, checks its syntax, and builds the assembly

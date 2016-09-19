@@ -1,7 +1,7 @@
 package ir
 
 import (
-	"e8vm.io/e8vm/arch"
+	"shanhu.io/smlvm/arch"
 )
 
 // FuncSig is a function signature

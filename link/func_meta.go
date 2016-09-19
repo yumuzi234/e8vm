@@ -1,7 +1,7 @@
 package link
 
 import (
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/lexing"
 )
 
 // FuncMeta stores the meta data of a function

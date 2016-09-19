@@ -3,9 +3,9 @@ package asm
 import (
 	"io"
 
-	"e8vm.io/e8vm/asm/parse"
-	"e8vm.io/e8vm/builds"
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/asm/parse"
+	"shanhu.io/smlvm/builds"
+	"shanhu.io/smlvm/lexing"
 )
 
 func listImport(

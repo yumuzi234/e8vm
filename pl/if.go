@@ -1,7 +1,7 @@
 package pl
 
 import (
-	"e8vm.io/e8vm/pl/tast"
+	"shanhu.io/smlvm/pl/tast"
 )
 
 func buildIfStmt(b *builder, stmt *tast.IfStmt) {

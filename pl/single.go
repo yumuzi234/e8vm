@@ -4,9 +4,9 @@ import (
 	"errors"
 	"path/filepath"
 
-	"e8vm.io/e8vm/asm"
-	"e8vm.io/e8vm/builds"
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/asm"
+	"shanhu.io/smlvm/builds"
+	"shanhu.io/smlvm/lexing"
 )
 
 // MakeMemHome makes a memory home for compiling.

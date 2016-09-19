@@ -8,10 +8,10 @@ import (
 	"io/ioutil"
 	"os"
 
-	"e8vm.io/e8vm/arch"
-	"e8vm.io/e8vm/dasm"
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/pl"
+	"shanhu.io/smlvm/arch"
+	"shanhu.io/smlvm/dasm"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/pl"
 )
 
 func exit(e error) {

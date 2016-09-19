@@ -3,7 +3,7 @@ package codegen
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/link"
+	"shanhu.io/smlvm/link"
 )
 
 func zeroAddr(g *gener, b *Block, reg uint32, size int32, regSizeAlign bool) {

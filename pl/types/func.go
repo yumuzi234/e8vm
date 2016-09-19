@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"fmt"
 
-	"e8vm.io/e8vm/arch"
-	"e8vm.io/e8vm/fmtutil"
+	"shanhu.io/smlvm/arch"
+	"shanhu.io/smlvm/fmtutil"
 )
 
 // Arg is a function argument or return value

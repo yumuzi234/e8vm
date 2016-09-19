@@ -1,7 +1,7 @@
 package gfmt
 
 import (
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/lexing"
 )
 
 type tokens struct {

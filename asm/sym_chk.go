@@ -3,8 +3,8 @@ package asm
 import (
 	"strings"
 
-	"e8vm.io/e8vm/asm/parse"
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/asm/parse"
+	"shanhu.io/smlvm/lexing"
 )
 
 // mightBeSymbol just looks at the first rune and see

@@ -1,7 +1,7 @@
 package builds
 
 import (
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/lexing"
 )
 
 func prepare(c *context, p string) (*pkg, []*lexing.Error) {

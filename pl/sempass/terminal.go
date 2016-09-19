@@ -1,7 +1,7 @@
 package sempass
 
 import (
-	"e8vm.io/e8vm/pl/ast"
+	"shanhu.io/smlvm/pl/ast"
 )
 
 func isBlockTerminal(block *ast.Block) bool {

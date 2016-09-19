@@ -3,7 +3,7 @@ package parse
 import (
 	"io"
 
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/lexing"
 )
 
 func lexAsm8(x *lexing.Lexer) *lexing.Token {

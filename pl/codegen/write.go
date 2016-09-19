@@ -1,7 +1,7 @@
 package codegen
 
 import (
-	"e8vm.io/e8vm/link"
+	"shanhu.io/smlvm/link"
 )
 
 func writeBlock(f *link.Func, b *Block) {

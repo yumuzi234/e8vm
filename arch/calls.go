@@ -3,7 +3,7 @@ package arch
 import (
 	"container/list"
 
-	"e8vm.io/e8vm/arch/vpc"
+	"shanhu.io/smlvm/arch/vpc"
 )
 
 const (

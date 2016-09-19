@@ -1,7 +1,7 @@
 package tast
 
 import (
-	"e8vm.io/e8vm/syms"
+	"shanhu.io/smlvm/syms"
 )
 
 // Import is an import statement

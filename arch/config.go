@@ -3,7 +3,7 @@ package arch
 import (
 	"io"
 
-	"e8vm.io/e8vm/arch/screen"
+	"shanhu.io/smlvm/arch/screen"
 )
 
 // Config contains config for constructing a machine

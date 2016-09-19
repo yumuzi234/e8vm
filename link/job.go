@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"fmt"
 
-	"e8vm.io/e8vm/arch"
-	"e8vm.io/e8vm/image"
+	"shanhu.io/smlvm/arch"
+	"shanhu.io/smlvm/image"
 )
 
 // Job is a linking job.

@@ -1,8 +1,8 @@
 package asm
 
 import (
-	"e8vm.io/e8vm/asm/parse"
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/asm/parse"
+	"shanhu.io/smlvm/lexing"
 )
 
 func checkTypeAll(p lexing.Logger, toks []*lexing.Token, typ int) bool {

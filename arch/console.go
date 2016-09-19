@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"e8vm.io/e8vm/arch/vpc"
+	"shanhu.io/smlvm/arch/vpc"
 )
 
 // Console is a simple console that can output/input a single

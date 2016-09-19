@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"encoding/binary"
 
-	"e8vm.io/e8vm/pl/ast"
-	"e8vm.io/e8vm/pl/tast"
-	"e8vm.io/e8vm/pl/types"
+	"shanhu.io/smlvm/pl/ast"
+	"shanhu.io/smlvm/pl/tast"
+	"shanhu.io/smlvm/pl/types"
 )
 
 func buildArrayLit(b *builder, lit *ast.ArrayLiteral) tast.Expr {

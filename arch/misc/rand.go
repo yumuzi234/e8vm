@@ -7,7 +7,7 @@ import (
 	"math/rand"
 	"time"
 
-	"e8vm.io/e8vm/arch/vpc"
+	"shanhu.io/smlvm/arch/vpc"
 )
 
 // Rand provides a random number generator.

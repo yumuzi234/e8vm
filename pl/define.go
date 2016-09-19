@@ -1,8 +1,8 @@
 package pl
 
 import (
-	"e8vm.io/e8vm/pl/tast"
-	"e8vm.io/e8vm/pl/types"
+	"shanhu.io/smlvm/pl/tast"
+	"shanhu.io/smlvm/pl/types"
 )
 
 func buildDefine(b *builder, d *tast.Define) {

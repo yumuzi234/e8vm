@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/lexing"
 )
 
 // Func saves the debug information of a function

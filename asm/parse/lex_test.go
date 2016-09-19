@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/lexing"
 )
 
 func tstr(t int) string {

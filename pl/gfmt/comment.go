@@ -3,7 +3,7 @@ package gfmt
 import (
 	"strings"
 
-	"e8vm.io/e8vm/fmtutil"
+	"shanhu.io/smlvm/fmtutil"
 )
 
 func formatComment(c string) string {

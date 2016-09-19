@@ -4,7 +4,7 @@ import (
 	"path"
 	"strconv"
 
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/lexing"
 )
 
 // ImportDecl is a import declare line

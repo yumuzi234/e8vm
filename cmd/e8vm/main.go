@@ -9,10 +9,10 @@ import (
 	"math"
 	"os"
 
-	"e8vm.io/e8vm/arch"
-	"e8vm.io/e8vm/dasm"
-	"e8vm.io/e8vm/debug"
-	"e8vm.io/e8vm/image"
+	"shanhu.io/smlvm/arch"
+	"shanhu.io/smlvm/dasm"
+	"shanhu.io/smlvm/debug"
+	"shanhu.io/smlvm/image"
 )
 
 var (

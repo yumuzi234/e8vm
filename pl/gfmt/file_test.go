@@ -5,7 +5,7 @@ import (
 
 	"strings"
 
-	"e8vm.io/e8vm/fmtutil"
+	"shanhu.io/smlvm/fmtutil"
 )
 
 func formatProg(s string) string {

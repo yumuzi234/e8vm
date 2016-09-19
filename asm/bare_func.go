@@ -3,9 +3,9 @@ package asm
 import (
 	"io"
 
-	"e8vm.io/e8vm/asm/parse"
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/link"
+	"shanhu.io/smlvm/asm/parse"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/link"
 )
 
 // BuildBareFunc builds a function body into an image.

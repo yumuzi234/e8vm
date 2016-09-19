@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"io"
 
-	"e8vm.io/e8vm/dasm"
-	"e8vm.io/e8vm/fmtutil"
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/dasm"
+	"shanhu.io/smlvm/fmtutil"
+	"shanhu.io/smlvm/lexing"
 )
 
 func printBlock(p *fmtutil.Printer, b *Block) {

@@ -3,11 +3,11 @@ package pl
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/pl/codegen"
-	"e8vm.io/e8vm/pl/tast"
-	"e8vm.io/e8vm/pl/types"
-	"e8vm.io/e8vm/syms"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/pl/codegen"
+	"shanhu.io/smlvm/pl/tast"
+	"shanhu.io/smlvm/pl/types"
+	"shanhu.io/smlvm/syms"
 )
 
 // builder builds a package

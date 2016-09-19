@@ -1,8 +1,8 @@
 package builds
 
 import (
-	"e8vm.io/e8vm/debug"
-	link8 "e8vm.io/e8vm/link"
+	"shanhu.io/smlvm/debug"
+	link8 "shanhu.io/smlvm/link"
 )
 
 type context struct {

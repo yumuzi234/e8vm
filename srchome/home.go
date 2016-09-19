@@ -8,9 +8,9 @@ import (
 	"path"
 	"strings"
 
-	"e8vm.io/e8vm/asm"
-	"e8vm.io/e8vm/builds"
-	"e8vm.io/e8vm/pl"
+	"shanhu.io/smlvm/asm"
+	"shanhu.io/smlvm/builds"
+	"shanhu.io/smlvm/pl"
 )
 
 // Home provides the default building home.

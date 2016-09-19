@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"e8vm.io/e8vm/image"
+	"shanhu.io/smlvm/image"
 )
 
 // DumpImage disassembles an image.

@@ -3,9 +3,9 @@ package asm
 import (
 	"strconv"
 
-	"e8vm.io/e8vm/arch"
-	asminst "e8vm.io/e8vm/asm/inst"
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/arch"
+	asminst "shanhu.io/smlvm/asm/inst"
+	"shanhu.io/smlvm/lexing"
 )
 
 var (

@@ -1,9 +1,9 @@
 package sempass
 
 import (
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/pl/tast"
-	"e8vm.io/e8vm/pl/types"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/pl/tast"
+	"shanhu.io/smlvm/pl/types"
 )
 
 func unaryOpConst(b *builder, opTok *lexing.Token, B tast.Expr) tast.Expr {

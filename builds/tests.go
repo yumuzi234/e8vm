@@ -7,8 +7,8 @@ import (
 	"sort"
 	"strings"
 
-	"e8vm.io/e8vm/arch"
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/arch"
+	"shanhu.io/smlvm/lexing"
 )
 
 var errTimeOut = errors.New("time out")

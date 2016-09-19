@@ -1,7 +1,7 @@
 package asm
 
 import (
-	"e8vm.io/e8vm/link"
+	"shanhu.io/smlvm/link"
 )
 
 func varSize(v *varDecl) int {

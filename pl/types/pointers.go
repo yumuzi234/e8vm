@@ -1,7 +1,7 @@
 package types
 
 import (
-	"e8vm.io/e8vm/arch"
+	"shanhu.io/smlvm/arch"
 )
 
 // RegSizeAlignUp aligns a size up to multiples of the register size.

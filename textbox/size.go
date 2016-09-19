@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"io"
 
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/lexing"
 )
 
 // TabSize is the indent size for each tab

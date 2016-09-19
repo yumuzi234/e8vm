@@ -3,7 +3,7 @@ package pl
 import (
 	"fmt"
 
-	"e8vm.io/e8vm/pl/tast"
+	"shanhu.io/smlvm/pl/tast"
 )
 
 func buildStmt(b *builder, s tast.Stmt) {

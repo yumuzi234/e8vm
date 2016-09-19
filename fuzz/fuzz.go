@@ -1,7 +1,7 @@
 package test
 
 import (
-	"e8vm.io/e8vm/pl"
+	"shanhu.io/smlvm/pl"
 )
 
 // Fuzz implements go-fuzz interface.

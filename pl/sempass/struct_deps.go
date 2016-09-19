@@ -3,8 +3,8 @@ package sempass
 import (
 	"sort"
 
-	"e8vm.io/e8vm/pl/ast"
-	"e8vm.io/e8vm/pl/parse"
+	"shanhu.io/smlvm/pl/ast"
+	"shanhu.io/smlvm/pl/parse"
 )
 
 type structDeps struct {

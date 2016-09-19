@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"strconv"
 
-	"e8vm.io/e8vm/asm/parse"
-	"e8vm.io/e8vm/lexing"
+	"shanhu.io/smlvm/asm/parse"
+	"shanhu.io/smlvm/lexing"
 )
 
 func parseDataHex(p lexing.Logger, args []*lexing.Token) ([]byte, uint32) {

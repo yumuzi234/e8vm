@@ -3,7 +3,7 @@ package pl
 import (
 	"testing"
 
-	"e8vm.io/e8vm/arch"
+	"shanhu.io/smlvm/arch"
 )
 
 func TestSingleFileBad(t *testing.T) {

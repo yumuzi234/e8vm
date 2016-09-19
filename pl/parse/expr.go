@@ -3,8 +3,8 @@ package parse
 import (
 	"io"
 
-	"e8vm.io/e8vm/lexing"
-	"e8vm.io/e8vm/pl/ast"
+	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/pl/ast"
 )
 
 func parseExpr(p *parser) ast.Expr {
