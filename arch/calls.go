@@ -66,12 +66,14 @@ func (c *calls) system(ctrl uint8, in []byte, respSize int) (
 				return nil, vpc.ErrInvalidArg, nil
 			}
 
+			// first time executing sleep.
 			if !c.timedSleep {
 				c.timedSleep = true
 				c.sleep = time.Duration(Endian.Uint64(in[:8]))
 				return nil, vpc.ErrInternal, errSleep
 			}
 
+			// second time, timeout, waking up.
 			c.timedSleep = false
 			return nil, vpc.ErrTimeout, nil
 		}

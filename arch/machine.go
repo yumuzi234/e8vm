@@ -242,3 +242,9 @@ func (m *Machine) Click(line, col uint8) { m.clicks.Click(line, col) }
 func (m *Machine) SleepTime() (time.Duration, bool) {
 	return m.calls.sleepTime()
 }
+
+// HasPending checks if the machine has pending messages that are not
+// delivered.
+func (m *Machine) HasPending() bool {
+	return m.calls.queueLen() > 0
+}
