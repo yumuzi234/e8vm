@@ -2,6 +2,7 @@ package arch
 
 import (
 	"io"
+	"time"
 
 	"shanhu.io/smlvm/arch/screen"
 )
@@ -22,4 +23,6 @@ type Config struct {
 	BootArg uint32
 
 	ROM string
+
+	PerfNow func() time.Duration
 }

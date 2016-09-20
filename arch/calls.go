@@ -88,7 +88,7 @@ func (c *calls) system(ctrl uint8, in []byte, respSize int) (
 		c.p.writeWord(callsService, m.service) // overwrite the service
 		return m.p, 0, nil
 
-	// TODO(lonliu): add other stuff
+	// TODO(h8liu): add other stuff
 	case 2: // list services
 	case 3: // enable/disable service message
 	}
