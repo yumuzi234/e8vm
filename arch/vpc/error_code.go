@@ -7,4 +7,5 @@ const (
 	ErrMemory
 	ErrSmallBuf
 	ErrInternal
+	ErrTimeout
 )

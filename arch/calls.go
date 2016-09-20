@@ -66,9 +66,14 @@ func (c *calls) system(ctrl uint8, in []byte, respSize int) (
 				return nil, vpc.ErrInvalidArg, nil
 			}
 
-			c.timedSleep = true
-			c.sleep = time.Duration(Endian.Uint64(in[:8]))
-			return nil, vpc.ErrInternal, errSleep
+			if !c.timedSleep {
+				c.timedSleep = true
+				c.sleep = time.Duration(Endian.Uint64(in[:8]))
+				return nil, vpc.ErrInternal, errSleep
+			}
+
+			c.timedSleep = false
+			return nil, vpc.ErrTimeout, nil
 		}
 
 		front := c.queue.Front()
@@ -179,3 +184,5 @@ func (c *calls) invoke() *Excep {
 func (c *calls) sleepTime() (time.Duration, bool) {
 	return c.sleep, c.timedSleep
 }
+
+func (c *calls) queueLen() int { return c.queue.Len() }
