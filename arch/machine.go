@@ -9,6 +9,7 @@ import (
 
 	"shanhu.io/smlvm/arch/misc"
 	"shanhu.io/smlvm/arch/screen"
+	"shanhu.io/smlvm/arch/table"
 	"shanhu.io/smlvm/image"
 )
 
@@ -22,6 +23,7 @@ type Machine struct {
 	console *console
 	clicks  *screen.Clicks
 	screen  *screen.Screen
+	table   *table.Table
 	rand    *misc.Rand
 	ticker  *ticker
 	rom     *rom
@@ -72,12 +74,16 @@ func NewMachine(c *Config) *Machine {
 
 	if c.Screen != nil {
 		m.clicks = screen.NewClicks(m.calls.sender(serviceScreen))
-
 		s := screen.New(c.Screen)
 		m.screen = s
 		m.addDevice(s)
-
 		m.calls.register(serviceScreen, s)
+	}
+
+	if c.Table != nil {
+		t := table.New(c.Table, m.calls.sender(serviceTable))
+		m.table = t
+		m.calls.register(serviceTable, t) // hook vpc all
 	}
 
 	sys := m.phyMem.Page(pageSysInfo)
@@ -236,7 +242,20 @@ func (m *Machine) FlushScreen() {
 }
 
 // Click sends in a mouse click at the particular location.
-func (m *Machine) Click(line, col uint8) { m.clicks.Click(line, col) }
+func (m *Machine) Click(line, col uint8) {
+	if m.clicks == nil {
+		return
+	}
+	m.clicks.Click(line, col)
+}
+
+// ClickTable sends a click on the table at the particular location.
+func (m *Machine) ClickTable(pos uint8) {
+	if m.table == nil {
+		return
+	}
+	m.table.Click(pos)
+}
 
 // SleepTime returns the sleeping time required before next execution.
 func (m *Machine) SleepTime() (time.Duration, bool) {

@@ -5,21 +5,14 @@ import (
 	"shanhu.io/smlvm/coder"
 )
 
-// Action is a pending table action.
-type Action struct {
-	Action string
-	Pos    int
-	Face   string
-}
-
 // Table is a virtual card table device.
 type Table struct {
-	out func(a *Action)
+	out Render
 	in  vpc.Sender
 }
 
-// NewTable creates a new virtual card table device.
-func NewTable(out func(a *Action), in vpc.Sender) *Table {
+// New creates a new virtual card table device.
+func New(out Render, in vpc.Sender) *Table {
 	return &Table{
 		out: out,
 		in:  in,
@@ -62,7 +55,7 @@ func (t *Table) Handle(req []byte) ([]byte, int32) {
 		return nil, vpc.ErrInvalidArg
 	}
 
-	t.out(&Action{
+	t.out.Act(&Action{
 		Action: actionStrings[action],
 		Pos:    int(pos),
 		Face:   face,

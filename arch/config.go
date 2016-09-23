@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"shanhu.io/smlvm/arch/screen"
+	"shanhu.io/smlvm/arch/table"
 )
 
 // Config contains config for constructing a machine
@@ -14,6 +15,7 @@ type Config struct {
 
 	Output   io.Writer
 	Screen   screen.Render
+	Table    table.Render
 	RandSeed int64
 
 	InitPC       uint32

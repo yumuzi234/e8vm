@@ -25,4 +25,5 @@ const (
 	serviceScreen
 	serviceRand
 	serviceClock
+	serviceTable
 )
