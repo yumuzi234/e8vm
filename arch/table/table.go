@@ -25,6 +25,8 @@ const (
 	actionShowFront
 	actionShowBack
 	actionHide
+	actionHideFront
+	actionHideBack
 	actionSetFace
 )
 
@@ -34,6 +36,8 @@ var actionStrings = map[uint8]string{
 	actionShowFront: "showFront",
 	actionShowBack:  "showBack",
 	actionHide:      "hide",
+	actionHideFront: "hideFront",
+	actionHideBack:  "hideBack",
 	actionSetFace:   "setFace",
 }
 
