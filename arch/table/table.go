@@ -28,6 +28,7 @@ const (
 	actionHideFront
 	actionHideBack
 	actionSetFace
+	actionSetText
 )
 
 var actionStrings = map[uint8]string{
@@ -39,6 +40,7 @@ var actionStrings = map[uint8]string{
 	actionHideFront: "hideFront",
 	actionHideBack:  "hideBack",
 	actionSetFace:   "setFace",
+	actionSetText:   "setText",
 }
 
 // Handle handles an incoming VPC.
@@ -50,9 +52,13 @@ func (t *Table) Handle(req []byte) ([]byte, int32) {
 	dec := coder.NewDecoder(req)
 	action := dec.U8()
 	pos := dec.U8()
-	face := ""
+	text := ""
 	if action == actionSetFace {
-		face = string(rune(dec.U8()))
+		text = string(rune(dec.U8()))
+	} else if action == actionSetText {
+		n := dec.U8()
+		bs := dec.Bytes(int(n))
+		text = string(bs)
 	}
 
 	if dec.Err != nil {
@@ -62,7 +68,7 @@ func (t *Table) Handle(req []byte) ([]byte, int32) {
 	t.out.Act(&Action{
 		Action: actionStrings[action],
 		Pos:    int(pos),
-		Face:   face,
+		Text:   text,
 	})
 
 	return nil, 0

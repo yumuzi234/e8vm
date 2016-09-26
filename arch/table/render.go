@@ -4,7 +4,7 @@ package table
 type Action struct {
 	Action string
 	Pos    int
-	Face   string
+	Text   string
 }
 
 // Render is a rendering engine that receives table actions.
