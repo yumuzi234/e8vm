@@ -5,21 +5,23 @@ import (
 	"sort"
 )
 
+// N is a node in the minified DAG visualization result.
+type N struct {
+	X    int      `json:"x"`
+	Y    int      `json:"y"`
+	Ins  []string `json:"i"`
+	Outs []string `json:"o"`
+}
+
+// M is a node in the minified DAG visualization result.
+type M struct {
+	Height int           `json:"h"`
+	Width  int           `json:"w"`
+	Nodes  map[string]*N `json:"n"`
+}
+
 // JSONMap returns a json'able object of a map.
 func JSONMap(m *Map) interface{} {
-	type N struct {
-		X    int      `json:"x"`
-		Y    int      `json:"y"`
-		Ins  []string `json:"i"`
-		Outs []string `json:"o"`
-	}
-
-	type M struct {
-		Height int           `json:"h"`
-		Width  int           `json:"w"`
-		Nodes  map[string]*N `json:"n"`
-	}
-
 	res := &M{
 		Height: m.Height,
 		Width:  m.Width,
