@@ -1,4 +1,4 @@
-// Package arch emulates the E8VM's instruction set.
+// Package arch emulates the virtual instruction set.
 package arch
 
 import (

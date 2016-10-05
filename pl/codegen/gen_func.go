@@ -7,7 +7,7 @@ import (
 )
 
 /**
-## E8VM calling convention
+## Calling convention
 
 - r0, always keep it as zero, never touch it
 - r1, the first arg or return, if not used, should keep the value

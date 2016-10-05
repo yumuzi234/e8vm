@@ -1,4 +1,5 @@
-// Package asm prvoides an assembly language compiler for E8VM.
+// Package asm prvoides an assembly language compiler for the virtual
+// instruction set.
 package asm
 
 import (
