@@ -14,7 +14,7 @@ times, it is not because the algorithm is too complex to comprehend,
 but the architecture losses its structure due to unmanaged code debt.
 No one understands the code any more.
 
-To avoid replaying this history, E8VM proposes an entire set of
+To avoid replaying this history, Small VM proposes an entire set of
 language tool-chain that puts code readability, or more precisely,
 code *comprehensibility* as the one and only first priority.
 
@@ -29,7 +29,7 @@ from relentless iterations, and iterations require good code
 understandings by *human* programmers (before AI's can read and write 
 programs). In the long run, code comprehensibility dominates all.
 
-To achieve high comprehensibility, E8VM project:
+To achieve high comprehensibility, Small VM project:
 
 - Uses simple programming languages with only a small set of
   language features.
