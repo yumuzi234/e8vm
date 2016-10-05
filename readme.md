@@ -1,4 +1,4 @@
-[![BuildStatus](https://travis-ci.org/e8vm/e8vm.png?branch=master)](https://travis-ci.org/e8vm/e8vm)
+[![BuildStatus](https://travis-ci.org/shanhuio/smlvm.png?branch=master)](https://travis-ci.org/shanhuio/smlvm)
 
 ```
 go get -u shanhu.io/smlvm/...
@@ -8,24 +8,22 @@ go get -u shanhu.io/smlvm/...
 
 Small Virtual Machine (smlvm) is a self-contained system that has its
 own instruction set, assembly language and assembler, system language,
-and project building system. A small operating system
-[`os8`](https://github.com/e8vm/os8) is also under construction.
+and project building system.
 
-The project is written entirely in Go language. Plus, each file in the
+The project is written entirely in Go language. Each file in the
 project has no more than 300 lines, with each line no more than 80
 characters. Among these small files, there are no circular
-dependencies, and as a result, the project architecture can be
-automatically visualized from static code analysis.
-
-[Check the visualization of the architecture.](https://e8vm.io/e8vm)
+dependencies, checked by static analysis, and as a result, the project
+architecture can be automatically visualized from static code
+analysis.
 
 The main project in this repository depends on nothing other than the
 Go standard library. It is *NOT* yet another compiler project based on
 LLVM.
 
 For Go language documentation on the package APIs, I recommend
-[GoWalker](https://gowalker.org/e8vm.io/e8vm). I find it slightly
-better than [godoc.org](https://godoc.org/e8vm.io/e8vm).
+[GoWalker](https://gowalker.org/shanhu.io/smlvm). I find it slightly
+better than [godoc.org](https://godoc.org/shanhu.io/smlvm).
 
 ## To Use `make`
 
