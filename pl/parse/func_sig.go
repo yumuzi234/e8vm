@@ -8,9 +8,14 @@ import (
 func parsePara(p *parser) *ast.Para {
 	ret := new(ast.Para)
 	if p.See(Ident) {
-		ret.Ident = p.Shift()
-		if !(p.SeeOp(",") || p.SeeOp(")")) {
-			ret.Type = p.parseType()
+		ident := p.Shift()
+		if p.SeeOp(".") {
+			ret.Type = parseMemberExpr(p, &ast.Operand{ident})
+		} else {
+			ret.Ident = ident
+			if !(p.SeeOp(",") || p.SeeOp(")")) {
+				ret.Type = p.parseType()
+			}
 		}
 	} else {
 		ret.Type = p.parseType()
