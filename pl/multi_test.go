@@ -115,6 +115,22 @@ func TestMultiFile(t *testing.T) {
 			func f() int = a.F
 			func main() { printInt(f()) }`,
 	}, "33")
+
+	// A bug found when writing mempair.
+	o(files{
+		"a/a.g": `struct A { I int }`,
+		"main/m.g": `
+			import ("a")
+			func f() (int, a.A) {
+				var ret a.A
+				ret.I = 33
+				return 0, ret
+			}
+			func main() {
+				_, v := f();
+				printInt(v.I)
+			}`,
+	}, "33")
 }
 
 func TestMultiFileBad(t *testing.T) {
