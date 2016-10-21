@@ -57,8 +57,10 @@ func (t *Table) Handle(req []byte) ([]byte, int32) {
 		text = string(rune(dec.U8()))
 	} else if action == actionSetText {
 		n := dec.U8()
-		bs := dec.Bytes(int(n))
-		text = string(bs)
+		if n > 0 {
+			bs := dec.Bytes(int(n))
+			text = string(bs)
+		}
 	}
 
 	if dec.Err != nil {
