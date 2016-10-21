@@ -40,6 +40,10 @@ func (c *Decoder) U32() uint32 {
 
 // Bytes reads some raw bytes out of the decoder.
 func (c *Decoder) Bytes(n int) []byte {
+	if n == 0 {
+		return nil
+	}
+
 	buf := make([]byte, n)
 	if _, err := c.r.Read(buf); err != nil {
 		c.Err = err
