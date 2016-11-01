@@ -16,3 +16,8 @@
 20-24: response length
 24-28: response length (used)
 28-32: reserved
+
+--
+
+- we need a token marking
+- also for each token
