@@ -20,27 +20,39 @@ func New(out Render, in vpc.Sender) *Table {
 }
 
 const (
-	actionNoop = iota
-	actionShow
-	actionShowFront
-	actionShowBack
-	actionHide
-	actionHideFront
-	actionHideBack
-	actionSetFace
-	actionSetText
+	noop = iota
+
+	cardShow
+	cardShowFront
+	cardShowBack
+	cardHide
+	cardHideFront
+	cardHideBack
+	cardFace
+
+	labelText
+
+	buttonShow
+	buttonHide
+	buttonText
 )
 
 var actionStrings = map[uint8]string{
-	actionNoop:      "noop",
-	actionShow:      "show",
-	actionShowFront: "showFront",
-	actionShowBack:  "showBack",
-	actionHide:      "hide",
-	actionHideFront: "hideFront",
-	actionHideBack:  "hideBack",
-	actionSetFace:   "setFace",
-	actionSetText:   "setText",
+	noop: "noop",
+
+	cardShow:      "card.show",
+	cardShowFront: "card.front",
+	cardShowBack:  "card.showBack",
+	cardHide:      "card.hide",
+	cardHideFront: "card.hideFront",
+	cardHideBack:  "card.hideBack",
+	cardFace:      "card.face",
+
+	labelText: "label.text",
+
+	buttonShow: "button.show",
+	buttonHide: "button.hide",
+	buttonText: "button.text",
 }
 
 // Handle handles an incoming VPC.
@@ -53,9 +65,11 @@ func (t *Table) Handle(req []byte) ([]byte, int32) {
 	action := dec.U8()
 	pos := dec.U8()
 	text := ""
-	if action == actionSetFace {
+
+	switch action {
+	case cardFace:
 		text = string(rune(dec.U8()))
-	} else if action == actionSetText {
+	case labelText, buttonText:
 		n := dec.U8()
 		if n > 0 {
 			bs := dec.Bytes(int(n))
