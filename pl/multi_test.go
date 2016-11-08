@@ -154,9 +154,22 @@ func TestMultiFileBad(t *testing.T) {
 		"main/b.g": `func a() { b() }`,
 	})
 
+	// name conflict
 	o(files{
 		"a/a.g":    ``,
 		"main/a.g": `import ("a"); func a() {}; func main() {};`,
+	})
+
+	// unused import
+	o(files{
+		"a/a.g":    ``,
+		"main/a.g": `import ("a"); func main() {};`,
+	})
+
+	// using private methods
+	o(files{
+		"a/a.g":    `func f() {}`,
+		"main/a.g": `import ("a"); func main() { a.f() };`,
 	})
 
 	o(files{

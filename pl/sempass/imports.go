@@ -49,3 +49,15 @@ func buildImports(
 	}
 	return ret
 }
+
+func checkUnusedImports(b *builder, imports []*syms.Symbol) {
+	for _, s := range imports {
+		name := s.Name()
+		if name == "_" {
+			continue
+		}
+		if !s.Used {
+			b.Errorf(s.Pos, "unsed import: %q", name)
+		}
+	}
+}

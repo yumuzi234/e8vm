@@ -160,6 +160,11 @@ func (p *Pkg) Build(scope *syms.Scope) (
 		return nil, nil, errs
 	}
 
+	checkUnusedImports(b, imports)
+	if errs := b.Errs(); errs != nil {
+		return nil, nil, errs
+	}
+
 	depGraph := b.depGraph()
 	structs := structSyms(pkgStructs)
 
