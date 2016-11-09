@@ -41,7 +41,7 @@ var actionStrings = map[uint8]string{
 	noop: "noop",
 
 	cardShow:      "card.show",
-	cardShowFront: "card.front",
+	cardShowFront: "card.showFront",
 	cardShowBack:  "card.showBack",
 	cardHide:      "card.hide",
 	cardHideFront: "card.hideFront",
