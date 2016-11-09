@@ -90,8 +90,18 @@ func (t *Table) Handle(req []byte) ([]byte, int32) {
 	return nil, 0
 }
 
+func whatCode(what string) uint8 {
+	switch what {
+	case "card":
+		return 1
+	case "button":
+		return 2
+	}
+	return 0
+}
+
 // Click send in a click.
-func (t *Table) Click(pos uint8) error {
-	t.in.Send([]byte{pos})
+func (t *Table) Click(what string, pos uint8) error {
+	t.in.Send([]byte{whatCode(what), pos})
 	return nil
 }

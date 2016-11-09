@@ -250,11 +250,11 @@ func (m *Machine) Click(line, col uint8) {
 }
 
 // ClickTable sends a click on the table at the particular location.
-func (m *Machine) ClickTable(pos uint8) {
+func (m *Machine) ClickTable(what string, pos uint8) {
 	if m.table == nil {
 		return
 	}
-	m.table.Click(pos)
+	m.table.Click(what, pos)
 }
 
 // SleepTime returns the sleeping time required before next execution.
