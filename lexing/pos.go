@@ -12,5 +12,8 @@ type Pos struct {
 }
 
 func (p *Pos) String() string {
+	if p.File == "" {
+		return fmt.Sprintf("%d:%d", p.Line, p.Col)
+	}
 	return fmt.Sprintf("%s:%d:%d", p.File, p.Line, p.Col)
 }
