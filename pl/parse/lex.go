@@ -18,6 +18,8 @@ func lexG8(x *lexing.Lexer) *lexing.Token {
 		return x.MakeToken(Endl)
 	case '"':
 		return lexing.LexString(x, String, '"')
+	case '`':
+		return lexing.LexRawString(x, String)
 	case '\'':
 		return lexing.LexString(x, Char, '\'')
 	}

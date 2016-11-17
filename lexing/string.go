@@ -72,6 +72,28 @@ func lexEscape(x *Lexer, quote rune) bool {
 	return true
 }
 
+// LexRawString parses a raw string token with type t, which is
+// quoted in a pair of `
+func LexRawString(x *Lexer, t int) *Token {
+	if !x.See('`') {
+		panic("incorrect raw string start")
+	}
+
+	x.Next()
+	for {
+		if x.Ended() {
+			x.Errorf("unexpected eof in raw string")
+			break
+		} else if x.See('`') {
+			x.Next()
+			break
+		} else {
+			x.Next()
+		}
+	}
+	return x.MakeToken(t)
+}
+
 // LexString parses a string token with type t.
 func LexString(x *Lexer, t int, q rune) *Token {
 	if !(q == '\'' || q == '"') {
