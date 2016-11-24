@@ -9,7 +9,7 @@ type Input interface {
 	// HasPkg checks if a package exists.
 	HasPkg(p string) bool
 
-	// Pkgs lists all the packages.
+	// Pkgs lists all the packages with the particular prefix.
 	Pkgs(prefix string) []string
 
 	// Src lists the source files in a package.
