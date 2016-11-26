@@ -98,6 +98,12 @@ func (c *multiCore) setSP(sp, stackSize uint32) {
 	}
 }
 
+func (c *multiCore) setPC(pc uint32) {
+	for _, cpu := range c.cores {
+		cpu.regs[PC] = pc
+	}
+}
+
 func printCPUStatus(c *cpu) {
 	p := func(name string, reg int) {
 		fmt.Printf(" %3s = 0x%08x %-11d\n",

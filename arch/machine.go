@@ -95,7 +95,7 @@ func NewMachine(c *Config) *Machine {
 	} else {
 		m.cores.setSP(c.InitSP, c.StackPerCore)
 	}
-	m.SetPC(c.InitPC)
+	m.cores.setPC(c.InitPC)
 	if c.Output != nil {
 		m.console.Output = c.Output
 	}
@@ -202,18 +202,11 @@ func (m *Machine) LoadSections(secs []*image.Section) error {
 	}
 
 	if pc, found := image.CodeStart(secs); found {
-		m.SetPC(pc)
+		m.cores.setPC(pc)
 	}
 	m.Sections = secs
 
 	return nil
-}
-
-// SetPC sets all cores to start with a particular PC pointer.
-func (m *Machine) SetPC(pc uint32) {
-	for _, cpu := range m.cores.cores {
-		cpu.regs[PC] = pc
-	}
 }
 
 // LoadImage loads an e8 image into the machine.
