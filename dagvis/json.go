@@ -20,8 +20,8 @@ type M struct {
 	Nodes  map[string]*N `json:"n"`
 }
 
-// JSONMap returns a json'able object of a map.
-func JSONMap(m *Map) interface{} {
+// Output returns a json'able object of a map.
+func Output(m *Map) *M {
 	res := &M{
 		Height: m.Height,
 		Width:  m.Width,
@@ -59,9 +59,8 @@ func JSONMap(m *Map) interface{} {
 	return res
 }
 
-func jsonMap(m *Map) []byte {
-	res := JSONMap(m)
-
+func marshalMap(m *Map) []byte {
+	res := Output(m)
 	ret, e := json.MarshalIndent(res, "", "    ")
 	if e != nil {
 		panic(e)

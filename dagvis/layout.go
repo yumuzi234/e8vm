@@ -116,7 +116,7 @@ func LayoutJSON(g *Graph) ([]byte, error) {
 		return nil, e
 	}
 
-	return jsonMap(m), nil
+	return marshalMap(m), nil
 }
 
 // RevLayout layouts a DAG into a map from right to left
@@ -137,5 +137,5 @@ func RevLayoutJSON(g *Graph) ([]byte, error) {
 		return nil, e
 	}
 
-	return jsonMap(m), nil
+	return marshalMap(m), nil
 }
