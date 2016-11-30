@@ -22,13 +22,10 @@ type parser struct {
 	inlineMethod bool
 }
 
-func makeTokener(f string, r io.Reader, golike bool) (
-	lexing.Tokener, *lexing.Recorder,
-) {
+func makeTokener(f string, r io.Reader, golike bool) lexing.Tokener {
 	var x lexing.Tokener = newLexer(f, r)
 
 	x = newSemiInserter(x)
-
 	kw := lexing.NewKeyworder(x)
 	kw.Ident = Ident
 	kw.Keyword = Keyword
@@ -38,16 +35,16 @@ func makeTokener(f string, r io.Reader, golike bool) (
 		kw.Keywords = golikeKeywords
 	}
 
-	rec := lexing.NewRecorder(kw)
-	return lexing.NewCommentRemover(rec), rec
+	return kw
 }
 
 func newParser(f string, r io.Reader, golike bool) (*parser, *lexing.Recorder) {
 	ret := new(parser)
 	ret.f = f
 	ret.golike = golike
-	x, rec := makeTokener(f, r, golike)
-	ret.x = x
+	x := makeTokener(f, r, golike)
+	rec := lexing.NewRecorder(x)
+	ret.x = lexing.NewCommentRemover(rec)
 	ret.Parser = lexing.NewParser(ret.x, Types)
 	return ret, rec
 }

@@ -8,7 +8,7 @@ import (
 
 // Tokens parses a file into a token array
 func Tokens(f string, r io.Reader) ([]*lexing.Token, []*lexing.Error) {
-	x, _ := makeTokener(f, r, false)
+	x := makeTokener(f, r, false)
 	toks := lexing.TokenAll(x)
 	if errs := x.Errs(); errs != nil {
 		return nil, errs
