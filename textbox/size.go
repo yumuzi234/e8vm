@@ -68,7 +68,11 @@ func CheckRect(file string, r io.Reader, h, w int) []*lexing.Error {
 	pos := func() *lexing.Pos { return &lexing.Pos{file, row + 1, col + 1} }
 	newLine := func() {
 		if col > w {
-			errs.Errorf(pos(), "line too wide")
+			errs.Errorf(
+				pos(),
+				"this line is too wide. it has %d chars; the limit is %d",
+				col, w,
+			)
 		}
 		row++
 		col = 0
