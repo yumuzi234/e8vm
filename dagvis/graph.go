@@ -24,6 +24,26 @@ func (g *Graph) Reverse() *Graph {
 	return &Graph{Nodes: ret}
 }
 
+// Remove removes a node in a graph and returns the new graph.
+func (g *Graph) Remove(node string) *Graph {
+	ret := make(map[string][]string)
+	for k, vs := range g.Nodes {
+		if k == node {
+			continue
+		}
+
+		var outs []string
+		for _, v := range vs {
+			if v == node {
+				continue
+			}
+			outs = append(outs, v)
+		}
+		ret[k] = outs
+	}
+	return &Graph{Nodes: ret}
+}
+
 // Rename renames the name of each node in the graph
 func (g *Graph) Rename(f func(string) (string, error)) (*Graph, error) {
 	if f == nil {

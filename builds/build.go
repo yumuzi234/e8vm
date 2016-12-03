@@ -110,15 +110,14 @@ func build(c *context, pkgs []string) []*lexing.Error {
 
 	g := &dagvis.Graph{c.deps}
 	g = g.Reverse()
+	if c.SaveDeps != nil {
+		c.SaveDeps(g)
+	}
 
 	m, err := dagvis.Layout(g)
 	if err != nil {
 		return lexing.SingleErr(err)
 	}
-	if c.SaveDeps != nil {
-		c.SaveDeps(m)
-	}
-
 	nodes := m.SortedNodes()
 	for _, node := range nodes {
 		if c.Verbose { // report progress

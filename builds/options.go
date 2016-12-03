@@ -14,7 +14,7 @@ type Options struct {
 	RunTests   bool
 	TestCycles int
 
-	SaveDeps       func(deps *dagvis.Map)
+	SaveDeps       func(deps *dagvis.Graph)
 	SaveFileTokens func(p string, toks []*lexing.Token)
 	LogLine        func(s string)
 }
