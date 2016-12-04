@@ -97,7 +97,7 @@ func CheckRect(file string, r io.Reader, h, w int) []*lexing.Error {
 	}
 
 	if row > h {
-		errs.Errorf(pos(), "too many lines")
+		errs.Errorf(pos(), "has too many lines; the limit is %d", h)
 	}
 
 	return errs.Errs()
