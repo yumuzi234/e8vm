@@ -12,6 +12,9 @@ func ListPkgs(input Input, selectors []string) []string {
 	picked := make(map[string]struct{})
 	add := func(ps []string) {
 		for _, p := range ps {
+			if !IsPkgPath(p) {
+				continue
+			}
 			picked[p] = struct{}{}
 		}
 	}
