@@ -32,14 +32,25 @@ func ListPkgs(input Input, selectors []string) ([]string, error) {
 			if pre == "." {
 				pre = ""
 			}
-			add(input.Pkgs(pre))
-		} else if !IsPkgPath(s) {
-			return nil, fmt.Errorf(
-				"%q is not a valid package path", s,
-			)
-		} else if input.HasPkg(s) {
-			add([]string{s})
+			pkgs := input.Pkgs(pre)
+			if len(pkgs) == 0 {
+				err := fmt.Errorf("%q matches no package", s)
+				return nil, err
+			}
+			add(pkgs)
+			continue
 		}
+
+		if !IsPkgPath(s) {
+			err := fmt.Errorf("%q is not a valid package path", s)
+			return nil, err
+		}
+		if !input.HasPkg(s) {
+			err := fmt.Errorf("package %q not found", s)
+			return nil, err
+		}
+
+		add([]string{s})
 	}
 
 	if len(picked) == 0 {
