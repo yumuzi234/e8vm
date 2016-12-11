@@ -19,7 +19,11 @@ func ListPkgs(input Input, selectors []string) []string {
 	for _, s := range selectors {
 		if s == "*" {
 			add(input.Pkgs(""))
-		} else if path.Base(s) == "..." {
+			continue
+		}
+
+		base := path.Base(s)
+		if base == "..." || base == "*" {
 			pre := path.Dir(s)
 			if pre == "." {
 				pre = ""

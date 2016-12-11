@@ -6,7 +6,7 @@ import (
 
 func TestIsPkgPath(t *testing.T) {
 	o := func(p string) {
-		if !isPkgPath(p) {
+		if !IsPkgPath(p) {
 			t.Errorf("%q should be a valid package path, but not", p)
 		}
 	}
@@ -17,7 +17,7 @@ func TestIsPkgPath(t *testing.T) {
 	o("/h8liu/std")
 
 	e := func(p string) {
-		if isPkgPath(p) {
+		if IsPkgPath(p) {
 			t.Errorf("%q should be an invalid package path, but not", p)
 		}
 	}

@@ -26,7 +26,7 @@ type pkg struct {
 func newErrPkg(e error) *pkg { return &pkg{err: e} }
 
 func newPkg(in Input, out Output, p string) *pkg {
-	if !isPkgPath(p) {
+	if !IsPkgPath(p) {
 		return newErrPkg(fmt.Errorf("invalid path: %q", p))
 	}
 

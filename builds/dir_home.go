@@ -170,7 +170,7 @@ func (h *DirHome) Pkgs(prefix string) []string {
 
 // Src lists all the source files inside this package.
 func (h *DirHome) Src(p string) map[string]*File {
-	if !isPkgPath(p) {
+	if !IsPkgPath(p) {
 		panic("not package path")
 	}
 
@@ -209,7 +209,7 @@ func (h *DirHome) Src(p string) map[string]*File {
 
 // Bin returns the writer to write the binary image.
 func (h *DirHome) Bin(p string) io.WriteCloser {
-	if !isPkgPath(p) {
+	if !IsPkgPath(p) {
 		panic("not package path")
 	}
 	return newDirFile(h.out("bin", p+".e8"))
@@ -217,7 +217,7 @@ func (h *DirHome) Bin(p string) io.WriteCloser {
 
 // TestBin returns the writer to write the test binary image.
 func (h *DirHome) TestBin(p string) io.WriteCloser {
-	if !isPkgPath(p) {
+	if !IsPkgPath(p) {
 		panic("not package path")
 	}
 	return newDirFile(h.out("test", p+".e8"))
@@ -225,7 +225,7 @@ func (h *DirHome) TestBin(p string) io.WriteCloser {
 
 // Output returns the debug output writer for a particular name.
 func (h *DirHome) Output(p, name string) io.WriteCloser {
-	if !isPkgPath(p) {
+	if !IsPkgPath(p) {
 		panic("not package path")
 	}
 	return newDirFile(h.outFile("out", p, name))

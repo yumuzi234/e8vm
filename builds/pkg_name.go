@@ -6,7 +6,8 @@ import (
 	"shanhu.io/smlvm/lexing"
 )
 
-func isPkgPath(p string) bool {
+// IsPkgPath checks if a string is a valid package path.
+func IsPkgPath(p string) bool {
 	p = strings.TrimPrefix(p, "/") // might have a leading slash
 	if p == "" {
 		return false

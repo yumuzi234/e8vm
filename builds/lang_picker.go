@@ -37,7 +37,7 @@ func (pick *LangPicker) AddLang(key string, lang Lang) {
 
 // Lang picks the language for a particular path.
 func (pick *LangPicker) Lang(path string) Lang {
-	if !isPkgPath(path) {
+	if !IsPkgPath(path) {
 		panic("not package path")
 	}
 
