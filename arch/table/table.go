@@ -100,7 +100,7 @@ func whatCode(what string) uint8 {
 	return 0
 }
 
-// Click send in a click.
+// Click sends in a click on the table.
 func (t *Table) Click(what string, pos uint8) error {
 	t.in.Send([]byte{whatCode(what), pos})
 	return nil
