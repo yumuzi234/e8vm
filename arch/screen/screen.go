@@ -9,11 +9,11 @@ import (
 type Screen struct {
 	textUpdate  map[uint32]byte
 	colorUpdate map[uint32]byte
-	r           Render
+	r           ScreenRender
 }
 
-// New creates a new screen that renders on the given renderer.
-func New(r Render) *Screen {
+// NewScreen creates a new screen that renders on the given renderer.
+func NewScreen(r ScreenRender) *Screen {
 	if r == nil {
 		panic("creating nil screen")
 	}
@@ -44,9 +44,9 @@ func (s *Screen) Handle(req []byte) ([]byte, int32) {
 		}
 
 		if cmd == 0 {
-			s.textUpdate[line*Width+col] = c
+			s.textUpdate[line*ScreenWidth+col] = c
 		} else { // cmd == 1
-			s.colorUpdate[line*Width+col] = c
+			s.colorUpdate[line*ScreenWidth+col] = c
 		}
 	default:
 		return nil, devs.ErrInvalidArg

@@ -14,7 +14,7 @@ type Config struct {
 	Ncore   int
 
 	Output   io.Writer
-	Screen   screen.Render
+	Screen   screen.ScreenRender
 	Table    devs.TableRender
 	RandSeed int64
 

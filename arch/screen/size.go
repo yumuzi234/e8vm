@@ -1,9 +1,9 @@
 package screen
 
 const (
-	// Width is the number of characters in a line on the screen.
-	Width = 80
+	// ScreenWidth is the number of characters in a line on the screen.
+	ScreenWidth = 80
 
-	// Height is the number of lines on the screen.
-	Height = 24
+	// ScreenHeight is the number of lines on the screen.
+	ScreenHeight = 24
 )

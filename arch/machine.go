@@ -21,7 +21,7 @@ type Machine struct {
 
 	devices []device
 	console *console
-	clicks  *screen.Clicks
+	clicks  *screen.ScreenClicks
 	screen  *screen.Screen
 	table   *devs.Table
 	rand    *misc.Rand
@@ -74,7 +74,7 @@ func NewMachine(c *Config) *Machine {
 
 	if c.Screen != nil {
 		m.clicks = screen.NewClicks(m.calls.sender(serviceScreen))
-		s := screen.New(c.Screen)
+		s := screen.NewScreen(c.Screen)
 		m.screen = s
 		m.addDevice(s)
 		m.calls.register(serviceScreen, s)
