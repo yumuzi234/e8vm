@@ -1,10 +1,8 @@
-package misc
+package devs
 
 import (
 	"encoding/binary"
 	"time"
-
-	"shanhu.io/smlvm/arch/devs"
 )
 
 // Clock provides time reading.
@@ -47,7 +45,7 @@ func (c *Clock) Handle(in []byte) ([]byte, int32) {
 	}
 
 	if len(in) != 1 {
-		return nil, devs.ErrInvalidArg
+		return nil, ErrInvalidArg
 	}
 
 	switch in[0] {
@@ -56,5 +54,5 @@ func (c *Clock) Handle(in []byte) ([]byte, int32) {
 	case 1:
 		return c.readMono()
 	}
-	return nil, devs.ErrInvalidArg
+	return nil, ErrInvalidArg
 }

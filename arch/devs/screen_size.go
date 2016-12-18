@@ -1,4 +1,4 @@
-package screen
+package devs
 
 const (
 	// ScreenWidth is the number of characters in a line on the screen.

@@ -1,4 +1,4 @@
-package screen
+package devs
 
 // ScreenRender is an interface that renders the screen.
 type ScreenRender interface {

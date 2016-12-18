@@ -8,8 +8,6 @@ import (
 	"time"
 
 	"shanhu.io/smlvm/arch/devs"
-	"shanhu.io/smlvm/arch/misc"
-	"shanhu.io/smlvm/arch/screen"
 	"shanhu.io/smlvm/image"
 )
 
@@ -21,10 +19,10 @@ type Machine struct {
 
 	devices []device
 	console *console
-	clicks  *screen.ScreenClicks
-	screen  *screen.Screen
+	clicks  *devs.ScreenClicks
+	screen  *devs.Screen
 	table   *devs.Table
-	rand    *misc.Rand
+	rand    *devs.Rand
 	ticker  *ticker
 	rom     *rom
 
@@ -40,11 +38,11 @@ const (
 	DefaultSPStride uint32 = 0x2000
 )
 
-func makeRand(c *Config) *misc.Rand {
+func makeRand(c *Config) *devs.Rand {
 	if c.RandSeed == 0 {
-		return misc.NewTimeRand()
+		return devs.NewTimeRand()
 	}
-	return misc.NewRand(c.RandSeed)
+	return devs.NewRand(c.RandSeed)
 }
 
 // NewMachine creates a machine with memory and cores.
@@ -67,14 +65,14 @@ func NewMachine(c *Config) *Machine {
 
 	m.calls.register(serviceConsole, m.console)
 	m.calls.register(serviceRand, makeRand(c))
-	m.calls.register(serviceClock, &misc.Clock{PerfNow: c.PerfNow})
+	m.calls.register(serviceClock, &devs.Clock{PerfNow: c.PerfNow})
 
 	m.addDevice(m.ticker)
 	m.addDevice(m.console)
 
 	if c.Screen != nil {
-		m.clicks = screen.NewClicks(m.calls.sender(serviceScreen))
-		s := screen.NewScreen(c.Screen)
+		m.clicks = devs.NewScreenClicks(m.calls.sender(serviceScreen))
+		s := devs.NewScreen(c.Screen)
 		m.screen = s
 		m.addDevice(s)
 		m.calls.register(serviceScreen, s)

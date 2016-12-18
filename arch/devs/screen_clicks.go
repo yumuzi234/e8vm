@@ -1,18 +1,16 @@
-package screen
+package devs
 
 import (
 	"fmt"
-
-	"shanhu.io/smlvm/arch/devs"
 )
 
 // ScreenClicks manages clicks on a screen.
 type ScreenClicks struct {
-	send devs.Sender
+	send Sender
 }
 
-// NewClicks creates new clicks handler.
-func NewClicks(s devs.Sender) *ScreenClicks {
+// NewScreenClicks creates new clicks handler.
+func NewScreenClicks(s Sender) *ScreenClicks {
 	return &ScreenClicks{send: s}
 }
 
