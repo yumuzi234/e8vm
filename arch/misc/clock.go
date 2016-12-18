@@ -4,7 +4,7 @@ import (
 	"encoding/binary"
 	"time"
 
-	"shanhu.io/smlvm/arch/vpc"
+	"shanhu.io/smlvm/arch/devs"
 )
 
 // Clock provides time reading.
@@ -47,7 +47,7 @@ func (c *Clock) Handle(in []byte) ([]byte, int32) {
 	}
 
 	if len(in) != 1 {
-		return nil, vpc.ErrInvalidArg
+		return nil, devs.ErrInvalidArg
 	}
 
 	switch in[0] {
@@ -56,5 +56,5 @@ func (c *Clock) Handle(in []byte) ([]byte, int32) {
 	case 1:
 		return c.readMono()
 	}
-	return nil, vpc.ErrInvalidArg
+	return nil, devs.ErrInvalidArg
 }

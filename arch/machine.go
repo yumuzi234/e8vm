@@ -7,9 +7,9 @@ import (
 	"math/rand"
 	"time"
 
+	"shanhu.io/smlvm/arch/devs"
 	"shanhu.io/smlvm/arch/misc"
 	"shanhu.io/smlvm/arch/screen"
-	"shanhu.io/smlvm/arch/table"
 	"shanhu.io/smlvm/image"
 )
 
@@ -23,7 +23,7 @@ type Machine struct {
 	console *console
 	clicks  *screen.Clicks
 	screen  *screen.Screen
-	table   *table.Table
+	table   *devs.Table
 	rand    *misc.Rand
 	ticker  *ticker
 	rom     *rom
@@ -81,7 +81,7 @@ func NewMachine(c *Config) *Machine {
 	}
 
 	if c.Table != nil {
-		t := table.New(c.Table, m.calls.sender(serviceTable))
+		t := devs.NewTable(c.Table, m.calls.sender(serviceTable))
 		m.table = t
 		m.calls.register(serviceTable, t) // hook vpc all
 	}

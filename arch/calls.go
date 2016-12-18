@@ -4,7 +4,7 @@ import (
 	"container/list"
 	"time"
 
-	"shanhu.io/smlvm/arch/vpc"
+	"shanhu.io/smlvm/arch/devs"
 )
 
 const (
@@ -24,7 +24,7 @@ const (
 type calls struct {
 	p        *pageOffset
 	mem      *phyMemory
-	services map[uint32]vpc.Service
+	services map[uint32]devs.Service
 	enabled  map[uint32]bool
 	queue    *list.List
 
@@ -36,16 +36,16 @@ func newCalls(p *page, mem *phyMemory) *calls {
 	return &calls{
 		p:        &pageOffset{p, 0},
 		mem:      mem,
-		services: make(map[uint32]vpc.Service),
+		services: make(map[uint32]devs.Service),
 		queue:    list.New(),
 	}
 }
 
-func (c *calls) sender(id uint32) vpc.Sender {
+func (c *calls) sender(id uint32) devs.Sender {
 	return &callsSender{service: id, queue: c.queue}
 }
 
-func (c *calls) register(id uint32, s vpc.Service) {
+func (c *calls) register(id uint32, s devs.Service) {
 	if id == 0 {
 		panic("cannot register service 0")
 	}
@@ -60,28 +60,28 @@ func (c *calls) system(ctrl uint8, in []byte, respSize int) (
 		if c.queue.Len() == 0 {
 			if len(in) == 0 {
 				c.timedSleep = false
-				return nil, vpc.ErrInternal, errSleep // we will execute again
+				return nil, devs.ErrInternal, errSleep // we will execute again
 			}
 			if len(in) != 8 {
-				return nil, vpc.ErrInvalidArg, nil
+				return nil, devs.ErrInvalidArg, nil
 			}
 
 			// first time executing sleep.
 			if !c.timedSleep {
 				c.timedSleep = true
 				c.sleep = time.Duration(Endian.Uint64(in[:8]))
-				return nil, vpc.ErrInternal, errSleep
+				return nil, devs.ErrInternal, errSleep
 			}
 
 			// second time, timeout, waking up.
 			c.timedSleep = false
-			return nil, vpc.ErrTimeout, nil
+			return nil, devs.ErrTimeout, nil
 		}
 
 		front := c.queue.Front()
 		m := front.Value.(*callsMessage)
 		if len(m.p) > respSize {
-			return nil, vpc.ErrSmallBuf, nil
+			return nil, devs.ErrSmallBuf, nil
 		}
 
 		c.queue.Remove(front)
@@ -93,7 +93,7 @@ func (c *calls) system(ctrl uint8, in []byte, respSize int) (
 	case 3: // enable/disable service message
 	}
 
-	return nil, vpc.ErrInvalidArg, nil
+	return nil, devs.ErrInvalidArg, nil
 }
 
 func (c *calls) call(ctrl uint8, s uint32, req []byte, respSize int) (
@@ -105,7 +105,7 @@ func (c *calls) call(ctrl uint8, s uint32, req []byte, respSize int) (
 
 	service, found := c.services[s]
 	if !found {
-		return nil, vpc.ErrNotFound, nil
+		return nil, devs.ErrNotFound, nil
 	}
 	resp, ret := service.Handle(req)
 	return resp, ret, nil
@@ -117,8 +117,8 @@ func (c *calls) respondCode(code int32) {
 
 func (c *calls) respSize() int {
 	ret := c.p.readWord(callsResponseSize)
-	if ret > vpc.MaxLen {
-		ret = vpc.MaxLen
+	if ret > devs.MaxLen {
+		ret = devs.MaxLen
 	}
 	return int(ret)
 }
@@ -158,15 +158,15 @@ func (c *calls) invoke() *Excep {
 
 	respAddr := c.p.readWord(callsResponseAddr)
 	respLen := len(resp)
-	if respLen > vpc.MaxLen {
-		c.respondCode(vpc.ErrInternal)
+	if respLen > devs.MaxLen {
+		c.respondCode(devs.ErrInternal)
 		return nil
 	}
 
 	// we will write the response length anyways
 	c.p.writeWord(callsResponseLen, uint32(respLen))
 	if respLen > respSize {
-		c.respondCode(vpc.ErrSmallBuf)
+		c.respondCode(devs.ErrSmallBuf)
 		return nil
 	}
 

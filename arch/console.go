@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"shanhu.io/smlvm/arch/vpc"
+	"shanhu.io/smlvm/arch/devs"
 )
 
 // Console is a simple console that can output/input a single
@@ -55,7 +55,7 @@ func (c *console) Handle(req []byte) ([]byte, int32) {
 		return nil, 0
 	}
 	if m > maxOutputLen {
-		return nil, vpc.ErrInvalidArg
+		return nil, devs.ErrInvalidArg
 	}
 
 	if _, err := c.Output.Write(req); err != nil {

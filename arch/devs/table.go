@@ -1,18 +1,17 @@
-package table
+package devs
 
 import (
-	"shanhu.io/smlvm/arch/vpc"
 	"shanhu.io/smlvm/coder"
 )
 
 // Table is a virtual card table device.
 type Table struct {
-	out Render
-	in  vpc.Sender
+	out TableRender
+	in  Sender
 }
 
-// New creates a new virtual card table device.
-func New(out Render, in vpc.Sender) *Table {
+// NewTable creates a new virtual card table device.
+func NewTable(out TableRender, in Sender) *Table {
 	return &Table{
 		out: out,
 		in:  in,
@@ -78,10 +77,10 @@ func (t *Table) Handle(req []byte) ([]byte, int32) {
 	}
 
 	if dec.Err != nil {
-		return nil, vpc.ErrInvalidArg
+		return nil, ErrInvalidArg
 	}
 
-	t.out.Act(&Action{
+	t.out.Act(&TableAction{
 		Action: actionStrings[action],
 		Pos:    int(pos),
 		Text:   text,

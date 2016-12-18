@@ -1,7 +1,7 @@
 package screen
 
 import (
-	"shanhu.io/smlvm/arch/vpc"
+	"shanhu.io/smlvm/arch/devs"
 	"shanhu.io/smlvm/coder"
 )
 
@@ -30,7 +30,7 @@ func (s *Screen) Handle(req []byte) ([]byte, int32) {
 	dec := coder.NewDecoder(req)
 	cmd := dec.U8()
 	if dec.Err != nil {
-		return nil, vpc.ErrInvalidArg
+		return nil, devs.ErrInvalidArg
 	}
 
 	switch cmd {
@@ -40,7 +40,7 @@ func (s *Screen) Handle(req []byte) ([]byte, int32) {
 		col := uint32(dec.U8())
 
 		if dec.Err != nil {
-			return nil, vpc.ErrInvalidArg
+			return nil, devs.ErrInvalidArg
 		}
 
 		if cmd == 0 {
@@ -49,7 +49,7 @@ func (s *Screen) Handle(req []byte) ([]byte, int32) {
 			s.colorUpdate[line*Width+col] = c
 		}
 	default:
-		return nil, vpc.ErrInvalidArg
+		return nil, devs.ErrInvalidArg
 	}
 
 	return nil, 0

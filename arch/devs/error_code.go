@@ -1,4 +1,4 @@
-package vpc
+package devs
 
 // VPC error codes.
 const (

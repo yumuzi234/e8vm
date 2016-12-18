@@ -7,7 +7,7 @@ import (
 	"math/rand"
 	"time"
 
-	"shanhu.io/smlvm/arch/vpc"
+	"shanhu.io/smlvm/arch/devs"
 )
 
 // Rand provides a random number generator.
@@ -40,7 +40,7 @@ func (r *Rand) Handle(_ []byte) ([]byte, int32) {
 	_, err := r.r.Read(ret)
 	if err != nil {
 		log.Println(err)
-		return nil, vpc.ErrInternal
+		return nil, devs.ErrInternal
 	}
 	return ret, 0
 }
