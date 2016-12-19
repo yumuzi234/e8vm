@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"io"
 	"io/ioutil"
-	"strings"
 	"os"
+	"strings"
 )
 
 // FileOpener opens a particular file for reading.
