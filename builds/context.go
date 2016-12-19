@@ -2,7 +2,7 @@ package builds
 
 import (
 	"shanhu.io/smlvm/debug"
-	link8 "shanhu.io/smlvm/link"
+	"shanhu.io/smlvm/link"
 )
 
 type context struct {
@@ -13,6 +13,6 @@ type context struct {
 	pkgs map[string]*pkg
 	deps map[string][]string
 
-	linkPkgs   map[string]*link8.Pkg
+	linkPkgs   map[string]*link.Pkg
 	debugFuncs *debug.Funcs
 }

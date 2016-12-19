@@ -6,7 +6,7 @@ import (
 	"shanhu.io/smlvm/dagvis"
 	"shanhu.io/smlvm/debug"
 	"shanhu.io/smlvm/lexing"
-	link8 "shanhu.io/smlvm/link"
+	"shanhu.io/smlvm/link"
 )
 
 // Builder builds a bunch of packages.
@@ -22,7 +22,7 @@ func NewBuilder(input Input, output Output) *Builder {
 			output:     output,
 			pkgs:       make(map[string]*pkg),
 			deps:       make(map[string][]string),
-			linkPkgs:   make(map[string]*link8.Pkg),
+			linkPkgs:   make(map[string]*link.Pkg),
 			debugFuncs: debug.NewFuncs(),
 			Options:    new(Options),
 		},

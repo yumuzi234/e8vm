@@ -4,7 +4,7 @@ import (
 	"io"
 
 	"shanhu.io/smlvm/lexing"
-	link8 "shanhu.io/smlvm/link"
+	"shanhu.io/smlvm/link"
 	"shanhu.io/smlvm/syms"
 )
 
@@ -44,7 +44,7 @@ type Package struct {
 	Symbols *syms.Table
 
 	// Lib is the linkable library.
-	Lib *link8.Pkg
+	Lib *link.Pkg
 }
 
 // Importer is an interface for importing required packages for compiling
