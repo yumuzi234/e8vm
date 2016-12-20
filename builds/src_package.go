@@ -1,9 +1,5 @@
 package builds
 
-import (
-	"io"
-)
-
 // SrcPackage contains all the input of a package
 type SrcPackage struct {
 	Path  string  // package import path

@@ -15,4 +15,3 @@ type File struct {
 func (f *File) Open() (io.ReadCloser, error) {
 	return f.Opener.Open()
 }
-
