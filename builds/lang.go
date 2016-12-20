@@ -49,14 +49,25 @@ type PkgInfo struct {
 	AddFuncDebug func(name string, pos *lexing.Pos, frameSize uint32)
 }
 
-// Lang is a language compiler interface
-type Lang interface {
-	// IsSrc filters source file filenames
-	IsSrc(filename string) bool
-
+// Compiler is a language compiler that compiles a source package.
+type Compiler interface {
 	// Prepare issues import requests
 	Prepare(src *SrcPackage) (*ImportList, []*lexing.Error)
 
 	// Compile compiles a list of source files into a compiled linkable
 	Compile(pinfo *PkgInfo) (*Package, []*lexing.Error)
+}
+
+// LangInfo contains the language info.
+type LangInfo struct {
+	Dir string
+	Ext string
+	Lang
+}
+
+// Lang is a language compiler interface
+type Lang interface {
+	// IsSrc filters source file filenames
+	IsSrc(filename string) bool
+	Compiler
 }
