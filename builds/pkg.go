@@ -47,10 +47,16 @@ func newPkg(in Input, out Output, p string) *pkg {
 func (p *pkg) srcMap() map[string]*File { return p.input.Src(p.path) }
 
 func (p *pkg) srcPackage() *SrcPackage {
+	m := p.srcMap()
+	fset := NewFileSet()
+	for _, f := range m {
+		fset.Add(f)
+	}
+
 	return &SrcPackage{
 		Path:  p.path,
 		Lang:  "", // TODO: specify language.
 		Hash:  "",
-		Files: p.input.Src(p.path),
+		Files: fset,
 	}
 }

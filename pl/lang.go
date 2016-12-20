@@ -32,26 +32,24 @@ func LangGoLike() *builds.Lang {
 	return Lang(true)
 }
 
-func (l *lang) Prepare(src *builds.SrcPackage) (
+func (l *lang) Prepare(src *builds.FileSet) (
 	*builds.ImportList, []*lexing.Error,
 ) {
 	ret := builds.NewImportList()
 	ret.Add("$", "asm/builtin", nil)
 
-	if f := builds.OnlyFile(src.Files); f != nil {
+	if f := src.OnlyFile(); f != nil {
 		if errs := listImport(f.Path, f, l.golike, ret); errs != nil {
 			return nil, errs
 		}
 	}
 
-	if src.Files != nil {
-		f := src.Files["import.g"]
-		if f == nil {
-			return ret, nil
-		}
-		if errs := listImport(f.Path, f, l.golike, ret); errs != nil {
-			return nil, errs
-		}
+	f := src.File("import.g")
+	if f == nil {
+		return ret, nil
+	}
+	if errs := listImport(f.Path, f, l.golike, ret); errs != nil {
+		return nil, errs
 	}
 	return ret, nil
 }

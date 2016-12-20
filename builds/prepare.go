@@ -16,7 +16,8 @@ func prepare(c *context, p string) (*pkg, []*lexing.Error) {
 		return pkg, nil
 	}
 
-	impList, errs := pkg.lang.Prepare(pkg.srcPackage())
+	srcPkg := pkg.srcPackage()
+	impList, errs := pkg.lang.Prepare(srcPkg.Files)
 	if errs != nil {
 		return pkg, errs
 	}

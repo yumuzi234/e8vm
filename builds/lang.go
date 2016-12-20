@@ -52,7 +52,7 @@ type PkgInfo struct {
 // Compiler is a language compiler that compiles a source package.
 type Compiler interface {
 	// Prepare issues import requests
-	Prepare(src *SrcPackage) (*ImportList, []*lexing.Error)
+	Prepare(files *FileSet) (*ImportList, []*lexing.Error)
 
 	// Compile compiles a list of source files into a compiled linkable
 	Compile(pinfo *PkgInfo) (*Package, []*lexing.Error)
@@ -60,7 +60,6 @@ type Compiler interface {
 
 // Lang contains the language info.
 type Lang struct {
-	Dir string
-	Ext string
+	Ext string // source file extension
 	Compiler
 }

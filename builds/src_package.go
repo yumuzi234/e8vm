@@ -2,10 +2,10 @@ package builds
 
 // SrcPackage contains all the input of a package
 type SrcPackage struct {
-	Path  string           // package import path
-	Lang  string           // language the package is written
-	Hash  string           // a signature; empty for unknown
-	Files map[string]*File // list of source files
+	Path  string   // package import path
+	Lang  string   // language the package is written
+	Hash  string   // a signature; empty for unknown
+	Files *FileSet // a set of source files
 }
 
 // Loader loads packages.

@@ -25,7 +25,7 @@ func BareFunc() *builds.Lang {
 	}
 }
 
-func (bareFunc) Prepare(*builds.SrcPackage) (
+func (bareFunc) Prepare(*builds.FileSet) (
 	*builds.ImportList, []*lexing.Error,
 ) {
 	ret := builds.NewImportList()
