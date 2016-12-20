@@ -1,5 +1,9 @@
 package builds
 
+import (
+	"sort"
+)
+
 // FileSet is a set of files.
 type FileSet struct {
 	fs map[string]*File
@@ -12,8 +16,7 @@ func NewFileSet() *FileSet {
 	}
 }
 
-// Add adds a file into the fileset.
-func (s *FileSet) Add(f *File) { s.fs[f.Name] = f }
+func (s *FileSet) add(f *File) { s.fs[f.Name] = f }
 
 // OnlyFile returns the only file in the file set, when the set have exactly
 // one file, and nil otherwise.
@@ -25,6 +28,21 @@ func (s *FileSet) OnlyFile() *File {
 		return f
 	}
 	panic("unreachable")
+}
+
+// List lists all the files in alphabetic order.
+func (s *FileSet) List() []*File {
+	var names []string
+	for name := range s.fs {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+
+	var ret []*File
+	for _, name := range names {
+		ret = append(ret, s.fs[name])
+	}
+	return ret
 }
 
 // File returns the file with the given name, nil when it does not exist.

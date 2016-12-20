@@ -35,7 +35,7 @@ type Flags struct {
 // PkgInfo contains the information for compiling a package
 type PkgInfo struct {
 	Path   string
-	Src    map[string]*File
+	Files  *FileSet
 	Import map[string]*Import
 	Flags  *Flags
 

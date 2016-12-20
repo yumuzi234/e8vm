@@ -14,7 +14,7 @@ type pkg struct {
 	imports *importDecl
 }
 
-func resolvePkg(p string, src map[string]*builds.File) (*pkg, []*lexing.Error) {
+func resolvePkg(p string, files *builds.FileSet) (*pkg, []*lexing.Error) {
 	log := lexing.NewErrorList()
 	ret := new(pkg)
 	ret.path = p
@@ -23,7 +23,8 @@ func resolvePkg(p string, src map[string]*builds.File) (*pkg, []*lexing.Error) {
 
 	// parse all the files first
 	var parseErrs []*lexing.Error
-	for name, f := range src {
+	fileList := files.List()
+	for _, f := range fileList {
 		rc, err := f.Open()
 		if err != nil {
 			return nil, lexing.SingleErr(err)
@@ -32,7 +33,7 @@ func resolvePkg(p string, src map[string]*builds.File) (*pkg, []*lexing.Error) {
 		if es != nil {
 			parseErrs = append(parseErrs, es...)
 		}
-		asts[name] = astFile
+		asts[f.Name] = astFile
 	}
 	if len(parseErrs) > 0 {
 		return nil, parseErrs
@@ -44,7 +45,7 @@ func resolvePkg(p string, src map[string]*builds.File) (*pkg, []*lexing.Error) {
 		ret.files = append(ret.files, file)
 
 		// enforce import policy
-		if len(src) == 1 || name == "import.s" {
+		if len(asts) == 1 || name == "import.s" {
 			if ret.imports != nil {
 				log.Errorf(file.imports.Kw.Pos,
 					"double valid import stmt; two import.s?",

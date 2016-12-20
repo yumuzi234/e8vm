@@ -49,26 +49,13 @@ func buildBareFunc(b *builder, stmts []ast.Stmt) []*lexing.Error {
 	return nil
 }
 
-func findTheFile(pinfo *builds.PkgInfo) (*builds.File, error) {
-	if len(pinfo.Src) == 0 {
-		panic("no source file")
-	} else if len(pinfo.Src) > 1 {
-		return nil, fmt.Errorf("bare func %q has too many files", pinfo.Path)
-	}
-
-	for _, r := range pinfo.Src {
-		return r, nil
-	}
-	panic("unreachable")
-}
-
 func (bare bareFunc) Compile(pinfo *builds.PkgInfo) (
 	pkg *builds.Package, es []*lexing.Error,
 ) {
 	// parsing
-	theFile, err := findTheFile(pinfo)
-	if err != nil {
-		return nil, lexing.SingleErr(err)
+	theFile := pinfo.Files.OnlyFile()
+	if theFile == nil {
+		return nil, lexing.SingleErr(fmt.Errorf("too many files"))
 	}
 	rc, err := theFile.Open()
 	if err != nil {

@@ -79,8 +79,8 @@ func (l *lang) parsePkg(pinfo *builds.PkgInfo) (
 ) {
 	var parseErrs []*lexing.Error
 	asts := make(map[string]*ast.File)
-	for name, src := range pinfo.Src {
-		if filepath.Base(src.Path) != name {
+	for _, src := range pinfo.Files.List() {
+		if filepath.Base(src.Path) != src.Name {
 			panic("basename in path is different from the file name")
 		}
 
@@ -99,9 +99,9 @@ func (l *lang) parsePkg(pinfo *builds.PkgInfo) (
 		}
 
 		if pinfo.ParseOutput != nil && rec != nil {
-			pinfo.ParseOutput(name, rec.Tokens())
+			pinfo.ParseOutput(src.Name, rec.Tokens())
 		}
-		asts[name] = f
+		asts[src.Name] = f
 	}
 	if len(parseErrs) > 0 {
 		return nil, parseErrs

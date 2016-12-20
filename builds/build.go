@@ -55,7 +55,7 @@ func parseOutput(c *context, p string) func(f string, toks []*lexing.Token) {
 func makePkgInfo(c *context, p *pkg) *PkgInfo {
 	return &PkgInfo{
 		Path:   p.path,
-		Src:    p.srcMap(),
+		Files:  p.fileSet(),
 		Import: p.imports,
 
 		Flags: &Flags{StaticOnly: c.StaticOnly},

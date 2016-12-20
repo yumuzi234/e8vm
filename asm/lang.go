@@ -53,7 +53,7 @@ func (lang) Compile(pinfo *builds.PkgInfo) (
 	*builds.Package, []*lexing.Error,
 ) {
 	// resolve pass, will also parse the files
-	pkg, es := resolvePkg(pinfo.Path, pinfo.Src)
+	pkg, es := resolvePkg(pinfo.Path, pinfo.Files)
 	if es != nil {
 		return nil, es
 	}
