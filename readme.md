@@ -14,8 +14,9 @@ The project is written entirely in Go language. Each file in the
 project has no more than 300 lines, with each line no more than 80
 characters. Among these small files, there are no circular
 dependencies, checked by static analysis, and as a result, the project
-architecture can be automatically visualized from static code
-analysis.
+architecture can be automatically
+[visualized](https://shanhu.io/smlvm)
+from static code analysis.
 
 The main project in this repository depends on nothing other than the
 Go standard library. It is *NOT* yet another compiler project based on
