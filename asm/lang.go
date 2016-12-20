@@ -16,26 +16,33 @@ func (lang) IsSrc(filename string) bool {
 	return strings.HasSuffix(filename, ".s")
 }
 
-func (lang) Prepare(
-	src map[string]*builds.File, imp builds.Importer,
-) []*lexing.Error {
+func (lang) Prepare(src map[string]*builds.File) (
+	*builds.ImportList, []*lexing.Error,
+) {
+	ret := builds.NewImportList()
 	if f := builds.OnlyFile(src); f != nil {
 		rc, err := f.Open()
 		if err != nil {
-			return lexing.SingleErr(err)
+			return nil, lexing.SingleErr(err)
 		}
-		return listImport(f.Path, rc, imp)
+		if errs := listImport(f.Path, rc, ret); errs != nil {
+			return nil, errs
+		}
+		return ret, nil
 	}
 
 	f := src["import.s"]
 	if f == nil {
-		return nil
+		return nil, nil
 	}
 	rc, err := f.Open()
 	if err != nil {
-		return lexing.SingleErr(err)
+		return nil, lexing.SingleErr(err)
 	}
-	return listImport(f.Path, rc, imp)
+	if errs := listImport(f.Path, rc, ret); errs != nil {
+		return nil, errs
+	}
+	return ret, nil
 }
 
 func buildSymTable(p *lib) *syms.Table {

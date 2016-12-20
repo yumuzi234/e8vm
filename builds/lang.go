@@ -17,32 +17,14 @@ type Import struct {
 
 // Package is an interface for a linkable package
 type Package struct {
-	// Lang is the language name this package used
-	Lang string
+	Lang    string      // the language name this package used
+	Lib     *link.Pkg   // linkable object.
+	Symbols *syms.Table // all the symbols
 
-	// Init is the init function of this package.
-	// It is always a function that has no paramters.
-	Init string
-
-	// Main is the main entrance of this package, if any.
-	Main string
-
-	// TestMain is the main entrance for testing of this package, if any.
-	TestMain string
-
-	// Tests is the list of test cases, mapping from names to test ids.
-	Tests map[string]uint32
-
-	// Symbols stores all the symbols of this package.
-	Symbols *syms.Table
-
-	// Lib is the linkable library.
-	Lib *link.Pkg
-}
-
-// Importer is an interface for importing required packages for compiling
-type Importer interface {
-	Import(name, path string, pos *lexing.Pos) // imports a package
+	Init     string            // the init function; always has no parameters.
+	Main     string            // main entrance. optional.
+	TestMain string            // test main entrance. optional.
+	Tests    map[string]uint32 // list of tests. map from names to ids.
 }
 
 // Flags contains the flags for compiling a package
@@ -73,7 +55,7 @@ type Lang interface {
 	IsSrc(filename string) bool
 
 	// Prepare issues import requests
-	Prepare(src map[string]*File, importer Importer) []*lexing.Error
+	Prepare(src map[string]*File) (*ImportList, []*lexing.Error)
 
 	// Compile compiles a list of source files into a compiled linkable
 	Compile(pinfo *PkgInfo) (*Package, []*lexing.Error)

@@ -9,11 +9,11 @@ import (
 )
 
 func listImport(
-	f string, rc io.ReadCloser, imp builds.Importer,
+	f string, rc io.ReadCloser, lst *builds.ImportList,
 ) []*lexing.Error {
-	astFile, es := parse.File(f, rc)
-	if es != nil {
-		return es
+	astFile, errs := parse.File(f, rc)
+	if errs != nil {
+		return errs
 	}
 
 	if astFile.Imports == nil {
@@ -22,12 +22,12 @@ func listImport(
 
 	log := lexing.NewErrorList()
 	impDecl := resolveImportDecl(log, astFile.Imports)
-	if es := log.Errs(); es != nil {
-		return es
+	if errs := log.Errs(); errs != nil {
+		return errs
 	}
 
 	for as, stmt := range impDecl.stmts {
-		imp.Import(as, stmt.path, stmt.Path.Pos)
+		lst.Add(as, stmt.path, stmt.Path.Pos)
 	}
 
 	return nil

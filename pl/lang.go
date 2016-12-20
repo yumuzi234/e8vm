@@ -31,19 +31,26 @@ func (l *lang) IsSrc(filename string) bool {
 	return strings.HasSuffix(filename, ".g")
 }
 
-func (l *lang) Prepare(
-	src map[string]*builds.File, importer builds.Importer,
-) []*lexing.Error {
-	importer.Import("$", "asm/builtin", nil)
+func (l *lang) Prepare(src map[string]*builds.File) (
+	*builds.ImportList, []*lexing.Error,
+) {
+	ret := builds.NewImportList()
+	ret.Add("$", "asm/builtin", nil)
+
 	if f := builds.OnlyFile(src); f != nil {
-		return listImport(f.Path, f, importer, l.golike)
+		if errs := listImport(f.Path, f, l.golike, ret); errs != nil {
+			return nil, errs
+		}
 	}
 
 	f := src["import.g"]
 	if f == nil {
-		return nil
+		return ret, nil
 	}
-	return listImport(f.Path, f, importer, l.golike)
+	if errs := listImport(f.Path, f, l.golike, ret); errs != nil {
+		return nil, errs
+	}
+	return ret, nil
 }
 
 func makeBuilder(pinfo *builds.PkgInfo) *builder {

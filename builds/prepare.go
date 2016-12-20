@@ -16,20 +16,26 @@ func prepare(c *context, p string) (*pkg, []*lexing.Error) {
 		return pkg, nil
 	}
 
-	if es := pkg.lang.Prepare(pkg.srcMap(), pkg); es != nil {
-		return pkg, es
+	impList, errs := pkg.lang.Prepare(pkg.srcMap())
+	if errs != nil {
+		return pkg, errs
 	}
 
 	// recursively prepare imported packages
-	for _, imp := range pkg.imports {
-		impPkg, es := prepare(c, imp.Path)
-		if es != nil {
-			return pkg, es
+	for name, imp := range impList.imps {
+		pkg.imports[name] = &Import{
+			Path: imp.path,
+			Pos:  imp.pos,
+		}
+
+		impPkg, errs := prepare(c, imp.path)
+		if errs != nil {
+			return pkg, errs
 		}
 
 		if impPkg.err != nil {
 			return pkg, []*lexing.Error{{
-				Pos: imp.Pos,
+				Pos: imp.pos,
 				Err: impPkg.err,
 			}}
 		}

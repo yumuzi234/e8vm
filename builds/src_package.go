@@ -8,12 +8,12 @@ type SrcPackage struct {
 	Files []*File // list of source files
 }
 
-// SrcLoader loads packages.
-type SrcLoader interface {
-	LoadPkg(path string) *SrcPackage
+// Loader loads packages.
+type Loader interface {
+	Load(path string) *SrcPackage
 }
 
-// SrcLister lists packages of a given pattern.
-type SrcLister interface {
-	ListPkg(pattern string) []*SrcPackage
+// Lister lists packages of a given pattern.
+type Lister interface {
+	List(pattern string) []*SrcPackage
 }

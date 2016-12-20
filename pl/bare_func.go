@@ -20,11 +20,12 @@ type bareFunc struct{ *lang }
 // BareFunc is a language where it only contains an implicit main function.
 func BareFunc() builds.Lang { return bareFunc{new(lang)} }
 
-func (bareFunc) Prepare(
-	src map[string]*builds.File, importer builds.Importer,
-) []*lexing.Error {
-	importer.Import("$", "asm/builtin", nil)
-	return nil
+func (bareFunc) Prepare(src map[string]*builds.File) (
+	*builds.ImportList, []*lexing.Error,
+) {
+	ret := builds.NewImportList()
+	ret.Add("$", "asm/builtin", nil)
+	return ret, nil
 }
 
 func buildBareFunc(b *builder, stmts []ast.Stmt) []*lexing.Error {

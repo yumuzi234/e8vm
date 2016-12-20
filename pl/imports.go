@@ -14,15 +14,15 @@ type importDecl struct {
 }
 
 func listImport(
-	f string, o builds.FileOpener, imp builds.Importer, golike bool,
+	f string, o builds.FileOpener, golike bool, lst *builds.ImportList,
 ) []*lexing.Error {
 	rc, err := o.Open()
 	if err != nil {
 		return lexing.SingleErr(err)
 	}
-	fast, _, es := parse.File(f, rc, golike)
-	if es != nil {
-		return es
+	fast, _, errs := parse.File(f, rc, golike)
+	if errs != nil {
+		return errs
 	}
 
 	if fast.Imports == nil {
@@ -54,7 +54,7 @@ func listImport(
 	}
 
 	for as, d := range m {
-		imp.Import(as, d.path, d.pos)
+		lst.Add(as, d.path, d.pos)
 	}
 
 	return nil
