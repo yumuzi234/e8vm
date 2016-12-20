@@ -11,7 +11,7 @@ import (
 
 // MakeMemHome makes a memory home for compiling.
 // It contains the basic built-in packages.
-func MakeMemHome(lang builds.Lang) *builds.MemHome {
+func MakeMemHome(lang *builds.Lang) *builds.MemHome {
 	home := builds.NewMemHome(lang)
 	home.AddLang("asm", asm.Lang())
 	builtin := home.NewPkg("asm/builtin")
@@ -42,7 +42,7 @@ func buildMainPkg(home *builds.MemHome, opt *builds.Options) (
 }
 
 func buildSingle(
-	f, s string, lang builds.Lang, opt *builds.Options,
+	f, s string, lang *builds.Lang, opt *builds.Options,
 ) (
 	image []byte, errs []*lexing.Error, log []byte,
 ) {

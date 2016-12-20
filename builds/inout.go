@@ -16,7 +16,7 @@ type Input interface {
 	Src(path string) map[string]*File
 
 	// Lang returns the language of a path.
-	Lang(path string) Lang
+	Lang(path string) *Lang
 }
 
 // Output provides writers for compiler outputs

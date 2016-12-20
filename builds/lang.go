@@ -58,16 +58,9 @@ type Compiler interface {
 	Compile(pinfo *PkgInfo) (*Package, []*lexing.Error)
 }
 
-// LangInfo contains the language info.
-type LangInfo struct {
+// Lang contains the language info.
+type Lang struct {
 	Dir string
 	Ext string
-	Lang
-}
-
-// Lang is a language compiler interface
-type Lang interface {
-	// IsSrc filters source file filenames
-	IsSrc(filename string) bool
 	Compiler
 }

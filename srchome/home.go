@@ -118,6 +118,6 @@ func (h *Home) Output(p, name string) io.WriteCloser {
 // Lang returns the langauge for the particular path.
 // It returns assembly when any of the package name in the path
 // is "asm".
-func (h *Home) Lang(p string) builds.Lang {
+func (h *Home) Lang(p string) *builds.Lang {
 	return h.home.Lang(h.dirPath(p))
 }

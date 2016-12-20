@@ -3,18 +3,12 @@
 package asm
 
 import (
-	"strings"
-
 	"shanhu.io/smlvm/builds"
 	"shanhu.io/smlvm/lexing"
 	"shanhu.io/smlvm/syms"
 )
 
 type lang struct{}
-
-func (lang) IsSrc(filename string) bool {
-	return strings.HasSuffix(filename, ".s")
-}
 
 func (lang) Prepare(src *builds.SrcPackage) (
 	*builds.ImportList, []*lexing.Error,
@@ -109,4 +103,9 @@ func (lang) Compile(pinfo *builds.PkgInfo) (
 }
 
 // Lang returns the assembly language builder for the building system
-func Lang() builds.Lang { return lang{} }
+func Lang() *builds.Lang {
+	return &builds.Lang{
+		Ext:      "asm",
+		Compiler: lang{},
+	}
+}

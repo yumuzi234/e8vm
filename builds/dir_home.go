@@ -7,17 +7,19 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 
 	"shanhu.io/smlvm/lexing"
 )
 
-func listSrcFiles(dir string, lang Lang) ([]string, error) {
+func listSrcFiles(dir string, lang *Lang) ([]string, error) {
 	files, e := ioutil.ReadDir(dir)
 	if e != nil {
 		return nil, e
 	}
 
 	var ret []string
+	ext := "." + lang.Ext
 
 	for _, file := range files {
 		if file.IsDir() {
@@ -25,7 +27,7 @@ func listSrcFiles(dir string, lang Lang) ([]string, error) {
 		}
 
 		name := file.Name()
-		if lang.IsSrc(name) {
+		if strings.HasSuffix(name, ext) {
 			ret = append(ret, name)
 		}
 	}
@@ -45,7 +47,7 @@ type DirHome struct {
 
 // NewDirHome creates a file system home storage with
 // a particualr default language for compiling.
-func NewDirHome(path string, lang Lang) *DirHome {
+func NewDirHome(path string, lang *Lang) *DirHome {
 	if lang == nil {
 		panic("must specify a default language")
 	}
@@ -76,7 +78,7 @@ func (h *DirHome) ClearCache() {
 }
 
 // AddLang registers a language with a particular path prefix
-func (h *DirHome) AddLang(keyword string, lang Lang) {
+func (h *DirHome) AddLang(keyword string, lang *Lang) {
 	h.langs.AddLang(keyword, lang)
 }
 
@@ -233,4 +235,6 @@ func (h *DirHome) Output(p, name string) io.WriteCloser {
 
 // Lang returns the language for the particular path.
 // It searches for the longest prefix match
-func (h *DirHome) Lang(p string) Lang { return h.langs.Lang(p) }
+func (h *DirHome) Lang(p string) *Lang {
+	return h.langs.Lang(p)
+}

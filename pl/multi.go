@@ -6,7 +6,7 @@ import (
 )
 
 func buildMulti(
-	lang builds.Lang, files map[string]string, opt *builds.Options,
+	lang *builds.Lang, files map[string]string, opt *builds.Options,
 ) (
 	image []byte, errs []*lexing.Error, log []byte,
 ) {

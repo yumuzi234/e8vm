@@ -12,7 +12,7 @@ type pkg struct {
 
 	runTests bool
 
-	lang    Lang
+	lang    Compiler
 	files   []string
 	imports map[string]*Import
 	deps    []string

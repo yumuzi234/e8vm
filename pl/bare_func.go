@@ -18,7 +18,12 @@ import (
 type bareFunc struct{ *lang }
 
 // BareFunc is a language where it only contains an implicit main function.
-func BareFunc() builds.Lang { return bareFunc{new(lang)} }
+func BareFunc() *builds.Lang {
+	return &builds.Lang{
+		Ext:      "g",
+		Compiler: bareFunc{new(lang)},
+	}
+}
 
 func (bareFunc) Prepare(*builds.SrcPackage) (
 	*builds.ImportList, []*lexing.Error,

@@ -20,15 +20,16 @@ type lang struct {
 }
 
 // Lang returns the G language builder for the building system
-func Lang(golike bool) builds.Lang { return &lang{golike: golike} }
-
-// LangGoLike returns the G lauguage that uses a subset of golang AST.
-func LangGoLike() builds.Lang {
-	return &lang{golike: true}
+func Lang(golike bool) *builds.Lang {
+	return &builds.Lang{
+		Ext:      "g",
+		Compiler: &lang{golike: golike},
+	}
 }
 
-func (l *lang) IsSrc(filename string) bool {
-	return strings.HasSuffix(filename, ".g")
+// LangGoLike returns the G lauguage that uses a subset of golang AST.
+func LangGoLike() *builds.Lang {
+	return Lang(true)
 }
 
 func (l *lang) Prepare(src *builds.SrcPackage) (

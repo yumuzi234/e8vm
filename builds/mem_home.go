@@ -13,7 +13,7 @@ type MemHome struct {
 }
 
 // NewMemHome creates a new memory-based home
-func NewMemHome(lang Lang) *MemHome {
+func NewMemHome(lang *Lang) *MemHome {
 	return &MemHome{
 		pkgs:  make(map[string]*MemPkg),
 		langs: NewLangPicker(lang),
@@ -140,10 +140,10 @@ func (h *MemHome) OutputBytes(p, name string) []byte {
 }
 
 // Lang returns the language for path
-func (h *MemHome) Lang(path string) Lang { return h.langs.Lang(path) }
+func (h *MemHome) Lang(path string) *Lang { return h.langs.Lang(path) }
 
 // AddLang adds a language to a prefix
-func (h *MemHome) AddLang(prefix string, lang Lang) {
+func (h *MemHome) AddLang(prefix string, lang *Lang) {
 	h.langs.AddLang(prefix, lang)
 }
 
