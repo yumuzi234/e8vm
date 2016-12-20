@@ -4,7 +4,6 @@ package srchome
 
 import (
 	"io"
-	"io/ioutil"
 	"path"
 	"strings"
 
@@ -85,9 +84,9 @@ func (h *Home) Pkgs(prefix string) []string {
 func builtinSrc() map[string]*builds.File {
 	return map[string]*builds.File{
 		"builtin.s": {
-			Name:       "builtin.s",
-			Path:       "<internal>/asm/builtin/builtin.s",
-			ReadCloser: ioutil.NopCloser(strings.NewReader(pl.BuiltInSrc)),
+			Name:   "builtin.s",
+			Path:   "<internal>/asm/builtin/builtin.s",
+			Opener: builds.StrFile(pl.BuiltInSrc),
 		},
 	}
 }

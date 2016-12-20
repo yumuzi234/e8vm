@@ -64,9 +64,9 @@ func (h *MemHome) Src(p string) map[string]*File {
 		}
 
 		ret[name] = &File{
-			Path:       path,
-			Name:       name,
-			ReadCloser: f.Reader(),
+			Path:   path,
+			Name:   name,
+			Opener: f.Opener(),
 		}
 	}
 

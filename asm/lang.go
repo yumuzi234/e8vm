@@ -20,14 +20,22 @@ func (lang) Prepare(
 	src map[string]*builds.File, imp builds.Importer,
 ) []*lexing.Error {
 	if f := builds.OnlyFile(src); f != nil {
-		return listImport(f.Path, f, imp)
+		rc, err := f.Open()
+		if err != nil {
+			return lexing.SingleErr(err)
+		}
+		return listImport(f.Path, rc, imp)
 	}
 
 	f := src["import.s"]
 	if f == nil {
 		return nil
 	}
-	return listImport(f.Path, f, imp)
+	rc, err := f.Open()
+	if err != nil {
+		return lexing.SingleErr(err)
+	}
+	return listImport(f.Path, rc, imp)
 }
 
 func buildSymTable(p *lib) *syms.Table {

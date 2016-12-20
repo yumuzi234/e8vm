@@ -1,8 +1,6 @@
 package pl
 
 import (
-	"io"
-
 	"shanhu.io/smlvm/builds"
 	"shanhu.io/smlvm/lexing"
 	"shanhu.io/smlvm/pl/ast"
@@ -16,8 +14,12 @@ type importDecl struct {
 }
 
 func listImport(
-	f string, rc io.ReadCloser, imp builds.Importer, golike bool,
+	f string, o builds.FileOpener, imp builds.Importer, golike bool,
 ) []*lexing.Error {
+	rc, err := o.Open()
+	if err != nil {
+		return lexing.SingleErr(err)
+	}
 	fast, _, es := parse.File(f, rc, golike)
 	if es != nil {
 		return es

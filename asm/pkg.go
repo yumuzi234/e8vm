@@ -24,7 +24,11 @@ func resolvePkg(p string, src map[string]*builds.File) (*pkg, []*lexing.Error) {
 	// parse all the files first
 	var parseErrs []*lexing.Error
 	for name, f := range src {
-		astFile, es := parse.File(f.Path, f)
+		rc, err := f.Open()
+		if err != nil {
+			return nil, lexing.SingleErr(err)
+		}
+		astFile, es := parse.File(f.Path, rc)
 		if es != nil {
 			parseErrs = append(parseErrs, es...)
 		}

@@ -9,6 +9,7 @@ import (
 
 	"shanhu.io/smlvm/arch"
 	"shanhu.io/smlvm/asm"
+	"shanhu.io/smlvm/builds"
 	"shanhu.io/smlvm/dasm"
 	"shanhu.io/smlvm/lexing"
 )
@@ -52,11 +53,7 @@ func main() {
 
 	fname := args[0]
 	var bs []byte
-	f, e := os.Open(fname)
-	if e != nil {
-		log.Fatalf("open: %s", e)
-	}
-
+	f := builds.PathFile(fname)
 	var es []*lexing.Error
 	if strings.HasSuffix(fname, "_bare.s") {
 		bs, es = asm.BuildBareFunc(fname, f)

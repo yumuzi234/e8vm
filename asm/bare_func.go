@@ -1,15 +1,18 @@
 package asm
 
 import (
-	"io"
-
 	"shanhu.io/smlvm/asm/parse"
+	"shanhu.io/smlvm/builds"
 	"shanhu.io/smlvm/lexing"
 	"shanhu.io/smlvm/link"
 )
 
 // BuildBareFunc builds a function body into an image.
-func BuildBareFunc(f string, rc io.ReadCloser) ([]byte, []*lexing.Error) {
+func BuildBareFunc(f string, o builds.FileOpener) ([]byte, []*lexing.Error) {
+	rc, err := o.Open()
+	if err != nil {
+		return nil, lexing.SingleErr(err)
+	}
 	fn, es := parse.BareFunc(f, rc)
 	if es != nil {
 		return nil, es

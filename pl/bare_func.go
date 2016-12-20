@@ -60,11 +60,15 @@ func (bare bareFunc) Compile(pinfo *builds.PkgInfo) (
 	pkg *builds.Package, es []*lexing.Error,
 ) {
 	// parsing
-	theFile, e := findTheFile(pinfo)
-	if e != nil {
-		return nil, lexing.SingleErr(e)
+	theFile, err := findTheFile(pinfo)
+	if err != nil {
+		return nil, lexing.SingleErr(err)
 	}
-	stmts, es := parse.Stmts(theFile.Path, theFile)
+	rc, err := theFile.Open()
+	if err != nil {
+		return nil, lexing.SingleErr(err)
+	}
+	stmts, es := parse.Stmts(theFile.Path, rc)
 	if es != nil {
 		return nil, es
 	}

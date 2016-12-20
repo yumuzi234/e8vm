@@ -198,9 +198,9 @@ func (h *DirHome) Src(p string) map[string]*File {
 	for _, name := range files {
 		filePath := h.srcFile(p, name)
 		ret[name] = &File{
-			Path:       filePath,
-			Name:       name,
-			ReadCloser: newDirFile(filePath),
+			Path:   filePath,
+			Name:   name,
+			Opener: PathFile(filePath),
 		}
 	}
 

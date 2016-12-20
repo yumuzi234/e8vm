@@ -8,13 +8,6 @@ import (
 	"shanhu.io/smlvm/syms"
 )
 
-// File is a file in a package.
-type File struct {
-	Name string
-	Path string
-	io.ReadCloser
-}
-
 // Import is an import identity
 type Import struct {
 	Path string

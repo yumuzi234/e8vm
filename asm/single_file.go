@@ -2,7 +2,6 @@ package asm
 
 import (
 	"bytes"
-	"io"
 
 	"shanhu.io/smlvm/builds"
 	"shanhu.io/smlvm/image"
@@ -11,10 +10,10 @@ import (
 )
 
 // BuildSingleFile builds a package named "main" from a single file.
-func BuildSingleFile(f string, rc io.ReadCloser) ([]byte, []*lexing.Error) {
+func BuildSingleFile(f string, o builds.FileOpener) ([]byte, []*lexing.Error) {
 	path := "_"
 
-	pinfo := builds.SimplePkg(path, f, rc)
+	pinfo := builds.SimplePkg(path, f, o)
 
 	pkg, errs := Lang().Compile(pinfo)
 	if errs != nil {

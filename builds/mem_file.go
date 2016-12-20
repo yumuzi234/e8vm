@@ -2,8 +2,6 @@ package builds
 
 import (
 	"bytes"
-	"io"
-	"io/ioutil"
 )
 
 type memFile struct {
@@ -15,8 +13,9 @@ func newMemFile() *memFile {
 	return &memFile{Buffer: new(bytes.Buffer)}
 }
 
-func (f *memFile) Reader() io.ReadCloser {
-	return ioutil.NopCloser(bytes.NewReader(f.Buffer.Bytes()))
+func (f *memFile) Opener() FileOpener {
+	bs := f.Buffer.Bytes()
+	return BytesFile(bs)
 }
 
 func (f *memFile) Close() error { return nil }

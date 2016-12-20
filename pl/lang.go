@@ -76,15 +76,21 @@ func (l *lang) parsePkg(pinfo *builds.PkgInfo) (
 			panic("basename in path is different from the file name")
 		}
 
-		f, rec, es := parse.File(src.Path, src, l.golike)
+		rc, err := src.Open()
+		if err != nil {
+			parseErrs = append(parseErrs, &lexing.Error{Err: err})
+			continue
+		}
+
+		f, rec, es := parse.File(src.Path, rc, l.golike)
 		if es != nil {
 			parseErrs = append(parseErrs, es...)
 		}
-		if err := src.Close(); err != nil {
+		if err := rc.Close(); err != nil {
 			parseErrs = append(parseErrs, &lexing.Error{Err: err})
 		}
 
-		if pinfo.ParseOutput != nil {
+		if pinfo.ParseOutput != nil && rec != nil {
 			pinfo.ParseOutput(name, rec.Tokens())
 		}
 		asts[name] = f
