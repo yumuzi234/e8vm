@@ -4,18 +4,6 @@ import (
 	"io"
 )
 
-// File is a source file in a package
-type File struct {
-	Name   string
-	Path   string // for printing compiler errors
-	Opener FileOpener
-}
-
-// Open opens the file.
-func (f *File) Open() (io.ReadCloser, error) {
-	return f.Opener.Open()
-}
-
 // SrcPackage contains all the input of a package
 type SrcPackage struct {
 	Path  string  // package import path
