@@ -20,7 +20,7 @@ type bareFunc struct{ *lang }
 // BareFunc is a language where it only contains an implicit main function.
 func BareFunc() builds.Lang { return bareFunc{new(lang)} }
 
-func (bareFunc) Prepare(src map[string]*builds.File) (
+func (bareFunc) Prepare(*builds.SrcPackage) (
 	*builds.ImportList, []*lexing.Error,
 ) {
 	ret := builds.NewImportList()

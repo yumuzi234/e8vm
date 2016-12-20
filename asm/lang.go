@@ -16,11 +16,11 @@ func (lang) IsSrc(filename string) bool {
 	return strings.HasSuffix(filename, ".s")
 }
 
-func (lang) Prepare(src map[string]*builds.File) (
+func (lang) Prepare(src *builds.SrcPackage) (
 	*builds.ImportList, []*lexing.Error,
 ) {
 	ret := builds.NewImportList()
-	if f := builds.OnlyFile(src); f != nil {
+	if f := builds.OnlyFile(src.Files); f != nil {
 		rc, err := f.Open()
 		if err != nil {
 			return nil, lexing.SingleErr(err)
@@ -31,16 +31,18 @@ func (lang) Prepare(src map[string]*builds.File) (
 		return ret, nil
 	}
 
-	f := src["import.s"]
-	if f == nil {
-		return nil, nil
-	}
-	rc, err := f.Open()
-	if err != nil {
-		return nil, lexing.SingleErr(err)
-	}
-	if errs := listImport(f.Path, rc, ret); errs != nil {
-		return nil, errs
+	if src.Files != nil {
+		f := src.Files["import.s"]
+		if f == nil {
+			return nil, nil
+		}
+		rc, err := f.Open()
+		if err != nil {
+			return nil, lexing.SingleErr(err)
+		}
+		if errs := listImport(f.Path, rc, ret); errs != nil {
+			return nil, errs
+		}
 	}
 	return ret, nil
 }

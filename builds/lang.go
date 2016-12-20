@@ -55,7 +55,7 @@ type Lang interface {
 	IsSrc(filename string) bool
 
 	// Prepare issues import requests
-	Prepare(src map[string]*File) (*ImportList, []*lexing.Error)
+	Prepare(src *SrcPackage) (*ImportList, []*lexing.Error)
 
 	// Compile compiles a list of source files into a compiled linkable
 	Compile(pinfo *PkgInfo) (*Package, []*lexing.Error)

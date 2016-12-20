@@ -31,24 +31,26 @@ func (l *lang) IsSrc(filename string) bool {
 	return strings.HasSuffix(filename, ".g")
 }
 
-func (l *lang) Prepare(src map[string]*builds.File) (
+func (l *lang) Prepare(src *builds.SrcPackage) (
 	*builds.ImportList, []*lexing.Error,
 ) {
 	ret := builds.NewImportList()
 	ret.Add("$", "asm/builtin", nil)
 
-	if f := builds.OnlyFile(src); f != nil {
+	if f := builds.OnlyFile(src.Files); f != nil {
 		if errs := listImport(f.Path, f, l.golike, ret); errs != nil {
 			return nil, errs
 		}
 	}
 
-	f := src["import.g"]
-	if f == nil {
-		return ret, nil
-	}
-	if errs := listImport(f.Path, f, l.golike, ret); errs != nil {
-		return nil, errs
+	if src.Files != nil {
+		f := src.Files["import.g"]
+		if f == nil {
+			return ret, nil
+		}
+		if errs := listImport(f.Path, f, l.golike, ret); errs != nil {
+			return nil, errs
+		}
 	}
 	return ret, nil
 }
