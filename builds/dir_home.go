@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -42,7 +43,8 @@ type DirHome struct {
 
 	fileList map[string][]string
 
-	Quiet bool
+	MemHome *MemHome
+	Quiet   bool
 }
 
 // NewDirHome creates a file system home storage with
@@ -52,12 +54,14 @@ func NewDirHome(path string, lang *Lang) *DirHome {
 		panic("must specify a default language")
 	}
 
-	ret := new(DirHome)
-	ret.path = path
-	ret.fileList = make(map[string][]string)
-	ret.langs = NewLangPicker(lang)
-
-	return ret
+	if path == "" {
+		path = "."
+	}
+	return &DirHome{
+		path:     path,
+		fileList: make(map[string][]string),
+		langs:    NewLangPicker(lang),
+	}
 }
 
 func (h *DirHome) out(pre, p string) string {
@@ -84,13 +88,19 @@ func (h *DirHome) AddLang(keyword string, lang *Lang) {
 
 // HasPkg checks if a package exists.
 func (h *DirHome) HasPkg(p string) bool {
+	println(p)
+	if h.MemHome != nil {
+		if h.MemHome.HasPkg(p) {
+			return true
+		}
+	}
+
 	root := h.path
 	fp := filepath.Join(root, p)
 	info, err := os.Stat(fp)
 	if err != nil {
 		return false
 	}
-
 	if !info.IsDir() {
 		return false
 	}
@@ -101,8 +111,7 @@ func (h *DirHome) HasPkg(p string) bool {
 	}
 
 	lang := h.Lang(p)
-
-	files, err := listSrcFiles(p, lang)
+	files, err := listSrcFiles(fp, lang)
 	if err != nil {
 		return false
 	}
@@ -117,35 +126,43 @@ func (h *DirHome) HasPkg(p string) bool {
 
 // Pkgs lists all the packages with a particular prefix.
 func (h *DirHome) Pkgs(prefix string) []string {
+	var pkgs []string
+	if h.MemHome != nil {
+		pkgs = h.MemHome.Pkgs(prefix)
+	}
+
 	root := h.path
 	start := filepath.Join(root, prefix)
-	var pkgs []string
 
-	walkFunc := func(p string, info os.FileInfo, e error) error {
-		if e != nil {
-			return e
+	walkFunc := func(p string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
 		}
 		if p == "." || p == root {
 			return nil
 		}
 
-		path, e := filepath.Rel(root, p)
-		if e != nil {
-			panic(e)
-		} else if path == "." {
+		relPath, err := filepath.Rel(root, p)
+		if err != nil {
+			panic(err)
+		}
+		if relPath == "." {
 			return nil
 		}
-
-		base := filepath.Base(path)
 		if !info.IsDir() {
 			return nil
-		} else if !lexing.IsPkgName(base) {
+		}
+		base := filepath.Base(relPath)
+		if !lexing.IsPkgName(base) {
 			return filepath.SkipDir
 		}
 
-		lang := h.Lang(path)
+		pkgPath := path.Join(filepath.SplitList(relPath)...)
+		pkgPath = path.Join("/", pkgPath)
+
+		lang := h.Lang(pkgPath)
 		if lang == nil {
-			panic(path)
+			panic(pkgPath)
 		}
 
 		files, err := listSrcFiles(p, lang)
@@ -154,8 +171,8 @@ func (h *DirHome) Pkgs(prefix string) []string {
 		}
 
 		if len(files) > 0 {
-			h.fileList[path] = files // caching
-			pkgs = append(pkgs, path)
+			h.fileList[pkgPath] = files // caching
+			pkgs = append(pkgs, pkgPath)
 		}
 
 		return nil
@@ -174,6 +191,10 @@ func (h *DirHome) Pkgs(prefix string) []string {
 func (h *DirHome) Src(p string) map[string]*File {
 	if !IsPkgPath(p) {
 		panic("not package path")
+	}
+
+	if h.MemHome != nil && h.MemHome.HasPkg(p) {
+		return h.MemHome.Src(p)
 	}
 
 	lang := h.Lang(p)
@@ -214,6 +235,9 @@ func (h *DirHome) Bin(p string) io.WriteCloser {
 	if !IsPkgPath(p) {
 		panic("not package path")
 	}
+	if h.MemHome != nil && h.MemHome.HasPkg(p) {
+		return h.MemHome.Bin(p)
+	}
 	return newDirFile(h.out("bin", p+".e8"))
 }
 
@@ -221,6 +245,9 @@ func (h *DirHome) Bin(p string) io.WriteCloser {
 func (h *DirHome) TestBin(p string) io.WriteCloser {
 	if !IsPkgPath(p) {
 		panic("not package path")
+	}
+	if h.MemHome != nil && h.MemHome.HasPkg(p) {
+		return h.MemHome.TestBin(p)
 	}
 	return newDirFile(h.out("test", p+".e8"))
 }
@@ -230,11 +257,18 @@ func (h *DirHome) Output(p, name string) io.WriteCloser {
 	if !IsPkgPath(p) {
 		panic("not package path")
 	}
+	if h.MemHome != nil && h.MemHome.HasPkg(p) {
+		return h.MemHome.Output(p, name)
+	}
 	return newDirFile(h.outFile("out", p, name))
 }
 
 // Lang returns the language for the particular path.
 // It searches for the longest prefix match
 func (h *DirHome) Lang(p string) *Lang {
+	if h.MemHome != nil && h.MemHome.HasPkg(p) {
+		return h.MemHome.Lang(p)
+	}
+
 	return h.langs.Lang(p)
 }

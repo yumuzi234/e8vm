@@ -29,7 +29,7 @@ func (bareFunc) Prepare(*builds.FileSet) (
 	*builds.ImportList, []*lexing.Error,
 ) {
 	ret := builds.NewImportList()
-	ret.Add("$", "asm/builtin", nil)
+	ret.Add("$", BuiltInPkg, nil)
 	return ret, nil
 }
 

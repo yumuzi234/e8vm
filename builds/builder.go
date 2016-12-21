@@ -15,11 +15,12 @@ type Builder struct {
 }
 
 // NewBuilder creates a new builder with a particular home directory
-func NewBuilder(input Input, output Output) *Builder {
+func NewBuilder(input Input, output Output, std string) *Builder {
 	return &Builder{
 		context: &context{
 			input:      input,
 			output:     output,
+			stdPath:    std,
 			pkgs:       make(map[string]*pkg),
 			deps:       make(map[string][]string),
 			linkPkgs:   make(map[string]*link.Pkg),
@@ -37,9 +38,8 @@ func (b *Builder) BuildPkgs(pkgs []string) []*lexing.Error {
 // Build builds a package.
 func (b *Builder) Build(p string) []*lexing.Error {
 	if !b.input.HasPkg(p) {
-		return lexing.SingleErr(fmt.Errorf(
-			"package %q not found", p,
-		))
+		err := fmt.Errorf("package %q not found", p)
+		return lexing.SingleErr(err)
 	}
 	return b.BuildPkgs([]string{p})
 }
@@ -57,6 +57,7 @@ func (b *Builder) BuildAll() []*lexing.Error { return b.BuildPrefix("") }
 // target packages.
 func (b *Builder) Plan(pkgs []string) ([]string, []*lexing.Error) {
 	for _, p := range pkgs {
+		p = b.context.importPath(p)
 		if pkg, es := prepare(b.context, p); es != nil {
 			return nil, es
 		} else if pkg.err != nil {

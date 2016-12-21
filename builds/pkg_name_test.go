@@ -11,7 +11,8 @@ func TestIsPkgPath(t *testing.T) {
 		}
 	}
 
-	o("asm/builtin")
+	o("/std/asm/builtin")
+	o("something/nothing")
 	o("hello")
 	o("/something")
 	o("/h8liu/std")

@@ -1,6 +1,7 @@
 package builds
 
 import (
+	"fmt"
 	"io"
 	"path"
 
@@ -95,6 +96,7 @@ func buildPkg(c *context, pkg *pkg) []*lexing.Error {
 
 func build(c *context, pkgs []string) []*lexing.Error {
 	for _, p := range pkgs {
+		p = c.importPath(p)
 		if pkg, es := prepare(c, p); es != nil {
 			return es
 		} else if pkg.err != nil {
@@ -114,17 +116,22 @@ func build(c *context, pkgs []string) []*lexing.Error {
 		c.SaveDeps(g)
 	}
 
+	// TODO(h8liu): this Layout should be not nessasary.
 	m, err := dagvis.Layout(g)
 	if err != nil {
 		return lexing.SingleErr(err)
 	}
 	nodes := m.SortedNodes()
 	for _, node := range nodes {
+		name := node.Name
 		if c.Verbose { // report progress
-			logln(c, node.Name)
+			logln(c, name)
 		}
 
-		pkg := c.pkgs[node.Name]
+		pkg := c.pkgs[name]
+		if pkg == nil {
+			panic(fmt.Sprintf("package not found: %q", name))
+		}
 		pkg.deps = deps(node)
 		if es := buildPkg(c, pkg); es != nil {
 			return es

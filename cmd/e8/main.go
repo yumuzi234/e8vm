@@ -26,6 +26,7 @@ var (
 	cpuProfile = flag.String("profile", "", "cpu profile output")
 	pkg        = flag.String("pkg", "", "package to build")
 	homeDir    = flag.String("home", ".", "the home directory")
+	std        = flag.String("std", "", "the standard library package path")
 )
 
 func checkInitPC() {
@@ -57,7 +58,7 @@ func main() {
 	home.AddLang("asm", asm.Lang())
 	home.AddLang("bare", pl.BareFunc())
 
-	b := builds.NewBuilder(home, home)
+	b := builds.NewBuilder(home, home, *std)
 	b.Verbose = true
 	b.InitPC = uint32(*initPC)
 	b.RunTests = *runTests

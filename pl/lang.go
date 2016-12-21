@@ -36,7 +36,7 @@ func (l *lang) Prepare(src *builds.FileSet) (
 	*builds.ImportList, []*lexing.Error,
 ) {
 	ret := builds.NewImportList()
-	ret.Add("$", "asm/builtin", nil)
+	ret.Add("$", BuiltInPkg, nil)
 
 	if f := src.OnlyFile(); f != nil {
 		if errs := listImport(f.Path, f, l.golike, ret); errs != nil {

@@ -24,12 +24,14 @@ func prepare(c *context, p string) (*pkg, []*lexing.Error) {
 
 	// recursively prepare imported packages
 	for name, imp := range impList.imps {
+		impPath := c.importPath(imp.path)
+
 		pkg.imports[name] = &Import{
-			Path: imp.path,
+			Path: impPath,
 			Pos:  imp.pos,
 		}
 
-		impPkg, errs := prepare(c, imp.path)
+		impPkg, errs := prepare(c, impPath)
 		if errs != nil {
 			return pkg, errs
 		}

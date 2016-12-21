@@ -14,7 +14,7 @@ import (
 func MakeMemHome(lang *builds.Lang) *builds.MemHome {
 	home := builds.NewMemHome(lang)
 	home.AddLang("asm", asm.Lang())
-	builtin := home.NewPkg("asm/builtin")
+	builtin := home.NewPkg(BuiltInPkg)
 	builtin.AddFile("", "builtin.s", BuiltInSrc)
 
 	return home
@@ -23,7 +23,7 @@ func MakeMemHome(lang *builds.Lang) *builds.MemHome {
 func buildMainPkg(home *builds.MemHome, opt *builds.Options) (
 	image []byte, errs []*lexing.Error, log []byte,
 ) {
-	b := builds.NewBuilder(home, home)
+	b := builds.NewBuilder(home, home, "")
 	if opt != nil {
 		b.Options = opt
 	}
@@ -31,8 +31,8 @@ func buildMainPkg(home *builds.MemHome, opt *builds.Options) (
 		return nil, errs, nil
 	}
 
-	image = home.BinBytes("main")
-	log = home.OutputBytes("main", "ir")
+	image = home.BinBytes("/main")
+	log = home.OutputBytes("/main", "ir")
 	if image == nil {
 		err := errors.New("missing main() function, no binary created")
 		return nil, lexing.SingleErr(err), log
@@ -48,7 +48,7 @@ func buildSingle(
 ) {
 	home := MakeMemHome(lang)
 
-	pkg := home.NewPkg("main")
+	pkg := home.NewPkg("/main")
 	name := filepath.Base(f)
 	pkg.AddFile(f, name, s)
 

@@ -103,7 +103,7 @@ func (lang) Compile(pinfo *builds.PkgInfo) (
 // Lang returns the assembly language builder for the building system
 func Lang() *builds.Lang {
 	return &builds.Lang{
-		Ext:      "asm",
+		Ext:      "s",
 		Compiler: lang{},
 	}
 }

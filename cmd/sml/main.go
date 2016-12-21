@@ -6,17 +6,26 @@ import (
 	"os"
 
 	"shanhu.io/smlvm/arch"
+	"shanhu.io/smlvm/asm"
 	"shanhu.io/smlvm/builds"
 	"shanhu.io/smlvm/lexing"
-	"shanhu.io/smlvm/srchome"
+	"shanhu.io/smlvm/pl"
 )
 
 var (
+	golike   = flag.Bool("golike", false, "uses go-like syntax")
 	runTests = flag.Bool("test", true, "run tests")
 	pkg      = flag.String("pkg", "/...", "package to build")
 	homeDir  = flag.String("home", ".", "the home directory")
 	plan     = flag.Bool("plan", false, "plan only")
-	std      = flag.String("std", "", "standard library directory")
+
+	std = flag.String(
+		"std", "/smallrepo/std", "standard library directory",
+	)
+	initPC = flag.Uint("initpc", arch.InitPC,
+		"the starting address of the image",
+	)
+	staticOnly = flag.Bool("static", false, "do static analysis only")
 )
 
 func handleErrs(errs []*lexing.Error) {
@@ -32,11 +41,16 @@ func handleErrs(errs []*lexing.Error) {
 func main() {
 	flag.Parse()
 
-	home := srchome.NewDirHome(*homeDir, *std)
-	b := builds.NewBuilder(home, home)
+	lang := pl.Lang(*golike)
+	home := builds.NewDirHome(*homeDir, lang)
+	home.MemHome = pl.MakeMemHome(lang)
+	home.AddLang("asm", asm.Lang())
+
+	b := builds.NewBuilder(home, home, *std)
 	b.Verbose = true
-	b.InitPC = arch.InitPC
+	b.InitPC = uint32(*initPC)
 	b.RunTests = *runTests
+	b.StaticOnly = *staticOnly
 
 	pkgs, err := builds.SelectPkgs(home, *pkg)
 	if err != nil {

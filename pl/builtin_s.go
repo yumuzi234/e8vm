@@ -1,6 +1,10 @@
 package pl
 
-// BuiltInSrc is the file that needs to be presented as asm/builtin/builtin.s
+// BuiltInPkg is the package name of the builtin package.
+const BuiltInPkg = "/std/asm/builtin"
+
+// BuiltInSrc is the file that needs to be presented
+// as /std/asm/builtin/builtin.s
 const BuiltInSrc = `
 // a char is sent in via r1
 func PrintChar {
@@ -128,11 +132,6 @@ func Assert {
 	mov pc ret
 }
 
-// Halt halts the system with halt exception
-func Halt {
-    halt
-}
-
 // MemCopy copies a range of memory
 //    r1 - destination address
 //    r2 - source address
@@ -195,16 +194,6 @@ func MemClear {
 	addi r2 r2 -1
 	bne r2 r0 .loop
 .ret
-	mov pc ret
-}
-
-func Vtable {
-	vtable r1
-	mov pc ret
-}
-
-func Syscall {
-	syscall
 	mov pc ret
 }
 `

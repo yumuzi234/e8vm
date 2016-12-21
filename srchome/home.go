@@ -60,7 +60,7 @@ func (h *Home) dirPath(p string) string {
 
 // HasPkg checks if a package exists
 func (h *Home) HasPkg(p string) bool {
-	if p == "asm/builtin" {
+	if p == pl.BuiltInPkg {
 		return true
 	}
 	return h.home.HasPkg(h.dirPath(p))
@@ -83,7 +83,7 @@ func (h *Home) Pkgs(prefix string) []string {
 
 func builtinSrc() map[string]*builds.File {
 	return map[string]*builds.File{
-		"builtin.s": {
+		pl.BuiltInPkg: {
 			Name:   "builtin.s",
 			Path:   "<internal>/asm/builtin/builtin.s",
 			Opener: builds.StrFile(pl.BuiltInSrc),
@@ -93,7 +93,7 @@ func builtinSrc() map[string]*builds.File {
 
 // Src lists all the source files inside a package.
 func (h *Home) Src(p string) map[string]*builds.File {
-	if p == "asm/builtin" {
+	if p == pl.BuiltInPkg {
 		return builtinSrc()
 	}
 

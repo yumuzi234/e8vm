@@ -21,9 +21,13 @@ func NewMemHome(lang *Lang) *MemHome {
 }
 
 // NewPkg creates (or replaces) a package of a particular path in this home.
-func (h *MemHome) NewPkg(path string) *MemPkg {
-	ret := newMemPkg(path)
-	h.pkgs[path] = ret
+func (h *MemHome) NewPkg(p string) *MemPkg {
+	if !path.IsAbs(p) {
+		p = path.Join("/", p)
+	}
+
+	ret := newMemPkg(p)
+	h.pkgs[p] = ret
 	return ret
 }
 
