@@ -88,7 +88,6 @@ func (h *DirHome) AddLang(keyword string, lang *Lang) {
 
 // HasPkg checks if a package exists.
 func (h *DirHome) HasPkg(p string) bool {
-	println(p)
 	if h.MemHome != nil {
 		if h.MemHome.HasPkg(p) {
 			return true

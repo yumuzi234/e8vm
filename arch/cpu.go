@@ -132,7 +132,6 @@ func (c *cpu) Ienter(code byte, arg uint32) *Excep {
 	}
 	if e := writeWord(intFrameSP, c.regs[SP]); e != nil {
 		fmt.Printf("%x", hsp)
-		println("sp", e)
 		return e
 	}
 	if e := writeWord(intFrameRET, c.regs[RET]); e != nil {
