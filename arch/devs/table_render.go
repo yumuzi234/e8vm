@@ -5,6 +5,8 @@ type TableAction struct {
 	Action string
 	Pos    int
 	Text   string
+	Num1   int
+	Num2   int
 }
 
 // TableRender is a rendering engine that receives table actions.

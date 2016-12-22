@@ -34,6 +34,10 @@ const (
 	buttonShow
 	buttonHide
 	buttonText
+
+	picShow
+	picHide
+	picPosition
 )
 
 var actionStrings = map[uint8]string{
@@ -52,6 +56,10 @@ var actionStrings = map[uint8]string{
 	buttonShow: "button.show",
 	buttonHide: "button.hide",
 	buttonText: "button.text",
+
+	picShow:     "pic.show",
+	picHide:     "pic.hide",
+	picPosition: "pic.position",
 }
 
 // Handle handles an incoming VPC.
@@ -64,6 +72,7 @@ func (t *Table) Handle(req []byte) ([]byte, int32) {
 	action := dec.U8()
 	pos := dec.U8()
 	text := ""
+	n1, n2 := 0, 0
 
 	switch action {
 	case cardFace:
@@ -74,6 +83,9 @@ func (t *Table) Handle(req []byte) ([]byte, int32) {
 			bs := dec.Bytes(int(n))
 			text = string(bs)
 		}
+	case picPosition:
+		n1 = int(dec.U32())
+		n2 = int(dec.U32())
 	}
 
 	if dec.Err != nil {
@@ -84,6 +96,8 @@ func (t *Table) Handle(req []byte) ([]byte, int32) {
 		Action: actionStrings[action],
 		Pos:    int(pos),
 		Text:   text,
+		Num1:   n1,
+		Num2:   n2,
 	})
 
 	return nil, 0
