@@ -20,6 +20,13 @@ type Map struct {
 	IsTopDown bool
 }
 
+// AssignDisplayName assigns display names in a map.
+func (m *Map) AssignDisplayName(f func(s string) string) {
+	for _, n := range m.Nodes {
+		n.DisplayName = f(n.Name)
+	}
+}
+
 // Reverse reverses the map.
 func (m *Map) Reverse() {
 	for _, node := range m.Nodes {

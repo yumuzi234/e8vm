@@ -2,8 +2,9 @@ package dagvis
 
 // MapNode is a node in the DAG graph
 type MapNode struct {
-	Name string
-	X, Y int // layout position
+	Name        string
+	DisplayName string
+	X, Y        int // layout position
 
 	Ins  map[string]*MapNode // direct input nodes
 	Outs map[string]*MapNode // direct output nodes
@@ -23,17 +24,13 @@ type MapNode struct {
 }
 
 func newMapNode(name string) *MapNode {
-	ret := new(MapNode)
-	ret.Name = name
-
-	ret.AllIns = make(map[string]*MapNode)
-	ret.AllOuts = make(map[string]*MapNode)
-
-	ret.CritIns = make(map[string]*MapNode)
-	ret.CritOuts = make(map[string]*MapNode)
-
-	ret.Ins = make(map[string]*MapNode)
-	ret.Outs = make(map[string]*MapNode)
-
-	return ret
+	return &MapNode{
+		Name:     name,
+		AllIns:   make(map[string]*MapNode),
+		AllOuts:  make(map[string]*MapNode),
+		CritIns:  make(map[string]*MapNode),
+		CritOuts: make(map[string]*MapNode),
+		Ins:      make(map[string]*MapNode),
+		Outs:     make(map[string]*MapNode),
+	}
 }
