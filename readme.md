@@ -6,17 +6,16 @@ go get -u shanhu.io/smlvm/...
 
 # Small VM
 
-Small Virtual Machine (smlvm) is a self-contained system that has its
-own instruction set, assembly language and assembler, system language,
-and project building system.
+Small Virtual Machine (`smlvm`) is a self-contained system that has
+its own instruction set, assembly language and assembler, system
+language, and project building system.
 
 The project is written entirely in Go language. Each file in the
 project has no more than 300 lines, with each line no more than 80
 characters. Among these small files, there are no circular
 dependencies, checked by static analysis, and as a result, the project
 architecture can be automatically
-[visualized](https://shanhu.io/smlvm)
-from static code analysis.
+[visualized](https://shanhu.io/smlvm) from static code analysis.
 
 The main project in this repository depends on nothing other than the
 Go standard library. It is *NOT* yet another compiler project based on
@@ -40,5 +39,4 @@ go get -u github.com/jstemmer/gotags
 
 ## Copyright and License
 
-The project developers own the copyright; my employer (Google) does
-*NOT* own the copyright. The Licence is Apache.
+Copyright by Shanhu contributors. Licence Apache.
