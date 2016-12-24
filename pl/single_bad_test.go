@@ -3,12 +3,15 @@ package pl
 import (
 	"testing"
 
+	"fmt"
+
 	"shanhu.io/smlvm/arch"
 )
 
 func TestSingleFileBad(t *testing.T) {
 	o := func(input, code string) {
 		_, es, _ := CompileSingle("main.g", input, false)
+		fmt.Println(len(es))
 		if es == nil {
 			t.Log(input)
 			t.Error("should error:", code)
@@ -22,27 +25,27 @@ func TestSingleFileBad(t *testing.T) {
 		}
 	}
 
-	o("", "pl.missingMainFunction") // no main
-	o(`func a() {}; func a() {}; func main {}`, "")
-	o(`struct A { b int; b int }; func main {}`, "")
-	o(`struct A { a A }; func main() {}`, "")
-	// o(`struct A { b B }; struct B { a A }; func main() {}`)
-	// o(`struct A { b B }; struct B { a [3]A }; func main() {}`)
-	// o(`struct A { b B }; struct B { a [0]A }; func main() {}`)
-	// o(`struct A {}; func main() { a := A }`)
+	o("", "pl.missingMainFunction")     // no main
+	o(`func a() {}; func a() {};`, "")  //2
+	o(`struct A { b int; b int };`, "") //2
+	o(`struct A { a A };`, "")
+	o(`struct A { b B }; struct B { a A };`, "")
+	o(`struct A { b B }; struct B { a [3]A };`, "")
+	o(`struct A { b B }; struct B { a [0]A };`, "")
+	o(`struct A {}; func main() { a := A }`, "")
 
-	// o(`	struct A { func f(){} };
-	// 	func main() { var a A; var f func()=a.f; _:=f }`)
-	// o(`	struct A { func f(){} };
-	// 	func main() { var a A; var f func(); f=a.f; _:=f }`)
+	o(`	struct A { func f(){} };
+		func main() { var a A; var f func()=a.f; _:=f }`, "")
+	o(`	struct A { func f(){} };
+		func main() { var a A; var f func(); f=a.f; _:=f }`, "")
 
-	// o(`import(); import()`)
-	// o("import() func main()")
-	// o(`struct A { func f(){} }; func main() { var a A; f := a.f; _ := f }`)
+	o(`import(); import()`, "")
+	o("import() func main()", "")
+	o(`struct A { func f(){} }; func main() { var a A; f := a.f; _ := f }`, "")
 
-	// o(` func r() (int, int) { return 3, 4 }
-	// 	func p(a, b, c int) { }
-	// 	func main() { p(r(), 5) }`)
+	o(` func r() (int, int) { return 3, 4 }
+		func p(a, b, c int) { }
+		func main() { p(r(), 5) }`, "")
 
 	// // missing returns
 	// o(`func f() int { }; func main() { }`)
