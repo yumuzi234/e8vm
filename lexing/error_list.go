@@ -57,7 +57,12 @@ func (lst *ErrorList) BailOut() { lst.inJail = false }
 
 // Errorf appends a new error with particular position and format.
 func (lst *ErrorList) Errorf(p *Pos, f string, args ...interface{}) {
-	lst.Add(&Error{p, fmt.Errorf(f, args...)})
+	lst.Add(&Error{p, fmt.Errorf(f, args...), ""})
+}
+
+// CodeErrorf appends a new error with a ErrorCode.
+func (lst *ErrorList) CodeErrorf(p *Pos, c, f string, args ...interface{}) {
+	lst.Add(&Error{p, fmt.Errorf(f, args...), c})
 }
 
 // Print prints to the writer (maximume lst.MaxPrint errors).
@@ -75,6 +80,11 @@ func (lst *ErrorList) Print(w io.Writer) error {
 // SingleErr returns an error array with one error.
 func SingleErr(e error) []*Error {
 	return []*Error{{Err: e}}
+}
+
+// SingleCodeErr returns an error array with one error with ErrorCode.
+func SingleCodeErr(e error, c string) []*Error {
+	return []*Error{{Err: e, Code: c}}
 }
 
 // Errs retunrs the errors in the list
