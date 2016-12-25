@@ -26,4 +26,5 @@ const (
 	serviceRand
 	serviceClock
 	serviceTable
+	serviceKeyboard
 )

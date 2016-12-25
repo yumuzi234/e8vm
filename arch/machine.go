@@ -17,14 +17,15 @@ type Machine struct {
 	inst   inst
 	calls  *calls
 
-	devices []device
-	console *console
-	clicks  *devs.ScreenClicks
-	screen  *devs.Screen
-	table   *devs.Table
-	rand    *devs.Rand
-	ticker  *ticker
-	rom     *rom
+	devices  []device
+	console  *console
+	clicks   *devs.ScreenClicks
+	screen   *devs.Screen
+	table    *devs.Table
+	keyboard *devs.Keyboard
+	rand     *devs.Rand
+	ticker   *ticker
+	rom      *rom
 
 	cores *multiCore
 
@@ -83,6 +84,8 @@ func NewMachine(c *Config) *Machine {
 		m.table = t
 		m.calls.register(serviceTable, t) // hook vpc all
 	}
+
+	m.keyboard = devs.NewKeyboard(m.calls.sender(serviceKeyboard))
 
 	sys := m.phyMem.Page(pageSysInfo)
 	sys.WriteWord(0, m.phyMem.npage)
@@ -238,6 +241,11 @@ func (m *Machine) Click(line, col uint8) {
 		return
 	}
 	m.clicks.Click(line, col)
+}
+
+// KeyDown sends in a key down event.
+func (m *Machine) KeyDown(code uint8) {
+	m.keyboard.KeyDown(code)
 }
 
 // ClickTable sends a click on the table at the particular location.
