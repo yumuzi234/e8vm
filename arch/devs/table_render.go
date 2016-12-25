@@ -2,11 +2,7 @@ package devs
 
 // TableAction is a pending table action.
 type TableAction struct {
-	Action string
-	Pos    int
-	Text   string
-	Num1   int
-	Num2   int
+	Bytes []byte
 }
 
 // TableRender is a rendering engine that receives table actions.
