@@ -29,6 +29,8 @@ func whatCode(what string) uint8 {
 		return 1
 	case "button":
 		return 2
+	case "div":
+		return 3
 	}
 	return 0
 }
