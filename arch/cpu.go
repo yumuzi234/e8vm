@@ -1,9 +1,5 @@
 package arch
 
-import (
-	"fmt"
-)
-
 // Inst is an interface for executing one single instruction
 type inst interface {
 	I(cpu *cpu, in uint32) *Excep
@@ -131,7 +127,6 @@ func (c *cpu) Ienter(code byte, arg uint32) *Excep {
 		return c.virtMem.WriteByte(base+off, 0, b)
 	}
 	if e := writeWord(intFrameSP, c.regs[SP]); e != nil {
-		fmt.Printf("%x", hsp)
 		return e
 	}
 	if e := writeWord(intFrameRET, c.regs[RET]); e != nil {
