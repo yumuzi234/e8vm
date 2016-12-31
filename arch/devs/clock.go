@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+var progStartTime = time.Now()
+
 // Clock provides time reading.
 type Clock struct {
 	// Now is the function pointer for reading the time.
@@ -21,6 +23,13 @@ func (c *Clock) now() time.Time {
 	return c.Now()
 }
 
+func (c *Clock) perfNow() time.Duration {
+	if c.PerfNow == nil {
+		return time.Since(progStartTime)
+	}
+	return c.PerfNow()
+}
+
 func (c *Clock) read() ([]byte, int32) {
 	now := c.now().UnixNano()
 	ret := make([]byte, 8)
@@ -29,10 +38,7 @@ func (c *Clock) read() ([]byte, int32) {
 }
 
 func (c *Clock) readMono() ([]byte, int32) {
-	if c.PerfNow == nil {
-		return nil, 0
-	}
-	d := c.PerfNow()
+	d := c.perfNow()
 	ret := make([]byte, 8)
 	binary.LittleEndian.PutUint64(ret, uint64(d))
 	return ret, 0

@@ -53,7 +53,7 @@ func run(bs []byte) (int, error) {
 		m.PrintCoreStatus()
 	}
 
-	if !arch.IsHalt(exp) {
+	if exp != nil && !arch.IsHalt(exp) {
 		fmt.Println(exp)
 		err := arch.FprintStack(os.Stdout, m, exp)
 		if err != nil {
