@@ -7,7 +7,6 @@ import (
 
 	"shanhu.io/smlvm/fmtutil"
 	"shanhu.io/smlvm/lexing"
-	"shanhu.io/smlvm/pl/ast"
 	"shanhu.io/smlvm/pl/parse"
 )
 
@@ -16,7 +15,7 @@ type formatter struct {
 	toks *tokens
 	err  *lexing.Error
 
-	exprFunc func(f *formatter, expr ast.Expr)
+	exprFunc func(f *formatter, expr interface{})
 }
 
 func (f *formatter) errs() []*lexing.Error {
@@ -36,7 +35,7 @@ func (f *formatter) errorf(pos *lexing.Pos, s string, args ...interface{}) {
 	}
 }
 
-func (f *formatter) printExpr(expr ast.Expr) {
+func (f *formatter) printExpr(expr interface{}) {
 	f.exprFunc(f, expr)
 }
 
