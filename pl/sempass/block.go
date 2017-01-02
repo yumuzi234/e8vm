@@ -8,7 +8,7 @@ import (
 func scopePopAndCheck(b *builder) {
 	tab := b.scope.Pop()
 	syms := tab.List()
-	//Same error code used here, instead of different codes based on sym.Type
+	// Same error code used here, instead of different codes based on sym.Type
 	for _, sym := range syms {
 		if !sym.Used {
 			b.CodeErrorf(

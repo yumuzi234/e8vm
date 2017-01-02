@@ -68,16 +68,16 @@ func TestSingleFileBad(t *testing.T) {
 	oo("pl.missingMainFunc", "")
 
 	// missing returns
-	oo("pl.missingFuncReturn", `func f() int { }`)
-	oo("pl.missingFuncReturn", `func f() int { for { break } }`)
-	oo("pl.missingFuncReturn", `func f() int { for { if true { break } } }`)
-	oo("pl.missingFuncReturn", `func f() int { for { if true break } }`)
-	oo("pl.missingFuncReturn",
+	oo("pl.missingReturn", `func f() int { }`)
+	oo("pl.missingReturn", `func f() int { for { break } }`)
+	oo("pl.missingReturn", `func f() int { for { if true { break } } }`)
+	oo("pl.missingReturn", `func f() int { for { if true break } }`)
+	oo("pl.missingReturn",
 		`func f() int { for true { if true { return 0 } } }`)
-	oo("pl.missingFuncReturn",
+	oo("pl.missingReturn",
 		`func f() int { for true { if true return 0 } }`)
-	oo("pl.missingFuncReturn", `func f() int { if true { return 0 } }`)
-	oo("pl.missingFuncReturn", `func f() int { if true return 0 }`)
+	oo("pl.missingReturn", `func f() int { if true { return 0 } }`)
+	oo("pl.missingReturn", `func f() int { if true return 0 }`)
 
 	// confliction errors return 2 errors,same error code with different pos
 	c("pl.declConflict.func",
