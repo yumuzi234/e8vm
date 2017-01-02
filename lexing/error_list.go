@@ -83,7 +83,7 @@ func SingleErr(e error) []*Error {
 }
 
 // SingleCodeErr returns an error array with one error with ErrorCode.
-func SingleCodeErr(e error, c string) []*Error {
+func SingleCodeErr(c string, e error) []*Error {
 	return []*Error{{Err: e, Code: c}}
 }
 

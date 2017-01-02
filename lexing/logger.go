@@ -1,7 +1,6 @@
 package lexing
 
 // Logger is an error logging interface
-// I will keep Logger interface like this for now
 type Logger interface {
 	Errorf(p *Pos, fmt string, args ...interface{})
 }
