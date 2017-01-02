@@ -23,11 +23,6 @@ func (e *Error) Error() string {
 	)
 }
 
-// ErrCode returns the error code
-func (e *Error) ErrCode() string {
-	return e.Code
-}
-
 // CodeErrorf creates a lex8.Error with ErrCode
 func CodeErrorf(c string, f string, args ...interface{}) *Error {
 	e := fmt.Errorf(f, args...)

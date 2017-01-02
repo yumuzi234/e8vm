@@ -24,7 +24,8 @@ func parseTopDecl(p *parser) ast.Decl {
 	} else if p.SeeKeyword("type") && p.golike {
 		return parseStruct(p)
 	} else if p.SeeKeyword("import") {
-		p.ErrorfHere("only one import block allowed at the head")
+		p.CodeErrorfHere("pl.multiImport",
+			"only one import block allowed at the head")
 	}
 
 	if len(p.Errs()) == 0 {
