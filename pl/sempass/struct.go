@@ -80,8 +80,11 @@ func buildFields(b *builder, ps *pkgStruct) {
 			sym := syms.Make(b.path, name, tast.SymField, field, ft, id.Pos)
 			conflict := t.Syms.Declare(sym)
 			if conflict != nil {
-				b.Errorf(id.Pos, "field %s already defined", id.Lit)
-				b.Errorf(conflict.Pos, "previously defined here")
+				b.CodeErrorf(id.Pos, "pl.conflictDeclaration.fieldOfStruct",
+					"field %s already defined", id.Lit)
+				b.CodeErrorf(conflict.Pos,
+					"pl.conflictDeclaration.fieldOfStruct",
+					"previously defined here")
 				continue
 			}
 

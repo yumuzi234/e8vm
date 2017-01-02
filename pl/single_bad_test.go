@@ -9,7 +9,17 @@ import (
 )
 
 func TestSingleFileBad(t *testing.T) {
-	o := func(input, code string) {
+	o := func(input string) {
+		_, es, _ := CompileSingle("main.g", input, false)
+		if es == nil {
+			t.Log(input)
+			t.Error("should error")
+			return
+		}
+
+	}
+
+	oo := func(input, code string) {
 		_, es, _ := CompileSingle("main.g", input, false)
 		fmt.Println(len(es))
 		if es == nil {
@@ -17,6 +27,7 @@ func TestSingleFileBad(t *testing.T) {
 			t.Error("should error:", code)
 			return
 		}
+
 		if es[0].Code != code {
 			t.Log(input)
 			t.Error("ErrCode expected:", code,
@@ -25,61 +36,65 @@ func TestSingleFileBad(t *testing.T) {
 		}
 	}
 
-	o("", "pl.missingMainFunction")     // no main
-	o(`func a() {}; func a() {};`, "")  //2
-	o(`struct A { b int; b int };`, "") //2
-	o(`struct A { a A };`, "")
-	o(`struct A { b B }; struct B { a A };`, "")
-	o(`struct A { b B }; struct B { a [3]A };`, "")
-	o(`struct A { b B }; struct B { a [0]A };`, "")
-	o(`struct A {}; func main() { a := A }`, "")
+	oo("", "pl.missingMainFunction") // no main
+	oo(`func a() {}; func a() {};`, "pl.conflictDeclaration.fucntion")
+	//confliction errors return 2 errors,same error code with different pos
+
+	oo(`struct A { b int; b int };`,
+		"pl.conflictDeclaration.fieldOfStruct") //2
+
+	o(`struct A { a A };`)
+	o(`struct A { b B }; struct B { a A };`)
+	o(`struct A { b B }; struct B { a [3]A };`)
+	o(`struct A { b B }; struct B { a [0]A };`)
+	o(`struct A {}; func main() { a := A }`)
 
 	o(`	struct A { func f(){} };
-		func main() { var a A; var f func()=a.f; _:=f }`, "")
+		func main() { var a A; var f func()=a.f; _:=f }`)
 	o(`	struct A { func f(){} };
-		func main() { var a A; var f func(); f=a.f; _:=f }`, "")
+		func main() { var a A; var f func(); f=a.f; _:=f }`)
 
-	o(`import(); import()`, "")
-	o("import() func main()", "")
-	o(`struct A { func f(){} }; func main() { var a A; f := a.f; _ := f }`, "")
+	o(`import(); import()`)
+	o("import() func main()")
+	o(`struct A { func f(){} }; func main() { var a A; f := a.f; _ := f }`)
 
 	o(` func r() (int, int) { return 3, 4 }
 		func p(a, b, c int) { }
-		func main() { p(r(), 5) }`, "")
+		func main() { p(r(), 5) }`)
 
-	// // missing returns
-	// o(`func f() int { }; func main() { }`)
-	// o(`func f() int { for { break } }; func main() { }`)
-	// o(`func f() int { for { if true { break } } }; func main() { }`)
-	// o(`func f() int { for { if true break } }; func main() { }`)
-	// o(`func f() int { for true { if true { return 0 } } }; func main() { }`)
-	// o(`func f() int { for true { if true return 0 } }; func main() { }`)
-	// o(`func f() int { if true { return 0 } }; func main() { }`)
-	// o(`func f() int { if true return 0 }; func main() { }`)
+	// missing returns
+	o(`func f() int { }; func main() { }`)
+	o(`func f() int { for { break } }; func main() { }`)
+	o(`func f() int { for { if true { break } } }; func main() { }`)
+	o(`func f() int { for { if true break } }; func main() { }`)
+	o(`func f() int { for true { if true { return 0 } } }; func main() { }`)
+	o(`func f() int { for true { if true return 0 } }; func main() { }`)
+	o(`func f() int { if true { return 0 } }; func main() { }`)
+	o(`func f() int { if true return 0 }; func main() { }`)
 
-	// // unused vars
-	// o(`func main() { var a int }`)
-	// o(`func main() { var a = 3 }`)
-	// o(`func main() { var a, b = 3; _ := a }`)
-	// o(`func main() { a := 3 }`)
-	// o(`func main() { var a int; a = 3 }`)
-	// o(`func main() { var a int; (a) = (3) }`)
+	// unused vars
+	o(`func main() { var a int }`)
+	o(`func main() { var a = 3 }`)
+	o(`func main() { var a, b = 3; _ := a }`)
+	o(`func main() { a := 3 }`)
+	o(`func main() { var a int; a = 3 }`)
+	o(`func main() { var a int; (a) = (3) }`)
 
-	// // Bugs found by the fuzzer in the past
-	// o("func main() {}; func f() **o.o {}")
-	// o("func main() {}; func n()[char[:]]string{}")
-	// o("func main() {}; func n() { var r = len; _ := r}")
-	// o("func main() {}; func n() { r := len; _ := r }")
-	// o("func main() {}; struct A{}; struct A{}")
+	// Bugs found by the fuzzer in the past
+	o("func main() {}; func f() **o.o {}")
+	o("func main() {}; func n()[char[:]]string{}")
+	o("func main() {}; func n() { var r = len; _ := r}")
+	o("func main() {}; func n() { r := len; _ := r }")
+	o("func main() {}; struct A{}; struct A{}")
 
-	// o("var a int; func a() {}; func main() {}")
-	// o("func main() {}; func main() {};")
-	// o("const a, b = a, b; func main() {}")
-	// o("const c, d = d, t; func main() {}")
-	// o(`	func main() {
-	// 		var s string
-	// 		for i := 0; i < len(s-2); i++ {}
-	// 	}`)
+	o("var a int; func a() {}; func main() {}")
+	o("func main() {}; func main() {};")
+	o("const a, b = a, b; func main() {}")
+	o("const c, d = d, t; func main() {}")
+	o(`	func main() {
+				var s string
+				for i := 0; i < len(s-2); i++ {}
+			}`)
 }
 
 func TestSingleFilePanic(t *testing.T) {

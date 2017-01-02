@@ -20,10 +20,11 @@ func declareFuncSym(b *builder, f *ast.Func, t types.T) *syms.Symbol {
 	s := syms.Make(b.path, name, tast.SymFunc, nil, t, f.Name.Pos)
 	conflict := b.scope.Declare(s)
 	if conflict != nil {
-		b.Errorf(f.Name.Pos, "%q already defined as a %s",
-			name, tast.SymStr(conflict.Type),
+		b.CodeErrorf(f.Name.Pos, "pl.conflictDeclaration.fucntion",
+			"%q already defined as a %s", name, tast.SymStr(conflict.Type),
 		)
-		b.Errorf(conflict.Pos, "previously defined here")
+		b.CodeErrorf(conflict.Pos, "pl.conflictDeclaration.fucntion",
+			"previously defined here")
 		return nil
 	}
 	return s

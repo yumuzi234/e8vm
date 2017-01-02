@@ -19,6 +19,16 @@ func declareConst(b *builder, tok *lexing.Token, t types.T) *syms.Symbol {
 		b.Errorf(conflict.Pos, "previously defined here")
 		return nil
 	}
+	//Tried several approaches, cannot make this error happen
+
+	// if conflict != nil {
+	// 	b.CodeErrorf(tok.Pos, "pl.conflictDeclaration",
+	// 		"%q already declared as a %s", name, tast.SymStr(conflict.Type),
+	// 	)
+	// 	b.CodeErrorf(conflict.Pos, "pl.conflictDeclaration",
+	// 		"previously defined here")
+	// 	return nil
+	// }
 	return s
 }
 
