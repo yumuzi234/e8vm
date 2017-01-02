@@ -12,7 +12,7 @@ func scopePopAndCheck(b *builder) {
 	for _, sym := range syms {
 		if !sym.Used {
 			b.CodeErrorf(
-				sym.Pos, "pl.unusedFuncOrVarible",
+				sym.Pos, "pl.unusedSym",
 				"unused %s %q", tast.SymStr(sym.Type), sym.Name(),
 			)
 		}

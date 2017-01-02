@@ -88,17 +88,17 @@ func TestSingleFileBad(t *testing.T) {
 		`const a=1; const a=2`)
 
 	// unused vars
-	oo("pl.unusedFuncOrVarible", `func main() { var a int }`)
-	oo("pl.unusedFuncOrVarible", `func main() { var a = 3 }`)
-	oo("pl.unusedFuncOrVarible", `func main() { a := 3 }`)
-	oo("pl.unusedFuncOrVarible", `func main() { var a int; a = 3 }`)
-	oo("pl.unusedFuncOrVarible", `func main() { var a int; (a) = (3) }`)
-	oo("pl.unusedFuncOrVarible", `func main() { var a, b = 3, 4; _ := a }`)
+	oo("pl.unusedSym", `func main() { var a int }`)
+	oo("pl.unusedSym", `func main() { var a = 3 }`)
+	oo("pl.unusedSym", `func main() { a := 3 }`)
+	oo("pl.unusedSym", `func main() { var a int; a = 3 }`)
+	oo("pl.unusedSym", `func main() { var a int; (a) = (3) }`)
+	oo("pl.unusedSym", `func main() { var a, b = 3, 4; _ := a }`)
 
 	// parser, import related
 	oo("pl.multiImport", `import(); import()`)
 
-	//expect ';', got keyword
+	// expect ';', got keyword
 	o("import() func main(){}")
 
 	o(`struct A { a A };`)
