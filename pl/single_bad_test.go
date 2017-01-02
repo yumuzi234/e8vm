@@ -93,15 +93,13 @@ func TestSingleFileBad(t *testing.T) {
 	oo("pl.unusedFuncOrVarible", `func main() { a := 3 }`)
 	oo("pl.unusedFuncOrVarible", `func main() { var a int; a = 3 }`)
 	oo("pl.unusedFuncOrVarible", `func main() { var a int; (a) = (3) }`)
+	oo("pl.unusedFuncOrVarible", `func main() { var a, b = 3, 4; _ := a }`)
 
 	// parser, import related
 	oo("pl.multiImport", `import(); import()`)
 
 	//expect ';', got keyword
 	o("import() func main(){}")
-
-	//bugs
-	oo("", `func main() { var a, b = 3; _ := a }`)
 
 	o(`struct A { a A };`)
 	o(`struct A { b B }; struct B { a A };`)
