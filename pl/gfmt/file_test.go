@@ -127,20 +127,32 @@ func TestFormatFile(t *testing.T) {
             "something"
         )
     `)
-	/*
-		o(`
-			func main() {
-				f(
+	o(`
+		func main() {
+			f(
+			1, // arg1
+			)
+		}`, `
+		func main() {
+			f(
 				1, // arg1
-				)
-			}`, `
-			func main() {
-				f(
-					1, // arg1
-				)
+			)
+		}
+	`)
+	o(`
+		func main() {
+			var a = []int {
+			3,   4, 5  ,
+				6,   7,   8,
+					}
+		}`, `
+		func main() {
+			var a = []int{
+				3, 4, 5,
+				6, 7, 8,
 			}
-		`)
-	*/
+		}
+	`)
 
 	/*
 		o(`

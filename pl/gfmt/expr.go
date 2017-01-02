@@ -5,7 +5,7 @@ import (
 	"shanhu.io/smlvm/pl/ast"
 )
 
-func printExpr(f *formatter, expr ast.Expr) {
+func printExpr(f *formatter, expr interface{}) {
 	switch expr := expr.(type) {
 	case string:
 		f.printStr(expr)
@@ -31,11 +31,12 @@ func printExpr(f *formatter, expr ast.Expr) {
 			}
 		}
 	case *ast.CallExpr:
+		f.printExprs(expr.Func)
+		f.printToken(expr.Lparen)
 		if expr.Args != nil {
-			f.printExprs(expr.Func, expr.Lparen, expr.Args, expr.Rparen)
-		} else {
-			f.printExprs(expr.Func, expr.Lparen, expr.Rparen)
+			printExprList(f, expr.Lparen, expr.Rparen, expr.Args)
 		}
+		f.printToken(expr.Rparen)
 	case *ast.IndexExpr:
 		if expr.Colon != nil {
 			f.printExprs(expr.Array, expr.Lbrack)
@@ -70,7 +71,9 @@ func printExpr(f *formatter, expr ast.Expr) {
 
 		f.printExprs(expr.Type.Type)
 		if expr.Exprs != nil {
-			f.printExprs(expr.Lbrace, expr.Exprs, expr.Rbrace)
+			f.printToken(expr.Lbrace)
+			printExprList(f, expr.Lbrace, expr.Rbrace, expr.Exprs)
+			f.printToken(expr.Rbrace)
 		} else {
 			f.printExprs(expr.Lbrace, expr.Rbrace)
 		}
