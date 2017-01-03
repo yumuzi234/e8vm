@@ -6,8 +6,8 @@ import (
 
 // Error is a parsing error
 type Error struct {
-	Pos  *Pos  // Pos can be null for error not related to any position
-	Err  error // Err is the error message, human friendly.
+	Pos  *Pos   // Pos can be null for error not related to any position
+	Err  error  // Err is the error message, human friendly.
 	Code string // Code is the error code, machine friendly.
 }
 

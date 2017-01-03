@@ -34,8 +34,7 @@ func TestSingleFileBad(t *testing.T) {
 
 		if es[0].Code != code {
 			t.Log(input)
-			t.Error("ErrCode expected:", code,
-				"\nErrcode get:", es[0].Code)
+			t.Errorf("ErrCode expected: %q, got %q", code, es[0].Code)
 			return
 		}
 	}
@@ -51,15 +50,14 @@ func TestSingleFileBad(t *testing.T) {
 
 		if es[0].Code != code {
 			t.Log(input)
-			t.Error("ErrCode expected:", code,
-				"\nErrcode get:", es[0].Code)
+			t.Errorf("ErrCode expected: %q, got %q", code, es[0].Code)
 			return
 		}
 
-		if es[1].Code != "pl.declConflict.previousPos" {
+		const previousPos = "pl.declConflict.previousPos"
+		if es[1].Code != previousPos {
 			t.Log(input)
-			t.Error("ErrCode expected:", "pl.declConflict.previousPos",
-				"\nErrcode get:", es[1].Code)
+			t.Error("ErrCode expected: %q, got %q", previousPos, es[1].Code)
 			return
 		}
 	}
@@ -79,13 +77,10 @@ func TestSingleFileBad(t *testing.T) {
 	oo("pl.missingReturn", `func f() int { if true { return 0 } }`)
 	oo("pl.missingReturn", `func f() int { if true return 0 }`)
 
-	// confliction errors return 2 errors,same error code with different pos
-	c("pl.declConflict.func",
-		`func a() {}; func a() {}`)
-	c("pl.declConflict.field",
-		`struct A { b int; b int }`)
-	c("pl.declConflict.const",
-		`const a=1; const a=2`)
+	// confliction errors return 2 errors, same error code with different pos
+	c("pl.declConflict.func", `func a() {}; func a() {}`)
+	c("pl.declConflict.field", `struct A { b int; b int }`)
+	c("pl.declConflict.const", `const a=1; const a=2`)
 
 	// unused vars
 	oo("pl.unusedSym", `func main() { var a int }`)
