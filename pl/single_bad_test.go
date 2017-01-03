@@ -3,6 +3,8 @@ package pl
 import (
 	"testing"
 
+	"fmt"
+
 	"shanhu.io/smlvm/arch"
 )
 
@@ -14,47 +16,107 @@ func TestSingleFileBad(t *testing.T) {
 			t.Error("should error")
 			return
 		}
+
 	}
 
-	o("") // no main
-	o(`func a() {}; func a() {}; func main {}`)
-	o(`struct A { b int; b int }; func main {}`)
-	o(`struct A { a A }; func main() {}`)
-	o(`struct A { b B }; struct B { a A }; func main() {}`)
-	o(`struct A { b B }; struct B { a [3]A }; func main() {}`)
-	o(`struct A { b B }; struct B { a [0]A }; func main() {}`)
+	oo := func(code, input string) {
+		_, es, _ := CompileSingle("main.g", input, false)
+		errNum := len(es)
+		if errNum != 1 {
+			fmt.Println(len(es))
+			fmt.Println(input)
+		}
+		if es == nil {
+			t.Log(input)
+			t.Error("should error:", code)
+			return
+		}
+
+		if es[0].Code != code {
+			t.Log(input)
+			t.Error("ErrCode expected:", code,
+				"\nErrcode get:", es[0].Code)
+			return
+		}
+	}
+
+	// Test function for declConflict
+	c := func(code, input string) {
+		_, es, _ := CompileSingle("main.g", input, false)
+		if es == nil || len(es) != 2 {
+			t.Log(input)
+			t.Error("should have 2 errors for confliction")
+			return
+		}
+
+		if es[0].Code != code {
+			t.Log(input)
+			t.Error("ErrCode expected:", code,
+				"\nErrcode get:", es[0].Code)
+			return
+		}
+
+		if es[1].Code != "pl.declConflict.previousPos" {
+			t.Log(input)
+			t.Error("ErrCode expected:", "pl.declConflict.previousPos",
+				"\nErrcode get:", es[1].Code)
+			return
+		}
+	}
+
+	// no main
+	oo("pl.missingMainFunc", "")
+
+	// missing returns
+	oo("pl.missingReturn", `func f() int { }`)
+	oo("pl.missingReturn", `func f() int { for { break } }`)
+	oo("pl.missingReturn", `func f() int { for { if true { break } } }`)
+	oo("pl.missingReturn", `func f() int { for { if true break } }`)
+	oo("pl.missingReturn",
+		`func f() int { for true { if true { return 0 } } }`)
+	oo("pl.missingReturn",
+		`func f() int { for true { if true return 0 } }`)
+	oo("pl.missingReturn", `func f() int { if true { return 0 } }`)
+	oo("pl.missingReturn", `func f() int { if true return 0 }`)
+
+	// confliction errors return 2 errors,same error code with different pos
+	c("pl.declConflict.func",
+		`func a() {}; func a() {}`)
+	c("pl.declConflict.field",
+		`struct A { b int; b int }`)
+	c("pl.declConflict.const",
+		`const a=1; const a=2`)
+
+	// unused vars
+	oo("pl.unusedSym", `func main() { var a int }`)
+	oo("pl.unusedSym", `func main() { var a = 3 }`)
+	oo("pl.unusedSym", `func main() { a := 3 }`)
+	oo("pl.unusedSym", `func main() { var a int; a = 3 }`)
+	oo("pl.unusedSym", `func main() { var a int; (a) = (3) }`)
+	oo("pl.unusedSym", `func main() { var a, b = 3, 4; _ := a }`)
+
+	// parser, import related
+	oo("pl.multiImport", `import(); import()`)
+
+	// expect ';', got keyword
+	o("import() func main(){}")
+
+	o(`struct A { a A };`)
+	o(`struct A { b B }; struct B { a A };`)
+	o(`struct A { b B }; struct B { a [3]A };`)
+	o(`struct A { b B }; struct B { a [0]A };`)
 	o(`struct A {}; func main() { a := A }`)
 
-	o(`	struct A { func f(){} }; 
+	o(`	struct A { func f(){} };
 		func main() { var a A; var f func()=a.f; _:=f }`)
-	o(`	struct A { func f(){} }; 
+	o(`	struct A { func f(){} };
 		func main() { var a A; var f func(); f=a.f; _:=f }`)
 
-	o(`import(); import()`)
-	o("import() func main()")
 	o(`struct A { func f(){} }; func main() { var a A; f := a.f; _ := f }`)
 
 	o(` func r() (int, int) { return 3, 4 }
 		func p(a, b, c int) { }
 		func main() { p(r(), 5) }`)
-
-	// missing returns
-	o(`func f() int { }; func main() { }`)
-	o(`func f() int { for { break } }; func main() { }`)
-	o(`func f() int { for { if true { break } } }; func main() { }`)
-	o(`func f() int { for { if true break } }; func main() { }`)
-	o(`func f() int { for true { if true { return 0 } } }; func main() { }`)
-	o(`func f() int { for true { if true return 0 } }; func main() { }`)
-	o(`func f() int { if true { return 0 } }; func main() { }`)
-	o(`func f() int { if true return 0 }; func main() { }`)
-
-	// unused vars
-	o(`func main() { var a int }`)
-	o(`func main() { var a = 3 }`)
-	o(`func main() { var a, b = 3; _ := a }`)
-	o(`func main() { a := 3 }`)
-	o(`func main() { var a int; a = 3 }`)
-	o(`func main() { var a int; (a) = (3) }`)
 
 	// Bugs found by the fuzzer in the past
 	o("func main() {}; func f() **o.o {}")

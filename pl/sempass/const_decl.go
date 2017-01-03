@@ -13,10 +13,11 @@ func declareConst(b *builder, tok *lexing.Token, t types.T) *syms.Symbol {
 	s := syms.Make(b.path, name, tast.SymConst, nil, t, tok.Pos)
 	conflict := b.scope.Declare(s)
 	if conflict != nil {
-		b.Errorf(tok.Pos, "%q already declared as a %s",
-			name, tast.SymStr(conflict.Type),
+		b.CodeErrorf(tok.Pos, "pl.declConflict.const",
+			"%q already declared as a %s", name, tast.SymStr(conflict.Type),
 		)
-		b.Errorf(conflict.Pos, "previously defined here")
+		b.CodeErrorf(conflict.Pos, "pl.declConflict.previousPos",
+			"previously defined here")
 		return nil
 	}
 	return s

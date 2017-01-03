@@ -35,7 +35,7 @@ func buildMainPkg(home *builds.MemHome, opt *builds.Options) (
 	log = home.OutputBytes("/main", "ir")
 	if image == nil {
 		err := errors.New("missing main() function, no binary created")
-		return nil, lexing.SingleErr(err), log
+		return nil, lexing.SingleCodeErr("pl.missingMainFunc", err), log
 	}
 
 	return image, nil, log

@@ -20,10 +20,11 @@ func declareFuncSym(b *builder, f *ast.Func, t types.T) *syms.Symbol {
 	s := syms.Make(b.path, name, tast.SymFunc, nil, t, f.Name.Pos)
 	conflict := b.scope.Declare(s)
 	if conflict != nil {
-		b.Errorf(f.Name.Pos, "%q already defined as a %s",
-			name, tast.SymStr(conflict.Type),
+		b.CodeErrorf(f.Name.Pos, "pl.declConflict.func",
+			"%q already defined as a %s", name, tast.SymStr(conflict.Type),
 		)
-		b.Errorf(conflict.Pos, "previously defined here")
+		b.CodeErrorf(conflict.Pos, "pl.declConflict.previousPos",
+			"previously defined here")
 		return nil
 	}
 	return s
@@ -140,7 +141,8 @@ func buildFunc(b *builder, f *pkgFunc) *tast.Func {
 	ret.Body = buildStmts(b, f.f.Body.Stmts)
 
 	if len(b.retType) > 0 && !isBlockTerminal(f.f.Body) {
-		b.Errorf(f.f.Body.Rbrace.Pos, "missing return at the end of function")
+		b.CodeErrorf(f.f.Body.Rbrace.Pos, "pl.missingReturn",
+			"missing return at the end of function")
 	}
 
 	// clear for safety
