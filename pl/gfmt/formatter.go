@@ -3,7 +3,6 @@ package gfmt
 import (
 	"fmt"
 	"io"
-	"strings"
 
 	"shanhu.io/smlvm/fmtutil"
 	"shanhu.io/smlvm/lexing"
@@ -14,6 +13,7 @@ type formatter struct {
 	*fmtutil.Printer
 	toks *tokens
 	err  *lexing.Error
+	last string // last string printed
 
 	exprFunc func(f *formatter, expr interface{})
 }
@@ -53,9 +53,20 @@ func newFormatter(out io.Writer, toks []*lexing.Token) *formatter {
 	}
 }
 
-func (f *formatter) printStr(s string) { fmt.Fprint(f.Printer, s) }
-func (f *formatter) printSpace()       { f.printStr(" ") }
-func (f *formatter) printEndl()        { fmt.Fprintln(f.Printer) }
+func (f *formatter) printStr(s string) {
+	if f.last == " " && s == " " {
+		return // consume consecutive spaces
+	}
+	fmt.Fprint(f.Printer, s)
+	f.last = s
+}
+
+func (f *formatter) printSpace() { f.printStr(" ") }
+
+func (f *formatter) printEndl() {
+	f.last = "\n"
+	fmt.Fprintln(f.Printer)
+}
 
 func (f *formatter) peek() *lexing.Token {
 	for {
@@ -142,12 +153,13 @@ func (f *formatter) printSameLineComments(line int) {
 			return
 		}
 
-		if strings.HasPrefix(tok.Lit, "//") {
-			f.printSpace()
-		}
-
+		f.printStr(" ")
 		f.printStr(formatComment(tok.Lit))
 		f.toks.shift()
+
+		if f.toks.lineGap() == 0 {
+			f.printStr(" ")
+		}
 	}
 }
 

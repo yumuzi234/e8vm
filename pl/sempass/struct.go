@@ -6,7 +6,6 @@ import (
 	"shanhu.io/smlvm/pl/tast"
 	"shanhu.io/smlvm/pl/types"
 	"shanhu.io/smlvm/syms"
-	"shanhu.io/smlvm/toposort"
 )
 
 type pkgStruct struct {
@@ -51,12 +50,12 @@ func declareStruct(b *builder, s *ast.Struct) *pkgStruct {
 }
 
 func sortStructs(b *builder, m map[string]*pkgStruct) []*pkgStruct {
-	s := toposort.NewSorter("struct")
+	s := newTopoSorter("struct", "pl.circDep.struct")
 	for name, ps := range m {
-		s.AddNode(name, ps.name, ps.deps)
+		s.addNode(name, ps.name, ps.deps)
 	}
 
-	order := s.Sort(b)
+	order := s.sort(b)
 	ret := make([]*pkgStruct, 0, len(order))
 	for _, name := range order {
 		ret = append(ret, m[name])

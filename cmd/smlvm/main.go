@@ -15,31 +15,13 @@ import (
 	"shanhu.io/smlvm/image"
 )
 
-var (
-	doDasm      = flag.Bool("d", false, "do dump")
-	printDebug  = flag.Bool("debug", false, "print debug symbols")
-	ncycle      = flag.Int("n", 100000, "max cycles to execute")
-	memSize     = flag.Int("m", 0, "memory size; 0 for full 4GB")
-	printStatus = flag.Bool("s", false, "print status after execution")
-	bootArg     = flag.Uint("arg", 0, "boot argument, a uint32 number")
-	romRoot     = flag.String("rom", "", "rom root path")
-	randSeed    = flag.Int64("seed", 0, "random seed, 0 for using the time")
-)
-
-func run(bs []byte) (int, error) {
-	if *bootArg > math.MaxUint32 {
-		log.Fatalf("boot arg(%d) is too large", *bootArg)
-	}
+func run(
+	img []byte, conf *arch.Config, ncycle int, printStatus bool,
+) (int, error) {
 
 	// create a single core machine
-	m := arch.NewMachine(&arch.Config{
-		MemSize:  uint32(*memSize),
-		ROM:      *romRoot,
-		RandSeed: *randSeed,
-		BootArg:  uint32(*bootArg),
-	})
-
-	secs, err := image.Read(bytes.NewReader(bs))
+	m := arch.NewMachine(conf)
+	secs, err := image.Read(bytes.NewReader(img))
 	if err != nil {
 		return 0, err
 	}
@@ -48,8 +30,8 @@ func run(bs []byte) (int, error) {
 		return 0, err
 	}
 
-	ret, exp := m.Run(*ncycle)
-	if *printStatus {
+	ret, exp := m.Run(ncycle)
+	if printStatus {
 		m.PrintCoreStatus()
 	}
 
@@ -68,6 +50,14 @@ func run(bs []byte) (int, error) {
 }
 
 func main() {
+	doDasm := flag.Bool("d", false, "do dump")
+	printDebug := flag.Bool("debug", false, "print debug symbols")
+	ncycle := flag.Int("n", 100000, "max cycles to execute")
+	memSize := flag.Int("m", 0, "memory size; 0 for full 4GB")
+	printStatus := flag.Bool("s", false, "print status after execution")
+	bootArg := flag.Uint("arg", 0, "boot argument, a uint32 number")
+	romRoot := flag.String("rom", "", "rom root path")
+	randSeed := flag.Int64("seed", 0, "random seed, 0 for using the time")
 	flag.Parse()
 
 	args := flag.Args()
@@ -111,7 +101,18 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		n, e := run(bs)
+
+		if *bootArg > math.MaxUint32 {
+			log.Fatalf("boot arg(%d) is too large", *bootArg)
+		}
+		conf := &arch.Config{
+			MemSize:  uint32(*memSize),
+			ROM:      *romRoot,
+			RandSeed: *randSeed,
+			BootArg:  uint32(*bootArg),
+		}
+
+		n, e := run(bs, conf, *ncycle, *printStatus)
 		fmt.Printf("(%d cycles)\n", n)
 		if e != nil {
 			if !arch.IsHalt(e) {

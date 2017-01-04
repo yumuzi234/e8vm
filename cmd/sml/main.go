@@ -12,22 +12,6 @@ import (
 	"shanhu.io/smlvm/pl"
 )
 
-var (
-	golike   = flag.Bool("golike", false, "uses go-like syntax")
-	runTests = flag.Bool("test", true, "run tests")
-	pkg      = flag.String("pkg", "/...", "package to build")
-	homeDir  = flag.String("home", ".", "the home directory")
-	plan     = flag.Bool("plan", false, "plan only")
-
-	std = flag.String(
-		"std", "/smallrepo/std", "standard library directory",
-	)
-	initPC = flag.Uint("initpc", arch.InitPC,
-		"the starting address of the image",
-	)
-	staticOnly = flag.Bool("static", false, "do static analysis only")
-)
-
 func handleErrs(errs []*lexing.Error) {
 	if errs == nil {
 		return
@@ -39,6 +23,14 @@ func handleErrs(errs []*lexing.Error) {
 }
 
 func main() {
+	pkg := flag.String("pkg", "/...", "package to build")
+	homeDir := flag.String("home", ".", "the home directory")
+	plan := flag.Bool("plan", false, "plan only")
+	golike := flag.Bool("golike", false, "uses go-like syntax")
+	runTests := flag.Bool("test", true, "run tests")
+	std := flag.String("std", "/smallrepo/std", "stdlib package")
+	initPC := flag.Uint("initpc", arch.InitPC, "init PC register value")
+	staticOnly := flag.Bool("static", false, "do static analysis only")
 	flag.Parse()
 
 	lang := pl.Lang(*golike)

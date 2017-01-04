@@ -13,6 +13,6 @@ func printFunc(f *formatter, fn *ast.Func) {
 	}
 	f.printExprs(fn.Name)
 	printFuncSig(f, fn.FuncSig)
-	f.printSpace()
+	f.printStr(" ")
 	printStmt(f, fn.Body)
 }

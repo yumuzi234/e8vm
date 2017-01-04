@@ -10,7 +10,7 @@ func printParaList(f *formatter, lst *ast.ParaList) {
 		if para.Ident != nil {
 			f.printToken(para.Ident)
 			if para.Type != nil {
-				f.printSpace()
+				f.printStr(" ")
 			}
 		}
 
@@ -29,7 +29,7 @@ func printFuncSig(f *formatter, fsig *ast.FuncSig) {
 	if fsig.RetType != nil {
 		f.printExprs(" ", fsig.RetType)
 	} else if fsig.Rets != nil {
-		f.printSpace()
+		f.printStr(" ")
 		printParaList(f, fsig.Rets)
 	}
 }
