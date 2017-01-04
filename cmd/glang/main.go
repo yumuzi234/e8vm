@@ -31,17 +31,13 @@ func printErrs(es []*lexing.Error) {
 	exit(nil)
 }
 
-var (
-	bare       = flag.Bool("bare", false, "parse as bare function")
-	ir         = flag.Bool("ir", false, "prints out the IR")
-	doDasm     = flag.Bool("d", false, "deassemble the image")
-	ncycle     = flag.Int("n", 100000, "maximum number of cycles")
-	ncycleTest = flag.Int("ntest", 0, "maximum number of cycles for tests")
-	verbose    = flag.Bool("v", false, "verbose")
-	golike     = flag.Bool("golike", false, "using strict go-like syntax")
-)
-
 func main() {
+	bare := flag.Bool("bare", false, "parse as bare function")
+	ir := flag.Bool("ir", false, "prints out the IR")
+	doDasm := flag.Bool("d", false, "deassemble the image")
+	ncycle := flag.Int("n", 100000, "maximum number of cycles")
+	ncycleTest := flag.Int("ntest", 0, "maximum number of cycles for tests")
+	golike := flag.Bool("golike", false, "using strict go-like syntax")
 	flag.Parse()
 
 	args := flag.Args()
