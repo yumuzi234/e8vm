@@ -6,7 +6,6 @@ import (
 	"shanhu.io/smlvm/pl/tast"
 	"shanhu.io/smlvm/pl/types"
 	"shanhu.io/smlvm/syms"
-	"shanhu.io/smlvm/toposort"
 )
 
 type pkgConst struct {
@@ -54,14 +53,14 @@ func buildPkgConstDecl(b *builder, d *ast.ConstDecl) []*pkgConst {
 
 func sortPkgConsts(b *builder, consts []*pkgConst) []*pkgConst {
 	m := make(map[string]*pkgConst)
-	s := toposort.NewSorter("const")
+	s := newTopoSorter("const", "pl.circDep.const")
 	for _, c := range consts {
 		name := c.sym.Name()
 		m[name] = c
-		s.AddNode(name, c.tok, c.deps)
+		s.addNode(name, c.tok, c.deps)
 	}
 
-	order := s.Sort(b)
+	order := s.sort(b)
 	var ret []*pkgConst
 	for _, name := range order {
 		ret = append(ret, m[name])

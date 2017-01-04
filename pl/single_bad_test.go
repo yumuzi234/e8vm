@@ -96,10 +96,14 @@ func TestSingleFileBad(t *testing.T) {
 	// expect ';', got keyword
 	o("import() func main(){}")
 
-	o(`struct A { a A };`)
-	o(`struct A { b B }; struct B { a A };`)
-	o(`struct A { b B }; struct B { a [3]A };`)
-	o(`struct A { b B }; struct B { a [0]A };`)
+	oo("pl.circDep.struct", `struct A { a A };`)
+	oo("pl.circDep.struct", `struct A { b B }; struct B { a A };`)
+	oo("pl.circDep.struct", `struct A { b B }; struct B { a [3]A };`)
+	oo("pl.circDep.struct", `struct A { b B }; struct B { a [0]A };`)
+	oo("pl.circDep.const", `const a = b; const b = a`)
+	oo("pl.circDep.const", `const a = 3 + b; const b = a`)
+	oo("pl.circDep.const", `const a = 3 + b; const b = 0 - a`)
+
 	o(`struct A {}; func main() { a := A }`)
 
 	o(`	struct A { func f(){} };
