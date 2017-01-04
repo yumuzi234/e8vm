@@ -94,7 +94,7 @@ func TestSingleFileBad(t *testing.T) {
 	oo("pl.multiImport", `import(); import()`)
 
 	// expect ';', got keyword
-	o("import() func main(){}")
+	oo("pl.missingSemicolon", "import() func main(){}")
 
 	o(`struct A { a A };`)
 	o(`struct A { b B }; struct B { a A };`)
