@@ -62,8 +62,8 @@ func TestFormatFile(t *testing.T) {
 	// Removes redundant line breaks in block.
 	o("func main() { var a [5]int;\n\n b := a[:] }",
 		"func main() {\n    var a [5]int\n\n    b := a[:]\n}\n")
-	o("func main() {/*something*/}", "func main() {/*something*/}\n")
-	o("func main() { /*something*/ }", "func main() {/*something*/}\n")
+	o("func main() {/*something*/}", "func main() { /*something*/ }\n")
+	o("func main() { /*something*/ }", "func main() { /*something*/ }\n")
 	o("func main() { // something\n}", "func main() { // something\n}\n")
 	o("func main() {\n// something\n}",
 		"func main() {\n    // something\n}\n")
@@ -154,21 +154,19 @@ func TestFormatFile(t *testing.T) {
 		}
 	`)
 
-	/*
-		o(`
-			func main() {
-				f(
-					3, /* arg1 /
-					4, /* arg2 /
-				)
-			}
-		`, `
-			func main() {
-				f(
-					3, /* arg1 /
-					4, /* arg2 /
-				)
-			}
-		`)
-	*/
+	o(`
+		func main() {
+			f(
+				3, /* arg1 */
+				4, /* arg2 */
+			)
+		}
+	`, `
+		func main() {
+			f(
+				3, /* arg1 */
+				4, /* arg2 */
+			)
+		}
+	`)
 }
