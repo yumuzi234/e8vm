@@ -51,7 +51,7 @@ func buildVarDecl(b *builder, d *ast.VarDecl) *tast.Define {
 
 		if !types.IsAllocable(tdest) {
 			pos := ast.ExprPos(d.Type)
-			b.CodeErrorf(pos, "pl.cannotAllocte",
+			b.CodeErrorf(pos, "pl.cannotAlloc",
 				"type %s is not allocatable", tdest)
 			return nil
 		}
