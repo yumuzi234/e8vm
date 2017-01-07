@@ -27,6 +27,13 @@ func parseStmt(p *parser) ast.Stmt {
 			return parseBreakStmt(p, true)
 		case "continue":
 			return parseContinueStmt(p, true)
+		case "else":
+			// a common error case where else leads a statement.
+			p.CodeErrorfHere(
+				"pl.elseStart", "else needs to be on the same line as '}'",
+			)
+			p.skipErrStmt()
+			return nil
 		}
 	}
 

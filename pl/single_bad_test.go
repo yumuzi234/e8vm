@@ -126,6 +126,10 @@ func TestSingleFileBad(t *testing.T) {
 		func p(a, b, c int) { }
 		func main() { p(r(), 5) }`)
 
+	oo("elseStart", `func main() {
+		if true { }
+		else { } }`)
+
 	// Bugs found by the fuzzer in the past
 	oo("undefinedIdent", "func f() **o.o {}")
 	oo("expectConstExpr", "func n()[char[:]]string{}")
