@@ -81,7 +81,8 @@ func buildArrayType(b *builder, expr *ast.ArrayTypeExpr) types.T {
 func buildPkgRef(b *builder, ident *lexing.Token) *types.Pkg {
 	s := b.scope.Query(ident.Lit)
 	if s == nil {
-		b.Errorf(ident.Pos, "undefined identifier %s", ident.Lit)
+		b.CodeErrorf(ident.Pos, "pl.undefinedIdent",
+			"undefined identifier %s", ident.Lit)
 		return nil
 	}
 
