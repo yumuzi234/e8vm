@@ -63,7 +63,7 @@ func buildConstExpr(b *builder, expr ast.Expr) tast.Expr {
 		return buildConstOpExpr(b, expr)
 	}
 
-	b.CodeErrorf(ast.ExprPos(expr), "pl.expConstExpr",
+	b.CodeErrorf(ast.ExprPos(expr), "pl.expectConstExpr",
 		"expect a const expression")
 	return nil
 }

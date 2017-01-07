@@ -3,8 +3,6 @@ package pl
 import (
 	"testing"
 
-	"fmt"
-
 	"shanhu.io/smlvm/arch"
 )
 
@@ -23,11 +21,11 @@ func TestSingleFileBad(t *testing.T) {
 		_, es, _ := CompileSingle("main.g", input, false)
 		errNum := len(es)
 		if errNum != 1 {
-			fmt.Println(len(es))
+			t.Log(len(es))
 			for i := 0; i < len(es); i++ {
-				fmt.Println(es[i].Code)
+				t.Log(es[i].Code)
 			}
-			fmt.Println(input)
+			t.Log(input)
 		}
 		if es == nil {
 			t.Log(input)
@@ -99,7 +97,7 @@ func TestSingleFileBad(t *testing.T) {
 	oo("multiImport", `import(); import()`)
 
 	// expect ';', got keyword
-	oo("missingSemicolon", "import() func main(){}")
+	oo("missingSemi", "import() func main(){}")
 
 	//circular dependence
 	oo("circDep.struct", `struct A { a A };`)
@@ -110,28 +108,30 @@ func TestSingleFileBad(t *testing.T) {
 	oo("circDep.const", `const a = 3 + b; const b = a`)
 	oo("circDep.const", `const a = 3 + b; const b = 0 - a`)
 
-	oo("CannotAllocte", `struct A {}; func main() { a := A }`)
-	oo("CannotAllocte", `struct A {}; func (a *A) f(){};
+	oo("cannotAllocte", `struct A {}; func main() { a := A }`)
+	oo("cannotAllocte", `struct A {}; func (a *A) f(){};
 		func main() { var a A; f := a.f; _ := f }`)
-	oo("CannotAllocte",
+	oo("cannotAllocte",
 		"func main() {}; func n() { var r = len; _ := r}")
-	oo("CannotAllocte", "func main() {}; func n() { r := len; _ := r }")
+	oo("cannotAllocte", "func main() {}; func n() { r := len; _ := r }")
 
 	//If the len is the same, cannot assign either
 	//and it will be another error code
-	oo("CannotAssign", `struct A {}; func (a *A) f(){};
+	oo("cannotAssign", `struct A {}; func (a *A) f(){};
 		func main() { var a A; var f func()=a.f; _:=f }`)
-	oo("CannotAssign", `struct A {}; func (a *A) f(){};
+	oo("cannotAssign", `struct A {}; func (a *A) f(){};
 		func main() { var a A; var f func(); f=a.f; _:=f }`)
+	oo("cannotAssign", `func main() { var a [2]int; var b [3]int;
+		a=b}`)
 
 	oo("multiRefInExprList", ` func r() (int, int) { return 3, 4 }
 		func p(a, b, c int) { }
 		func main() { p(r(), 5) }`)
 
-	oo("undefinedIdent", "func main() {}; func f() **o.o {}")
-	oo("expConstExpr", "func main() {}; func n()[char[:]]string{}")
-
 	// Bugs found by the fuzzer in the past
+	oo("undefinedIdent", "func main() {}; func f() **o.o {}")
+	oo("expectConstExpr", "func main() {}; func n()[char[:]]string{}")
+
 	o("var a int; func a() {}; func main() {}")
 	o("func main() {}; func main() {};")
 	o("const a, b = a, b; func main() {}")

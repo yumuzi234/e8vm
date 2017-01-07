@@ -30,7 +30,7 @@ func allocPrepare(
 			}
 		}
 		if !types.IsAllocable(t) {
-			b.CodeErrorf(tok.Pos, "pl.CannotAllocte",
+			b.CodeErrorf(tok.Pos, "pl.cannotAllocte",
 				"cannot allocate for %s", t)
 			return nil
 		}
