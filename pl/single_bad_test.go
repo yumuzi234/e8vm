@@ -113,14 +113,14 @@ func TestSingleFileBad(t *testing.T) {
 	oo("cannotAlloc", "func n() { var r = len; _ := r}")
 	oo("cannotAlloc", "func n() { r := len; _ := r }")
 
-	// If the length are the same, cannot assign either
-	// and it will be another error code
 	oo("cannotAssign", `struct A {}; func (a *A) f(){};
 		func main() { var a A; var f func()=a.f; _:=f }`)
 	oo("cannotAssign", `struct A {}; func (a *A) f(){};
 		func main() { var a A; var f func(); f=a.f; _:=f }`)
 	oo("cannotAssign", `func main() { var a [2]int; var b [3]int;
 		a=b}`)
+	// If the length are not the same, cannot assign either and it will be
+	// another error code
 
 	oo("multiRefInExprList", ` func r() (int, int) { return 3, 4 }
 		func p(a, b, c int) { }
