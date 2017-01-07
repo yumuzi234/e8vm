@@ -38,10 +38,10 @@ func declareStruct(b *builder, s *ast.Struct) *pkgStruct {
 	sym := syms.Make(b.path, name, tast.SymStruct, nil, t, pos)
 	conflict := b.scope.Declare(sym)
 	if conflict != nil {
-		b.Errorf(pos, "%s already defined", name)
-		b.Errorf(conflict.Pos, "previously defined here as a %s",
-			tast.SymStr(conflict.Type),
-		)
+		b.CodeErrorf(pos, "pl.declConflict.struct",
+			"%s already defined", name)
+		b.CodeErrorf(conflict.Pos, "pl.declConflict.previousPos",
+			"previously defined here as a %s", tast.SymStr(conflict.Type))
 		return nil
 	}
 

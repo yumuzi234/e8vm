@@ -51,7 +51,8 @@ func buildVarDecl(b *builder, d *ast.VarDecl) *tast.Define {
 
 		if !types.IsAllocable(tdest) {
 			pos := ast.ExprPos(d.Type)
-			b.Errorf(pos, "%s is not allocatable", tdest)
+			b.CodeErrorf(pos, "pl.cannotAlloc",
+				"type %s is not allocatable", tdest)
 			return nil
 		}
 
@@ -59,7 +60,8 @@ func buildVarDecl(b *builder, d *ast.VarDecl) *tast.Define {
 		ts := right.R().TypeList()
 		for _, t := range ts {
 			if !types.CanAssign(tdest, t) {
-				b.Errorf(d.Eq.Pos, "cannot assign %s to %s", t, tdest)
+				b.CodeErrorf(d.Eq.Pos, "pl.cannotAssign",
+					"cannot assign type %s to type %s", t, tdest)
 				return nil
 			}
 		}

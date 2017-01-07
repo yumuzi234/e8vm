@@ -14,7 +14,9 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 	ndest := destRef.Len()
 	nsrc := srcRef.Len()
 	if ndest != nsrc {
-		b.Errorf(op.Pos, "cannot assign %s to %s", nsrc, ndest)
+		b.CodeErrorf(op.Pos, "pl.cannotAssign",
+			"cannot assign(len) %s to %s; length mismatch",
+			nsrc, ndest)
 		return nil
 	}
 
@@ -28,7 +30,9 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 		destType := r.Type()
 		srcType := srcRef.At(i).Type()
 		if !types.CanAssign(destType, srcType) {
-			b.Errorf(op.Pos, "cannot assign %s to %s", srcType, destType)
+			b.CodeErrorf(op.Pos, "pl.cannotAssign",
+				"cannot assign %s to %s; type mismatch",
+				srcType, destType)
 			return nil
 		}
 	}
