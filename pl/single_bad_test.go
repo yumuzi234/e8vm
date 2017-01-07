@@ -108,12 +108,12 @@ func TestSingleFileBad(t *testing.T) {
 	oo("circDep.const", `const a = 3 + b; const b = a`)
 	oo("circDep.const", `const a = 3 + b; const b = 0 - a`)
 
-	oo("cannotAllocte", `struct A {}; func main() { a := A }`)
-	oo("cannotAllocte", `struct A {}; func (a *A) f(){};
+	oo("cannotAlloc", `struct A {}; func main() { a := A }`)
+	oo("cannotAlloc", `struct A {}; func (a *A) f(){};
 		func main() { var a A; f := a.f; _ := f }`)
-	oo("cannotAllocte",
+	oo("cannotAlloc",
 		"func main() {}; func n() { var r = len; _ := r}")
-	oo("cannotAllocte", "func main() {}; func n() { r := len; _ := r }")
+	oo("cannotAlloc", "func main() {}; func n() { r := len; _ := r }")
 
 	//If the len is the same, cannot assign either
 	//and it will be another error code
