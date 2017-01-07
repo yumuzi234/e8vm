@@ -134,7 +134,8 @@ func (p *parser) ExpectSemi() *lexing.Token {
 	}
 
 	if t.Type != Semi {
-		p.ErrorfHere("expect ';', got %s", p.typeStr(t))
+		p.CodeErrorfHere("pl.missingSemicolon",
+			"expect ';', got %s", p.typeStr(t))
 		return nil
 	}
 	return p.Shift()

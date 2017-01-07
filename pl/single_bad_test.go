@@ -24,6 +24,9 @@ func TestSingleFileBad(t *testing.T) {
 		errNum := len(es)
 		if errNum != 1 {
 			fmt.Println(len(es))
+			for i := 0; i < len(es); i++ {
+				fmt.Println(es[i].Code)
+			}
 			fmt.Println(input)
 		}
 		if es == nil {
@@ -31,7 +34,7 @@ func TestSingleFileBad(t *testing.T) {
 			t.Error("should error:", code)
 			return
 		}
-
+		code = "pl." + code
 		if es[0].Code != code {
 			t.Log(input)
 			t.Errorf("ErrCode expected: %q, got %q", code, es[0].Code)
@@ -47,7 +50,7 @@ func TestSingleFileBad(t *testing.T) {
 			t.Error("should have 2 errors for confliction")
 			return
 		}
-
+		code = "pl." + code
 		if es[0].Code != code {
 			t.Log(input)
 			t.Errorf("ErrCode expected: %q, got %q", code, es[0].Code)
@@ -63,67 +66,72 @@ func TestSingleFileBad(t *testing.T) {
 	}
 
 	// no main
-	oo("pl.missingMainFunc", "")
+	oo("missingMainFunc", "")
 
 	// missing returns
-	oo("pl.missingReturn", `func f() int { }`)
-	oo("pl.missingReturn", `func f() int { for { break } }`)
-	oo("pl.missingReturn", `func f() int { for { if true { break } } }`)
-	oo("pl.missingReturn", `func f() int { for { if true break } }`)
-	oo("pl.missingReturn",
+	oo("missingReturn", `func f() int { }`)
+	oo("missingReturn", `func f() int { for { break } }`)
+	oo("missingReturn", `func f() int { for { if true { break } } }`)
+	oo("missingReturn", `func f() int { for { if true break } }`)
+	oo("missingReturn",
 		`func f() int { for true { if true { return 0 } } }`)
-	oo("pl.missingReturn",
+	oo("missingReturn",
 		`func f() int { for true { if true return 0 } }`)
-	oo("pl.missingReturn", `func f() int { if true { return 0 } }`)
-	oo("pl.missingReturn", `func f() int { if true return 0 }`)
+	oo("missingReturn", `func f() int { if true { return 0 } }`)
+	oo("missingReturn", `func f() int { if true return 0 }`)
 
 	// confliction errors return 2 errors, same error code with different pos
-	c("pl.declConflict.func", `func a() {}; func a() {}`)
-	c("pl.declConflict.field", `struct A { b int; b int }`)
-	c("pl.declConflict.const", `const a=1; const a=2`)
+	c("declConflict.func", `func a() {}; func a() {}`)
+	c("declConflict.field", `struct A { b int; b int }`)
+	c("declConflict.const", `const a=1; const a=2`)
+	c("declConflict.struct",
+		"func main() {}; struct A{}; struct A{}")
 
 	// unused vars
-	oo("pl.unusedSym", `func main() { var a int }`)
-	oo("pl.unusedSym", `func main() { var a = 3 }`)
-	oo("pl.unusedSym", `func main() { a := 3 }`)
-	oo("pl.unusedSym", `func main() { var a int; a = 3 }`)
-	oo("pl.unusedSym", `func main() { var a int; (a) = (3) }`)
-	oo("pl.unusedSym", `func main() { var a, b = 3, 4; _ := a }`)
+	oo("unusedSym", `func main() { var a int }`)
+	oo("unusedSym", `func main() { var a = 3 }`)
+	oo("unusedSym", `func main() { a := 3 }`)
+	oo("unusedSym", `func main() { var a int; a = 3 }`)
+	oo("unusedSym", `func main() { var a int; (a) = (3) }`)
+	oo("unusedSym", `func main() { var a, b = 3, 4; _ := a }`)
 
 	// parser, import related
-	oo("pl.multiImport", `import(); import()`)
+	oo("multiImport", `import(); import()`)
 
 	// expect ';', got keyword
-	o("import() func main(){}")
+	oo("missingSemicolon", "import() func main(){}")
 
-	oo("pl.circDep.struct", `struct A { a A };`)
-	oo("pl.circDep.struct", `struct A { b B }; struct B { a A };`)
-	oo("pl.circDep.struct", `struct A { b B }; struct B { a [3]A };`)
-	oo("pl.circDep.struct", `struct A { b B }; struct B { a [0]A };`)
-	oo("pl.circDep.const", `const a = b; const b = a`)
-	oo("pl.circDep.const", `const a = 3 + b; const b = a`)
-	oo("pl.circDep.const", `const a = 3 + b; const b = 0 - a`)
+	//circular dependence
+	oo("circDep.struct", `struct A { a A };`)
+	oo("circDep.struct", `struct A { b B }; struct B { a A };`)
+	oo("circDep.struct", `struct A { b B }; struct B { a [3]A };`)
+	oo("circDep.struct", `struct A { b B }; struct B { a [0]A };`)
+	oo("circDep.const", `const a = b; const b = a`)
+	oo("circDep.const", `const a = 3 + b; const b = a`)
+	oo("circDep.const", `const a = 3 + b; const b = 0 - a`)
 
-	o(`struct A {}; func main() { a := A }`)
+	oo("CannotAllocte", `struct A {}; func main() { a := A }`)
+	oo("CannotAllocte", `struct A {}; func (a *A) f(){};
+		func main() { var a A; f := a.f; _ := f }`)
+	oo("CannotAllocte",
+		"func main() {}; func n() { var r = len; _ := r}")
+	oo("CannotAllocte", "func main() {}; func n() { r := len; _ := r }")
 
-	o(`	struct A { func f(){} };
+	//If the len is the same, cannot assign either
+	//and it will be another error code
+	oo("CannotAssign", `struct A {}; func (a *A) f(){};
 		func main() { var a A; var f func()=a.f; _:=f }`)
-	o(`	struct A { func f(){} };
+	oo("CannotAssign", `struct A {}; func (a *A) f(){};
 		func main() { var a A; var f func(); f=a.f; _:=f }`)
 
-	o(`struct A { func f(){} }; func main() { var a A; f := a.f; _ := f }`)
-
-	o(` func r() (int, int) { return 3, 4 }
+	oo("multiRefInExprList", ` func r() (int, int) { return 3, 4 }
 		func p(a, b, c int) { }
 		func main() { p(r(), 5) }`)
 
-	// Bugs found by the fuzzer in the past
-	o("func main() {}; func f() **o.o {}")
-	o("func main() {}; func n()[char[:]]string{}")
-	o("func main() {}; func n() { var r = len; _ := r}")
-	o("func main() {}; func n() { r := len; _ := r }")
-	o("func main() {}; struct A{}; struct A{}")
+	oo("undefinedIdent", "func main() {}; func f() **o.o {}")
+	oo("expConstExpr", "func main() {}; func n()[char[:]]string{}")
 
+	// Bugs found by the fuzzer in the past
 	o("var a int; func a() {}; func main() {}")
 	o("func main() {}; func main() {};")
 	o("const a, b = a, b; func main() {}")

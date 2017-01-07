@@ -26,7 +26,9 @@ func buildExprList(b *builder, list *ast.ExprList) tast.Expr {
 
 		ref := ex.R()
 		if !ref.IsSingle() {
-			b.Errorf(ast.ExprPos(expr), "cannot put %s in a list", ref)
+			b.CodeErrorf(ast.ExprPos(expr), "pl.multiRefInExprList",
+				`cannot put %s in a expresssion list, 
+				only single reference is allowed`, ref)
 			return nil
 		}
 
@@ -53,7 +55,9 @@ func buildConstExprList(b *builder, list *ast.ExprList) tast.Expr {
 		}
 		ref := ex.R()
 		if !ref.IsSingle() {
-			b.Errorf(ast.ExprPos(expr), "cannot put %s in a list", ref)
+			b.CodeErrorf(ast.ExprPos(expr), "pl.multiRefInExprList",
+				`cannot put %s in a expresssion list, 
+				only single reference is allowed`, ref)
 			return nil
 		}
 		ret.Append(ex)

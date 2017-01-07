@@ -56,7 +56,8 @@ func buildString(b *builder, op *lexing.Token) tast.Expr {
 func buildIdent(b *builder, ident *lexing.Token) tast.Expr {
 	s := b.scope.Query(ident.Lit)
 	if s == nil {
-		b.Errorf(ident.Pos, "undefined identifier %s", ident.Lit)
+		b.CodeErrorf(ident.Pos, "pl.undefinedIdent",
+			"undefined identifier %s", ident.Lit)
 		return nil
 	}
 
@@ -91,7 +92,8 @@ func buildIdent(b *builder, ident *lexing.Token) tast.Expr {
 func buildConstIdent(b *builder, ident *lexing.Token) tast.Expr {
 	s := b.scope.Query(ident.Lit)
 	if s == nil {
-		b.Errorf(ident.Pos, "undefined identifier %s", ident.Lit)
+		b.CodeErrorf(ident.Pos, "pl.undefinedIdent",
+			"undefined identifier %s", ident.Lit)
 		return nil
 	}
 
