@@ -78,12 +78,11 @@ func TestSingleFileBad(t *testing.T) {
 	oo("missingReturn", `func f() int { if true { return 0 } }`)
 	oo("missingReturn", `func f() int { if true return 0 }`)
 
-	// confliction errors return 2 errors, same error code with different pos
+	// confliction return 2 errors
 	c("declConflict.func", `func a() {}; func a() {}`)
 	c("declConflict.field", `struct A { b int; b int }`)
 	c("declConflict.const", `const a=1; const a=2`)
-	c("declConflict.struct",
-		"func main() {}; struct A{}; struct A{}")
+	c("declConflict.struct", "struct A{}; struct A{}")
 
 	// unused vars
 	oo("unusedSym", `func main() { var a int }`)
@@ -99,7 +98,7 @@ func TestSingleFileBad(t *testing.T) {
 	// expect ';', got keyword
 	oo("missingSemi", "import() func main(){}")
 
-	//circular dependence
+	// circular dependence
 	oo("circDep.struct", `struct A { a A };`)
 	oo("circDep.struct", `struct A { b B }; struct B { a A };`)
 	oo("circDep.struct", `struct A { b B }; struct B { a [3]A };`)
@@ -111,12 +110,11 @@ func TestSingleFileBad(t *testing.T) {
 	oo("cannotAlloc", `struct A {}; func main() { a := A }`)
 	oo("cannotAlloc", `struct A {}; func (a *A) f(){};
 		func main() { var a A; f := a.f; _ := f }`)
-	oo("cannotAlloc",
-		"func main() {}; func n() { var r = len; _ := r}")
-	oo("cannotAlloc", "func main() {}; func n() { r := len; _ := r }")
+	oo("cannotAlloc", "func n() { var r = len; _ := r}")
+	oo("cannotAlloc", "func n() { r := len; _ := r }")
 
-	//If the len is the same, cannot assign either
-	//and it will be another error code
+	// If the length are the same, cannot assign either
+	// and it will be another error code
 	oo("cannotAssign", `struct A {}; func (a *A) f(){};
 		func main() { var a A; var f func()=a.f; _:=f }`)
 	oo("cannotAssign", `struct A {}; func (a *A) f(){};
@@ -129,8 +127,8 @@ func TestSingleFileBad(t *testing.T) {
 		func main() { p(r(), 5) }`)
 
 	// Bugs found by the fuzzer in the past
-	oo("undefinedIdent", "func main() {}; func f() **o.o {}")
-	oo("expectConstExpr", "func main() {}; func n()[char[:]]string{}")
+	oo("undefinedIdent", "func f() **o.o {}")
+	oo("expectConstExpr", "func n()[char[:]]string{}")
 
 	o("var a int; func a() {}; func main() {}")
 	o("func main() {}; func main() {};")
