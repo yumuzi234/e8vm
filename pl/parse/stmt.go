@@ -30,7 +30,8 @@ func parseStmt(p *parser) ast.Stmt {
 		case "else":
 			// a common error case where else leads a statement.
 			p.CodeErrorfHere(
-				"pl.elseStart", "else needs to be on the same line as '}'",
+				"pl.elseStart",
+				"else must be on the same line as the last '}'",
 			)
 			p.skipErrStmt()
 			return nil

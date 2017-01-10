@@ -8,7 +8,13 @@ import (
 type Slice struct{ T T }
 
 // String returns "[]T"
-func (t *Slice) String() string { return "[]" + t.T.String() }
+func (t *Slice) String() string {
+	s := t.T.String()
+	if s == "int8" {
+		return "[]int8 (string)"
+	}
+	return "[]" + s
+}
 
 // Size returns the size of the slice.
 // It contains the start address of the slice,

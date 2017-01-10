@@ -30,7 +30,7 @@ func TestSingleFileBad(t *testing.T) {
 		}
 	}
 
-	// Test function for declConflict
+	// test function for declConflict
 	c := func(code, input string) {
 		_, es, _ := CompileSingle("main.g", input, false)
 		if es == nil || len(es) != 2 {
@@ -73,7 +73,7 @@ func TestSingleFileBad(t *testing.T) {
 	c("declConflict.field", `struct A { b int; b int }`)
 	c("declConflict.const", `const a=1; const a=2`)
 	c("declConflict.struct", "struct A{}; struct A{}")
-	c("declConflict.Var", "var a int; func a() {}")
+	c("declConflict.var", "var a int; func a() {}")
 	c("declConflict.func", "func main() {}; func main() {};")
 
 	// unused vars
@@ -100,7 +100,7 @@ func TestSingleFileBad(t *testing.T) {
 	oo("circDep.const", `const a = 3 + b; const b = 0 - a`)
 	oo("circDep.const", "const a, b = a, b")
 
-	//Assign and allocate
+	// assign and allocate
 	oo("cannotAlloc", `struct A {}; func main() { a := A }`)
 	oo("cannotAlloc", `struct A {}; func (a *A) f(){};
 		func main() { var a A; f := a.f; _ := f }`)
@@ -113,6 +113,8 @@ func TestSingleFileBad(t *testing.T) {
 		func main() { var a A; var f func(); f=a.f; _:=f }`)
 	oo("cannotAssign", `func main() { var a [2]int; var b [3]int;
 		a=b}`)
+	// If the length are not the same, cannot assign either and it will be
+	// another error code
 
 	oo("multiRefInExprList", ` func r() (int, int) { return 3, 4 }
 		func p(a, b, c int) { }
