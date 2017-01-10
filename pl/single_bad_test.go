@@ -73,7 +73,7 @@ func TestSingleFileBad(t *testing.T) {
 	c("declConflict.field", `struct A { b int; b int }`)
 	c("declConflict.const", `const a=1; const a=2`)
 	c("declConflict.struct", "struct A{}; struct A{}")
-	c("declConflict.Var", "var a int; func a() {}")
+	c("declConflict.var", "var a int; func a() {}")
 	c("declConflict.func", "func main() {}; func main() {};")
 
 	// unused vars
