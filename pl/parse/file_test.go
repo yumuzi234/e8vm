@@ -75,26 +75,27 @@ func TestFile_bad(t *testing.T) {
 			return
 		}
 	}
-
+	var testCases = []struct {
+		s    string
+		code string
+	}{
+		{"func f() ", "expectOp"},
+		{"func f{} ", "expectOp"},
+		{"func f(", "expectOp"},
+		{"func f)", "expectOp"},
+		{"func f; {}", "expectOp"},
+		{"func f(a int) () {}", "expectReturnList"},
+		{"func f(,a) {}", "expectType"},
+		{"func f(a int) (,a) {}", "expectType"},
+		{"func f(a b int) (,a) {}", "expectOp"},
+		{"func f(a int,,) (,a) {}", "expectType"},
+	}
 	// The test part can be fulfilled like that or the same as single_bad_test
-	for _, s := range []string{
-		"func f() ",
-	} {
-		oo("expectOp", s)
+	for _, c := range testCases {
+		oo(c.code, c.s)
 	}
 
 	for _, s := range []string{
-		"func f() ",
-		"func f {}",
-		"func f(",
-		"func f)",
-		"func f; {}",
-		"func f(a int) () {}",
-		"func f(,) {}",
-		"func f(,a) {}",
-		"func f(a int) (,a) {}",
-		"func f(a b int) (,a) {}",
-		"func f(a int,,) (,a) {}",
 		"func f(a int \n b int) {}",
 		"func f() \n {}",
 		"var (a int, b int); func main() { }",

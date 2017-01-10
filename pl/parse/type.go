@@ -55,6 +55,7 @@ func parseType(p *parser) ast.Expr {
 	}
 
 	tok := p.Token()
-	p.ErrorfHere("expect a type, got %s %q", p.TypeStr(tok.Type), tok.Lit)
+	p.CodeErrorfHere("pl.expectType",
+		"expect a type, got %s %q", p.TypeStr(tok.Type), tok.Lit)
 	return nil
 }

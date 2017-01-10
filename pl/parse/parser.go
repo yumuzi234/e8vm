@@ -182,7 +182,7 @@ func (p *parser) ExpectOp(op string) *lexing.Token {
 	t := p.Token()
 	if t.Type != Operator || t.Lit != op {
 		p.CodeErrorfHere("pl.expectOp",
-			"expect a operator '%s', got %s", op, p.typeStr(t))
+			"expect '%s', got %s", op, p.typeStr(t))
 		return nil
 	}
 
