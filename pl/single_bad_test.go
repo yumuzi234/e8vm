@@ -73,7 +73,7 @@ func TestSingleFileBad(t *testing.T) {
 	c("declConflict.field", `struct A { b int; b int }`)
 	c("declConflict.const", `const a=1; const a=2`)
 	c("declConflict.struct", "struct A{}; struct A{}")
-	c("declConflict", "var a int; func a() {}")
+	c("declConflict.Var", "var a int; func a() {}")
 	c("declConflict.func", "func main() {}; func main() {};")
 
 	// unused vars
@@ -127,8 +127,6 @@ func TestSingleFileBad(t *testing.T) {
 	oo("expectConstExpr", "func n()[char[:]]string{}")
 	oo("undefinedIdent", "const c, d = d, t; func main() {}")
 
-	// The error message of the code below is "cannot cast 2 to []int8"
-	// why []int8?
 	oo("cannotCast", `func main() {
 			var s string
 			for i := 0; i < len(s-2); i++ {}

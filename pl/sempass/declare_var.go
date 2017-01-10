@@ -14,8 +14,8 @@ func declareVar(
 	s := syms.Make(b.path, name, tast.SymVar, nil, t, tok.Pos)
 	conflict := b.scope.Declare(s)
 	if conflict != nil {
-		b.CodeErrorf(tok.Pos, "pl.declConflict", "%q already defined as a %s",
-			name, tast.SymStr(conflict.Type),
+		b.CodeErrorf(tok.Pos, "pl.declConflict.Var",
+			"%q already defined as a %s", name, tast.SymStr(conflict.Type),
 		)
 		b.CodeErrorf(conflict.Pos, "pl.declConflict.previousPos",
 			"previously defined here")
