@@ -30,7 +30,7 @@ func TestSingleFileBad(t *testing.T) {
 		}
 	}
 
-	// Test function for declConflict
+	// test function for declConflict
 	c := func(code, input string) {
 		_, es, _ := CompileSingle("main.g", input, false)
 		if es == nil || len(es) != 2 {
@@ -100,7 +100,7 @@ func TestSingleFileBad(t *testing.T) {
 	oo("circDep.const", `const a = 3 + b; const b = 0 - a`)
 	oo("circDep.const", "const a, b = a, b")
 
-	//Assign and allocate
+	// assign and allocate
 	oo("cannotAlloc", `struct A {}; func main() { a := A }`)
 	oo("cannotAlloc", `struct A {}; func (a *A) f(){};
 		func main() { var a A; f := a.f; _ := f }`)
