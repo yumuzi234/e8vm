@@ -12,7 +12,10 @@ func constCast(
 	if types.IsInteger(to) && types.InRange(v, to) {
 		return tast.NewCast(from, to)
 	}
-	b.CodeErrorf(pos, "pl.cannotCast", "cannot cast %d to %s", v, to)
+	b.CodeErrorf(
+		pos, "pl.cannotCast",
+		"cannot cast const number %d to %s", v, to,
+	)
 	return nil
 }
 
