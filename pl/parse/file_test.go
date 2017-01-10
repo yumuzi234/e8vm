@@ -50,6 +50,39 @@ func TestFile_good(t *testing.T) {
 }
 
 func TestFile_bad(t *testing.T) {
+	// I will introduce the function similar as single_bad_test.go
+	oo := func(code, s string) {
+		buf := strings.NewReader(s)
+		_, _, es := File("test.g", buf, false)
+		errNum := len(es)
+		if errNum != 1 {
+			t.Log(len(es))
+			for i := 0; i < len(es); i++ {
+				t.Log(es[i].Code)
+			}
+			t.Log(s)
+		}
+		if es == nil {
+			t.Log(s)
+			t.Log("should fail")
+			t.Fail()
+		}
+		code = "pl." + code
+		if es[0].Code != code {
+			t.Log(s)
+			t.Log(es[0].Err)
+			t.Errorf("ErrCode expected: %q, got %q", code, es[0].Code)
+			return
+		}
+	}
+
+	// The test part can be fulfilled like that or the same as single_bad_test
+	for _, s := range []string{
+		"func f() ",
+	} {
+		oo("expectOp", s)
+	}
+
 	for _, s := range []string{
 		"func f() ",
 		"func f {}",

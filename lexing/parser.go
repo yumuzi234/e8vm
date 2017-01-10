@@ -108,8 +108,8 @@ func (p *Parser) ExpectLit(t int, lit string) *Token {
 	if p.SeeLit(t, lit) {
 		return p.Shift()
 	}
-
-	p.ErrorfHere("expect %s %s, got %s",
+	// There are too much error messages with expect A, got B.
+	p.CodeErrorfHere("lex.unexpectedLit", "expect %s %s, got %s",
 		p.TypeStr(t), lit, p.TypeStr(p.t.Type),
 	)
 	return nil
@@ -128,8 +128,9 @@ func (p *Parser) Expect(t int) *Token {
 	if p.See(t) {
 		return p.Shift()
 	}
-
-	p.ErrorfHere("expect %s, got %s", p.TypeStr(t), p.TypeStr(p.t.Type))
+	// There are too much error messages with expect A, got B.
+	p.CodeErrorfHere("lex.unexpectedType", "expect %s, got %s",
+		p.TypeStr(t), p.TypeStr(p.t.Type))
 	return nil
 }
 
