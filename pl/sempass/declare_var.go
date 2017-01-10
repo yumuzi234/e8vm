@@ -14,10 +14,11 @@ func declareVar(
 	s := syms.Make(b.path, name, tast.SymVar, nil, t, tok.Pos)
 	conflict := b.scope.Declare(s)
 	if conflict != nil {
-		b.Errorf(tok.Pos, "%q already defined as a %s",
-			name, tast.SymStr(conflict.Type),
+		b.CodeErrorf(tok.Pos, "pl.declConflict.Var",
+			"%q already defined as a %s", name, tast.SymStr(conflict.Type),
 		)
-		b.Errorf(conflict.Pos, "previously defined here")
+		b.CodeErrorf(conflict.Pos, "pl.declConflict.previousPos",
+			"previously defined here")
 		return nil
 	}
 	s.Used = used

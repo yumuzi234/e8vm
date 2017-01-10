@@ -7,16 +7,6 @@ import (
 )
 
 func TestSingleFileBad(t *testing.T) {
-	o := func(input string) {
-		_, es, _ := CompileSingle("main.g", input, false)
-		if es == nil {
-			t.Log(input)
-			t.Error("should error")
-			return
-		}
-
-	}
-
 	oo := func(code, input string) {
 		_, es, _ := CompileSingle("main.g", input, false)
 		errNum := len(es)
@@ -83,6 +73,8 @@ func TestSingleFileBad(t *testing.T) {
 	c("declConflict.field", `struct A { b int; b int }`)
 	c("declConflict.const", `const a=1; const a=2`)
 	c("declConflict.struct", "struct A{}; struct A{}")
+	c("declConflict.Var", "var a int; func a() {}")
+	c("declConflict.func", "func main() {}; func main() {};")
 
 	// unused vars
 	oo("unusedSym", `func main() { var a int }`)
@@ -106,7 +98,9 @@ func TestSingleFileBad(t *testing.T) {
 	oo("circDep.const", `const a = b; const b = a`)
 	oo("circDep.const", `const a = 3 + b; const b = a`)
 	oo("circDep.const", `const a = 3 + b; const b = 0 - a`)
+	oo("circDep.const", "const a, b = a, b")
 
+	//Assign and allocate
 	oo("cannotAlloc", `struct A {}; func main() { a := A }`)
 	oo("cannotAlloc", `struct A {}; func (a *A) f(){};
 		func main() { var a A; f := a.f; _ := f }`)
@@ -133,12 +127,9 @@ func TestSingleFileBad(t *testing.T) {
 	// Bugs found by the fuzzer in the past
 	oo("undefinedIdent", "func f() **o.o {}")
 	oo("expectConstExpr", "func n()[char[:]]string{}")
+	oo("undefinedIdent", "const c, d = d, t; func main() {}")
 
-	o("var a int; func a() {}; func main() {}")
-	o("func main() {}; func main() {};")
-	o("const a, b = a, b; func main() {}")
-	o("const c, d = d, t; func main() {}")
-	o(`	func main() {
+	oo("cannotCast", `func main() {
 			var s string
 			for i := 0; i < len(s-2); i++ {}
 		}`)
