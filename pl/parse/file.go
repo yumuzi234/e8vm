@@ -30,7 +30,7 @@ func parseTopDecl(p *parser) ast.Decl {
 
 	if len(p.Errs()) == 0 {
 		// we only complain about this when there is no other error
-		p.ErrorfHere("expect top level declaration")
+		p.CodeErrorfHere("pl.expectTopDecl", "expect top level declaration")
 	} else {
 		p.Jail()
 	}
