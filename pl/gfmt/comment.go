@@ -10,8 +10,9 @@ func formatComment(c string) string {
 	if strings.HasPrefix(c, "//") {
 		// line comment
 		if c != "//" && !strings.HasPrefix(c, "// ") {
-			return "// " + strings.TrimPrefix(c, "//")
+			c = "// " + strings.TrimPrefix(c, "//")
 		}
+		c = strings.TrimRight(c, " \t\n")
 		return c
 	}
 

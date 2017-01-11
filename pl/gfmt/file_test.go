@@ -51,6 +51,9 @@ func TestFormatFile(t *testing.T) {
 	o("func main() {\n}", "func main() {\n}\n")     // do not auto merge one liner
 	o("func main() {\n  }", "func main() {\n}\n")   // do not auto merge one liner
 	o("// some comment", "// some comment\n")       // comment
+	o("// some comment  ", "// some comment\n")     // comment
+	o("//some comment  ", "// some comment\n")      // comment
+	o("//some comment  ", "// some comment\n")      // comment
 	o("/* some comment */", "/* some comment */")   // block comment
 
 	// Common case of line break.
@@ -85,6 +88,14 @@ func TestFormatFile(t *testing.T) {
 		func main() {
 			f()
 			g()
+		}
+	`)
+	o(`
+		func main() {
+			f()   //with some comment       
+		}`, `
+		func main() {
+			f() // with some comment
 		}
 	`)
 	o(`

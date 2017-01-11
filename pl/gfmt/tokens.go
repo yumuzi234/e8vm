@@ -2,6 +2,7 @@ package gfmt
 
 import (
 	"shanhu.io/smlvm/lexing"
+	"shanhu.io/smlvm/pl/parse"
 )
 
 type tokens struct {
@@ -42,6 +43,10 @@ func (t *tokens) see(tok *lexing.Token) bool {
 
 func (t *tokens) lineGap() int {
 	cur := t.peek()
+	if cur != nil && cur.Type == parse.Semi && cur.Lit == "\n" {
+		cur = t.get(t.cur + 1)
+	}
+
 	last := t.get(t.cur - 1)
 	if cur == nil || last == nil {
 		return 0
