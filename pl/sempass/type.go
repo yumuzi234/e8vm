@@ -111,7 +111,8 @@ func buildType(b *builder, expr ast.Expr) types.T {
 		ref := ret.R()
 		t, ok := ref.T.(*types.Type)
 		if !ok {
-			b.Errorf(ast.ExprPos(expr), "expect a type, got %s", ref.T)
+			b.CodeErrorf(ast.ExprPos(expr), "pl.expectType",
+				"expect a type, got %s", ref.T)
 			return nil
 		}
 		return t.T
@@ -158,6 +159,6 @@ func buildType(b *builder, expr ast.Expr) types.T {
 		return s.ObjType.(*types.Type).T
 	}
 
-	b.Errorf(ast.ExprPos(expr), "expect a type")
+	b.CodeErrorf(ast.ExprPos(expr), "pl.expectType", "expect a type")
 	return nil
 }

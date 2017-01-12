@@ -72,7 +72,8 @@ func parseFuncSig(p *parser) *ast.FuncSig {
 			return nil
 		}
 		if len(ret.Rets.Paras) == 0 {
-			p.Errorf(ret.Rets.Rparen.Pos, "expect return list")
+			p.CodeErrorf(ret.Rets.Rparen.Pos, "pl.expectReturnList",
+				"expect return list in \"()\" after the function")
 		}
 	} else if p.SeeType() {
 		ret.RetType = p.parseType()
