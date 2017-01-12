@@ -50,11 +50,16 @@ func TestFormatFile(t *testing.T) {
 	o("func main(){}", "func main() {}\n")          // add spaces
 	o("func main() {\n}", "func main() {\n}\n")     // do not auto merge one liner
 	o("func main() {\n  }", "func main() {\n}\n")   // do not auto merge one liner
-	o("// some comment", "// some comment\n")       // comment
-	o("// some comment  ", "// some comment\n")     // comment
-	o("//some comment  ", "// some comment\n")      // comment
-	o("//some comment  ", "// some comment\n")      // comment
-	o("/* some comment */", "/* some comment */")   // block comment
+
+	// comment
+	o("// some comment", "// some comment\n")
+	o("// some comment  ", "// some comment\n")
+	o("//    some comment  ", "//    some comment\n")
+	o("//some comment  ", "// some comment\n")
+	o("//some comment  ", "// some comment\n")
+
+	// block comment
+	o("/* some comment */", "/* some comment */")
 
 	// Common case of line break.
 	o("func main() { var a [5]int; b := a[:] }",
