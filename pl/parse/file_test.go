@@ -76,41 +76,30 @@ func TestFile_bad(t *testing.T) {
 		}
 	}
 	var testCases = []struct {
-		s    string
 		code string
+		s    string
 	}{
-		{"func f() ", "expectOp"},
-		{"func f{} ", "expectOp"},
-		{"func f(", "expectOp"},
-		{"func f)", "expectOp"},
-		{"func f; {}", "expectOp"},
-		{"func f(a int) () {}", "expectReturnList"},
-		{"func f(,a) {}", "expectType"},
-		{"func f(a int) (,a) {}", "expectType"},
-		{"func f(a b int) (,a) {}", "expectOp"},
-		{"func f(a int,,) (,a) {}", "expectType"},
+		{"expectOp", "func f() "},
+		{"expectOp", "func f{} "},
+		{"expectOp", "func f("},
+		{"expectOp", "func f)"},
+		{"expectOp", "func f; {}"},
+		{"expectReturnList", "func f(a int) () {}"},
+		{"expectType", "func f(,a) {}"},
+		{"expectType", "func f(a int) (,a) {}"},
+		{"expectOp", "func f(a b int) (,a) {}"},
+		{"expectType", "func f(a int,,) (,a) {}"},
+		{"expectOp", "func f(a int \n b int) {}"},
+		{"expectOp", "func f() \n {}"},
+		{"missingSemi", "var (a int, b int); func main() { }"},
+		{"missingSemi", "var (a int, b int}"},
+		{"multiImport", "import (); import()"},
+		{"expectType", `var (a "a"}`},
+		{"expectType", `var (a "a";}`},
 	}
 	// The test part can be fulfilled like that or the same as single_bad_test
 	for _, c := range testCases {
 		oo(c.code, c.s)
-	}
-
-	for _, s := range []string{
-		"func f(a int \n b int) {}",
-		"func f() \n {}",
-		"var (a int, b int); func main() { }",
-		"var (a int, b int}",
-		"import (); import()",
-		`var (a "a"}`,
-		`var (a "a";}`,
-	} {
-		buf := strings.NewReader(s)
-		_, _, es := File("test.g", buf, false)
-		if es == nil {
-			t.Log(s)
-			t.Log("should fail")
-			t.Fail()
-		}
 	}
 }
 
