@@ -7,7 +7,7 @@ import (
 )
 
 func TestSingleFileBad(t *testing.T) {
-	oo := func(code, input string) {
+	o := func(code, input string) {
 		_, es, _ := CompileSingle("main.g", input, false)
 		errNum := len(es)
 		if errNum != 1 {
@@ -54,19 +54,19 @@ func TestSingleFileBad(t *testing.T) {
 	}
 
 	// no main
-	oo("missingMainFunc", "")
+	o("missingMainFunc", "")
 
 	// missing returns
-	oo("missingReturn", `func f() int { }`)
-	oo("missingReturn", `func f() int { for { break } }`)
-	oo("missingReturn", `func f() int { for { if true { break } } }`)
-	oo("missingReturn", `func f() int { for { if true break } }`)
-	oo("missingReturn",
+	o("missingReturn", `func f() int { }`)
+	o("missingReturn", `func f() int { for { break } }`)
+	o("missingReturn", `func f() int { for { if true { break } } }`)
+	o("missingReturn", `func f() int { for { if true break } }`)
+	o("missingReturn",
 		`func f() int { for true { if true { return 0 } } }`)
-	oo("missingReturn",
+	o("missingReturn",
 		`func f() int { for true { if true return 0 } }`)
-	oo("missingReturn", `func f() int { if true { return 0 } }`)
-	oo("missingReturn", `func f() int { if true return 0 }`)
+	o("missingReturn", `func f() int { if true { return 0 } }`)
+	o("missingReturn", `func f() int { if true return 0 }`)
 
 	// confliction return 2 errors
 	c("declConflict.func", `func a() {}; func a() {}`)
@@ -77,59 +77,59 @@ func TestSingleFileBad(t *testing.T) {
 	c("declConflict.func", "func main() {}; func main() {};")
 
 	// unused vars
-	oo("unusedSym", `func main() { var a int }`)
-	oo("unusedSym", `func main() { var a = 3 }`)
-	oo("unusedSym", `func main() { a := 3 }`)
-	oo("unusedSym", `func main() { var a int; a = 3 }`)
-	oo("unusedSym", `func main() { var a int; (a) = (3) }`)
-	oo("unusedSym", `func main() { var a, b = 3, 4; _ := a }`)
+	o("unusedSym", `func main() { var a int }`)
+	o("unusedSym", `func main() { var a = 3 }`)
+	o("unusedSym", `func main() { a := 3 }`)
+	o("unusedSym", `func main() { var a int; a = 3 }`)
+	o("unusedSym", `func main() { var a int; (a) = (3) }`)
+	o("unusedSym", `func main() { var a, b = 3, 4; _ := a }`)
 
 	// parser, import related
-	oo("multiImport", `import(); import()`)
+	o("multiImport", `import(); import()`)
 
 	// expect ';', got keyword
-	oo("missingSemi", "import() func main(){}")
+	o("missingSemi", "import() func main(){}")
 
 	// circular dependence
-	oo("circDep.struct", `struct A { a A };`)
-	oo("circDep.struct", `struct A { b B }; struct B { a A };`)
-	oo("circDep.struct", `struct A { b B }; struct B { a [3]A };`)
-	oo("circDep.struct", `struct A { b B }; struct B { a [0]A };`)
-	oo("circDep.const", `const a = b; const b = a`)
-	oo("circDep.const", `const a = 3 + b; const b = a`)
-	oo("circDep.const", `const a = 3 + b; const b = 0 - a`)
-	oo("circDep.const", "const a, b = a, b")
+	o("circDep.struct", `struct A { a A };`)
+	o("circDep.struct", `struct A { b B }; struct B { a A };`)
+	o("circDep.struct", `struct A { b B }; struct B { a [3]A };`)
+	o("circDep.struct", `struct A { b B }; struct B { a [0]A };`)
+	o("circDep.const", `const a = b; const b = a`)
+	o("circDep.const", `const a = 3 + b; const b = a`)
+	o("circDep.const", `const a = 3 + b; const b = 0 - a`)
+	o("circDep.const", "const a, b = a, b")
 
 	// assign and allocate
-	oo("cannotAlloc", `struct A {}; func main() { a := A }`)
-	oo("cannotAlloc", `struct A {}; func (a *A) f(){};
+	o("cannotAlloc", `struct A {}; func main() { a := A }`)
+	o("cannotAlloc", `struct A {}; func (a *A) f(){};
 		func main() { var a A; f := a.f; _ := f }`)
-	oo("cannotAlloc", "func n() { var r = len; _ := r}")
-	oo("cannotAlloc", "func n() { r := len; _ := r }")
+	o("cannotAlloc", "func n() { var r = len; _ := r}")
+	o("cannotAlloc", "func n() { r := len; _ := r }")
 
-	oo("cannotAssign", `struct A {}; func (a *A) f(){};
+	o("cannotAssign", `struct A {}; func (a *A) f(){};
 		func main() { var a A; var f func()=a.f; _:=f }`)
-	oo("cannotAssign", `struct A {}; func (a *A) f(){};
+	o("cannotAssign", `struct A {}; func (a *A) f(){};
 		func main() { var a A; var f func(); f=a.f; _:=f }`)
-	oo("cannotAssign", `func main() { var a [2]int; var b [3]int;
+	o("cannotAssign", `func main() { var a [2]int; var b [3]int;
 		a=b}`)
 	// If the length are not the same, cannot assign either and it will be
 	// another error code
 
-	oo("multiRefInExprList", ` func r() (int, int) { return 3, 4 }
+	o("multiRefInExprList", ` func r() (int, int) { return 3, 4 }
 		func p(a, b, c int) { }
 		func main() { p(r(), 5) }`)
 
-	oo("elseStart", `func main() {
+	o("elseStart", `func main() {
 		if true { }
 		else { } }`)
 
 	// Bugs found by the fuzzer in the past
-	oo("undefinedIdent", "func f() **o.o {}")
-	oo("expectConstExpr", "func n()[char[:]]string{}")
-	oo("undefinedIdent", "const c, d = d, t; func main() {}")
+	o("undefinedIdent", "func f() **o.o {}")
+	o("expectConstExpr", "func n()[char[:]]string{}")
+	o("undefinedIdent", "const c, d = d, t; func main() {}")
 
-	oo("cannotCast", `func main() {
+	o("cannotCast", `func main() {
 			var s string
 			for i := 0; i < len(s-2); i++ {}
 		}`)

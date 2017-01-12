@@ -50,57 +50,49 @@ func TestFile_good(t *testing.T) {
 }
 
 func TestFile_bad(t *testing.T) {
-	// I will introduce the function similar as single_bad_test.go
-	oo := func(code, s string) {
+	o := func(code, s string) {
 		buf := strings.NewReader(s)
 		_, _, es := File("test.g", buf, false)
-		errNum := len(es)
-		if errNum != 1 {
-			t.Log(len(es))
-			for i := 0; i < len(es); i++ {
-				t.Log(es[i].Code)
-			}
+
+		if len(es) != 1 {
 			t.Log(s)
+			t.Log(len(es))
+			for _, e := range es {
+				t.Log(e.Code)
+			}
 		}
+
 		if es == nil {
 			t.Log(s)
 			t.Log("should fail")
 			t.Fail()
+			return
 		}
+
 		code = "pl." + code
 		if es[0].Code != code {
 			t.Log(s)
 			t.Log(es[0].Err)
 			t.Errorf("ErrCode expected: %q, got %q", code, es[0].Code)
-			return
 		}
 	}
-	var testCases = []struct {
-		code string
-		s    string
-	}{
-		{"expectOp", "func f() "},
-		{"expectOp", "func f{} "},
-		{"expectOp", "func f("},
-		{"expectOp", "func f)"},
-		{"expectOp", "func f; {}"},
-		{"expectReturnList", "func f(a int) () {}"},
-		{"expectType", "func f(,a) {}"},
-		{"expectType", "func f(a int) (,a) {}"},
-		{"expectOp", "func f(a b int) (,a) {}"},
-		{"expectType", "func f(a int,,) (,a) {}"},
-		{"expectOp", "func f(a int \n b int) {}"},
-		{"expectOp", "func f() \n {}"},
-		{"missingSemi", "var (a int, b int); func main() { }"},
-		{"missingSemi", "var (a int, b int}"},
-		{"multiImport", "import (); import()"},
-		{"expectType", `var (a "a"}`},
-		{"expectType", `var (a "a";}`},
-	}
-	// The test part can be fulfilled like that or the same as single_bad_test
-	for _, c := range testCases {
-		oo(c.code, c.s)
-	}
+
+	o("expectOp", "func f()")
+	o("expectOp", "func f{}")
+	o("expectOp", "func f(")
+	o("expectOp", "func f)")
+	o("expectOp", "func f; {}")
+	o("expectReturnList", "func f(a int) () {}")
+	o("expectType", "func f(,a) {}")
+	o("expectType", "func f(a int) (,a) {}")
+	o("expectOp", "func f(a b int) (,a) {}")
+	o("expectType", "func f(a int,,) (,a) {}")
+	o("expectOp", "func f(a int \n b int) {}")
+	o("expectOp", "func f() \n {}")
+	o("missingSemi", "var (a int, b int)")
+	o("multiImport", "import (); import()")
+	o("expectType", `var (a "a")`)
+	o("expectType", `var (a "a";)`)
 }
 
 func TestFileTokens(t *testing.T) {
