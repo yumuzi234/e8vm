@@ -56,9 +56,10 @@ func TestFile_bad(t *testing.T) {
 
 		if len(es) != 1 {
 			t.Log(s)
-			t.Log(len(es))
+			t.Logf("%d errors returned", len(es))
 			for _, e := range es {
 				t.Log(e.Code)
+				t.Log(e.Err)
 			}
 		}
 

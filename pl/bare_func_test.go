@@ -191,35 +191,68 @@ func TestBareFunc_bad(t *testing.T) {
 		}
 	}
 
-	o("a")                   // expression statement
-	o("printInt")            // expression statement
-	o("3+4")                 // expression statement
-	o("a=3")                 // a not defined
-	o("3=4")                 // non-addressable
-	o("3=a")                 // non-addressable
-	o("var x = &3")          // non-addressable
-	o("var a, b int; a+b=3") // non-addressable
-	o("a:=3;a:=4")           // redefine
-	o("printInt(true)")      // type mismatch
-	o("printInt(3, 4)")      // arg count mismatch
-	o("printInt()")          // arg count mismatch
-	o("a := printInt(3, 4)") // mismatch
-	o("a := 3, 4")           // count mismatch
-	o("a, b := 3")           // count mismatch
-	o("a, b := ()")          // invalid
-	o("a()")                 // undefined function
-	o("var a, b c")          // undefined type
-	o("var a int; var b a")  // not a type
-	o("var a = nil")         // infer type from nil
-	o("a := nil")            // inter type from nil
-	o("break")               // not in for loop
-	o("continue")            // not in for loop
-	o("if true { break }")   // nothing to break
-	o("if true break")       // nothing to break
-	o("true > false")        // boolean cannot compare
-	o("true + 3")            // boolean cannot add
-	o("3++")                 // inc on non-addressable
-	o("(3)+=3")              // assign to non-addressable
+	oo := func(code, input string) {
+		_, es, _ := CompileBareFunc("main.g", input)
+		errNum := len(es)
+		if errNum != 1 {
+			t.Log(input)
+			t.Logf("%d errors returned", errNum)
+			for _, err := range es {
+				t.Log(err.Code)
+			}
+		}
+		if es == nil {
+			t.Log(input)
+			t.Error("should error:", code)
+			return
+		}
+		code = "pl." + code
+		if es[0].Code != code {
+			t.Log(input)
+			t.Log(es[0].Err)
+			t.Errorf("ErrCode expected: %q, got %q", code, es[0].Code)
+			return
+		}
+	}
+
+	// expression statement
+	oo("invalidExprStmt", "a")
+	oo("invalidExprStmt", "printInt")
+	oo("invalidExprStmt", "3+4")
+
+	// a not defined
+	oo("undefinedIdent", "a=3")
+
+	// non-addressable
+	oo("cannotAssign", "3=4")
+	oo("cannotAssign", "var a int; 3=a")
+	oo("cannotReadAdress", "var x = &3")
+	oo("cannotAssign", "var a, b int; a+b=3")
+
+	// redefine
+	oo("declConflict.var", "a:=3;a:=4")
+
+	oo("argsMismatch", "printInt(true)")              // type mismatch
+	oo("argsMismatch", "printInt(3, 4)")              // arg count mismatch
+	oo("argsMismatch", "printInt()")                  // arg count mismatch
+	oo("argsMismatch", "a := printInt(3, 4)")         // mismatch
+	oo("cannotDefine.idsNumberMismatch", "a := 3, 4") // count mismatch
+	oo("cannotDefine.idsNumberMismatch", "a, b := 3") // count mismatch
+
+	o("a, b := ()")         // invalid
+	o("a()")                // undefined function
+	o("var a, b c")         // undefined type
+	o("var a int; var b a") // not a type
+	o("var a = nil")        // infer type from nil
+	o("a := nil")           // inter type from nil
+	o("break")              // not in for loop
+	o("continue")           // not in for loop
+	o("if true { break }")  // nothing to break
+	o("if true break")      // nothing to break
+	o("true > false")       // boolean cannot compare
+	o("true + 3")           // boolean cannot add
+	o("3++")                // inc on non-addressable
+	o("(3)+=3")             // assign to non-addressable
 	o("a := int")
 
 	o("var a [8]int; i:=a[-1]") // negative array index

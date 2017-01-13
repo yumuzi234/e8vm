@@ -98,7 +98,7 @@ func parseVarDecl(p *parser) *ast.VarDecl {
 		ret.Eq = p.Shift()
 		ret.Exprs = parseExprList(p)
 	} else if ret.Type == nil {
-		p.ErrorfHere("expect type")
+		p.CodeErrorfHere("expectType", "expect type")
 	}
 
 	ret.Semi = p.ExpectSemi()

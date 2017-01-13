@@ -11,11 +11,11 @@ func TestSingleFileBad(t *testing.T) {
 		_, es, _ := CompileSingle("main.g", input, false)
 		errNum := len(es)
 		if errNum != 1 {
-			t.Log(len(es))
-			for i := 0; i < len(es); i++ {
-				t.Log(es[i].Code)
-			}
 			t.Log(input)
+			t.Logf("%d errors returned", errNum)
+			for _, err := range es {
+				t.Log(err.Code)
+			}
 		}
 		if es == nil {
 			t.Log(input)
