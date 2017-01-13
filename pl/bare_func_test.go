@@ -214,14 +214,15 @@ func TestBareFunc_bad(t *testing.T) {
 			return
 		}
 	}
-
 	// expression statement
 	oo("invalidExprStmt", "a")
 	oo("invalidExprStmt", "printInt")
 	oo("invalidExprStmt", "3+4")
 
-	// a not defined
+	// undefined
 	oo("undefinedIdent", "a=3")
+	oo("undefinedIdent", "a()")
+	oo("undefinedIdent", "var a, b c")
 
 	// non-addressable
 	oo("cannotAssign", "3=4")
@@ -239,20 +240,22 @@ func TestBareFunc_bad(t *testing.T) {
 	oo("cannotDefine.idsNumberMismatch", "a := 3, 4") // count mismatch
 	oo("cannotDefine.idsNumberMismatch", "a, b := 3") // count mismatch
 
-	o("a, b := ()")         // invalid
-	o("a()")                // undefined function
-	o("var a, b c")         // undefined type
-	o("var a int; var b a") // not a type
-	o("var a = nil")        // infer type from nil
-	o("a := nil")           // inter type from nil
-	o("break")              // not in for loop
-	o("continue")           // not in for loop
-	o("if true { break }")  // nothing to break
-	o("if true break")      // nothing to break
-	o("true > false")       // boolean cannot compare
-	o("true + 3")           // boolean cannot add
-	o("3++")                // inc on non-addressable
-	o("(3)+=3")             // assign to non-addressable
+	oo("expectOperand", "a, b := ()") // invalid
+
+	oo("expectType", "var a int; var b a") // not a type
+
+	// infer type from nil
+	oo("cannotAlloc.fromNil", "var a = nil")
+	oo("cannotAlloc.fromNil", "a := nil")
+
+	o("break")             // not in for loop
+	o("continue")          // not in for loop
+	o("if true { break }") // nothing to break
+	o("if true break")     // nothing to break
+	o("true > false")      // boolean cannot compare
+	o("true + 3")          // boolean cannot add
+	o("3++")               // inc on non-addressable
+	o("(3)+=3")            // assign to non-addressable
 	o("a := int")
 
 	o("var a [8]int; i:=a[-1]") // negative array index
