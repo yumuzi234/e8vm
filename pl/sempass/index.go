@@ -43,7 +43,8 @@ func checkArrayIndex(b *builder, index tast.Expr, pos *lexing.Pos) tast.Expr {
 	t := index.R().T
 	if v, ok := types.NumConst(t); ok {
 		if v < 0 {
-			b.Errorf(pos, "array index is negative: %d", v)
+			b.CodeErrorf(pos, "pl.negArrayIndex",
+				"array index is negative: %d", v)
 			return nil
 		}
 		return constCastInt(b, pos, v, index)

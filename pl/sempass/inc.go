@@ -21,7 +21,8 @@ func buildIncStmt(b *builder, stmt *ast.IncStmt) tast.Stmt {
 
 	t := ref.Type()
 	if !types.IsInteger(t) {
-		b.Errorf(stmt.Op.Pos, "%s on %s", op, t)
+		b.CodeErrorf(stmt.Op.Pos, "pl.incStmt.notInt",
+			"cannot %s on %s, not a integer variable", op, t)
 		return nil
 	}
 

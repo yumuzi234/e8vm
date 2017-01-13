@@ -28,7 +28,7 @@ func bareTestRun(t *testing.T, input string, N int) (out string, e error) {
 	return out, e
 }
 
-func TestBareFunc_good(t *testing.T) {
+func TestBareFunc_god(t *testing.T) {
 	const N = 100000
 	o := func(input, output string) {
 		out, e := bareTestRun(t, input, N)
@@ -182,16 +182,7 @@ func TestBareFunc_good(t *testing.T) {
 func TestBareFunc_bad(t *testing.T) {
 	// compile errors
 
-	o := func(input string) {
-		_, es, _ := CompileBareFunc("main.g", input)
-		if es == nil {
-			t.Log(input)
-			t.Error("should error")
-			return
-		}
-	}
-
-	oo := func(code, input string) {
+	o := func(code, input string) {
 		_, es, _ := CompileBareFunc("main.g", input)
 		errNum := len(es)
 		if errNum != 1 {
@@ -215,60 +206,65 @@ func TestBareFunc_bad(t *testing.T) {
 		}
 	}
 	// expression statement
-	oo("invalidExprStmt", "a")
-	oo("invalidExprStmt", "printInt")
-	oo("invalidExprStmt", "3+4")
+	o("invalidExprStmt", "a")
+	o("invalidExprStmt", "printInt")
+	o("invalidExprStmt", "3+4")
+	o("invalidExprStmt", "true > false") // boolean cannot compare
 
 	// undefined
-	oo("undefinedIdent", "a=3")
-	oo("undefinedIdent", "a()")
-	oo("undefinedIdent", "var a, b c")
+	o("undefinedIdent", "a=3")
+	o("undefinedIdent", "a()")
+	o("undefinedIdent", "var a, b c")
 
 	// non-addressable
-	oo("cannotAssign", "3=4")
-	oo("cannotAssign", "var a int; 3=a")
-	oo("cannotReadAdress", "var x = &3")
-	oo("cannotAssign", "var a, b int; a+b=3")
+	o("cannotAssign", "3=4")
+	o("cannotAssign", "var a int; 3=a")
+	o("cannotReadAddress", "var x = &3")
+	o("cannotAssign", "var a, b int; a+b=3")
+	o("cannotAssign", "(3)+=3") // assign to non-addressable
+
+	// pointer cannot add
+	o("cannotCast", "var a int; var b = &a+3")
+	o("cannotAssign", "var a int; var b *uint = &a;") // incompatible pointer type
 
 	// redefine
-	oo("declConflict.var", "a:=3;a:=4")
+	o("declConflict.var", "a:=3;a:=4")
 
-	oo("argsMismatch", "printInt(true)")              // type mismatch
-	oo("argsMismatch", "printInt(3, 4)")              // arg count mismatch
-	oo("argsMismatch", "printInt()")                  // arg count mismatch
-	oo("argsMismatch", "a := printInt(3, 4)")         // mismatch
-	oo("cannotDefine.idsNumberMismatch", "a := 3, 4") // count mismatch
-	oo("cannotDefine.idsNumberMismatch", "a, b := 3") // count mismatch
+	o("argsMismatch", "printInt(true)")          // type mismatch
+	o("argsMismatch", "printInt(3, 4)")          // arg count mismatch
+	o("argsMismatch", "printInt()")              // arg count mismatch
+	o("argsMismatch", "a := printInt(3, 4)")     // mismatch
+	o("cannotDefine.countMismatch", "a := 3, 4") // count mismatch
+	o("cannotDefine.countMismatch", "a, b := 3") // count mismatch
 
-	oo("expectOperand", "a, b := ()") // invalid
+	o("expectOperand", "a, b := ()") // invalid
 
-	oo("expectType", "var a int; var b a") // not a type
+	o("incStmt.notInt", "3++") // inc on non-addressable
+
+	o("expectType", "var a int; var b a") // not a type
 
 	// infer type from nil
-	oo("cannotAlloc.fromNil", "var a = nil")
-	oo("cannotAlloc.fromNil", "a := nil")
+	o("cannotAlloc.fromNil", "var a = nil")
+	o("cannotAlloc.fromNil", "a := nil")
 
-	o("break")             // not in for loop
-	o("continue")          // not in for loop
-	o("if true { break }") // nothing to break
-	o("if true break")     // nothing to break
-	o("true > false")      // boolean cannot compare
-	o("true + 3")          // boolean cannot add
-	o("3++")               // inc on non-addressable
-	o("(3)+=3")            // assign to non-addressable
-	o("a := int")
+	// continue and break
+	o("breakStmt.notInLoop", "break")
+	o("continueStmt.notInLoop", "continue")
+	o("breakStmt.notInLoop", "if true { break }")
+	o("breakStmt.notInLoop", "if true break")
 
-	o("var a [8]int; i:=a[-1]") // negative array index
-	o("var a [7]int; s:=a[:]; i:=s[-33]")
-	o("var a [0==0]int")
+	o("invalidExprStmt", "true + 3") // boolean cannot add
+	o("cannotAlloc", "a := int")
 
-	o("var a int; var b = &a+3")      // pointer cannot add
-	o("var a int; var b *uint = &a;") // incompatible pointer type
+	o("negArrayIndex", "var a [8]int; i:=a[-1]") // negative array index
+	o("negArrayIndex", "var a [7]int; s:=a[:]; i:=s[-33]")
+	o("nonConstArrayIndex", "var a [0==0]int")
 
-	o("a := 3/0") // divide by zero
-	o("a := 3%0")
+	// divide by zero
+	o("divideByZero", "a := 3/0")
+	o("divideByZero", "a := 3%0")
 
-	o("const a = -1; printUint(a)")
+	o("argsMismatch", "const a = -1; printUint(a)")
 }
 
 func TestBareFunc_panic(t *testing.T) {

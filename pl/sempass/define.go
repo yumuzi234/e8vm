@@ -48,7 +48,7 @@ func define(
 	nleft := len(ids)
 	nright := r.Len()
 	if nleft != nright {
-		b.CodeErrorf(eq.Pos, "pl.cannotDefine.idsNumberMismatch",
+		b.CodeErrorf(eq.Pos, "pl.cannotDefine.countMismatch",
 			"defined %d identifers with %d expressions",
 			nleft, nright,
 		)
