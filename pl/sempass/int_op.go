@@ -67,13 +67,13 @@ func binaryOpConst(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 		return r(va ^ vb)
 	case "%":
 		if vb == 0 {
-			b.Errorf(opTok.Pos, "modular by zero")
+			b.CodeErrorf(opTok.Pos, "pl.divideByZero", "modular by zero")
 			return nil
 		}
 		return r(va % vb)
 	case "/":
 		if vb == 0 {
-			b.Errorf(opTok.Pos, "divide by zero")
+			b.CodeErrorf(opTok.Pos, "pl.divideByZero", "divide by zero")
 			return nil
 		}
 		return r(va / vb)

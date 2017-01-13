@@ -23,7 +23,8 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 	for i := 0; i < ndest; i++ {
 		r := destRef.At(i)
 		if !r.Addressable {
-			b.Errorf(op.Pos, "assigning to non-addressable")
+			b.CodeErrorf(op.Pos, "pl.cannotAssign",
+				"assigning to non-addressable")
 			return nil
 		}
 
@@ -73,7 +74,8 @@ func opAssign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 		b.Errorf(op.Pos, "%s %s %s", destRef, op.Lit, srcRef)
 		return nil
 	} else if !destRef.Addressable {
-		b.Errorf(op.Pos, "assign to non-addressable")
+		b.CodeErrorf(op.Pos, "pl.cannotAssign",
+			"assign to non-addressable")
 		return nil
 	}
 

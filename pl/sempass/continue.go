@@ -11,7 +11,8 @@ func buildContinueStmt(b *builder, s *ast.ContinueStmt) tast.Stmt {
 		return nil
 	}
 	if b.nloop == 0 {
-		b.Errorf(s.Kw.Pos, "continue is not in a for block")
+		b.CodeErrorf(s.Kw.Pos, "pl.continueStmt.notInLoop",
+			"continue is not in a for block")
 		return nil
 	}
 	return &tast.ContinueStmt{}

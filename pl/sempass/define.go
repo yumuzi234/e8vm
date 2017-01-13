@@ -20,7 +20,8 @@ func allocPrepare(
 		e := lst.Exprs[i]
 		t := e.Type()
 		if types.IsNil(t) {
-			b.Errorf(tok.Pos, "cannot infer type from nil for %q", tok.Lit)
+			b.CodeErrorf(tok.Pos, "pl.cannotAlloc.fromNil",
+				"cannot infer type from nil for %q", tok.Lit)
 			return nil
 		}
 		if v, ok := types.NumConst(t); ok {
@@ -47,7 +48,7 @@ func define(
 	nleft := len(ids)
 	nright := r.Len()
 	if nleft != nright {
-		b.Errorf(eq.Pos,
+		b.CodeErrorf(eq.Pos, "pl.cannotDefine.countMismatch",
 			"defined %d identifers with %d expressions",
 			nleft, nright,
 		)

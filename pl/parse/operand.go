@@ -51,7 +51,8 @@ func parseOperand(p *parser) ast.Expr {
 	}
 
 	t := p.Token()
-	p.Errorf(t.Pos, "expect an operand, got %s", p.typeStr(t))
+	p.CodeErrorf(t.Pos, "pl.expectOperand",
+		"expect an operand, got %s", p.typeStr(t))
 
 	return nil
 }

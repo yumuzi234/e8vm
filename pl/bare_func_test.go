@@ -28,7 +28,7 @@ func bareTestRun(t *testing.T, input string, N int) (out string, e error) {
 	return out, e
 }
 
-func TestBareFunc_good(t *testing.T) {
+func TestBareFunc_god(t *testing.T) {
 	const N = 100000
 	o := func(input, output string) {
 		out, e := bareTestRun(t, input, N)
@@ -182,57 +182,89 @@ func TestBareFunc_good(t *testing.T) {
 func TestBareFunc_bad(t *testing.T) {
 	// compile errors
 
-	o := func(input string) {
+	o := func(code, input string) {
 		_, es, _ := CompileBareFunc("main.g", input)
+		errNum := len(es)
+		if errNum != 1 {
+			t.Log(input)
+			t.Logf("%d errors returned", errNum)
+			for _, err := range es {
+				t.Log(err.Code)
+			}
+		}
 		if es == nil {
 			t.Log(input)
-			t.Error("should error")
+			t.Error("should error:", code)
+			return
+		}
+		code = "pl." + code
+		if es[0].Code != code {
+			t.Log(input)
+			t.Log(es[0].Err)
+			t.Errorf("ErrCode expected: %q, got %q", code, es[0].Code)
 			return
 		}
 	}
+	// expression statement
+	o("invalidExprStmt", "a")
+	o("invalidExprStmt", "printInt")
+	o("invalidExprStmt", "3+4")
+	o("invalidExprStmt", "true > false") // boolean cannot compare
 
-	o("a")                   // expression statement
-	o("printInt")            // expression statement
-	o("3+4")                 // expression statement
-	o("a=3")                 // a not defined
-	o("3=4")                 // non-addressable
-	o("3=a")                 // non-addressable
-	o("var x = &3")          // non-addressable
-	o("var a, b int; a+b=3") // non-addressable
-	o("a:=3;a:=4")           // redefine
-	o("printInt(true)")      // type mismatch
-	o("printInt(3, 4)")      // arg count mismatch
-	o("printInt()")          // arg count mismatch
-	o("a := printInt(3, 4)") // mismatch
-	o("a := 3, 4")           // count mismatch
-	o("a, b := 3")           // count mismatch
-	o("a, b := ()")          // invalid
-	o("a()")                 // undefined function
-	o("var a, b c")          // undefined type
-	o("var a int; var b a")  // not a type
-	o("var a = nil")         // infer type from nil
-	o("a := nil")            // inter type from nil
-	o("break")               // not in for loop
-	o("continue")            // not in for loop
-	o("if true { break }")   // nothing to break
-	o("if true break")       // nothing to break
-	o("true > false")        // boolean cannot compare
-	o("true + 3")            // boolean cannot add
-	o("3++")                 // inc on non-addressable
-	o("(3)+=3")              // assign to non-addressable
-	o("a := int")
+	// undefined
+	o("undefinedIdent", "a=3")
+	o("undefinedIdent", "a()")
+	o("undefinedIdent", "var a, b c")
 
-	o("var a [8]int; i:=a[-1]") // negative array index
-	o("var a [7]int; s:=a[:]; i:=s[-33]")
-	o("var a [0==0]int")
+	// non-addressable
+	o("cannotAssign", "3=4")
+	o("cannotAssign", "var a int; 3=a")
+	o("cannotReadAddress", "var x = &3")
+	o("cannotAssign", "var a, b int; a+b=3")
+	o("cannotAssign", "(3)+=3") // assign to non-addressable
 
-	o("var a int; var b = &a+3")      // pointer cannot add
-	o("var a int; var b *uint = &a;") // incompatible pointer type
+	// pointer cannot add
+	o("cannotCast", "var a int; var b = &a+3")
+	o("cannotAssign", "var a int; var b *uint = &a;") // incompatible pointer type
 
-	o("a := 3/0") // divide by zero
-	o("a := 3%0")
+	// redefine
+	o("declConflict.var", "a:=3;a:=4")
 
-	o("const a = -1; printUint(a)")
+	o("argsMismatch", "printInt(true)")          // type mismatch
+	o("argsMismatch", "printInt(3, 4)")          // arg count mismatch
+	o("argsMismatch", "printInt()")              // arg count mismatch
+	o("argsMismatch", "a := printInt(3, 4)")     // mismatch
+	o("cannotDefine.countMismatch", "a := 3, 4") // count mismatch
+	o("cannotDefine.countMismatch", "a, b := 3") // count mismatch
+
+	o("expectOperand", "a, b := ()") // invalid
+
+	o("incStmt.notInt", "3++") // inc on non-addressable
+
+	o("expectType", "var a int; var b a") // not a type
+
+	// infer type from nil
+	o("cannotAlloc.fromNil", "var a = nil")
+	o("cannotAlloc.fromNil", "a := nil")
+
+	// continue and break
+	o("breakStmt.notInLoop", "break")
+	o("continueStmt.notInLoop", "continue")
+	o("breakStmt.notInLoop", "if true { break }")
+	o("breakStmt.notInLoop", "if true break")
+
+	o("invalidExprStmt", "true + 3") // boolean cannot add
+	o("cannotAlloc", "a := int")
+
+	o("negArrayIndex", "var a [8]int; i:=a[-1]") // negative array index
+	o("negArrayIndex", "var a [7]int; s:=a[:]; i:=s[-33]")
+	o("nonConstArrayIndex", "var a [0==0]int")
+
+	// divide by zero
+	o("divideByZero", "a := 3/0")
+	o("divideByZero", "a := 3%0")
+
+	o("argsMismatch", "const a = -1; printUint(a)")
 }
 
 func TestBareFunc_panic(t *testing.T) {

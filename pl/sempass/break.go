@@ -11,7 +11,8 @@ func buildBreakStmt(b *builder, s *ast.BreakStmt) tast.Stmt {
 		return nil
 	}
 	if b.nloop == 0 {
-		b.Errorf(s.Kw.Pos, "break is not in a for block")
+		b.CodeErrorf(s.Kw.Pos, "pl.breakStmt.notInLoop",
+			"break is not in a for block")
 		return nil
 	}
 	return &tast.BreakStmt{}
