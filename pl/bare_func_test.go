@@ -225,7 +225,9 @@ func TestBareFunc_bad(t *testing.T) {
 
 	// pointer cannot add
 	o("cannotCast", "var a int; var b = &a+3")
-	o("cannotAssign", "var a int; var b *uint = &a;") // incompatible pointer type
+
+	// incompatible pointer type
+	o("cannotAssign", "var a int; var b *uint = &a;")
 
 	// redefine
 	o("declConflict.var", "a:=3;a:=4")
@@ -239,7 +241,8 @@ func TestBareFunc_bad(t *testing.T) {
 
 	o("expectOperand", "a, b := ()") // invalid
 
-	o("incStmt.notInt", "3++") // inc on non-addressable
+	o("incStmt.notInt", "3++") // inc on const
+	o("incStmt.nonAddressable", "var a int; (a+3)++")
 
 	o("expectType", "var a int; var b a") // not a type
 

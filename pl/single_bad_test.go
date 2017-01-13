@@ -124,6 +124,9 @@ func TestSingleFileBad(t *testing.T) {
 		if true { }
 		else { } }`)
 
+	o("incStmt.notSingle", ` func f() (int, int) { return 0, 0 }
+		func main() { f()++ }`)
+
 	// Bugs found by the fuzzer in the past
 	o("undefinedIdent", "func f() **o.o {}")
 	o("expectConstExpr", "func n()[char[:]]string{}")
