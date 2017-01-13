@@ -242,7 +242,9 @@ func TestBareFunc_bad(t *testing.T) {
 	o("expectOperand", "a, b := ()") // invalid
 
 	o("incStmt.notInt", "3++") // inc on const
+	o("incStmt.notInt", "3--") // inc on const
 	o("incStmt.nonAddressable", "var a int; (a+3)++")
+	o("incStmt.nonAddressable", "var a int; (a*3)--")
 
 	o("expectType", "var a int; var b a") // not a type
 
