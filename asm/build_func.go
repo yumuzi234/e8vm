@@ -227,7 +227,7 @@ func makeFuncObj(b *builder, f *funcDecl) *link.Func {
 	}
 
 	if ret.TooLarge() {
-		b.Errorf(f.Name.Pos, "too many instructions in func", f.Name.Lit)
+		b.Errorf(f.Name.Pos, "too many instructions in func %s", f.Name.Lit)
 	}
 
 	return ret
