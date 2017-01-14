@@ -117,7 +117,7 @@ func (p *Pkg) Var(name string) *Var {
 // PrintSymbols prints all symbols out to a writer.
 func (p *Pkg) PrintSymbols(out io.Writer) {
 	for index, sym := range p.symbols {
-		fmt.Fprintf(out, "%d: %s %s\n",
+		fmt.Fprintf(out, "%s: %s %s\n",
 			index, symStr(sym.Type), sym.Name,
 		)
 	}

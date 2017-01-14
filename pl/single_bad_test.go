@@ -48,7 +48,7 @@ func TestSingleFileBad(t *testing.T) {
 		const previousPos = "pl.declConflict.previousPos"
 		if es[1].Code != previousPos {
 			t.Log(input)
-			t.Error("ErrCode expected: %q, got %q", previousPos, es[1].Code)
+			t.Errorf("ErrCode expected: %q, got %q", previousPos, es[1].Code)
 			return
 		}
 	}
