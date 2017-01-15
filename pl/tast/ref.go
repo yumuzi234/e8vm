@@ -32,7 +32,7 @@ type Ref struct {
 func NewRef(t types.T) *Ref { return &Ref{T: t} }
 
 // NewTypeRef creates a new reference node for a type expression.
-func NewTypeRef(t types.T) *Ref { return NewRef(&types.Type{t}) }
+func NewTypeRef(t types.T) *Ref { return NewRef(&types.Type{T: t}) }
 
 // NewConstRef creates a new reference node with a constant value.
 func NewConstRef(t types.T, v interface{}) *Ref {

@@ -60,12 +60,18 @@ func Rect(r io.Reader) (nline, maxWidth int, e error) {
 // CheckRect checks if a program is within a rectangular area.
 func CheckRect(file string, r io.Reader, h, w int) []*lexing.Error {
 	br := bufio.NewReader(r)
-	row := 0
+	line := 0
 	col := 0
 
 	errs := lexing.NewErrorList()
 
-	pos := func() *lexing.Pos { return &lexing.Pos{file, row + 1, col + 1} }
+	pos := func() *lexing.Pos {
+		return &lexing.Pos{
+			File: file,
+			Line: line + 1,
+			Col:  col + 1,
+		}
+	}
 	newLine := func() {
 		if col > w {
 			errs.Errorf(
@@ -74,7 +80,7 @@ func CheckRect(file string, r io.Reader, h, w int) []*lexing.Error {
 				col, w,
 			)
 		}
-		row++
+		line++
 		col = 0
 	}
 
@@ -96,7 +102,7 @@ func CheckRect(file string, r io.Reader, h, w int) []*lexing.Error {
 		}
 	}
 
-	if row > h {
+	if line > h {
 		errs.Errorf(pos(), "has too many lines; the limit is %d", h)
 	}
 
