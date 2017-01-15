@@ -19,7 +19,7 @@ func buildStarExpr(b *builder, expr *ast.StarExpr) tast.Expr {
 
 	addrRef := addr.R()
 	if !addrRef.IsSingle() {
-		b.CodeErrorf(opPos, "pl.starExprNotSingle", "* on %s", addrRef)
+		b.CodeErrorf(opPos, "pl.star.onNotSingle", "* on %s", addrRef)
 		return nil
 	}
 	if t, ok := addrRef.T.(*types.Type); ok {
@@ -28,7 +28,7 @@ func buildStarExpr(b *builder, expr *ast.StarExpr) tast.Expr {
 
 	t, ok := addrRef.T.(*types.Pointer)
 	if !ok {
-		b.CodeErrorf(opPos, "pl.starOnNonPointer", "* on non-pointer")
+		b.CodeErrorf(opPos, "pl.star.onNonPointer", "* on non-pointer")
 		return nil
 	}
 

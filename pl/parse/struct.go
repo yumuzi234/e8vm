@@ -22,7 +22,7 @@ func parseStruct(p *parser) *ast.Struct {
 				Lbrace:  p.ExpectOp("{"),
 			}
 			p.CodeErrorf(
-				ret.Kw.Pos, "pl.structDecl",
+				ret.Kw.Pos, "pl.invalidStructDecl",
 				`G langauge uses "struct %s {}" `+
 					`rather than "type %s struct {}"`,
 				ret.Name.Lit, ret.Name.Lit,

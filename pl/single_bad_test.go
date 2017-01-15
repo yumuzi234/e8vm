@@ -69,7 +69,7 @@ func TestSingleFileBad(t *testing.T) {
 	o("missingReturn", `func f() int { if true return 0 }`)
 
 	o("return.typeMismatch", `func f() int {return 'a'}`)
-	o("return.typeMismatch", `func f() (int ,int) {return 1, 'a'}`)
+	o("return.typeMismatch", `func f() (int, int) {return 1, 'a'}`)
 	o("return.expectNoReturn", `func f() {return 1}`)
 	o("return.noReturnValue", `func f() int {return}`)
 
@@ -113,9 +113,9 @@ func TestSingleFileBad(t *testing.T) {
 	o("cannotAlloc", "func n() { r := len; _ := r }")
 
 	o("cannotAssign.typeMismatch", `struct A {}; func (a *A) f(){};
-		func main() { var a A; var f func()=a.f; _:=f }`)
+		func main() { var a A; var f func()=a.f; _:= f }`)
 	o("cannotAssign.typeMismatch", `struct A {}; func (a *A) f(){};
-		func main() { var a A; var f func(); f=a.f; _:=f }`)
+		func main() { var a A; var f func(); f=a.f; _:= f }`)
 	o("cannotAssign.typeMismatch", `func main() { var a [2]int; var b [3]int;
 		a=b}`)
 
@@ -129,9 +129,10 @@ func TestSingleFileBad(t *testing.T) {
 		else { } }`)
 
 	o("illegalChar", "@")
-	o("structDecl", "type A struct {}")
-	o("starExprNotSingle", `func main() { var a=*A() };
-	func A() (*int, *int) { c:=1; d:=2; return &c, &d}`)
+	o("invalidDotDot", "..")
+	o("invalidStructDecl", "type A struct {}")
+	o("star.onNotSingle", `func main() { var a=*A() };
+	func A() (*int, *int) { return nil, nil}`)
 	o("incStmt.notSingle", ` func f() (int, int) { return 0, 0 }
 		func main() { f()++ }`)
 

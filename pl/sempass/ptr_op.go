@@ -16,7 +16,7 @@ func refAddress(b *builder, opTok *lexing.Token, B tast.Expr) tast.Expr {
 			"%q on %s", op, bref)
 		return nil
 	} else if !bref.Addressable {
-		b.CodeErrorf(opPos, "pl.refAddress.notAddressalbe",
+		b.CodeErrorf(opPos, "pl.refAddress.notAddressable",
 			"reading address of non-addressable")
 		return nil
 	}
