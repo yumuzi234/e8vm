@@ -210,22 +210,35 @@ func TestBareFunc_bad(t *testing.T) {
 	o("invalidExprStmt", "printInt")
 	o("invalidExprStmt", "3+4")
 	o("invalidExprStmt", "true > false") // boolean cannot compare
+	o("invalidExprStmt", "var a,b int; _:=&a + &b")
+	o("invalidExprStmt", "var a,b []int; _:=a + b")
 
 	// undefined
 	o("undefinedIdent", "a=3")
 	o("undefinedIdent", "a()")
 	o("undefinedIdent", "var a, b c")
 
-	// non-addressable
-	o("cannotAssign", "3=4")
-	o("cannotAssign", "var a int; 3=a")
-	o("cannotReadAddress", "var x = &3")
-	o("cannotAssign", "var a, b int; a+b=3")
-	o("cannotAssign", "(3)+=3") // assign to non-addressable
+	// cannot assign
+	o("cannotAssign.notAddressable", "3=4")
+	o("cannotAssign.notAddressable", "var a int; 3=a")
+	o("refAddress.notAddressalbe", "var x = &3")
+	o("cannotAssign.notAddressable", "var a, b int; a+b=3")
+	o("cannotAssign.notAddressable", "(3)+=3") // assign to non-addressable
+	o("cannotAssign.notSingle", "var a int; var b int; a,b+=2")
 
-	// pointer cannot add
+	// array literal
+	o("arrayLit.notConstant", "var a=[]int {true, false}")
+	o("expectConst", "var a int; var b=[]int {a}") //error returned from operand.go
+
+	// pointer
 	o("cannotCast", "var a int; var b = &a+3")
-	o("cannotAssign", "var a int; var b *uint = &a;") // incompatible pointer type
+	o("cannotAssign.typeMismatch", "var a int; var b *uint = &a;")
+	o("starOnNonPointer", "var a int; var b=*a")
+
+	//shift
+	o("cannotShift", "a:=true; a=a>>1")
+	o("cannotShift", "a:=true; b:=2; b=b>>a")
+	o("cannotShift", "a:=2; b:=2; b=b>>a")
 
 	// redefine
 	o("declConflict.var", "a:=3;a:=4")
@@ -265,6 +278,7 @@ func TestBareFunc_bad(t *testing.T) {
 	o("divideByZero", "a := 3%0")
 
 	o("argsMismatch", "const a = -1; printUint(a)")
+
 }
 
 func TestBareFunc_panic(t *testing.T) {

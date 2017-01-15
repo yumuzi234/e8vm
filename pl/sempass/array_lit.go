@@ -29,7 +29,8 @@ func buildArrayLit(b *builder, lit *ast.ArrayLiteral) tast.Expr {
 
 	if !types.IsInteger(t) {
 		pos := ast.ExprPos(lit.Type.Type)
-		b.Errorf(pos, "array literal must be integer type")
+		b.CodeErrorf(pos, "pl.arrayLit.notInteger",
+			"array literal must be integer type")
 		return nil
 	}
 	bt := t.(types.Basic)
@@ -42,7 +43,8 @@ func buildArrayLit(b *builder, lit *ast.ArrayLiteral) tast.Expr {
 			}
 			ntype := n.R().T
 			if _, ok := ntype.(*types.Const); !ok {
-				b.Errorf(ast.ExprPos(expr), "array literal not a constant")
+				b.CodeErrorf(ast.ExprPos(expr), "pl.arrayLit.notConstant",
+					"array literal not a constant")
 				return nil
 			}
 
