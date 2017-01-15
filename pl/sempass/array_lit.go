@@ -14,8 +14,8 @@ func buildArrayLit(b *builder, lit *ast.ArrayLiteral) tast.Expr {
 	defer b.lhsRestore(hold)
 
 	if lit.Type.Len != nil {
-		b.Errorf(
-			ast.ExprPos(lit),
+		b.CodeErrorf(
+			ast.ExprPos(lit), "pl.notSupport",
 			"array literal with length not supported yet",
 		)
 		return nil
@@ -30,7 +30,7 @@ func buildArrayLit(b *builder, lit *ast.ArrayLiteral) tast.Expr {
 	if !types.IsInteger(t) {
 		pos := ast.ExprPos(lit.Type.Type)
 		b.CodeErrorf(pos, "pl.arrayLit.notInteger",
-			"array literal must be integer type")
+			"array literal now only support integer array")
 		return nil
 	}
 	bt := t.(types.Basic)
@@ -50,10 +50,9 @@ func buildArrayLit(b *builder, lit *ast.ArrayLiteral) tast.Expr {
 
 			if v, ok := types.NumConst(ntype); ok {
 				if !types.InRange(v, t) {
-					b.Errorf(
-						ast.ExprPos(expr),
-						"constant out of range of %s",
-						t,
+					b.CodeErrorf(
+						ast.ExprPos(expr), "pl.arrayLit.outOfRange",
+						"constant out of range of %s", t,
 					)
 					return nil
 				}

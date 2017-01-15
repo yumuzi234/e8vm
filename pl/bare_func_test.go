@@ -212,6 +212,7 @@ func TestBareFunc_bad(t *testing.T) {
 	o("invalidExprStmt", "true > false") // boolean cannot compare
 	o("invalidExprStmt", "var a,b int; _:=&a + &b")
 	o("invalidExprStmt", "var a,b []int; _:=a + b")
+	o("invalidExprStmt", "_:=nil + nil")
 
 	// undefined
 	o("undefinedIdent", "a=3")
@@ -227,7 +228,9 @@ func TestBareFunc_bad(t *testing.T) {
 	o("cannotAssign.notSingle", "var a int; var b int; a,b+=2")
 
 	// array literal
+	o("arrayLit.notInteger", "var a=[]bool {true, false}")
 	o("arrayLit.notConstant", "var a=[]int {true, false}")
+	o("notSupport", "var a=[1]int {1}")
 	o("expectConst", "var a int; var b=[]int {a}") //error returned from operand.go
 
 	// pointer

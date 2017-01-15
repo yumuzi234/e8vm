@@ -32,7 +32,7 @@ func binaryOpNil(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 		return &tast.OpExpr{A, opTok, B, tast.NewRef(types.Bool)}
 	}
 
-	b.Errorf(opTok.Pos, "%q on nils", op)
+	b.CodeErrorf(opTok.Pos, "pl.invalidExprStmt", "%q on nils", op)
 	return nil
 }
 
