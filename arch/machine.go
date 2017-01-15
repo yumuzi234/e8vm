@@ -167,7 +167,7 @@ func (m *Machine) WriteBytes(r io.Reader, offset uint32) error {
 		buf := pageBuf[:PageSize-start]
 		n, err := r.Read(buf)
 		if err == io.EOF {
-			return nil
+			break
 		}
 
 		p.WriteAt(buf[:n], start)

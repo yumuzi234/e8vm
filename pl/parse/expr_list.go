@@ -29,8 +29,6 @@ func parseExprListClosed(p *parser, closeWith string) *ast.ExprList {
 			return ret
 		}
 	}
-
-	return ret
 }
 
 func parseExprList(p *parser) *ast.ExprList {

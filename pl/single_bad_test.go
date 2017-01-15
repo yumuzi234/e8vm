@@ -48,7 +48,7 @@ func TestSingleFileBad(t *testing.T) {
 		const previousPos = "pl.declConflict.previousPos"
 		if es[1].Code != previousPos {
 			t.Log(input)
-			t.Error("ErrCode expected: %q, got %q", previousPos, es[1].Code)
+			t.Errorf("ErrCode expected: %q, got %q", previousPos, es[1].Code)
 			return
 		}
 	}
@@ -132,6 +132,8 @@ func TestSingleFileBad(t *testing.T) {
 	o("structDecl", "type A struct {}")
 	o("starExprNotSingle", `func main() { var a=*A() };
 	func A() (*int, *int) { c:=1; d:=2; return &c, &d}`)
+	o("incStmt.notSingle", ` func f() (int, int) { return 0, 0 }
+		func main() { f()++ }`)
 
 	// Bugs found by the fuzzer in the past
 	o("undefinedIdent", "func f() **o.o {}")

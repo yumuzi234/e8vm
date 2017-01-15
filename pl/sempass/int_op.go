@@ -81,13 +81,13 @@ func binaryOpConst(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 		return &tast.OpExpr{A, opTok, B, tast.NewRef(types.Bool)}
 	case "<<":
 		if vb < 0 {
-			b.Errorf(opTok.Pos, "shift with negative value", vb)
+			b.Errorf(opTok.Pos, "shift with negative value: %d", vb)
 			return nil
 		}
 		return r(va << uint64(vb))
 	case ">>":
 		if vb < 0 {
-			b.Errorf(opTok.Pos, "shift with negative value", vb)
+			b.Errorf(opTok.Pos, "shift with negative value: %d", vb)
 			return nil
 		}
 		return r(va >> uint64(vb))

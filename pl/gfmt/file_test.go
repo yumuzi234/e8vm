@@ -40,7 +40,7 @@ func TestFormatFile(t *testing.T) {
 			t.Errorf("gfmt %q: expect %q, got %q", s, exp, got)
 		}
 		if got2 != got {
-			t.Errorf("gfmt result %q changed to %q", s, got, got2)
+			t.Errorf("gfmt %q: result %q changed to %q", s, got, got2)
 		}
 	}
 
