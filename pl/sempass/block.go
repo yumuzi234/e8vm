@@ -31,7 +31,7 @@ func buildBlock(b *builder, block *ast.Block) tast.Stmt {
 		}
 	}
 
-	return &tast.Block{stmts}
+	return &tast.Block{Stmts: stmts}
 }
 
 func buildBlockStmt(b *builder, block *ast.BlockStmt) tast.Stmt {

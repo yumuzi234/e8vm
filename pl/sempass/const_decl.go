@@ -59,7 +59,7 @@ func buildConstDecl(b *builder, d *ast.ConstDecl) *tast.Define {
 		ret = append(ret, sym)
 	}
 
-	return &tast.Define{ret, right}
+	return &tast.Define{Left: ret, Right: right}
 }
 
 func buildConstDecls(b *builder, decls *ast.ConstDecls) tast.Stmt {
@@ -74,5 +74,5 @@ func buildConstDecls(b *builder, decls *ast.ConstDecls) tast.Stmt {
 			ret = append(ret, d)
 		}
 	}
-	return &tast.ConstDecls{ret}
+	return &tast.ConstDecls{Decls: ret}
 }

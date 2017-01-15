@@ -73,7 +73,7 @@ func define(
 		ret = append(ret, s)
 	}
 
-	return &tast.Define{ret, expr}
+	return &tast.Define{Left: ret, Right: expr}
 }
 
 func buildIdentExprList(b *builder, list *ast.ExprList) (

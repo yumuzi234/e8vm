@@ -58,7 +58,7 @@ func buildField(b *builder, this codegen.Ref, field *types.Field) *ref {
 }
 
 func buildIdent(b *builder, id *tast.Ident) *ref {
-	s := id.Symbol
+	s := id.Sym
 	switch s.Type {
 	case tast.SymVar:
 		return s.Obj.(*objVar).ref
@@ -84,7 +84,7 @@ func buildIdent(b *builder, id *tast.Ident) *ref {
 }
 
 func buildConstIdent(b *builder, id *tast.Ident) *ref {
-	s := id.Symbol
+	s := id.Sym
 	switch s.Type {
 	case tast.SymConst:
 		return s.Obj.(*objConst).ref

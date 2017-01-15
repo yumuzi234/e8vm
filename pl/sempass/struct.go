@@ -34,7 +34,7 @@ func declareStruct(b *builder, s *ast.Struct) *pkgStruct {
 	ret := newPkgStruct(s)
 	name := ret.name.Lit
 	pos := ret.name.Pos
-	t := &types.Type{ret.t}
+	t := &types.Type{T: ret.t}
 	sym := syms.Make(b.path, name, tast.SymStruct, nil, t, pos)
 	conflict := b.scope.Declare(sym)
 	if conflict != nil {

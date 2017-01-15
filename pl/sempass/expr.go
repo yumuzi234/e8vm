@@ -74,7 +74,7 @@ func buildExprStmt(b *builder, expr ast.Expr) tast.Stmt {
 		if ret == nil {
 			return nil
 		}
-		return &tast.ExprStmt{ret}
+		return &tast.ExprStmt{Expr: ret}
 	}
 
 	b.CodeErrorf(ast.ExprPos(expr), "pl.invalidExprStmt",

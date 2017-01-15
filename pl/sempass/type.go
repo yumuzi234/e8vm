@@ -46,7 +46,7 @@ func buildArrayType(b *builder, expr *ast.ArrayTypeExpr) types.T {
 
 	if expr.Len == nil {
 		// slice
-		return &types.Slice{t}
+		return &types.Slice{T: t}
 	}
 
 	// array
@@ -123,7 +123,7 @@ func buildType(b *builder, expr ast.Expr) types.T {
 		if t == nil {
 			return nil
 		}
-		return &types.Pointer{t}
+		return &types.Pointer{T: t}
 	case *ast.ArrayTypeExpr:
 		return buildArrayType(b, expr)
 	case *ast.ParenExpr:

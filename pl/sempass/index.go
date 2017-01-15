@@ -95,7 +95,7 @@ func buildSlicing(
 		}
 	}
 
-	ref := tast.NewRef(&types.Slice{et})
+	ref := tast.NewRef(&types.Slice{T: et})
 	return &tast.IndexExpr{
 		Array:    array,
 		Index:    indexStart,

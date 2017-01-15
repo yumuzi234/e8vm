@@ -27,7 +27,7 @@ func buildInt(b *builder, op *lexing.Token) tast.Expr {
 	}
 
 	ref := tast.NewConstRef(types.NewNumber(ret), ret)
-	return &tast.Const{ref}
+	return tast.NewConst(ref)
 }
 
 func buildChar(b *builder, op *lexing.Token) tast.Expr {
@@ -40,7 +40,7 @@ func buildChar(b *builder, op *lexing.Token) tast.Expr {
 		return nil
 	}
 	ref := tast.NewConstRef(types.Int8, int64(v[0]))
-	return &tast.Const{ref}
+	return tast.NewConst(ref)
 }
 
 func buildString(b *builder, op *lexing.Token) tast.Expr {
@@ -50,7 +50,7 @@ func buildString(b *builder, op *lexing.Token) tast.Expr {
 		return nil
 	}
 	ref := tast.NewConstRef(types.String, v)
-	return &tast.Const{ref}
+	return tast.NewConst(ref)
 }
 
 func buildIdent(b *builder, ident *lexing.Token) tast.Expr {
@@ -67,22 +67,22 @@ func buildIdent(b *builder, ident *lexing.Token) tast.Expr {
 	switch s.Type {
 	case tast.SymVar, tast.SymField:
 		ref := tast.NewAddressableRef(t)
-		return &tast.Ident{ident, ref, s}
+		return &tast.Ident{Token: ident, Ref: ref, Sym: s}
 	case tast.SymConst, tast.SymStruct, tast.SymType, tast.SymImport:
 		ref := tast.NewRef(t)
-		return &tast.Ident{ident, ref, s}
+		return &tast.Ident{Token: ident, Ref: ref, Sym: s}
 	case tast.SymFunc:
 		if t, ok := t.(*types.Func); ok {
 			if t.MethodFunc == nil {
-				return &tast.Ident{ident, tast.NewRef(t), s}
+				return &tast.Ident{Token: ident, Ref: tast.NewRef(t), Sym: s}
 			}
 			if b.this == nil {
 				panic("this missing")
 			}
 			ref := &tast.Ref{T: t.MethodFunc, Recv: b.this}
-			return &tast.Ident{ident, ref, s}
+			return &tast.Ident{Token: ident, Ref: ref, Sym: s}
 		}
-		return &tast.Ident{ident, tast.NewRef(t), s}
+		return &tast.Ident{Token: ident, Ref: tast.NewRef(t), Sym: s}
 	default:
 		b.Errorf(ident.Pos, "todo: token type: %s", tast.SymStr(s.Type))
 		return nil
@@ -103,10 +103,10 @@ func buildConstIdent(b *builder, ident *lexing.Token) tast.Expr {
 	switch s.Type {
 	case tast.SymConst:
 		ref := tast.NewRef(t)
-		return &tast.Const{ref}
+		return tast.NewConst(ref)
 	case tast.SymStruct, tast.SymType, tast.SymImport:
 		ref := tast.NewRef(t)
-		return &tast.Ident{ident, ref, s}
+		return &tast.Ident{Token: ident, Ref: ref, Sym: s}
 	}
 
 	b.Errorf(ident.Pos, "%s is a %s; expect a const",
@@ -133,7 +133,7 @@ func buildOperand(b *builder, op *ast.Operand) tast.Expr {
 			b.Errorf(op.Token.Pos, "using this out of a method function")
 			return nil
 		}
-		return &tast.This{b.this}
+		return &tast.This{Ref: b.this}
 	}
 
 	switch op.Token.Type {
