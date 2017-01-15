@@ -110,8 +110,7 @@ func build(c *context, pkgs []string) []*lexing.Error {
 		}
 	}
 
-	g := &dagvis.Graph{c.deps}
-	g = g.Reverse()
+	g := dagvis.NewGraph(c.deps).Reverse()
 	if c.SaveDeps != nil {
 		c.SaveDeps(g)
 	}
