@@ -18,7 +18,7 @@ func TestInstReg(t *testing.T) {
 		in |= (s1 & 0x7) << 18
 		in |= (s2 & 0x7) << 15
 		in |= (d & 0x7) << 21
-		m.WriteWord(InitPC, in)
+		m.WriteU32(InitPC, in)
 
 		cpu.regs[s1] = v1
 		cpu.regs[s2] = v2
@@ -40,7 +40,7 @@ func TestInstReg(t *testing.T) {
 		in |= (sh & 0x1f) << 10
 		in |= (s1 & 0x7) << 18
 		in |= (d & 0x7) << 21
-		m.WriteWord(InitPC, in)
+		m.WriteU32(InitPC, in)
 
 		cpu.regs[s1] = v1
 		e := cpu.Tick()
@@ -62,7 +62,7 @@ func TestInstReg(t *testing.T) {
 		in |= (s2 & 0x7) << 15
 		in |= (d & 0x7) << 21
 		in |= 0x1 << 8
-		m.WriteWord(InitPC, in)
+		m.WriteU32(InitPC, in)
 
 		cpu.regs[s1] = math.Float32bits(f1)
 		cpu.regs[s2] = math.Float32bits(f2)

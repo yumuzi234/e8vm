@@ -24,13 +24,13 @@ func TestPageTable(t *testing.T) {
 
 	pte1 := ptEntry(0x9000)
 	pte1.setBit(pteValid)
-	p8.WriteWord(0, uint32(pte1))
+	p8.WriteU32(0, uint32(pte1))
 
 	pte2 := ptEntry(0xa000)
 	pte2.setBit(pteValid)
 	for i := uint32(0); i < 512; i++ {
 		// map all pages from 0 to 1023 to page 10
-		p9.WriteWord(i*4, uint32(pte2))
+		p9.WriteU32(i*4, uint32(pte2))
 	}
 
 	pt := newPageTable(m, 0x8000)
@@ -52,19 +52,19 @@ func TestPageTable(t *testing.T) {
 	as(e == nil)
 
 	pte2.setBit(pteReadonly)
-	p9.WriteWord(3*4, uint32(pte2))
+	p9.WriteU32(3*4, uint32(pte2))
 	_, e = pt.TranslateRead(addr, 0)
 	as(e == nil)
 	_, e = pt.TranslateWrite(addr, 0)
 	as(e.Code == ErrPageReadonly)
 
-	w := p9.ReadWord(3 * 4)
+	w := p9.ReadU32(3 * 4)
 	as((w & (0x1 << pteUse)) != 0)
 	as((w & (0x1 << pteDirty)) == 0)
 
 	addr += PageSize
 	_, e = pt.TranslateWrite(addr, 0)
 	as(e == nil)
-	w = p9.ReadWord(4 * 4)
+	w = p9.ReadU32(4 * 4)
 	as((w & (0x1 << pteDirty)) != 0)
 }

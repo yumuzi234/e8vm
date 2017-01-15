@@ -18,7 +18,7 @@ func TestInstImm(t *testing.T) {
 		in |= (d & 0x7) << 21
 		in |= im & 0xffff
 
-		m.WriteWord(InitPC, in)
+		m.WriteU32(InitPC, in)
 
 		cpu.regs[s] = v
 		e := cpu.Tick()
@@ -40,7 +40,7 @@ func TestInstImm(t *testing.T) {
 		in |= (d & 0x7) << 21
 		in |= im & 0xffff
 
-		m.WriteWord(InitPC, in)
+		m.WriteU32(InitPC, in)
 		cpu.regs[s] = v
 		cpu.regs[d] = w
 		e := cpu.Tick()
@@ -87,7 +87,7 @@ func TestInstImm(t *testing.T) {
 		offset -= PageSize / 2
 		w := uint32(rand.Int63())
 
-		e := m.WriteWord(addr+offset, w)
+		e := m.WriteU32(addr+offset, w)
 		if e != nil {
 			t.Fatal("write fail")
 		}
@@ -104,7 +104,7 @@ func TestInstImm(t *testing.T) {
 		offset -= PageSize / 2
 		b := byte(rand.Int63())
 
-		e := m.WriteByte(addr+offset, b)
+		e := m.WriteU8(addr+offset, b)
 		if e != nil {
 			t.Fatal("write fail")
 		}
@@ -132,7 +132,7 @@ func TestInstImm(t *testing.T) {
 
 		twr(SW, s, addr, offset, d, w)
 
-		got, e := m.ReadWord(addr + offset)
+		got, e := m.ReadU32(addr + offset)
 		if e != nil {
 			t.Fatal("read fail")
 		}
@@ -157,7 +157,7 @@ func TestInstImm(t *testing.T) {
 
 		twr(SB, s, addr, offset, d, uint32(b))
 
-		got, e := m.ReadByte(addr + offset)
+		got, e := m.ReadU8(addr + offset)
 		if e != nil {
 			t.Fatal("read fail")
 		}

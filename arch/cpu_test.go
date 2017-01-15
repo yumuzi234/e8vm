@@ -35,15 +35,15 @@ func TestCPU(t *testing.T) {
 	as(e == errHalt, "not halting")
 
 	cpu.Reset()
-	m.WriteWord(InitPC, 1)
+	m.WriteU32(InitPC, 1)
 	e = cpu.Tick()
 	as(e == errTimeInt, "not time interrupt")
 
 	cpu.Reset()
 	cpu.interrupt.Enable()
 	cpu.interrupt.EnableInt(errTimeInt.Code)
-	cpu.interrupt.writeWord(intHandlerSP, 0x10000) // page 16
-	cpu.interrupt.writeWord(intHandlerPC, 0x10000) // page 16
+	cpu.interrupt.writeU32(intHandlerSP, 0x10000) // page 16
+	cpu.interrupt.writeU32(intHandlerPC, 0x10000) // page 16
 	cpu.ring = 1
 
 	e = cpu.Tick()
@@ -52,10 +52,10 @@ func TestCPU(t *testing.T) {
 	as(cpu.regs[SP] == 0x10000, "sp incorrect")
 	as(cpu.regs[RET] == 0x8000, "ret incorrect")
 	as(!cpu.UserMode(), "not in kernel")
-	b, e := m.ReadByte(0x10000 - intFrameSize + intFrameCode)
+	b, e := m.ReadU8(0x10000 - intFrameSize + intFrameCode)
 	as(e == nil, "read byte error")
 	as(b == errTimeInt.Code, "not time interrupt")
-	b, e = m.ReadByte(0x10000 - intFrameSize + intFrameRing)
+	b, e = m.ReadU8(0x10000 - intFrameSize + intFrameRing)
 	as(b == 1, "was not in user")
 	as(!cpu.interrupt.Enabled(), "interrupt not disabled")
 
@@ -65,7 +65,7 @@ func TestCPU(t *testing.T) {
 	cpu.Reset()
 	cpu.interrupt.Enable()
 	cpu.ring = 1
-	m.WriteWord(0x10000, 2) // write an iret
+	m.WriteU32(0x10000, 2) // write an iret
 	e = cpu.Tick()
 	as(e == nil, "unexpected error: %s", e)
 	as(!cpu.interrupt.Enabled(), "interrupt not disabled")

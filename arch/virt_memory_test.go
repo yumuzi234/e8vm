@@ -25,15 +25,15 @@ func TestVirtMemory(t *testing.T) {
 	pte1 := ptEntry(2 * PageSize)
 	pte1.setBit(pteValid)
 
-	p1.WriteWord(0, uint32(pte1))
+	p1.WriteU32(0, uint32(pte1))
 	pte1 += PageSize
-	p1.WriteWord(4*10, uint32(pte1))
+	p1.WriteU32(4*10, uint32(pte1))
 
 	for i := uint32(0); i < 4; i++ {
 		pte := ptEntry((i + 4) * PageSize)
 		pte.setBit(pteValid)
-		p2.WriteWord(4*i, uint32(pte))
-		p3.WriteWord(4*(3-i), uint32(pte))
+		p2.WriteU32(4*i, uint32(pte))
+		p3.WriteU32(4*(3-i), uint32(pte))
 	}
 
 	vm := newVirtMemory(m)
@@ -47,9 +47,9 @@ func TestVirtMemory(t *testing.T) {
 
 	for i := uint32(0); i < 4; i++ {
 		wd := w + i
-		e := vm.WriteWord(off+i*PageSize, 0, wd)
+		e := vm.WriteU32(off+i*PageSize, 0, wd)
 		as(e == nil, "write error: %s", e)
-		w2, e := vm.ReadWord((10*1024+(3-i))*PageSize+off, 0)
+		w2, e := vm.ReadU32((10*1024+(3-i))*PageSize+off, 0)
 		as(e == nil, "read error: %s", e)
 		eo(w2 != wd, "expect 0x%08x, got 0x%08x", wd, w2)
 	}
@@ -58,9 +58,9 @@ func TestVirtMemory(t *testing.T) {
 	off = 575
 	for i := uint32(0); i < 4; i++ {
 		bt := b + byte(i)
-		e := vm.WriteByte(off+i*PageSize, 0, bt)
+		e := vm.WriteU8(off+i*PageSize, 0, bt)
 		as(e == nil, "write error: %s", e)
-		b2, e := vm.ReadByte((10*1024+(3-i))*PageSize+off, 0)
+		b2, e := vm.ReadU8((10*1024+(3-i))*PageSize+off, 0)
 		as(e == nil, "read error: %s", e)
 		eo(b2 != bt, "expect 0x%02x, got 0x%02x", bt, b2)
 	}

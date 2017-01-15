@@ -32,68 +32,68 @@ func newInterrupt(p *page, core byte) *interrupt {
 	return ret
 }
 
-func (in *interrupt) handlerSP() uint32 { return in.readWord(intHandlerSP) }
-func (in *interrupt) handlerPC() uint32 { return in.readWord(intHandlerPC) }
-func (in *interrupt) syscallSP() uint32 { return in.readWord(intSyscallSP) }
-func (in *interrupt) syscallPC() uint32 { return in.readWord(intSyscallPC) }
+func (in *interrupt) handlerSP() uint32 { return in.readU32(intHandlerSP) }
+func (in *interrupt) handlerPC() uint32 { return in.readU32(intHandlerPC) }
+func (in *interrupt) syscallSP() uint32 { return in.readU32(intSyscallSP) }
+func (in *interrupt) syscallPC() uint32 { return in.readU32(intSyscallPC) }
 
 // Issue issues an interrupt. If the interrupt is already issued,
 // this has no effect.
 func (in *interrupt) Issue(i byte) {
 	off := uint32(i/8) + intPending
-	b := in.readByte(off)
+	b := in.readU8(off)
 	b |= 0x1 << (i % 8)
-	in.writeByte(off, b)
+	in.writeU8(off, b)
 }
 
 // Clear clears an interrupt. If the interrupt is already cleared,
 // this has no effect.
 func (in *interrupt) Clear(i byte) {
 	off := uint32(i/8) + intPending
-	b := in.readByte(off)
+	b := in.readU8(off)
 	b &= ^(0x1 << (i % 8))
-	in.writeByte(off, b)
+	in.writeU8(off, b)
 }
 
 // Enable sets the interrupt enable bit in the flags.
 func (in *interrupt) Enable() {
-	b := in.readByte(intFlags)
+	b := in.readU8(intFlags)
 	b |= 0x1
-	in.writeByte(intFlags, b)
+	in.writeU8(intFlags, b)
 }
 
 // Enabled tests if interrupt is enabled
 func (in *interrupt) Enabled() bool {
-	b := in.readByte(intFlags)
+	b := in.readU8(intFlags)
 	return (b & 0x1) != 0
 }
 
 // Disable clears the interrupt enable bit in the flags.
 func (in *interrupt) Disable() {
-	b := in.readByte(intFlags)
+	b := in.readU8(intFlags)
 	b &= ^byte(0x1)
-	in.writeByte(intFlags, b)
+	in.writeU8(intFlags, b)
 }
 
 // EnableInt enables a particular interrupt by clearing the mask.
 func (in *interrupt) EnableInt(i byte) {
 	off := uint32(i/8) + intMask
-	b := in.readByte(off)
+	b := in.readU8(off)
 	b |= 0x1 << (i % 8)
-	in.writeByte(off, b)
+	in.writeU8(off, b)
 }
 
 // DisableInt disables a particular interrupt by setting the mask.
 func (in *interrupt) DisableInt(i byte) {
 	off := uint32(i/8) + intMask
-	b := in.readByte(off)
+	b := in.readU8(off)
 	b &= ^(0x1 << (i % 8))
-	in.writeByte(off, b)
+	in.writeU8(off, b)
 }
 
 // Flags returns the flags byte.
 func (in *interrupt) Flags() byte {
-	return in.readByte(intFlags)
+	return in.readU8(intFlags)
 }
 
 // Poll looks for the next pending interrupt.
@@ -106,8 +106,8 @@ func (in *interrupt) Poll() (bool, byte) {
 	// search bits based on priorities.
 	// smaller is higher
 	for i := uint32(0); i < Ninterrupt/32; i++ {
-		pending := in.readWord(intPending + i*4)
-		mask := in.readWord(intMask + i*4)
+		pending := in.readU32(intPending + i*4)
+		mask := in.readU32(intMask + i*4)
 		pending &= mask
 		if pending == 0 {
 			continue

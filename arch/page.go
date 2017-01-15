@@ -24,15 +24,15 @@ func (p *page) dirtyBytes() map[uint32]byte {
 	}
 	ret := make(map[uint32]byte)
 	for off := range p.dirty {
-		b := p.ReadByte(off)
+		b := p.ReadU8(off)
 		ret[off] = b
 	}
 	return ret
 }
 
-// ReadByte reads a byte at the particular offset.
+// ReadU8 reads a byte at the particular offset.
 // When offset is larger than offset, it uses the modular.
-func (p *page) ReadByte(offset uint32) byte {
+func (p *page) ReadU8(offset uint32) byte {
 	offset %= PageSize
 	pos := offset / 4
 	shift := (offset % 4) * 8
@@ -40,9 +40,9 @@ func (p *page) ReadByte(offset uint32) byte {
 	return byte(u >> shift)
 }
 
-// WriteByte writes a byte into the page at a particular offset.
+// WriteU8 writes a byte into the page at a particular offset.
 // When offset is larger than offset, it uses the modular.
-func (p *page) WriteByte(offset uint32, b byte) {
+func (p *page) WriteU8(offset uint32, b byte) {
 	offset %= PageSize
 	pos := offset / 4
 	shift := (offset % 4) * 8
@@ -56,17 +56,17 @@ func (p *page) WriteByte(offset uint32, b byte) {
 	}
 }
 
-// ReadWord reads the word at the particular offset.
+// ReadU32 reads the word at the particular offset.
 // When offset is larger than offset, it uses the modular.
 // When offset is not 4-byte aligned, it aligns down.
-func (p *page) ReadWord(offset uint32) uint32 {
+func (p *page) ReadU32(offset uint32) uint32 {
 	return p.uints[(offset%PageSize)/4]
 }
 
-// WriteWord writes the word at the particular offset.
+// WriteU32 writes the word at the particular offset.
 // When offset is larger than offset, it uses the modular.
 // When offset is not 4-byte aligned, it aligns down.
-func (p *page) WriteWord(offset uint32, w uint32) {
+func (p *page) WriteU32(offset uint32, w uint32) {
 	p.uints[(offset%PageSize)/4] = w
 
 	if p.dirty != nil {
@@ -84,6 +84,6 @@ func (p *page) WriteAt(bs []byte, offset uint32) {
 		if off > PageSize {
 			panic("out of range")
 		}
-		p.WriteByte(off, b)
+		p.WriteU8(off, b)
 	}
 }
