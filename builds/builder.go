@@ -65,9 +65,7 @@ func (b *Builder) Plan(pkgs []string) ([]string, []*lexing.Error) {
 		}
 	}
 
-	g := &dagvis.Graph{b.deps}
-	g = g.Reverse()
-
+	g := dagvis.NewGraph(b.deps).Reverse()
 	ret, err := dagvis.TopoSort(g)
 	if err != nil {
 		return nil, lexing.SingleErr(err)

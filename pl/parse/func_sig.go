@@ -10,7 +10,7 @@ func parsePara(p *parser) *ast.Para {
 	if p.See(Ident) {
 		ident := p.Shift()
 		if p.SeeOp(".") {
-			ret.Type = parseMemberExpr(p, &ast.Operand{ident})
+			ret.Type = parseMemberExpr(p, ast.NewOperand(ident))
 		} else {
 			ret.Ident = ident
 			if !(p.SeeOp(",") || p.SeeOp(")")) {

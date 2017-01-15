@@ -82,7 +82,7 @@ func declareBuiltin(b *builder, builtin *link.Pkg) {
 	c("nil", refNil)
 
 	t := func(name string, t types.T) {
-		s := syms.Make(b.path, name, tast.SymType, nil, &types.Type{t}, nil)
+		s := syms.Make(b.path, name, tast.SymType, nil, &types.Type{T: t}, nil)
 		pre := b.scope.Declare(s)
 		if pre != nil {
 			b.Errorf(nil, "builtin symbol %s declare failed", name)
