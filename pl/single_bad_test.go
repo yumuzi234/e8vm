@@ -85,9 +85,9 @@ func TestSingleFileBad(t *testing.T) {
 	o("unusedSym", `func main() { var a int }`)
 	o("unusedSym", `func main() { var a = 3 }`)
 	o("unusedSym", `func main() { a := 3 }`)
-	o("unusedSym", `func main() { var a int; a = 3 }`)
-	o("unusedSym", `func main() { var a int; (a) = (3) }`)
-	o("unusedSym", `func main() { var a, b = 3, 4; _ := a }`)
+	o("unusedSym", `func main() { var a int; a=3 }`)
+	o("unusedSym", `func main() { var a int; (a)=(3) }`)
+	o("unusedSym", `func main() { var a,b=3,4; _:=a }`)
 
 	// parser, import related
 	o("multiImport", `import(); import()`)
@@ -106,11 +106,11 @@ func TestSingleFileBad(t *testing.T) {
 	o("circDep.const", "const a, b = a, b")
 
 	// assign and allocate
-	o("cannotAlloc", `struct A {}; func main() { a := A }`)
+	o("cannotAlloc", `struct A {}; func main() { a:=A }`)
 	o("cannotAlloc", `struct A {}; func (a *A) f(){};
-		func main() { var a A; f := a.f; _ := f }`)
-	o("cannotAlloc", "func n() { var r = len; _ := r}")
-	o("cannotAlloc", "func n() { r := len; _ := r }")
+		func main() { var a A; f:=a.f; _:=f }`)
+	o("cannotAlloc", "func n() { var r=len; _:=r}")
+	o("cannotAlloc", "func n() { r:=len; _:=r }")
 
 	o("cannotAssign.typeMismatch", `struct A {}; func (a *A) f(){};
 		func main() { var a A; var f func()=a.f; _:= f }`)
@@ -163,7 +163,7 @@ func TestSingleFilePanic(t *testing.T) {
 
 	o("func main() { panic() }")
 	o("func main() { var pa *int; printInt(*pa) }")
-	o("struct A { a int }; func main() { var pa *A; b := pa.a; _ := b }")
+	o("struct A { a int }; func main() { var pa *A; b:=pa.a; _:=b }")
 	o("func main() { var a func(); a() }")
 	o("func f() {}; func main() { var a func()=f; a=nil; a() }")
 	o("func f(p *int) { printInt(*p) }; func main() { f(nil) }")
