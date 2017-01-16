@@ -49,7 +49,7 @@ func buildConstMember(b *builder, m *ast.MemberExpr) tast.Expr {
 			b.Errorf(m.Sub.Pos, "%s.%s is not a const", pkg, m.Sub.Lit)
 			return nil
 		}
-		return &tast.Const{tast.NewRef(s.ObjType.(types.T))}
+		return tast.NewConst(tast.NewRef(s.ObjType.(types.T)))
 	}
 
 	b.Errorf(m.Dot.Pos, "expect const expression")
@@ -112,8 +112,8 @@ func buildMember(b *builder, m *ast.MemberExpr) tast.Expr {
 		if r == nil {
 			return nil
 		}
-		// TODO: this can be further optimized
-		return &tast.MemberExpr{obj, m.Sub, r, sym}
+		// TODO(h8liu): this can be further optimized
+		return &tast.MemberExpr{Expr: obj, Sub: m.Sub, Ref: r, Sym: sym}
 	}
 
 	pt := types.PointerOf(t)
@@ -149,12 +149,12 @@ func buildMember(b *builder, m *ast.MemberExpr) tast.Expr {
 	if sym.Type == tast.SymField {
 		t := sym.ObjType.(types.T)
 		r := tast.NewAddressableRef(t)
-		return &tast.MemberExpr{obj, m.Sub, r, sym}
+		return &tast.MemberExpr{Expr: obj, Sub: m.Sub, Ref: r, Sym: sym}
 	} else if sym.Type == tast.SymFunc {
 		ft := sym.ObjType.(*types.Func)
 		r := tast.NewRef(ft.MethodFunc)
 		r.Recv = ref
-		return &tast.MemberExpr{obj, m.Sub, r, sym}
+		return &tast.MemberExpr{Expr: obj, Sub: m.Sub, Ref: r, Sym: sym}
 	}
 
 	b.Errorf(m.Sub.Pos, "invalid sym type: %s", tast.SymStr(sym.Type))

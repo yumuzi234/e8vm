@@ -154,6 +154,7 @@ func TestBareFunc_god(t *testing.T) {
 	o("printUint(uint(0x80000000) / 10)", "214748364")
 	o("printUint(uint(0x80000000) % 10)", "8")
 	o("a := uint(214748364); printUint(a*2)", "429496728")
+	o("a:=12e3; printInt(a)", "12000")
 
 	o("a := 3; a+=4; printInt(a)", "7")
 	o("a := 3; a-=4; printInt(a)", "-1")
@@ -210,9 +211,11 @@ func TestBareFunc_bad(t *testing.T) {
 	o("invalidExprStmt", "printInt")
 	o("invalidExprStmt", "3+4")
 	o("invalidExprStmt", "true > false") // boolean cannot compare
+
 	o("invalidExprStmt", "var a,b int; _:= &a+&b")
 	o("invalidExprStmt", "var a,b []int; _:= a+b")
 	o("invalidExprStmt", "_:= nil+nil")
+	o("invalidExprStmt", "true + 3") // boolean cannot add
 
 	// undefined
 	o("undefinedIdent", "a=3")
@@ -230,7 +233,6 @@ func TestBareFunc_bad(t *testing.T) {
 	// array literal
 	o("arrayLit.notInteger", "var a=[]bool {true, false}")
 	o("arrayLit.notConstant", "var a=[]int {true, false}")
-	o("notSupport", "var a=[1]int {1}")
 	o("expectConst", "var a int; var b=[]int {a}") // error returned from operand.go
 	o("arrayLit.outOfRange", "var a = []int8{256}")
 
@@ -273,7 +275,6 @@ func TestBareFunc_bad(t *testing.T) {
 	o("breakStmt.notInLoop", "if true { break }")
 	o("breakStmt.notInLoop", "if true break")
 
-	o("invalidExprStmt", "true + 3") // boolean cannot add
 	o("cannotAlloc", "a := int")
 
 	o("negArrayIndex", "var a [8]int; i := a[-1]") // negative array index
@@ -286,6 +287,15 @@ func TestBareFunc_bad(t *testing.T) {
 
 	o("argsMismatch", "const a = -1; printUint(a)")
 
+	// build op
+	o("cannotCast.integerOverFlowed", "a:=12345678987654321")
+	o("cannotParseConst", "a:=19223372036854775808") // too large for int64
+	o("cannotParseConst.wrongFloatFormat", "a:=10e")
+
+	// not yet supported
+	o("notYetSupported", "a:=1e-2")
+	o("notYetSupported", "a:=1.2")
+	o("notYetSupported", "var a=[1]int {1}")
 }
 
 func TestBareFunc_panic(t *testing.T) {

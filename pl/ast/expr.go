@@ -9,6 +9,11 @@ type Operand struct {
 	*lexing.Token
 }
 
+// NewOperand creates a new operand.
+func NewOperand(t *lexing.Token) *Operand {
+	return &Operand{Token: t}
+}
+
 // MemberExpr is an expression of form A.B
 type MemberExpr struct {
 	Expr Expr

@@ -75,7 +75,7 @@ func (c *multiCore) readWord(core byte, virtAddr uint32) (uint32, error) {
 		panic("out of cores")
 	}
 
-	v, exp := c.cores[core].virtMem.ReadWord(virtAddr, 0)
+	v, exp := c.cores[core].virtMem.ReadU32(virtAddr, 0)
 	if exp != nil {
 		return 0, exp
 	}

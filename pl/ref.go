@@ -20,7 +20,7 @@ type ref struct {
 
 func newRef(t types.T, r codegen.Ref) *ref { return &ref{typ: t, ir: r} }
 
-func newTypeRef(t types.T) *ref { return &ref{typ: &types.Type{t}} }
+func newTypeRef(t types.T) *ref { return &ref{typ: &types.Type{T: t}} }
 
 func newAddressableRef(t types.T, r codegen.Ref) *ref {
 	return &ref{typ: t, ir: r, addressable: true}

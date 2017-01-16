@@ -23,7 +23,7 @@ func buildStarExpr(b *builder, expr *ast.StarExpr) tast.Expr {
 		return nil
 	}
 	if t, ok := addrRef.T.(*types.Type); ok {
-		return tast.NewType(&types.Pointer{t.T})
+		return tast.NewType(&types.Pointer{T: t.T})
 	}
 
 	t, ok := addrRef.T.(*types.Pointer)
@@ -33,5 +33,5 @@ func buildStarExpr(b *builder, expr *ast.StarExpr) tast.Expr {
 	}
 
 	r := tast.NewAddressableRef(t.T)
-	return &tast.StarExpr{addr, r}
+	return &tast.StarExpr{Expr: addr, Ref: r}
 }

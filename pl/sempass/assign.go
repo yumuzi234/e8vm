@@ -56,7 +56,7 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 		src = newList
 	}
 
-	return &tast.AssignStmt{dest, op, src}
+	return &tast.AssignStmt{Left: dest, Op: op, Right: src}
 }
 
 func parseAssignOp(op string) string {
@@ -97,7 +97,7 @@ func opAssign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 		if !canShift(b, destType, srcType, op.Pos, opLit) {
 			return nil
 		}
-		return &tast.AssignStmt{dest, op, src}
+		return &tast.AssignStmt{Left: dest, Op: op, Right: src}
 	}
 
 	if v, ok := types.NumConst(srcType); ok {
@@ -112,7 +112,7 @@ func opAssign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 	if ok, t := types.SameBasic(destType, srcType); ok {
 		switch t {
 		case types.Int, types.Int8, types.Uint, types.Uint8:
-			return &tast.AssignStmt{dest, op, src}
+			return &tast.AssignStmt{Left: dest, Op: op, Right: src}
 		}
 	}
 

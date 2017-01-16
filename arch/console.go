@@ -66,14 +66,14 @@ func (c *console) Handle(req []byte) ([]byte, int32) {
 
 // Tick flushes the buffered byte to the console.
 func (c *console) Tick() {
-	outValid := c.p.readByte(consoleOutValid)
+	outValid := c.p.readU8(consoleOutValid)
 	if outValid != 0 {
-		out := c.p.readByte(consoleOut)
+		out := c.p.readU8(consoleOut)
 		_, e := c.Output.Write([]byte{out})
 		if e != nil {
 			log.Print(e)
 		}
-		c.p.writeByte(consoleOutValid, 0)
+		c.p.writeU8(consoleOutValid, 0)
 		c.interrupt(c.IntOut) // out available
 	}
 

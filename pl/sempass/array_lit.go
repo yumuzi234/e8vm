@@ -15,7 +15,7 @@ func buildArrayLit(b *builder, lit *ast.ArrayLiteral) tast.Expr {
 
 	if lit.Type.Len != nil {
 		b.CodeErrorf(
-			ast.ExprPos(lit), "pl.notSupport",
+			ast.ExprPos(lit), "pl.notYetSupported",
 			"array literal with length not supported yet",
 		)
 		return nil
@@ -71,6 +71,6 @@ func buildArrayLit(b *builder, lit *ast.ArrayLiteral) tast.Expr {
 		}
 	}
 
-	ref := tast.NewConstRef(&types.Slice{bt}, buf.Bytes())
-	return &tast.Const{ref}
+	ref := tast.NewConstRef(&types.Slice{T: bt}, buf.Bytes())
+	return &tast.Const{Ref: ref}
 }

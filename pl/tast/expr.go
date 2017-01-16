@@ -12,13 +12,14 @@ type This struct{ *Ref }
 // Const is a constant.
 type Const struct{ *Ref }
 
+// NewConst creates a new constant node.
+func NewConst(ref *Ref) *Const { return &Const{Ref: ref} }
+
 // Type is a type expression
 type Type struct{ *Ref }
 
 // NewType creates a new type expression of a particular type.
-func NewType(t types.T) *Type {
-	return &Type{NewTypeRef(t)}
-}
+func NewType(t types.T) *Type { return &Type{NewTypeRef(t)} }
 
 // Cast cast from one type of reference to another
 type Cast struct {
@@ -35,7 +36,7 @@ func NewCast(from Expr, to types.T) *Cast {
 type Ident struct {
 	Token *lexing.Token
 	*Ref
-	Symbol *syms.Symbol
+	Sym *syms.Symbol
 }
 
 // MemberExpr is an expression of "a.b"
@@ -43,7 +44,7 @@ type MemberExpr struct {
 	Expr Expr
 	Sub  *lexing.Token
 	*Ref
-	Symbol *syms.Symbol
+	Sym *syms.Symbol
 }
 
 // OpExpr is an expression likfe "a+b"

@@ -21,15 +21,16 @@ func refAddress(b *builder, opTok *lexing.Token, B tast.Expr) tast.Expr {
 		return nil
 	}
 
-	r := tast.NewRef(&types.Pointer{bref.T})
-	return &tast.OpExpr{nil, opTok, B, r}
+	r := tast.NewRef(&types.Pointer{T: bref.T})
+	return &tast.OpExpr{Op: opTok, B: B, Ref: r}
 }
 
 func binaryOpNil(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 	op := opTok.Lit
 	switch op {
 	case "==", "!=":
-		return &tast.OpExpr{A, opTok, B, tast.NewRef(types.Bool)}
+		ref := tast.NewRef(types.Bool)
+		return &tast.OpExpr{A: A, Op: opTok, B: B, Ref: ref}
 	}
 
 	b.CodeErrorf(opTok.Pos, "pl.invalidExprStmt", "%q on nils", op)
@@ -49,7 +50,7 @@ func binaryOpPtr(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 			B = tast.NewCast(B, atyp)
 		}
 
-		return &tast.OpExpr{A, opTok, B, tast.NewRef(types.Bool)}
+		return &tast.OpExpr{A: A, Op: opTok, B: B, Ref: tast.NewRef(types.Bool)}
 	}
 
 	b.CodeErrorf(opTok.Pos, "pl.invalidExprStmt",
@@ -61,7 +62,7 @@ func binaryOpSlice(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 	op := opTok.Lit
 	switch op {
 	case "==", "!=":
-		return &tast.OpExpr{A, opTok, B, tast.NewRef(types.Bool)}
+		return &tast.OpExpr{A: A, Op: opTok, B: B, Ref: tast.NewRef(types.Bool)}
 	}
 	b.CodeErrorf(opTok.Pos, "pl.invalidExprStmt",
 		"%q on slices", op)
