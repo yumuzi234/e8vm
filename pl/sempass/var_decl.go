@@ -80,7 +80,7 @@ func buildVarDecl(b *builder, d *ast.VarDecl) *tast.Define {
 		if syms == nil {
 			return nil
 		}
-		return &tast.Define{syms, right}
+		return &tast.Define{Left: syms, Right: right}
 	}
 
 	if d.Type == nil {
@@ -96,7 +96,7 @@ func buildVarDecl(b *builder, d *ast.VarDecl) *tast.Define {
 	if syms == nil {
 		return nil
 	}
-	return &tast.Define{syms, nil}
+	return &tast.Define{Left: syms, Right: nil}
 }
 
 func buildVarDecls(b *builder, decls *ast.VarDecls) tast.Stmt {
@@ -111,5 +111,5 @@ func buildVarDecls(b *builder, decls *ast.VarDecls) tast.Stmt {
 			ret = append(ret, d)
 		}
 	}
-	return &tast.VarDecls{ret}
+	return &tast.VarDecls{Decls: ret}
 }

@@ -71,6 +71,6 @@ func buildArrayLit(b *builder, lit *ast.ArrayLiteral) tast.Expr {
 		}
 	}
 
-	ref := tast.NewConstRef(&types.Slice{bt}, buf.Bytes())
-	return &tast.Const{ref}
+	ref := tast.NewConstRef(&types.Slice{T: bt}, buf.Bytes())
+	return &tast.Const{Ref: ref}
 }

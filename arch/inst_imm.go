@@ -39,17 +39,17 @@ func (i *instImm) I(cpu *cpu, in uint32) *Excep {
 	case LUI:
 		d = im << 16
 	case LW:
-		d, e = cpu.readWord(addr)
+		d, e = cpu.readU32(addr)
 	case LB:
-		b, e = cpu.readByte(addr)
+		b, e = cpu.readU8(addr)
 		d = uint32(int32(int8(b)))
 	case LBU:
-		b, e = cpu.readByte(addr)
+		b, e = cpu.readU8(addr)
 		d = uint32(b)
 	case SW:
-		e = cpu.writeWord(addr, d)
+		e = cpu.writeU32(addr, d)
 	case SB:
-		e = cpu.writeByte(addr, byte(d))
+		e = cpu.writeU8(addr, byte(d))
 	default:
 		return errInvalidInst
 	}

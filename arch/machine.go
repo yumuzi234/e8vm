@@ -88,8 +88,8 @@ func NewMachine(c *Config) *Machine {
 	m.keyboard = devs.NewKeyboard(m.calls.sender(serviceKeyboard))
 
 	sys := m.phyMem.Page(pageSysInfo)
-	sys.WriteWord(0, m.phyMem.npage)
-	sys.WriteWord(4, uint32(c.Ncore))
+	sys.WriteU32(0, m.phyMem.npage)
+	sys.WriteU32(4, uint32(c.Ncore))
 
 	if c.InitSP == 0 {
 		m.cores.setSP(DefaultSPBase, DefaultSPStride)
@@ -106,7 +106,7 @@ func NewMachine(c *Config) *Machine {
 	if c.RandSeed != 0 {
 		m.randSeed(c.RandSeed)
 	}
-	m.phyMem.WriteWord(AddrBootArg, c.BootArg) // ignoring write error
+	m.phyMem.WriteU32(AddrBootArg, c.BootArg) // ignoring write error
 
 	return m
 }

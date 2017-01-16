@@ -16,35 +16,35 @@ func TestPage(t *testing.T) {
 	e(((PageSize-1)&PageSize) != 0, "page size not exponential of 2")
 
 	for i := uint32(0); i < PageSize; i++ {
-		b := p.ReadByte(i)
+		b := p.ReadU8(i)
 		e(b != 0, "byte %d not zero on new page", i)
 	}
 
 	for i := uint32(0); i < PageSize/4; i++ {
-		b := p.ReadWord(i * 4)
+		b := p.ReadU32(i * 4)
 		e(b != 0, "word %d not zero on new page", i)
 	}
 
 	off := uint32(56)
-	p.WriteByte(off+0, 0x37)
-	p.WriteByte(off+1, 0x21)
-	p.WriteByte(off+2, 0x5a)
-	p.WriteByte(off+3, 0x70)
+	p.WriteU8(off+0, 0x37)
+	p.WriteU8(off+1, 0x21)
+	p.WriteU8(off+2, 0x5a)
+	p.WriteU8(off+3, 0x70)
 
 	exp := uint32(0x705a2137)
-	w := p.ReadWord(off)
+	w := p.ReadU32(off)
 	e(w != exp, "expect 0x%08x got 0x%08x", exp, w)
-	w = p.ReadWord(off + 3)
+	w = p.ReadU32(off + 3)
 	e(w != exp, "expect 0x%08x got 0x%08x", exp, w)
-	w = p.ReadWord(off + 3 + 2*PageSize)
+	w = p.ReadU32(off + 3 + 2*PageSize)
 	e(w != exp, "expect 0x%08x got 0x%08x", exp, w)
 
-	b := p.ReadByte(off + 2)
+	b := p.ReadU8(off + 2)
 	e(b != 0x5a, "got incorrect byte 0x%02x", b)
-	b = p.ReadByte(off + 2 + 2*PageSize)
+	b = p.ReadU8(off + 2 + 2*PageSize)
 	e(b != 0x5a, "got incorrect byte 0x%02x", b)
 
-	p.WriteWord(off+3+2*PageSize, exp)
-	b = p.ReadByte(off + 2)
+	p.WriteU32(off+3+2*PageSize, exp)
+	b = p.ReadU8(off + 2)
 	e(b != 0x5a, "got incorrect byte 0x%02x", b)
 }

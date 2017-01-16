@@ -7,6 +7,11 @@ type Graph struct {
 	Nodes map[string][]string
 }
 
+// NewGraph create a new graph with the given nodes.
+func NewGraph(nodes map[string][]string) *Graph {
+	return &Graph{Nodes: nodes}
+}
+
 // Reverse the graph
 func (g *Graph) Reverse() *Graph {
 	ret := make(map[string][]string)

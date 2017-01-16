@@ -72,17 +72,17 @@ func (r *rom) interrupt(code byte) {
 }
 
 func (r *rom) readFile() (byte, error) {
-	nameLen := r.p.readByte(romNameLen)
-	offset := r.p.readWord(romOffset)
-	addr := r.p.readWord(romAddr)
-	size := r.p.readWord(romSize)
+	nameLen := r.p.readU8(romNameLen)
+	offset := r.p.readU32(romOffset)
+	addr := r.p.readU32(romAddr)
+	size := r.p.readU32(romSize)
 
 	if nameLen > romFilenameMax {
 		nameLen = romFilenameMax
 	}
 	name := make([]byte, nameLen)
 	for i := range name {
-		name[i] = r.p.readByte(romFilename + uint32(i))
+		name[i] = r.p.readU8(romFilename + uint32(i))
 	}
 
 	fullPath := filepath.Join(r.root, string(name))
@@ -117,7 +117,7 @@ func (r *rom) readFile() (byte, error) {
 func (r *rom) Tick() {
 	switch r.state {
 	case romStateIdle:
-		cmd := r.p.readByte(romCmd)
+		cmd := r.p.readU8(romCmd)
 		if cmd != 0 {
 			r.state = romStateBusy
 
@@ -133,17 +133,17 @@ func (r *rom) Tick() {
 			}
 
 			r.err = errCode
-			r.p.writeByte(romCmd, romCmdIdle)
+			r.p.writeU8(romCmd, romCmdIdle)
 		}
 	case romStateBusy:
 		if r.countDown > 0 {
 			r.countDown--
 		} else {
 			if r.err == romErrNone {
-				r.p.writeWord(romNread, uint32(len(r.bs)))
+				r.p.writeU32(romNread, uint32(len(r.bs)))
 
 				for i, b := range r.bs {
-					err := r.mem.WriteByte(r.addr+uint32(i), b)
+					err := r.mem.WriteU8(r.addr+uint32(i), b)
 					if err != nil {
 						r.err = romErrMemory
 						break
@@ -151,11 +151,11 @@ func (r *rom) Tick() {
 				}
 			}
 
-			r.p.writeByte(romErr, r.err)
+			r.p.writeU8(romErr, r.err)
 			r.state = romStateIdle
 			r.interrupt(r.IntDone)
 		}
 	}
 
-	r.p.writeByte(romState, r.state)
+	r.p.writeU8(romState, r.state)
 }

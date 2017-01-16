@@ -8,7 +8,7 @@ import (
 )
 
 func buildPkgSym(b *builder, m *tast.MemberExpr, pkg *types.Pkg) *ref {
-	sym := m.Symbol
+	sym := m.Sym
 	if pkg.Lang == "asm8" {
 		switch sym.Type {
 		case asm.SymVar:
@@ -73,7 +73,7 @@ func buildMember(b *builder, m *tast.MemberExpr) *ref {
 		b.b.Arith(addr, nil, "&", obj.IR())
 	}
 
-	sym := m.Symbol
+	sym := m.Sym
 	if sym.Type == tast.SymField {
 		return buildField(b, addr, sym.Obj.(*types.Field))
 	} else if sym.Type == tast.SymFunc {

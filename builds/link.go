@@ -15,7 +15,7 @@ func linkPkg(c *context, out io.Writer, p *pkg, main string) error {
 	addInit := func(p *pkg) {
 		name := p.pkg.Init
 		if name != "" && p.pkg.Lib.HasFunc(name) {
-			funcs = append(funcs, &link.PkgSym{p.path, name})
+			funcs = append(funcs, link.NewPkgSym(p.path, name))
 		}
 	}
 
@@ -23,7 +23,7 @@ func linkPkg(c *context, out io.Writer, p *pkg, main string) error {
 		addInit(c.pkgs[dep])
 	}
 	addInit(p)
-	funcs = append(funcs, &link.PkgSym{p.path, main})
+	funcs = append(funcs, link.NewPkgSym(p.path, main))
 
 	debugTable := debug.NewTable()
 	job := link.NewJob(c.linkPkgs, funcs)

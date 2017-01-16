@@ -66,7 +66,7 @@ func (c *cpu) Reset() {
 func (c *cpu) tick() *Excep {
 	c.ncycle++
 	pc := c.regs[PC]
-	inst, e := c.readWord(pc)
+	inst, e := c.readU32(pc)
 	if e != nil {
 		return e
 	}
@@ -99,20 +99,20 @@ func (c *cpu) Interrupt(code byte) {
 	c.interrupt.Issue(code)
 }
 
-func (c *cpu) readWord(addr uint32) (uint32, *Excep) {
-	return c.virtMem.ReadWord(addr, c.ring)
+func (c *cpu) readU32(addr uint32) (uint32, *Excep) {
+	return c.virtMem.ReadU32(addr, c.ring)
 }
 
-func (c *cpu) readByte(addr uint32) (uint8, *Excep) {
-	return c.virtMem.ReadByte(addr, c.ring)
+func (c *cpu) readU8(addr uint32) (uint8, *Excep) {
+	return c.virtMem.ReadU8(addr, c.ring)
 }
 
-func (c *cpu) writeWord(addr uint32, v uint32) *Excep {
-	return c.virtMem.WriteWord(addr, c.ring, v)
+func (c *cpu) writeU32(addr uint32, v uint32) *Excep {
+	return c.virtMem.WriteU32(addr, c.ring, v)
 }
 
-func (c *cpu) writeByte(addr uint32, v uint8) *Excep {
-	return c.virtMem.WriteByte(addr, c.ring, v)
+func (c *cpu) writeU8(addr uint32, v uint8) *Excep {
+	return c.virtMem.WriteU8(addr, c.ring, v)
 }
 
 // Ienter enters a interrupt routine.
@@ -121,10 +121,10 @@ func (c *cpu) Ienter(code byte, arg uint32) *Excep {
 	base := hsp - intFrameSize
 
 	writeWord := func(off uint32, v uint32) *Excep {
-		return c.virtMem.WriteWord(base+off, 0, v)
+		return c.virtMem.WriteU32(base+off, 0, v)
 	}
 	writeByte := func(off uint32, b uint8) *Excep {
-		return c.virtMem.WriteByte(base+off, 0, b)
+		return c.virtMem.WriteU8(base+off, 0, b)
 	}
 	if e := writeWord(intFrameSP, c.regs[SP]); e != nil {
 		return e
@@ -156,7 +156,7 @@ func (c *cpu) Syscall() *Excep {
 	userSP := c.regs[SP]
 	syscallSP := c.interrupt.syscallSP()
 
-	if e := c.virtMem.WriteWord(syscallSP-4, 0, userSP); e != nil {
+	if e := c.virtMem.WriteU32(syscallSP-4, 0, userSP); e != nil {
 		return e
 	}
 
@@ -179,19 +179,19 @@ func (c *cpu) Iret() *Excep {
 
 	sp := c.regs[SP]
 	base := sp - intFrameSize
-	sp, e := c.readWord(base + intFrameSP)
+	sp, e := c.readU32(base + intFrameSP)
 	if e != nil {
 		return e
 	}
-	ret, e := c.readWord(base + intFrameRET)
+	ret, e := c.readU32(base + intFrameRET)
 	if e != nil {
 		return e
 	}
-	code, e := c.readByte(base + intFrameCode)
+	code, e := c.readU8(base + intFrameCode)
 	if e != nil {
 		return e
 	}
-	ring, e := c.readByte(base + intFrameRing)
+	ring, e := c.readU8(base + intFrameRing)
 	if e != nil {
 		return e
 	}

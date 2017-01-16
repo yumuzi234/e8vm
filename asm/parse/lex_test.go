@@ -38,8 +38,8 @@ func o(s string) {
 	rc := ioutil.NopCloser(r)
 	toks, errs := Tokens(f, rc)
 	if errs != nil {
-		for _, e := range errs {
-			fmt.Println(e)
+		for _, err := range errs {
+			fmt.Println(err)
 		}
 		fmt.Printf("%d error(s)\n", len(errs))
 	} else {
@@ -56,24 +56,20 @@ func o(s string) {
 	}
 }
 
-func p(s string) {
-	fmt.Println(s)
-}
-
-func ExampleLexer_1() {
+func ExampleTokens_case1() {
 	o("\n")
 	// Output:
 	// t.s8:1: endl
 	// t.s8:1: eof
 }
 
-func ExampleLexer_2() {
+func ExampleTokens_case2() {
 	o("")
 	// Output:
 	// t.s8:1: eof
 }
 
-func ExampleLexer_3() {
+func ExampleTokens_case3() {
 	o("func a { // comment \n\tsyscall\n}")
 	// Output:
 	// t.s8:1: kw - "func"
@@ -87,7 +83,7 @@ func ExampleLexer_3() {
 	// t.s8:3: eof
 }
 
-func ExampleLexer_4() {
+func ExampleTokens_case4() {
 	o("func a{}")
 	// Output
 	// t.s8:1: kw - "func"
@@ -96,7 +92,7 @@ func ExampleLexer_4() {
 	// t.s8:1: rb
 }
 
-func ExampleLexer_keywords() {
+func ExampleTokens_keywords() {
 	o("func var const import")
 	// Output:
 	// t.s8:1: kw - "func"
@@ -106,35 +102,35 @@ func ExampleLexer_keywords() {
 	// t.s8:1: eof
 }
 
-func ExampleLexer_string() {
+func ExampleTokens_string() {
 	o("\"some string \\\"\\\\ here\"")
 	// Output:
 	// t.s8:1: str - "\"some string \\\"\\\\ here\""
 	// t.s8:1: eof
 }
 
-func ExampleLexer_badstr1() {
+func ExampleTokens_badstr1() {
 	o(`"some string`)
 	// Output:
 	// t.s8:1: unexpected eof in string
 	// 1 error(s)
 }
 
-func ExampleLexer_badstr2() {
+func ExampleTokens_badstr2() {
 	o("\"some string\n")
 	// Output:
 	// t.s8:1: unexpected endl in string
 	// 1 error(s)
 }
 
-func ExampleLexer_badcomment() {
+func ExampleTokens_badcomment() {
 	o(`/*some comment`)
 	// Output:
 	// t.s8:1: unexpected eof in block comment
 	// 1 error(s)
 }
 
-func ExampleLexer_comments() {
+func ExampleTokens_comments() {
 	o("// line comment \n /* block comment */")
 	// Output:
 	// t.s8:1: cm - "// line comment "

@@ -70,5 +70,5 @@ func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {
 		src = newList
 	}
 
-	return &tast.ReturnStmt{src}
+	return &tast.ReturnStmt{Exprs: src}
 }

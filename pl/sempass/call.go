@@ -22,9 +22,9 @@ func buildCallLen(b *builder, expr *ast.CallExpr, f tast.Expr) tast.Expr {
 	t := ref.T
 	switch t.(type) {
 	case *types.Slice:
-		return &tast.CallExpr{f, args, tast.NewRef(types.Int)}
+		return &tast.CallExpr{Func: f, Args: args, Ref: tast.NewRef(types.Int)}
 	case *types.Array:
-		return &tast.CallExpr{f, args, tast.NewRef(types.Int)}
+		return &tast.CallExpr{Func: f, Args: args, Ref: tast.NewRef(types.Int)}
 	}
 
 	b.Errorf(expr.Lparen.Pos, "len() does not take %s", t)
@@ -93,7 +93,7 @@ func buildCallMake(b *builder, expr *ast.CallExpr, f tast.Expr) tast.Expr {
 		callArgs.Append(start)
 
 		r := tast.NewRef(st)
-		return &tast.CallExpr{f, callArgs, r}
+		return &tast.CallExpr{Func: f, Args: callArgs, Ref: r}
 	}
 
 	b.Errorf(expr.Lparen.Pos, "cannot make() type %s", t.T)
@@ -191,5 +191,5 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 		retRef = tast.AppendRef(retRef, tast.NewRef(t))
 	}
 
-	return &tast.CallExpr{f, args, retRef}
+	return &tast.CallExpr{Func: f, Args: args, Ref: retRef}
 }

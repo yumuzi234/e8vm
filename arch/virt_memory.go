@@ -39,39 +39,39 @@ func (vm *virtMemory) transWrite(addr uint32, ring byte) (uint32, *Excep) {
 	return vm.ptable.TranslateWrite(addr, ring)
 }
 
-// ReadWord reads the byte at the given virtual address.
-func (vm *virtMemory) ReadWord(addr uint32, ring byte) (uint32, *Excep) {
+// ReadU32 reads the byte at the given virtual address.
+func (vm *virtMemory) ReadU32(addr uint32, ring byte) (uint32, *Excep) {
 	addr, e := vm.transRead(addr, ring)
 	if e != nil {
 		return 0, e
 	}
-	return vm.phyMem.ReadWord(addr)
+	return vm.phyMem.ReadU32(addr)
 }
 
-// WriteWord writes the byte at the given virtual address.
-func (vm *virtMemory) WriteWord(addr uint32, ring byte, v uint32) *Excep {
+// WriteU32 writes the byte at the given virtual address.
+func (vm *virtMemory) WriteU32(addr uint32, ring byte, v uint32) *Excep {
 	addr, e := vm.transWrite(addr, ring)
 	if e != nil {
 		return e
 	}
-	return vm.phyMem.WriteWord(addr, v)
+	return vm.phyMem.WriteU32(addr, v)
 }
 
-// ReadByte reads the byte at the given virtual address.
-func (vm *virtMemory) ReadByte(addr uint32, ring byte) (byte, *Excep) {
+// ReadU8 reads the byte at the given virtual address.
+func (vm *virtMemory) ReadU8(addr uint32, ring byte) (byte, *Excep) {
 	addr, e := vm.transRead(addr, ring)
 	if e != nil {
 		return 0, e
 	}
-	return vm.phyMem.ReadByte(addr)
+	return vm.phyMem.ReadU8(addr)
 }
 
-// WriteByte writes a byte at the given virtual address under
+// WriteU8 writes a byte at the given virtual address under
 // a certain ring.
-func (vm *virtMemory) WriteByte(addr uint32, ring byte, v byte) *Excep {
+func (vm *virtMemory) WriteU8(addr uint32, ring byte, v byte) *Excep {
 	addr, e := vm.transWrite(addr, ring)
 	if e != nil {
 		return e
 	}
-	return vm.phyMem.WriteByte(addr, v)
+	return vm.phyMem.WriteU8(addr, v)
 }

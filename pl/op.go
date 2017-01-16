@@ -17,7 +17,7 @@ func buildUnaryOpExpr(b *builder, expr *tast.OpExpr) *ref {
 	B := b.buildExpr(expr.B)
 	btyp := B.Type()
 	if op == "&" {
-		ret := b.newTemp(&types.Pointer{btyp})
+		ret := b.newTemp(&types.Pointer{T: btyp})
 		b.b.Arith(ret.IR(), nil, op, B.IR())
 		return ret
 	} else if types.IsConst(btyp) {

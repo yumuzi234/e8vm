@@ -29,7 +29,7 @@ func TestInstBr(t *testing.T) {
 	}
 
 	wr := func(addr, w uint32) {
-		e := m.WriteWord(addr, w)
+		e := m.WriteU32(addr, w)
 		if e != nil {
 			t.Fatal(e)
 		}

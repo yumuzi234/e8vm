@@ -10,7 +10,7 @@ func unaryOpBool(b *builder, opTok *lexing.Token, B tast.Expr) tast.Expr {
 	op := opTok.Lit
 	if op == "!" {
 		t := B.R().T
-		return &tast.OpExpr{nil, opTok, B, tast.NewRef(t)}
+		return &tast.OpExpr{Op: opTok, B: B, Ref: tast.NewRef(t)}
 	}
 
 	b.Errorf(opTok.Pos, "invalid operation: %q on boolean", op)
@@ -22,7 +22,7 @@ func binaryOpBool(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 	switch op {
 	case "==", "!=", "&&", "||":
 		r := tast.NewRef(types.Bool)
-		return &tast.OpExpr{A, opTok, B, r}
+		return &tast.OpExpr{A: A, Op: opTok, B: B, Ref: r}
 	}
 
 	b.Errorf(opTok.Pos, "%q on bools", op)

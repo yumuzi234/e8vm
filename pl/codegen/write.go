@@ -9,7 +9,7 @@ func writeBlock(f *link.Func, b *Block) {
 		f.AddInst(inst.inst)
 		if inst.sym != nil {
 			s := inst.sym
-			f.AddLink(s.fill, &link.PkgSym{s.pkg, s.sym})
+			f.AddLink(s.fill, link.NewPkgSym(s.pkg, s.sym))
 		}
 	}
 }

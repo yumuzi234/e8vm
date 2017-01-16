@@ -8,3 +8,11 @@ type PkgSym struct {
 	// Sym is the symbol name
 	Sym string
 }
+
+// NewPkgSym creates a new package symbol.
+func NewPkgSym(pkg, sym string) *PkgSym {
+	return &PkgSym{
+		Pkg: pkg,
+		Sym: sym,
+	}
+}

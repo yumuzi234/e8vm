@@ -52,7 +52,7 @@ func (pm *phyMemory) Page(pn uint32) *page {
 	return ret
 }
 
-func (pm *phyMemory) pageForByte(addr uint32) (*page, *Excep) {
+func (pm *phyMemory) pageForU8(addr uint32) (*page, *Excep) {
 	p := pm.Page(addr / PageSize)
 	if p == nil {
 		return nil, newOutOfRange(addr)
@@ -60,51 +60,51 @@ func (pm *phyMemory) pageForByte(addr uint32) (*page, *Excep) {
 	return p, nil
 }
 
-func (pm *phyMemory) pageForWord(addr uint32) (*page, *Excep) {
+func (pm *phyMemory) pageForU32(addr uint32) (*page, *Excep) {
 	if addr%4 != 0 {
 		return nil, errMisalign
 	}
-	return pm.pageForByte(addr)
+	return pm.pageForU8(addr)
 }
 
-// ReadByte reads the byte at the given address.
+// ReadU8 reads the byte at the given address.
 // If the address is out of range, it returns an error.
-func (pm *phyMemory) ReadByte(addr uint32) (byte, *Excep) {
-	p, e := pm.pageForByte(addr)
+func (pm *phyMemory) ReadU8(addr uint32) (byte, *Excep) {
+	p, e := pm.pageForU8(addr)
 	if e != nil {
 		return 0, e
 	}
-	return p.ReadByte(addr), nil
+	return p.ReadU8(addr), nil
 }
 
-// WriteByte writes the byte at the given address.
+// WriteU8 writes the byte at the given address.
 // If the address is out of range, it returns an error.
-func (pm *phyMemory) WriteByte(addr uint32, v byte) *Excep {
-	p, e := pm.pageForByte(addr)
+func (pm *phyMemory) WriteU8(addr uint32, v byte) *Excep {
+	p, e := pm.pageForU8(addr)
 	if e != nil {
 		return e
 	}
-	p.WriteByte(addr, v)
+	p.WriteU8(addr, v)
 	return e
 }
 
-// ReadWord reads the byte at the given address.
+// ReadU32 reads the byte at the given address.
 // If the address is out of range or not 4-byte aligned, it returns an error.
-func (pm *phyMemory) ReadWord(addr uint32) (uint32, *Excep) {
-	p, e := pm.pageForWord(addr)
+func (pm *phyMemory) ReadU32(addr uint32) (uint32, *Excep) {
+	p, e := pm.pageForU32(addr)
 	if e != nil {
 		return 0, e
 	}
-	return p.ReadWord(addr), nil
+	return p.ReadU32(addr), nil
 }
 
-// WriteWord reads the byte at the given address.
+// WriteU32 reads the byte at the given address.
 // If the address is out of range or not 4-byte aligned, it returns an error.
-func (pm *phyMemory) WriteWord(addr uint32, v uint32) *Excep {
-	p, e := pm.pageForWord(addr)
+func (pm *phyMemory) WriteU32(addr uint32, v uint32) *Excep {
+	p, e := pm.pageForU32(addr)
 	if e != nil {
 		return e
 	}
-	p.WriteWord(addr, v)
+	p.WriteU32(addr, v)
 	return nil
 }

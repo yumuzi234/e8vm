@@ -19,7 +19,7 @@ func parseStmt(p *parser) ast.Stmt {
 			return parseIfStmt(p)
 		case "for":
 			return parseForStmt(p)
-		//case "switch":
+		// case "switch":
 		//	return parseSwitchStmt(p)
 		case "return":
 			return parseReturnStmt(p, true)

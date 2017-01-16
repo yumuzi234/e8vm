@@ -49,7 +49,7 @@ func buildIf(
 
 	body := buildBlock(b, ifs.(*ast.Block))
 	next := buildElseStmt(b, elses)
-	return &tast.IfStmt{c, body, next}
+	return &tast.IfStmt{Expr: c, Body: body, Else: next}
 }
 
 func buildElseStmt(b *builder, stmt *ast.ElseStmt) tast.Stmt {

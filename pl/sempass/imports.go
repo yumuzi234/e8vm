@@ -37,7 +37,7 @@ func buildImports(
 			continue
 		}
 
-		t := &types.Pkg{as, p.Lang, p.Symbols}
+		t := &types.Pkg{As: as, Lang: p.Lang, Syms: p.Symbols}
 		sym := syms.Make(b.path, as, tast.SymImport, nil, t, pos)
 		conflict := b.scope.Declare(sym)
 		if conflict != nil {

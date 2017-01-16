@@ -25,7 +25,7 @@ func unaryOpConst(b *builder, opTok *lexing.Token, B tast.Expr) tast.Expr {
 	case "+":
 		return B // just shortcut this
 	case "-":
-		return &tast.Const{tast.NewRef(types.NewNumber(-v))}
+		return tast.NewConst(tast.NewRef(types.NewNumber(-v)))
 	}
 
 	b.Errorf(opTok.Pos, "invalid operation: %q on %s", op, B)
@@ -49,7 +49,7 @@ func binaryOpConst(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 	}
 
 	r := func(v int64) tast.Expr {
-		return &tast.Const{tast.NewRef(types.NewNumber(v))}
+		return tast.NewConst(tast.NewRef(types.NewNumber(v)))
 	}
 
 	switch op {
@@ -78,7 +78,10 @@ func binaryOpConst(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 		}
 		return r(va / vb)
 	case "==", "!=", ">", "<", ">=", "<=":
-		return &tast.OpExpr{A, opTok, B, tast.NewRef(types.Bool)}
+		return &tast.OpExpr{
+			A: A, Op: opTok, B: B,
+			Ref: tast.NewRef(types.Bool),
+		}
 	case "<<":
 		if vb < 0 {
 			b.Errorf(opTok.Pos, "shift with negative value: %d", vb)
@@ -104,7 +107,7 @@ func unaryOpInt(b *builder, opTok *lexing.Token, B tast.Expr) tast.Expr {
 		return B
 	case "-", "^":
 		t := B.R().T
-		return &tast.OpExpr{nil, opTok, B, tast.NewRef(t)}
+		return &tast.OpExpr{Op: opTok, B: B, Ref: tast.NewRef(t)}
 	}
 
 	b.Errorf(opTok.Pos, "invalid operation: %q on %s", op, B)
@@ -118,10 +121,10 @@ func binaryOpInt(
 	switch op {
 	case "+", "-", "*", "&", "|", "^", "%", "/":
 		r := tast.NewRef(t)
-		return &tast.OpExpr{A, opTok, B, r}
+		return &tast.OpExpr{A: A, Op: opTok, B: B, Ref: r}
 	case "==", "!=", ">", "<", ">=", "<=":
 		r := tast.NewRef(types.Bool)
-		return &tast.OpExpr{A, opTok, B, r}
+		return &tast.OpExpr{A: A, Op: opTok, B: B, Ref: r}
 	}
 
 	b.Errorf(opTok.Pos, "%q on ints", op)

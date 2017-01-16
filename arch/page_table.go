@@ -77,7 +77,7 @@ func (pt *pageTable) Translate(addr uint32, ring byte) (uint32, *Excep) {
 
 	// first level page table entry
 	pt.pte1Addr = pt.root + index1*4
-	w, e := pt.mem.ReadWord(pt.pte1Addr)
+	w, e := pt.mem.ReadU32(pt.pte1Addr)
 	if e != nil {
 		return 0, e
 	}
@@ -90,7 +90,7 @@ func (pt *pageTable) Translate(addr uint32, ring byte) (uint32, *Excep) {
 	pn1 := pt.pte1.pn()
 
 	pt.pte2Addr = pn1*PageSize + index2*4
-	w, e = pt.mem.ReadWord(pt.pte2Addr)
+	w, e = pt.mem.ReadU32(pt.pte2Addr)
 	if e != nil {
 		return 0, e
 	}
@@ -106,12 +106,12 @@ func (pt *pageTable) Translate(addr uint32, ring byte) (uint32, *Excep) {
 }
 
 func (pt *pageTable) updatePte() *Excep {
-	e := pt.mem.WriteWord(pt.pte1Addr, uint32(pt.pte1))
+	e := pt.mem.WriteU32(pt.pte1Addr, uint32(pt.pte1))
 	if e != nil {
 		return e
 	}
 
-	e = pt.mem.WriteWord(pt.pte2Addr, uint32(pt.pte2))
+	e = pt.mem.WriteU32(pt.pte2Addr, uint32(pt.pte2))
 	if e != nil {
 		return e
 	}

@@ -85,7 +85,7 @@ func (c *calls) system(ctrl uint8, in []byte, respSize int) (
 		}
 
 		c.queue.Remove(front)
-		c.p.writeWord(callsService, m.service) // overwrite the service
+		c.p.writeU32(callsService, m.service) // overwrite the service
 		return m.p, 0, nil
 
 	// TODO(h8liu): add other stuff
@@ -112,11 +112,11 @@ func (c *calls) call(ctrl uint8, s uint32, req []byte, respSize int) (
 }
 
 func (c *calls) respondCode(code int32) {
-	c.p.writeWord(callsResponseCode, uint32(code))
+	c.p.writeU32(callsResponseCode, uint32(code))
 }
 
 func (c *calls) respSize() int {
-	ret := c.p.readWord(callsResponseSize)
+	ret := c.p.readU32(callsResponseSize)
 	if ret > devs.MaxLen {
 		ret = devs.MaxLen
 	}
@@ -124,14 +124,14 @@ func (c *calls) respSize() int {
 }
 
 func (c *calls) invoke() *Excep {
-	control := c.p.readByte(callsControl)
+	control := c.p.readU8(callsControl)
 	if control == 0 {
 		return nil
 	}
 
-	service := c.p.readWord(callsService)
-	reqAddr := c.p.readWord(callsRequestAddr)
-	reqLen := c.p.readWord(callsRequestLen)
+	service := c.p.readU32(callsService)
+	reqAddr := c.p.readU32(callsRequestAddr)
+	reqLen := c.p.readU32(callsRequestLen)
 
 	var req []byte
 	if reqLen > 0 {
@@ -140,7 +140,7 @@ func (c *calls) invoke() *Excep {
 
 	for i := range req {
 		var exp *Excep
-		req[i], exp = c.mem.ReadByte(reqAddr + uint32(i))
+		req[i], exp = c.mem.ReadU8(reqAddr + uint32(i))
 		if exp != nil {
 			return exp
 		}
@@ -156,7 +156,7 @@ func (c *calls) invoke() *Excep {
 		return nil
 	}
 
-	respAddr := c.p.readWord(callsResponseAddr)
+	respAddr := c.p.readU32(callsResponseAddr)
 	respLen := len(resp)
 	if respLen > devs.MaxLen {
 		c.respondCode(devs.ErrInternal)
@@ -164,7 +164,7 @@ func (c *calls) invoke() *Excep {
 	}
 
 	// we will write the response length anyways
-	c.p.writeWord(callsResponseLen, uint32(respLen))
+	c.p.writeU32(callsResponseLen, uint32(respLen))
 	if respLen > respSize {
 		c.respondCode(devs.ErrSmallBuf)
 		return nil
@@ -172,14 +172,14 @@ func (c *calls) invoke() *Excep {
 
 	if resp != nil {
 		for i := range resp {
-			if exp := c.mem.WriteByte(respAddr+uint32(i), resp[i]); exp != nil {
+			if exp := c.mem.WriteU8(respAddr+uint32(i), resp[i]); exp != nil {
 				return exp
 			}
 		}
 	}
 
 	c.respondCode(0)
-	c.p.writeByte(callsControl, 0)
+	c.p.writeU8(callsControl, 0)
 	return nil
 }
 

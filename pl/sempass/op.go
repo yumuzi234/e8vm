@@ -131,7 +131,7 @@ func buildBinaryOpExpr(b *builder, expr *ast.OpExpr) tast.Expr {
 		}
 
 		r := tast.NewRef(atyp)
-		return &tast.OpExpr{A, opTok, B, r}
+		return &tast.OpExpr{A: A, Op: opTok, B: B, Ref: r}
 	}
 
 	if v, ok := types.NumConst(atyp); ok {

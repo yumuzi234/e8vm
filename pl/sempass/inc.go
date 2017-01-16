@@ -41,7 +41,7 @@ func buildIncStmt(b *builder, stmt *ast.IncStmt) tast.Stmt {
 
 	switch stmt.Op.Lit {
 	case "++", "--":
-		return &tast.IncStmt{expr, stmt.Op}
+		return &tast.IncStmt{Expr: expr, Op: stmt.Op}
 	default:
 		b.Errorf(stmt.Op.Pos, "invalid inc op %s", op)
 		return nil
