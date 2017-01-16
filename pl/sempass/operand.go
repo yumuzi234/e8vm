@@ -109,7 +109,7 @@ func buildConstIdent(b *builder, ident *lexing.Token) tast.Expr {
 		return &tast.Ident{Token: ident, Ref: ref, Sym: s}
 	}
 
-	b.Errorf(ident.Pos, "%s is a %s; expect a const",
+	b.CodeErrorf(ident.Pos, "pl.expectConst", "%s is a %s; expect a const",
 		ident.Lit, tast.SymStr(s.Type),
 	)
 	return nil
