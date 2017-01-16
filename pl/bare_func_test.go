@@ -211,7 +211,6 @@ func TestBareFunc_bad(t *testing.T) {
 	o("invalidExprStmt", "printInt")
 	o("invalidExprStmt", "3+4")
 	o("invalidExprStmt", "true > false") // boolean cannot compare
-
 	o("invalidExprStmt", "var a,b int; _:= &a+&b")
 	o("invalidExprStmt", "var a,b []int; _:= a+b")
 	o("invalidExprStmt", "_:= nil+nil")
@@ -252,7 +251,7 @@ func TestBareFunc_bad(t *testing.T) {
 	o("argsMismatch", "printInt(true)")          // type mismatch
 	o("argsMismatch", "printInt(3, 4)")          // arg count mismatch
 	o("argsMismatch", "printInt()")              // arg count mismatch
-	o("argsMismatch", "a := printInt(3, 4)")     // mismatch
+	o("argsMismatch", "a := printInt(3, 4)")     // return value mismatch
 	o("cannotDefine.countMismatch", "a := 3, 4") // count mismatch
 	o("cannotDefine.countMismatch", "a, b := 3") // count mismatch
 
