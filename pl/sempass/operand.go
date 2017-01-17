@@ -14,19 +14,41 @@ import (
 func buildInt(b *builder, op *lexing.Token) tast.Expr {
 	ret, e := strconv.ParseInt(op.Lit, 0, 64)
 	if e != nil {
-		b.Errorf(op.Pos, "invalid integer: %s", e)
+		b.CodeErrorf(op.Pos, "pl.cannotCast.invalidInteger",
+			"invalid integer: %s", e)
 		return nil
 	}
 
-	if ret < math.MinInt32 {
-		b.Errorf(op.Pos, "integer too small to fit in 32-bit")
-		return nil
-	} else if ret > math.MaxUint32 {
-		b.Errorf(op.Pos, "integer too large to fit in 32-bit")
+	if ret > math.MaxUint32 {
+		b.CodeErrorf(op.Pos, "pl.cannotCast.integerOverFlowed",
+			"integer too large to fit in 32-bit")
 		return nil
 	}
 
 	ref := tast.NewConstRef(types.NewNumber(ret), ret)
+	return tast.NewConst(ref)
+}
+
+func buildFloat(b *builder, op *lexing.Token) tast.Expr {
+	ret, e := strconv.ParseFloat(op.Lit, 64)
+	if e != nil {
+		b.CodeErrorf(op.Pos, "pl.cannotCast.invalidFloat",
+			"invalid integer: %s", e)
+		return nil
+	}
+	if ret != math.Floor(ret) {
+		b.CodeErrorf(
+			op.Pos, "pl.notYetSupported",
+			"float is not yet supported")
+		return nil
+	}
+	if ret > math.MaxUint32 {
+		b.CodeErrorf(op.Pos, "pl.cannotCast.integerOverFlowed",
+			"integer too large to fit in 32-bit")
+		return nil
+	}
+	retInt := int64(ret)
+	ref := tast.NewConstRef(types.NewNumber(retInt), retInt)
 	return tast.NewConst(ref)
 }
 
@@ -119,6 +141,8 @@ func buildConstOperand(b *builder, op *ast.Operand) tast.Expr {
 	switch op.Token.Type {
 	case parse.Int:
 		return buildInt(b, op.Token)
+	case parse.Float:
+		return buildFloat(b, op.Token)
 	case parse.Ident:
 		return buildConstIdent(b, op.Token)
 	}
@@ -139,6 +163,8 @@ func buildOperand(b *builder, op *ast.Operand) tast.Expr {
 	switch op.Token.Type {
 	case parse.Int:
 		return buildInt(b, op.Token)
+	case parse.Float:
+		return buildFloat(b, op.Token)
 	case parse.Char:
 		return buildChar(b, op.Token)
 	case parse.String:

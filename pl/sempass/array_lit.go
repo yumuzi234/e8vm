@@ -15,7 +15,7 @@ func buildArrayLit(b *builder, lit *ast.ArrayLiteral) tast.Expr {
 
 	if lit.Type.Len != nil {
 		b.CodeErrorf(
-			ast.ExprPos(lit), "pl.notSupport",
+			ast.ExprPos(lit), "pl.notYetSupported",
 			"array literal with length not supported yet",
 		)
 		return nil
