@@ -248,12 +248,12 @@ func TestBareFunc_bad(t *testing.T) {
 	// redefine
 	o("declConflict.var", "a:=3; a:=4")
 
-	//argsMismatch
+	// argsMismatch
 	o("argsMismatch.type", "printInt(true)")
 	o("argsMismatch.type", "const a = -1; printUint(a)")
 	o("argsMismatch.count", "printInt(3, 4)")
 	o("argsMismatch.count", "printInt()")
-	o("argsMismatch", "const a = -1; printUint(a)")
+	o("argsMismatch.type", "const a = -1; printUint(a)")
 
 	o("cannotDefine.countMismatch", "a := 3, 4") // count mismatch
 	o("cannotDefine.countMismatch", "a, b := 3") // count mismatch
