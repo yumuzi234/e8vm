@@ -33,7 +33,7 @@ func buildFloat(b *builder, op *lexing.Token) tast.Expr {
 	ret, e := strconv.ParseFloat(op.Lit, 64)
 	if e != nil {
 		b.CodeErrorf(op.Pos, "pl.cannotCast.invalidFloat",
-			"invalid integer: %s", e)
+			"invalid float: %s", e)
 		return nil
 	}
 	if ret != math.Floor(ret) {
