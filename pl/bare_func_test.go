@@ -253,6 +253,7 @@ func TestBareFunc_bad(t *testing.T) {
 	o("argsMismatch.type", "const a = -1; printUint(a)")
 	o("argsMismatch.count", "printInt(3, 4)")
 	o("argsMismatch.count", "printInt()")
+	o("argsMismatch", "const a = -1; printUint(a)")
 
 	o("cannotDefine.countMismatch", "a := 3, 4") // count mismatch
 	o("cannotDefine.countMismatch", "a, b := 3") // count mismatch
