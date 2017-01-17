@@ -155,6 +155,9 @@ func TestBareFunc_god(t *testing.T) {
 	o("printUint(uint(0x80000000) % 10)", "8")
 	o("a:=uint(214748364); printUint(a*2)", "429496728")
 	o("a:=12e3; printInt(a)", "12000")
+	o("a:=1e-1000; printInt(a)", "0")
+	o("a:=100e-1; printInt(a)", "10")
+	o("a:=1.23e9; printInt(a)", "1230000000")
 
 	o("a:=3; a+=4; printInt(a)", "7")
 	o("a:=3; a-=4; printInt(a)", "-1")
@@ -289,11 +292,13 @@ func TestBareFunc_bad(t *testing.T) {
 
 	// build op
 	o("cannotCast.integerOverFlowed", "a:=12345678987654321")
-	o("cannotParseConst", "a:=19223372036854775808") // too large for int64
-	o("cannotParseConst.wrongFloatFormat", "a:=10e")
+	o("cannotCast.integerOverFlowed", "a:=1.2e10")
+	o("cannotCast.invalidInteger", "a:=19223372036854775808") // too large for int64
+	o("cannotCast.invalidFloat", "a:=10e")
+	o("cannotCast.invalidFloat", "a:=0.2e-")
 
 	// not yet supported
-	o("notYetSupported", "a:=1e-2")
+	o("notYetSupported", "a:=10e-2")
 	o("notYetSupported", "a:=1.2")
 	o("notYetSupported", "var a=[1]int {1}")
 

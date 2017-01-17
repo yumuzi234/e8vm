@@ -14,11 +14,11 @@ import (
 func buildInt(b *builder, op *lexing.Token) tast.Expr {
 	ret, e := strconv.ParseInt(op.Lit, 0, 64)
 	if e != nil {
-		b.CodeErrorf(op.Pos, "pl.cannotParseConst",
+		b.CodeErrorf(op.Pos, "pl.cannotCast.invalidInteger",
 			"invalid integer: %s", e)
 		return nil
 	}
-	// ret can be a negative number? no?
+
 	if ret > math.MaxUint32 {
 		b.CodeErrorf(op.Pos, "pl.cannotCast.integerOverFlowed",
 			"integer too large to fit in 32-bit")
@@ -30,65 +30,25 @@ func buildInt(b *builder, op *lexing.Token) tast.Expr {
 }
 
 func buildFloat(b *builder, op *lexing.Token) tast.Expr {
-	s := op.Lit
-	var ret int64
-	var index int
-	for i, r := range s {
-		if r == '.' {
-			b.CodeErrorf(
-				op.Pos, "pl.notYetSupported",
-				"float is not yet supported")
-			return nil
-		}
-		if r == 'e' || r == 'E' {
-			index = i
-			idxPart := s[0:i]
-			idxNum, e := strconv.ParseInt(idxPart, 0, 64)
-			if e != nil {
-				b.CodeErrorf(op.Pos, "pl.cannotParseConst",
-					"invalid integer: %s", e)
-				return nil
-			}
-			ret = idxNum
-			break
-		}
-	}
-	expPart := s[index+1:]
-	if len(expPart) == 0 {
-		b.CodeErrorf(
-			op.Pos, "pl.cannotParseConst.wrongFloatFormat",
-			"malformed exponent part for the number: %s", op.Lit)
-		return nil
-	}
-	if s[index+1] == 45 { // 45 for '-'
-		b.CodeErrorf(
-			op.Pos, "pl.notYetSupported",
-			"negative exponent index is not yet supported")
-		return nil
-	}
-	expNum, e := strconv.ParseInt(expPart, 0, 64)
+	ret, e := strconv.ParseFloat(op.Lit, 64)
 	if e != nil {
-		b.CodeErrorf(op.Pos, "pl.cannotParseConst",
+		b.CodeErrorf(op.Pos, "pl.cannotCast.invalidFloat",
 			"invalid integer: %s", e)
 		return nil
 	}
-
-	if expNum > 10 {
-		b.CodeErrorf(op.Pos, "pl.cannotCast.integerOverFlowed",
-			"integer too large to fit in 32-bit")
+	if ret != math.Floor(ret) {
+		b.CodeErrorf(
+			op.Pos, "pl.notYetSupported",
+			"float is not yet supported")
 		return nil
 	}
-	for ; expNum > 0; expNum-- {
-		ret *= 10
-	}
-
 	if ret > math.MaxUint32 {
 		b.CodeErrorf(op.Pos, "pl.cannotCast.integerOverFlowed",
 			"integer too large to fit in 32-bit")
 		return nil
 	}
-
-	ref := tast.NewConstRef(types.NewNumber(ret), ret)
+	retInt := int64(ret)
+	ref := tast.NewConstRef(types.NewNumber(retInt), retInt)
 	return tast.NewConst(ref)
 }
 
