@@ -66,35 +66,35 @@ func TestBareFunc_god(t *testing.T) {
 	o("printInt(3^1)", "2")
 	o("printInt(0xf)", "15")
 	o("printInt(0xA)", "10")
-	o("a := 3; if a==3 { printInt(5) }", "5")
-	o("a := 5; if a==3 { printInt(5) }", "")
-	o("a := 5; if a==3 { printInt(5) } else { printInt(10) }", "10")
-	o("a := 3; for a>0 { printInt(a); a-- }", "3\n2\n1")
-	o("a := 0; for a<4 { printInt(a); a++ }", "0\n1\n2\n3")
-	o("for i := 0;i<3;i++ { printInt(i); }", "0\n1\n2")
-	o("for i := 0;i<10;i+=3 { printInt(i); }", "0\n3\n6\n9")
-	o("i := 3; for i := 0;i<3;i++ { printInt(i); }", "0\n1\n2")
-	o("i := 0; for ;i<3;i++ { printInt(i); }", "0\n1\n2")
-	o("a := 1; { a := 3; printInt(a) }", "3")
-	o("true := 3; printInt(true)", "3")
-	o("a,b := 3,4; printInt(a); printInt(b)", "3\n4")
-	o("a,b := 3,4; { a,b := b,a; printInt(a); printInt(b) }", "4\n3")
-	o("a,b := 3,4; a,b=b,a; printInt(a); printInt(b)", "4\n3")
+	o("a:=3; if a==3 { printInt(5) }", "5")
+	o("a:=5; if a==3 { printInt(5) }", "")
+	o("a:=5; if a==3 { printInt(5) } else { printInt(10) }", "10")
+	o("a:=3; for a>0 { printInt(a); a-- }", "3\n2\n1")
+	o("a:=0; for a<4 { printInt(a); a++ }", "0\n1\n2\n3")
+	o("for i:=0;i<3;i++ { printInt(i); }", "0\n1\n2")
+	o("for i:=0;i<10;i+=3 { printInt(i); }", "0\n3\n6\n9")
+	o("i:=3; for i:=0;i<3;i++ { printInt(i); }", "0\n1\n2")
+	o("i:=0; for ;i<3;i++ { printInt(i); }", "0\n1\n2")
+	o("a:=1; { a:=3; printInt(a) }", "3")
+	o("true:=3; printInt(true)", "3")
+	o("a,b:=3,4; printInt(a); printInt(b)", "3\n4")
+	o("a,b:=3,4; { a,b:=b,a; printInt(a); printInt(b) }", "4\n3")
+	o("a,b:=3,4; a,b=b,a; printInt(a); printInt(b)", "4\n3")
 	o("var a int; printInt(a)", "0")
 	o("var a (int); printInt(a)", "0")
 	o("var a,b = 3,4; printInt(a); printInt(b)", "3\n4")
 	o("var a,b = 3,4; printInt(a); printInt(b)", "3\n4")
 	o("var a,b int = 3,4; printInt(a); printInt(b)", "3\n4")
 	o("var a,b uint = 3,4; printUint(a); printUint(b)", "3\n4")
-	o(` a,b := 3,4; { var a,b=b,a; printInt(a); printInt(b) }
+	o(` a,b:=3,4; { var a,b=b,a; printInt(a); printInt(b) }
 	   	printInt(a); printInt(b)
 	`, "4\n3\n3\n4")
 	o("var i int; for i < 3 { printInt(i); i=i+1 }", "0\n1\n2")
 	o("for true { break }; printInt(3)", "3")
 	o("for true { if true break }; printInt(3)", "3")
 	o("for { break }; printInt(33)", "33")
-	o("for i := 0; i<5; i++ { printInt(i); i++; continue }", "0\n2\n4")
-	o("i := 0; for i<3 { printInt(i); i=i+1; continue; break }", "0\n1\n2")
+	o("for i:=0; i<5; i++ { printInt(i); i++; continue }", "0\n2\n4")
+	o("i:=0; for i<3 { printInt(i); i=i+1; continue; break }", "0\n1\n2")
 	o("printChar('x')", "x")
 	o("var a=32; var b=*&a; printInt(b)", "32")
 	o("var a=32; var b=&a; var c=*b; printInt(c)", "32")
@@ -104,9 +104,9 @@ func TestBareFunc_god(t *testing.T) {
 	o("if nil!=nil { printInt(3) }", "")
 	o("var a*int; if a==nil { printInt(3) }", "3")
 	o("var a*int; if nil==a { printInt(3) }", "3")
-	o("b := 3; a := &b; if *a==3 { printInt(*a) }", "3")
-	o("b := 3; a := &b; a=nil; if a==nil { printInt(b) }", "3")
-	o("b := 3; a := &b; *a=4; printInt(b)", "4")
+	o("b:=3; a:=&b; if *a==3 { printInt(*a) }", "3")
+	o("b:=3; a:=&b; a=nil; if a==nil { printInt(b) }", "3")
+	o("b:=3; a:=&b; *a=4; printInt(b)", "4")
 	o("if true==true { printChar('y') }", "y")
 	o("if true!=true { printChar('y') }", "")
 	o("if true==false { printChar('y') }", "")
@@ -114,19 +114,19 @@ func TestBareFunc_god(t *testing.T) {
 	o("if false==false { printChar('y') }", "y")
 	o("if false!=false { printChar('y') }", "")
 	o("var a [4]int; a[3] = 3; printInt(a[3]); printInt(a[2])", "3\n0")
-	o("var a [7]int; a[3]=33; pt := &a[3]; printInt(*pt)", "33")
+	o("var a [7]int; a[3]=33; pt:=&a[3]; printInt(*pt)", "33")
 	o("var a [7]int; printInt(len(a))", "7")
-	o("var a [7]int; s := a[:]; printInt(len(s))", "7")
-	o("var a [7]int; s := a[:3]; printInt(len(s))", "3")
-	o("var a [7]int; s := a[1:]; printInt(len(s))", "6")
-	o("var a [7]int; s := a[1:3]; printInt(len(s))", "2")
-	o("var a [7]int; s := a[0:0]; printInt(len(s))", "0")
-	o("var a [7]int; s := a[:]; a[3]=33; printInt(s[3])", "33")
-	o("var a [7]int; s := a[1:]; a[3]=33; printInt(s[2])", "33")
-	o("var a [7]int; s := a[1:4]; a[3]=33; printInt(s[2])", "33")
-	o("var a [7]int; s := a[:]; a[3]=33; pt := &s[3]; printInt(*pt)", "33")
-	o("a := 3; a++; printInt(a)", "4")
-	o("a := 3; pt := &a; *pt++; printInt(a)", "4")
+	o("var a [7]int; s:=a[:]; printInt(len(s))", "7")
+	o("var a [7]int; s:=a[:3]; printInt(len(s))", "3")
+	o("var a [7]int; s:=a[1:]; printInt(len(s))", "6")
+	o("var a [7]int; s:=a[1:3]; printInt(len(s))", "2")
+	o("var a [7]int; s:=a[0:0]; printInt(len(s))", "0")
+	o("var a [7]int; s:=a[:]; a[3]=33; printInt(s[3])", "33")
+	o("var a [7]int; s:=a[1:]; a[3]=33; printInt(s[2])", "33")
+	o("var a [7]int; s:=a[1:4]; a[3]=33; printInt(s[2])", "33")
+	o("var a [7]int; s:=a[:]; a[3]=33; pt:=&s[3]; printInt(*pt)", "33")
+	o("a:=3; a++; printInt(a)", "4")
+	o("a:=3; pt:=&a; *pt++; printInt(a)", "4")
 
 	o("printInt(int(byte(int(-1))))", "255")
 	o("printInt(int(byte(3)))", "3")
@@ -153,20 +153,21 @@ func TestBareFunc_god(t *testing.T) {
 	o("printInt(int(uint(33) >> 1))", "16")
 	o("printUint(uint(0x80000000) / 10)", "214748364")
 	o("printUint(uint(0x80000000) % 10)", "8")
-	o("a := uint(214748364); printUint(a*2)", "429496728")
+
+	o("a:=uint(214748364); printUint(a*2)", "429496728")
 	o("a:=12e3; printInt(a)", "12000")
 
-	o("a := 3; a+=4; printInt(a)", "7")
-	o("a := 3; a-=4; printInt(a)", "-1")
-	o("a := 3; a*=4; printInt(a)", "12")
-	o("a := 3; a/=2; printInt(a)", "1")
-	o("a := uint(3); a/=2; printUint(a)", "1")
-	o("a := 33; a<<=uint(1); printInt(a)", "66")
-	o("a := 33; a<<=1; printInt(a)", "66")
-	o("a := 33; a>>=uint(1); printInt(a)", "16")
-	o("a := 33; a>>=1; printInt(a)", "16")
+	o("a:=3; a+=4; printInt(a)", "7")
+	o("a:=3; a-=4; printInt(a)", "-1")
+	o("a:=3; a*=4; printInt(a)", "12")
+	o("a:=3; a/=2; printInt(a)", "1")
+	o("a:=uint(3); a/=2; printUint(a)", "1")
+	o("a:=33; a<<=uint(1); printInt(a)", "66")
+	o("a:=33; a<<=1; printInt(a)", "66")
+	o("a:=33; a>>=uint(1); printInt(a)", "16")
+	o("a:=33; a>>=1; printInt(a)", "16")
 
-	o("a := 33; b := (*uint)(&a); printUint(*b)", "33")
+	o("a:=33; b:=(*uint)(&a); printUint(*b)", "33")
 
 	o("if 0x33 == 51 { printInt(33) }", "33")
 
@@ -241,17 +242,19 @@ func TestBareFunc_bad(t *testing.T) {
 	o("star.onNonPointer", "var a int; var b=*a")
 
 	// shift
-	o("cannotShift", "a := true; a=a>>1")
-	o("cannotShift", "a := true; b := 2; b=b>>a")
-	o("cannotShift", "a := 2; b := 2; b=b>>a")
+	o("cannotShift", "a:=true; a=a>>1")
+	o("cannotShift", "a:=true; b:=2; b=b>>a")
+	o("cannotShift", "a:=2; b:=2; b=b>>a")
 
 	// redefine
-	o("declConflict.var", "a := 3;a := 4")
+	o("declConflict.var", "a:=3; a:=4")
 
-	o("argsMismatch", "printInt(true)")          // type mismatch
-	o("argsMismatch", "printInt(3, 4)")          // arg count mismatch
-	o("argsMismatch", "printInt()")              // arg count mismatch
-	o("argsMismatch", "a := printInt(3, 4)")     // return value mismatch
+	//argsMismatch
+	o("argsMismatch.type", "printInt(true)")
+	o("argsMismatch.type", "const a = -1; printUint(a)")
+	o("argsMismatch.count", "printInt(3, 4)")
+	o("argsMismatch.count", "printInt()")
+
 	o("cannotDefine.countMismatch", "a := 3, 4") // count mismatch
 	o("cannotDefine.countMismatch", "a, b := 3") // count mismatch
 
@@ -276,15 +279,13 @@ func TestBareFunc_bad(t *testing.T) {
 
 	o("cannotAlloc", "a := int")
 
-	o("negArrayIndex", "var a [8]int; i := a[-1]") // negative array index
-	o("negArrayIndex", "var a [7]int; s := a[:]; i := s[-33]")
+	o("negArrayIndex", "var a [8]int; i:=a[-1]") // negative array index
+	o("negArrayIndex", "var a [7]int; s:=a[:]; i:=s[-33]")
 	o("nonConstArrayIndex", "var a [0==0]int")
 
 	// divide by zero
-	o("divideByZero", "a := 3/0")
-	o("divideByZero", "a := 3%0")
-
-	o("argsMismatch", "const a = -1; printUint(a)")
+	o("divideByZero", "a:=3/0")
+	o("divideByZero", "a:=3%0")
 
 	// build op
 	o("cannotCast.integerOverFlowed", "a:=12345678987654321")
@@ -295,6 +296,7 @@ func TestBareFunc_bad(t *testing.T) {
 	o("notYetSupported", "a:=1e-2")
 	o("notYetSupported", "a:=1.2")
 	o("notYetSupported", "var a=[1]int {1}")
+
 }
 
 func TestBareFunc_panic(t *testing.T) {
@@ -315,14 +317,14 @@ func TestBareFunc_panic(t *testing.T) {
 	o("var a *int=nil; var b=*a")
 	o("var a *int; printInt(*a)")
 	o("var a *bool; if *a {}")
-	o("var s []int; i := s[0]")
-	o("var a [8]int; j := -1; i := a[j]")
-	o("var a [8]int; i := a[9]")
-	o("var a [7]int; s := a[0:0]; i := s[0]")
-	o("var a [7]int; s := a[1:3]; i := s[2]")
-	o("var a [7]int; s := a[:]; j := -33; i := s[j]")
-	o("d := 0; a := 3/d")
-	o("d := 0; a := -3%d")
-	o("var d [3]int; s := d[:]; s=nil; printInt(s[1])")
-	o("d := make([]int, 3, uint(0))")
+	o("var s []int; i:=s[0]")
+	o("var a [8]int; j:=-1; i:=a[j]")
+	o("var a [8]int; i:=a[9]")
+	o("var a [7]int; s:=a[0:0]; i:=s[0]")
+	o("var a [7]int; s:=a[1:3]; i:=s[2]")
+	o("var a [7]int; s:=a[:]; j:=-33; i:=s[j]")
+	o("d:=0; a:=3/d")
+	o("d:=0; a:=-3%d")
+	o("var d [3]int; s:=d[:]; s=nil; printInt(s[1])")
+	o("d:=make([]int, 3, uint(0))")
 }
