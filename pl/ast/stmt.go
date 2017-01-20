@@ -60,6 +60,33 @@ type ElseStmt struct {
 	Next *ElseStmt // next else statement
 }
 
+// SwitchStmt is the swithc statement block
+type SwitchStmt struct {
+	Kw      *lexing.Token
+	Init    Stmt // optional
+	Cond    Expr // optional, if not expression detect, Cond = true
+	Lbrace  *lexing.Token
+	Body    []CaseStmt
+	Default DefaultStmt
+	Rbrace  *lexing.Token
+	Semi    *lexing.Token
+}
+
+// CaseStmt is the inset statement block in switch
+type CaseStmt struct {
+	Kw    *lexing.Token
+	Cond  Expr
+	Colon *lexing.Token
+	Stmts []Stmt
+}
+
+// DefaultStmt is the inset statement block in switch
+type DefaultStmt struct {
+	Kw    *lexing.Token
+	Colon *lexing.Token
+	Stmts []Stmt
+}
+
 // ForStmt is a loop statement
 type ForStmt struct {
 	Kw        *lexing.Token
