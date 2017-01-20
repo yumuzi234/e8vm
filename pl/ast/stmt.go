@@ -67,7 +67,7 @@ type SwitchStmt struct {
 	Cond    Expr // optional, if not expression detect, Cond = true
 	Lbrace  *lexing.Token
 	Body    []CaseStmt
-	Default DefaultStmt
+	Default *DefaultStmt
 	Rbrace  *lexing.Token
 	Semi    *lexing.Token
 }
