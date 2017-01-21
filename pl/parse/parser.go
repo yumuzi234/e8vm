@@ -13,10 +13,9 @@ type parser struct {
 	x lexing.Tokener
 	*lexing.Parser
 
-	exprFunc    func(p *parser) ast.Expr
-	typeFunc    func(p *parser) ast.Expr
-	seeTypeFunc func(p *parser) bool
-	stmtFunc    func(p *parser) ast.Stmt
+	exprFunc func(p *parser) ast.Expr
+	typeFunc func(p *parser) ast.Expr
+	stmtFunc func(p *parser) ast.Stmt
 
 	golike       bool
 	inlineMethod bool
@@ -161,14 +160,6 @@ func (p *parser) skipErrStmt() bool {
 
 	p.BailOut()
 	return true
-}
-
-func (p *parser) SeeType() bool {
-	if p.seeTypeFunc == nil {
-		return false
-	}
-
-	return p.seeTypeFunc(p)
 }
 
 func (p *parser) SeeKeyword(kw string) bool {

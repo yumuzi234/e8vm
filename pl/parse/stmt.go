@@ -55,7 +55,6 @@ func makeParser(f string, r io.Reader, golike bool) (
 	p.exprFunc = parseExpr
 	p.stmtFunc = parseStmt
 	p.typeFunc = parseType
-	p.seeTypeFunc = seeType
 	return p, rec
 }
 

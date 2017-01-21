@@ -4,19 +4,6 @@ import (
 	"shanhu.io/smlvm/pl/ast"
 )
 
-func seeType(p *parser) bool {
-	if p.See(Ident) {
-		return true
-	}
-	if p.SeeOp("*", "[", "(") {
-		return true
-	}
-	if p.SeeKeyword("func") {
-		return true
-	}
-	return false
-}
-
 func parseType(p *parser) ast.Expr {
 	if p.See(Ident) {
 		ret := ast.NewOperand(p.Shift())

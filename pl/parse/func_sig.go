@@ -59,6 +59,19 @@ func parseParaList(p *parser) *ast.ParaList {
 	return ret
 }
 
+func seeType(p *parser) bool {
+	if p.See(Ident) {
+		return true
+	}
+	if p.SeeOp("*", "[", "(") {
+		return true
+	}
+	if p.SeeKeyword("func") {
+		return true
+	}
+	return false
+}
+
 func parseFuncSig(p *parser) *ast.FuncSig {
 	ret := new(ast.FuncSig)
 	ret.Args = parseParaList(p)
@@ -75,7 +88,7 @@ func parseFuncSig(p *parser) *ast.FuncSig {
 			p.CodeErrorf(ret.Rets.Rparen.Pos, "pl.expectReturnList",
 				"expect return list in \"()\" after the function")
 		}
-	} else if p.SeeType() {
+	} else if seeType(p) {
 		ret.RetType = p.parseType()
 	}
 	return ret
