@@ -9,11 +9,12 @@ import (
 // statement part if a semicolon is seen at the end, the result is a expression
 // if the semicolon is missing. When needSemi is false, the result will always
 // be a simple statement, but the statement will not contain the semicolon.
-// When needSemi is false, the statement cannot be an empty statement.
 func parseSimpleStmtOrExpr(p *parser, needSemi bool) (ast.Stmt, ast.Expr) {
-	if needSemi && p.See(Semi) {
+	if p.See(Semi) {
 		ret := new(ast.EmptyStmt)
-		ret.Semi = p.Shift()
+		if needSemi {
+			ret.Semi = p.Shift()
+		}
 		return ret, nil
 	}
 
