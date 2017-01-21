@@ -135,6 +135,7 @@ func TestSingleFileBad(t *testing.T) {
 	func A() (*int, *int) { return nil, nil}`)
 	o("incStmt.notSingle", ` func f() (int, int) { return 0, 0 }
 		func main() { f()++ }`)
+	o("expectOperand", `func f() { for ;;; {} }`)
 
 	// Bugs found by the fuzzer in the past
 	o("undefinedIdent", "func f() **o.o {}")
