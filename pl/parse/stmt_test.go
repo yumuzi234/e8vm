@@ -186,6 +186,8 @@ func TestStmts_bad(t *testing.T) {
 		"if true break; else {}",
 		"if true break return",
 		"for ; {}",
+		"for ;;; {}",
+		"for ;;;; {}",
 		"for ; ",
 		"for true ;",
 		"if true { x( } else {}",
