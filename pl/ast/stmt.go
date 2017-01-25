@@ -62,27 +62,20 @@ type ElseStmt struct {
 
 // SwitchStmt is the swithc statement block
 type SwitchStmt struct {
-	Kw      *lexing.Token
-	Init    Stmt // optional
-	Cond    Expr // optional, if not expression detect, Cond = true
-	Lbrace  *lexing.Token
-	Body    []CaseStmt
-	Default *DefaultStmt
-	Rbrace  *lexing.Token
-	Semi    *lexing.Token
+	Kw          *lexing.Token
+	Fallthrough bool
+	Cond        Expr // optional, if not expression detect, Cond = true
+	Lbrace      *lexing.Token
+	Body        []*Case
+	Rbrace      *lexing.Token
+	Semi        *lexing.Token
 }
 
-// CaseStmt is the inset statement block in switch
-type CaseStmt struct {
+// Case is the inset statement block in switch
+// default is included here, Kw will determine it is case or default
+type Case struct {
 	Kw    *lexing.Token
 	Cond  Expr
-	Colon *lexing.Token
-	Stmts []Stmt
-}
-
-// DefaultStmt is the inset statement block in switch
-type DefaultStmt struct {
-	Kw    *lexing.Token
 	Colon *lexing.Token
 	Stmts []Stmt
 }
@@ -123,7 +116,7 @@ type BreakStmt struct{ Kw, Label, Semi *lexing.Token }
 
 // FallthroughStmt is the fallthrough statement
 // fallthrough
-// type FallthroughStmt struct{ Kw, Semi *lex8.Token }
+type FallthroughStmt struct{ Kw, Semi *lexing.Token }
 
 // EmptyStmt is an empty statement created by
 // an orphan semicolon
