@@ -127,7 +127,6 @@ func TestSingleFileBad(t *testing.T) {
 	o("elseStart", `func main() {
 		if true { }
 		else { } }`)
-	o("missingSwitch", `func main() { case }`)
 
 	o("illegalChar", "@")
 	o("invalidDotDot", "..")

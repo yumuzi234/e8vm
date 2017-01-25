@@ -302,6 +302,10 @@ func TestBareFunc_bad(t *testing.T) {
 	o("notYetSupported", "a:=1.2")
 	o("notYetSupported", "var a=[1]int {1}")
 
+	// switch
+	o("missingSwitch", "case")
+	o("missingSwitch", "default")
+	o("missingCaseInSwitch", `a:=1;switch a {b:=2}`)
 }
 
 func TestBareFunc_panic(t *testing.T) {

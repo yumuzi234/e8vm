@@ -64,9 +64,9 @@ type ElseStmt struct {
 type SwitchStmt struct {
 	Kw          *lexing.Token
 	Fallthrough bool
-	Cond        Expr // optional, if not expression detect, Cond = true
+	Expr        Expr // optional, if not expression detect, Cond = true
 	Lbrace      *lexing.Token
-	Body        []*Case
+	Cases       []*Case
 	Rbrace      *lexing.Token
 	Semi        *lexing.Token
 }
@@ -75,7 +75,7 @@ type SwitchStmt struct {
 // default is included here, Kw will determine it is case or default
 type Case struct {
 	Kw    *lexing.Token
-	Cond  Expr
+	Expr  Expr
 	Colon *lexing.Token
 	Stmts []Stmt
 }

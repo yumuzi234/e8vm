@@ -38,10 +38,12 @@ func parseStmt(p *parser) ast.Stmt {
 			)
 			p.skipErrStmt()
 			return nil
-		case "case":
-			return swtichErr(p, first.Lit)
-		case "default":
-			return swtichErr(p, first.Lit)
+		case "case", "default":
+			p.CodeErrorfHere(
+				"pl.missingSwitch",
+				"%s must be within a 'switch' block", first.Lit)
+			p.skipErrStmt()
+			return nil
 		}
 	}
 
@@ -53,14 +55,6 @@ func parseStmt(p *parser) ast.Stmt {
 	}
 
 	return parseSimpleStmt(p)
-}
-
-func swtichErr(p *parser, s string) ast.Stmt {
-	p.CodeErrorfHere(
-		"pl.missingSwitch",
-		"%s must be within a 'switch' block", s)
-	p.skipErrStmt()
-	return nil
 }
 
 func makeParser(f string, r io.Reader, golike bool) (

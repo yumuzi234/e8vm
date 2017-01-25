@@ -10,8 +10,7 @@ func parseSwitchStmt(p *parser) *ast.SwitchStmt {
 	}
 	ret := new(ast.SwitchStmt)
 	ret.Kw = p.Shift()
-	ret.Cond = p.parseExpr()
-	ret.Fallthrough = false
+	ret.Expr = p.parseExpr()
 	if p.InError() {
 		return ret
 	}
@@ -20,8 +19,8 @@ func parseSwitchStmt(p *parser) *ast.SwitchStmt {
 			"missing switch body, need '{'")
 		return ret
 	}
-	ret.Lbrace = p.ExpectOp("{")
-	ret.Body = parseCases(p)
-	ret.Rbrace = p.ExpectOp("{")
+	ret.Lbrace = p.Shift()
+	ret.Cases = parseCases(p)
+	ret.Rbrace = p.ExpectOp("}")
 	return ret
 }
