@@ -40,6 +40,9 @@ type ContinueStmt struct{}
 // BreakStmt is a "break"
 type BreakStmt struct{}
 
+// FallthroughStmt is a "fallthrough"
+type FallthroughStmt struct{}
+
 // ReturnStmt is a statement like "return a,b"
 type ReturnStmt struct {
 	Exprs Expr
@@ -50,6 +53,19 @@ type IfStmt struct {
 	Expr Expr
 	Body Stmt
 	Else Stmt
+}
+
+// SwitchStmt is a switch statement
+type SwitchStmt struct {
+	Fallthrough bool
+	Expr        Expr
+	Cases       []*Case
+}
+
+// Case is a case statement
+type Case struct {
+	Expr  Expr
+	Stmts []Stmt
 }
 
 // ForStmt is a for loop statement.

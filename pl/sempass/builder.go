@@ -23,9 +23,10 @@ type builder struct {
 	// file level dependency, for checking circular dependencies.
 	deps deps
 
-	nloop    int
-	this     *tast.Ref
-	thisType *types.Pointer
+	nloop       int
+	switchlayer int
+	this        *tast.Ref
+	thisType    *types.Pointer
 
 	retType  []types.T
 	retNamed bool
