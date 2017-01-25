@@ -62,13 +62,12 @@ type ElseStmt struct {
 
 // SwitchStmt is the swithc statement block
 type SwitchStmt struct {
-	Kw          *lexing.Token
-	Fallthrough bool
-	Expr        Expr // optional, if not expression detect, Cond = true
-	Lbrace      *lexing.Token
-	Cases       []*Case
-	Rbrace      *lexing.Token
-	Semi        *lexing.Token
+	Kw     *lexing.Token
+	Expr   Expr // optional, if not expression detect, Cond = true
+	Lbrace *lexing.Token
+	Cases  []*Case
+	Rbrace *lexing.Token
+	Semi   *lexing.Token
 }
 
 // Case is the inset statement block in switch
