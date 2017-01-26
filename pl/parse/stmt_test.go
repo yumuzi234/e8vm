@@ -111,6 +111,7 @@ func TestStmts_good(t *testing.T) {
 		}`,
 		"break",
 		"continue",
+		"fallthrough",
 		"if true return",
 		"if true break",
 		"if true continue",
@@ -138,6 +139,13 @@ func TestStmts_good(t *testing.T) {
 		"a--",
 		"ret := (a.b & 0x1) > 0",
 		"a := []int{3,4}",
+		"switch 0 { }",
+		"switch 0 { case 3: }",
+		`switch 0 {
+			case 3:
+			case 4:
+		}`,
+		"switch 0 { default: }",
 	} {
 		buf := strings.NewReader(s)
 		stmts, es := Stmts("test.g", buf)
@@ -149,7 +157,7 @@ func TestStmts_good(t *testing.T) {
 			t.Fail()
 		} else if len(stmts) != 1 {
 			t.Log(s)
-			t.Error("should be one statement")
+			t.Errorf("should be one statement, got %d", len(stmts))
 		} else {
 			s := stmts[0]
 			if _, ok := s.(*ast.ExprStmt); ok {
