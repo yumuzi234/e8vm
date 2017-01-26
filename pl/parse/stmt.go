@@ -19,20 +19,29 @@ func parseStmt(p *parser) ast.Stmt {
 			return parseIfStmt(p)
 		case "for":
 			return parseForStmt(p)
-		// case "switch":
-		//	return parseSwitchStmt(p)
+		case "switch":
+			return parseSwitchStmt(p)
 		case "return":
 			return parseReturnStmt(p, true)
 		case "break":
 			return parseBreakStmt(p, true)
 		case "continue":
 			return parseContinueStmt(p, true)
+		case "fallthrough":
+			return parseFallthroughStmt(p)
 		case "else":
 			// a common error case where else leads a statement.
 			p.CodeErrorfHere(
 				"pl.elseStart",
-				"else must be on the same line as the last '}'",
+				"else must be after the if statement,"+
+					"and on the same line as the last '}'",
 			)
+			p.skipErrStmt()
+			return nil
+		case "case", "default":
+			p.CodeErrorfHere(
+				"pl.missingSwitch",
+				"%s must be within a 'switch' block", first.Lit)
 			p.skipErrStmt()
 			return nil
 		}
