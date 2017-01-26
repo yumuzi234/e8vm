@@ -15,7 +15,7 @@ func parseSwitchStmt(p *parser) *ast.SwitchStmt {
 		return ret
 	}
 	if !p.SeeOp("{") {
-		p.CodeErrorfHere("pl.parseSwitch.missingBody",
+		p.CodeErrorfHere("missingSwitchBody",
 			"missing switch body, need '{'")
 		return ret
 	}

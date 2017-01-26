@@ -22,7 +22,7 @@ func parseElse(p *parser) *ast.ElseStmt {
 	}
 
 	if !p.SeeOp("{") {
-		p.CodeErrorfHere("pl.missingElseBody",
+		p.CodeErrorfHere("pl.missingIfBody",
 			"missing else body")
 		return ret
 	}
