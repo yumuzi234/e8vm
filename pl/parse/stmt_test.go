@@ -111,6 +111,7 @@ func TestStmts_good(t *testing.T) {
 		}`,
 		"break",
 		"continue",
+		"fallthrough",
 		"if true return",
 		"if true break",
 		"if true continue",

@@ -7,5 +7,6 @@ import (
 func parseFallthroughStmt(p *parser) *ast.FallthroughStmt {
 	ret := new(ast.FallthroughStmt)
 	ret.Kw = p.ExpectKeyword("fallthrough")
+	ret.Semi = p.ExpectSemi()
 	return ret
 }
