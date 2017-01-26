@@ -94,6 +94,8 @@ func printStmt(f *formatter, stmt ast.Stmt) {
 		printVarDecls(f, stmt)
 	case *ast.ConstDecls:
 		printConstDecls(f, stmt)
+	case *ast.SwitchStmt:
+		f.errorf(stmt.Kw.Pos, "switch statement not implemented")
 	default:
 		f.errorf(nil, "invalid statement type: %T", stmt)
 	}
