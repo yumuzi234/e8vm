@@ -30,10 +30,11 @@ func parseCase(p *parser) *ast.Case {
 	} else {
 		p.CodeErrorfHere("pl.missingCaseInSwitch",
 			"must start with keyword case/default in switch")
+		return nil
 	}
 	ret.Colon = p.ExpectOp(":")
 	if ret.Colon == nil {
-		return ret
+		return nil
 	}
 	for !(p.SeeKeyword("case") || p.SeeKeyword("default") ||
 		p.SeeOp("}") || p.See(lexing.EOF)) {
