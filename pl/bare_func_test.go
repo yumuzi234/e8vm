@@ -280,7 +280,7 @@ func TestBareFunc_bad(t *testing.T) {
 	o("breakStmt.notInLoop", "if true { break }")
 	o("breakStmt.notInLoop", "if true break")
 
-	o("ifStmt.missingBody", "if true _:=true")
+	o("missingIfBody", "if true _:=true")
 
 	o("cannotAlloc", "a := int")
 
