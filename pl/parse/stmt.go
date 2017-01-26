@@ -28,13 +28,13 @@ func parseStmt(p *parser) ast.Stmt {
 		case "continue":
 			return parseContinueStmt(p, true)
 		case "fallthrough":
-			return parseFallthrough(p)
+			return parseFallthroughStmt(p)
 		case "else":
 			// a common error case where else leads a statement.
 			p.CodeErrorfHere(
 				"pl.elseStart",
-				`else must be after the if statement,
-					and on the same line as the last '}'`,
+				"else must be after the if statement,"+
+					"and on the same line as the last '}'",
 			)
 			p.skipErrStmt()
 			return nil

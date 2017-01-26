@@ -63,7 +63,7 @@ type ElseStmt struct {
 // SwitchStmt is the swithc statement block
 type SwitchStmt struct {
 	Kw     *lexing.Token
-	Expr   Expr // optional, if not expression detect, Cond = true
+	Expr   Expr
 	Lbrace *lexing.Token
 	Cases  []*Case
 	Rbrace *lexing.Token
