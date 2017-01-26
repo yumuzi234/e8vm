@@ -22,5 +22,6 @@ func parseSwitchStmt(p *parser) *ast.SwitchStmt {
 	ret.Lbrace = p.Shift()
 	ret.Cases = parseCases(p)
 	ret.Rbrace = p.ExpectOp("}")
+	ret.Semi = p.ExpectSemi()
 	return ret
 }
