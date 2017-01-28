@@ -50,17 +50,17 @@ func parseCase(p *parser) *ast.Case {
 }
 
 func parseFallthrough(p *parser, ret *ast.Case) *ast.Case {
-	fall := new(ast.FallthroughStmt)
-	fall.Kw = p.Shift()
-	fall.Semi = p.ExpectSemi()
-	ret.Fall = fall
+	f := new(ast.FallthroughStmt)
+	f.Kw = p.Shift()
+	f.Semi = p.ExpectSemi()
+	ret.Fallthrough = f
 	if p.InError() {
 		return nil
 	}
 	if p.SeeKeyword("case") || p.SeeKeyword("default") {
 		return ret
 	}
-	p.CodeErrorfHere("pl.wrongFallthroughPos",
+	p.CodeErrorfHere("pl.invalidFallthrough",
 		"fallthrough out of place, must be the last statement"+
 			"of a CASE and cannot be in the final CASE in a switch")
 	return nil

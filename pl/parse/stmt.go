@@ -43,7 +43,7 @@ func parseStmt(p *parser) ast.Stmt {
 			p.skipErrStmt()
 			return nil
 		case "fallthrough":
-			p.CodeErrorfHere("pl.wrongFallthroughPos",
+			p.CodeErrorfHere("pl.invalidFallthrough",
 				"fallthrough out of place, must be the last statement"+
 					"of a CASE and cannot be in the final CASE in a switch")
 			p.skipErrStmt()

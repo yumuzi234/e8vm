@@ -37,5 +37,5 @@ func buildCase(b *builder, c *ast.Case) *tast.Case {
 			stmts = append(stmts, s)
 		}
 	}
-	return &tast.Case{Expr: e, Stmts: stmts, Fallthrough: c.Fall == nil}
+	return &tast.Case{Expr: e, Stmts: stmts, Fallthrough: c.Fallthrough == nil}
 }

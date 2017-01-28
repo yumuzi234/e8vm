@@ -73,11 +73,11 @@ type SwitchStmt struct {
 // Case is the inset statement block in switch
 // default is included here, Kw will determine it is case or default
 type Case struct {
-	Kw    *lexing.Token
-	Expr  Expr
-	Fall  *FallthroughStmt
-	Colon *lexing.Token
-	Stmts []Stmt
+	Kw          *lexing.Token
+	Expr        Expr
+	Fallthrough *FallthroughStmt
+	Colon       *lexing.Token
+	Stmts       []Stmt
 }
 
 // ForStmt is a loop statement

@@ -308,10 +308,10 @@ func TestBareFunc_bad(t *testing.T) {
 	o("missingSwitch", "case")
 	o("missingSwitch", "default")
 	o("missingCaseInSwitch", `a:=1;switch a {b:=2}`)
-	o("wrongFallthroughPos", `a:=2; switch a { case 2: fallthrough}`)
-	o("wrongFallthroughPos", `a:=2; switch a { case 1:
+	o("invalidFallthrough", `a:=2; switch a { case 2: fallthrough}`)
+	o("invalidFallthrough", `a:=2; switch a { case 1:
 		fallthrough;fallthrough;case 2:`)
-	o("wrongFallthroughPos", `a:=2; switch a { case 2:
+	o("invalidFallthrough", `a:=2; switch a { case 2:
 		if true {fallthrough}}`)
 }
 
