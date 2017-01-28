@@ -38,10 +38,9 @@ func buildIf(
 			body = buildContinueStmt(b, ifs)
 		default:
 			pos := ast.ExprPos(cond)
-			//I think this situation has been covered in /parse/if.go
-			b.CodeErrorf(pos, "pl.mssingIfBlocks",
-				`only return, break and continue can be used after if 
-				without {}`)
+			b.CodeErrorf(pos, "pl.impossible",
+				"Congrats! You have found a bug,"+
+					"please report your code to us, thank you!")
 		}
 		if body == nil {
 			return nil
