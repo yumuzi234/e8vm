@@ -38,10 +38,30 @@ func parseCase(p *parser) *ast.Case {
 	}
 	for !(p.SeeKeyword("case") || p.SeeKeyword("default") ||
 		p.SeeOp("}") || p.See(lexing.EOF)) {
+		if p.SeeKeyword("fallthrough") {
+			return parseFallthrough(p, ret)
+		}
 		if stmt := p.parseStmt(); stmt != nil {
 			ret.Stmts = append(ret.Stmts, stmt)
 		}
 		p.skipErrStmt()
 	}
 	return ret
+}
+
+func parseFallthrough(p *parser, ret *ast.Case) *ast.Case {
+	fall := new(ast.FallthroughStmt)
+	fall.Kw = p.Shift()
+	fall.Semi = p.ExpectSemi()
+	ret.Fall = fall
+	if p.InError() {
+		return nil
+	}
+	if p.SeeKeyword("case") || p.SeeKeyword("default") {
+		return ret
+	}
+	p.CodeErrorfHere("pl.wrongFallthroughPos",
+		"fallthrough out of place, must be the last statement"+
+			"of a CASE and cannot be in the final CASE in a switch")
+	return nil
 }

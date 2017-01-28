@@ -57,15 +57,15 @@ type IfStmt struct {
 
 // SwitchStmt is a switch statement
 type SwitchStmt struct {
-	Fallthrough bool
-	Expr        Expr
-	Cases       []*Case
+	Expr  Expr
+	Cases []*Case
 }
 
 // Case is a case statement
 type Case struct {
-	Expr  Expr
-	Stmts []Stmt
+	Expr        Expr
+	Stmts       []Stmt
+	Fallthrough bool
 }
 
 // ForStmt is a for loop statement.

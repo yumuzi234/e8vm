@@ -75,6 +75,7 @@ type SwitchStmt struct {
 type Case struct {
 	Kw    *lexing.Token
 	Expr  Expr
+	Fall  *FallthroughStmt
 	Colon *lexing.Token
 	Stmts []Stmt
 }

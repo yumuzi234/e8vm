@@ -308,7 +308,11 @@ func TestBareFunc_bad(t *testing.T) {
 	o("missingSwitch", "case")
 	o("missingSwitch", "default")
 	o("missingCaseInSwitch", `a:=1;switch a {b:=2}`)
-	o("fallthrough.notInLoop", `fallthrough`)
+	o("wrongFallthroughPos", `a:=2; switch a { case 2: fallthrough}`)
+	o("wrongFallthroughPos", `a:=2; switch a { case 1:
+		fallthrough;fallthrough;case 2:`)
+	o("wrongFallthroughPos", `a:=2; switch a { case 2:
+		if true {fallthrough}}`)
 }
 
 func TestBareFunc_panic(t *testing.T) {

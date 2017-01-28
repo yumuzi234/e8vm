@@ -6,24 +6,14 @@ import (
 )
 
 func buildSwitchStmt(b *builder, stmt *ast.SwitchStmt) tast.Stmt {
-	return buildSwtich(b, stmt.Expr, stmt.Cases)
+	return buildSwitch(b, stmt.Expr, stmt.Cases)
 }
 
-func buildFallthroughStmt(b *builder, stmt *ast.FallthroughStmt) tast.Stmt {
-	if b.switchlayer == 0 {
-		b.CodeErrorf(stmt.Kw.Pos, "pl.fallthrough.notInLoop",
-			"fallthrough is not in a switch block")
-		return nil
-	}
-	return &tast.FallthroughStmt{}
-}
-
-func buildSwtich(b *builder, expr ast.Expr, Cases []*ast.Case) tast.Stmt {
+func buildSwitch(b *builder, expr ast.Expr, Cases []*ast.Case) tast.Stmt {
 	e := b.buildExpr(expr)
 	if e == nil {
 		return nil
 	}
-	b.switchlayer++
 	var cases []*tast.Case
 	for _, c := range Cases {
 		ret := buildCase(b, c)
@@ -47,5 +37,5 @@ func buildCase(b *builder, c *ast.Case) *tast.Case {
 			stmts = append(stmts, s)
 		}
 	}
-	return &tast.Case{Expr: e, Stmts: stmts}
+	return &tast.Case{Expr: e, Stmts: stmts, Fallthrough: c.Fall == nil}
 }

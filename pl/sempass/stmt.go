@@ -18,7 +18,6 @@ func buildStmt(b *builder, stmt ast.Stmt) tast.Stmt {
 		return buildContinueStmt(b, stmt)
 	case *ast.BreakStmt:
 		return buildBreakStmt(b, stmt)
-
 	case *ast.DefineStmt:
 		return buildDefineStmt(b, stmt)
 	case *ast.VarDecls:
@@ -37,8 +36,6 @@ func buildStmt(b *builder, stmt ast.Stmt) tast.Stmt {
 		return buildForStmt(b, stmt)
 	case *ast.SwitchStmt:
 		return buildSwitchStmt(b, stmt)
-	case *ast.FallthroughStmt:
-		return buildFallthroughStmt(b, stmt)
 	}
 
 	b.Errorf(nil, "invalid or not implemented: %T", stmt)
