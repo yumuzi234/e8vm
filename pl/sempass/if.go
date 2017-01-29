@@ -39,8 +39,8 @@ func buildIf(
 		default:
 			pos := ast.ExprPos(cond)
 			b.CodeErrorf(pos, "pl.impossible",
-				"Congrats! You have found a bug,"+
-					"please report your code to us, thank you!")
+				"miss if body, only return, continue, breack can"+
+					" be used after if without {}")
 		}
 		if body == nil {
 			return nil

@@ -1,13 +1,9 @@
 package pl
 
-import (
-	"fmt"
-
-	"shanhu.io/smlvm/pl/tast"
-)
+import "shanhu.io/smlvm/pl/tast"
 
 func buildSwitchStmt(b *builder, stmt *tast.SwitchStmt) {
-	fmt.Println("switch")
+	b.CodeErrorf(nil, "pl.notYetSupport", "switch is not supported yet")
 }
 
 func buildFallthroughStmt(b *builder) {
