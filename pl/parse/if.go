@@ -51,9 +51,7 @@ func parseIfBody(p *parser) (ret ast.Stmt, isBlock bool) {
 		}
 	}
 
-	p.CodeErrorfHere("pl.ifStmt.missingBody",
-		`expect if body, only return, break and continue can be used 
-		after if without {}`)
+	p.ErrorfHere("expect if body")
 	return nil, false
 }
 

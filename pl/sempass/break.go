@@ -7,8 +7,7 @@ import (
 
 func buildBreakStmt(b *builder, s *ast.BreakStmt) tast.Stmt {
 	if s.Label != nil {
-		b.CodeErrorf(s.Label.Pos, "pl.notYetSupported",
-			"break with label not implemented")
+		b.Errorf(s.Label.Pos, "break with label not implemented")
 		return nil
 	}
 	if b.nloop == 0 {
