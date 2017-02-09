@@ -38,6 +38,8 @@ func buildStmt(b *builder, s tast.Stmt) {
 		buildForStmt(b, stmt)
 	case *tast.IfStmt:
 		buildIfStmt(b, stmt)
+	case *tast.SwitchStmt:
+		buildSwitchStmt(b, stmt)
 	default:
 		panic(fmt.Errorf("unimplemented: %T", stmt))
 	}

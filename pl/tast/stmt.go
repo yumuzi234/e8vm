@@ -52,6 +52,22 @@ type IfStmt struct {
 	Else Stmt
 }
 
+<<<<<<< HEAD
+=======
+// SwitchStmt is a switch statement
+type SwitchStmt struct {
+	Expr  Expr
+	Cases []*Case
+}
+
+// Case is a case statement
+type Case struct {
+	Expr        Expr
+	Stmts       []Stmt
+	Fallthrough bool
+}
+
+>>>>>>> readyToPull
 // ForStmt is a for loop statement.
 type ForStmt struct {
 	ThreeFold bool
