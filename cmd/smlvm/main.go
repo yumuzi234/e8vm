@@ -58,6 +58,7 @@ func main() {
 	bootArg := flag.Uint("arg", 0, "boot argument, a uint32 number")
 	romRoot := flag.String("rom", "", "rom root path")
 	randSeed := flag.Int64("seed", 0, "random seed, 0 for using the time")
+	initSP := flag.Int64("initsp", 0, "init stack pointer")
 	flag.Parse()
 
 	args := flag.Args()
@@ -110,6 +111,7 @@ func main() {
 			ROM:      *romRoot,
 			RandSeed: *randSeed,
 			BootArg:  uint32(*bootArg),
+			InitSP:   uint32(*initSP),
 		}
 
 		n, e := run(bs, conf, *ncycle, *printStatus)

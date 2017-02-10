@@ -74,6 +74,8 @@ func runTests(
 		arg := tests[test]
 		m := arch.NewMachine(&arch.Config{
 			BootArg: arg,
+			InitPC:  opt.InitPC,
+			InitSP:  opt.InitSP,
 		})
 		if err := m.LoadImageBytes(img); err != nil {
 			report(test, 0, false, m, err)

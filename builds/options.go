@@ -9,6 +9,7 @@ import (
 type Options struct {
 	Verbose bool
 	InitPC  uint32
+	InitSP  uint32
 
 	StaticOnly bool
 	RunTests   bool

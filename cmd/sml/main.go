@@ -30,6 +30,7 @@ func main() {
 	runTests := flag.Bool("test", true, "run tests")
 	std := flag.String("std", "/smallrepo/std", "stdlib package")
 	initPC := flag.Uint("initpc", arch.InitPC, "init PC register value")
+	initSP := flag.Uint("initsp", 0, "init SP value, for testing")
 	staticOnly := flag.Bool("static", false, "do static analysis only")
 	flag.Parse()
 
@@ -41,6 +42,7 @@ func main() {
 	b := builds.NewBuilder(home, home, *std)
 	b.Verbose = true
 	b.InitPC = uint32(*initPC)
+	b.InitSP = uint32(*initSP)
 	b.RunTests = *runTests
 	b.StaticOnly = *staticOnly
 

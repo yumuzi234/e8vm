@@ -35,7 +35,7 @@ type Machine struct {
 
 // Default SP settings.
 const (
-	DefaultSPBase   uint32 = 0x20000
+	DefaultSPBase   uint32 = 0x100000
 	DefaultSPStride uint32 = 0x2000
 )
 
