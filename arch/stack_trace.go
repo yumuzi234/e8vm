@@ -105,6 +105,14 @@ func FprintStack(w io.Writer, m *Machine, excep *CoreExcep) error {
 	ret := regs[RET]
 	level := 0
 
+	fmt.Fprintf(w, "err: %s\n", excep.Err.Error())
+	fmt.Fprintf(w, "core=%d excep=%d\n", core, excep.Code)
+	fmt.Fprintf(w, "pc=%08x sp=%08x ret=%08x\n", pc, sp, ret)
+	inst, readErr := m.ReadWord(0, pc)
+	if readErr == nil {
+		fmt.Fprintf(w, "inst=%08x\n", inst)
+	}
+
 	for {
 		level++
 
