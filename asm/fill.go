@@ -5,6 +5,6 @@ const (
 	fillNone = iota
 	fillLink // for jumps
 	fillLow  // for immediate instructions
-	fillHigh // for lui
+	fillHigh // for addui
 	fillLabel
 )

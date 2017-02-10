@@ -11,8 +11,9 @@ import (
 var (
 	// op reg reg imm(signed)
 	opImsMap = map[string]uint32{
-		"addi": arch.ADDI,
-		"slti": arch.SLTI,
+		"addi":  arch.ADDI,
+		"slti":  arch.SLTI,
+		"addui": arch.ADDUI,
 	}
 
 	opMemMap = map[string]uint32{
@@ -28,11 +29,6 @@ var (
 		"andi": arch.ANDI,
 		"ori":  arch.ORI,
 		"xori": arch.XORI,
-	}
-
-	// op reg imm(signed or unsigned)
-	opImmMap = map[string]uint32{
-		"lui": arch.LUI,
 	}
 )
 
@@ -131,6 +127,9 @@ func resolveInstImm(p lexing.Logger, ops []*lexing.Token) (*inst, bool) {
 			s = resolveReg(p, args[1])
 			parseSym(args[2], parseIms)
 		}
+		if opName == "addui" && fill == fillLow {
+			fill = fillHigh
+		}
 	} else if op, found = opMemMap[opName]; found {
 		if len(args) == 2 {
 			// mem op can omit the offset if it is 0
@@ -145,14 +144,6 @@ func resolveInstImm(p lexing.Logger, ops []*lexing.Token) (*inst, bool) {
 		if argCount(3) {
 			s = resolveReg(p, args[1])
 			parseSym(args[2], parseImu)
-		}
-	} else if op, found = opImmMap[opName]; found {
-		// op reg imm(signed or unsigned)
-		if argCount(2) {
-			parseSym(args[1], parseImm)
-		}
-		if opName == "lui" && fill == fillLow {
-			fill = fillHigh
 		}
 	} else {
 		return nil, false

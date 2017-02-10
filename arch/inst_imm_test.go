@@ -77,7 +77,7 @@ func TestInstImm(t *testing.T) {
 	tf(ANDI, func(v, im uint32) uint32 { return v & im })
 	tf(ORI, func(v, im uint32) uint32 { return v | im })
 	tf(XORI, func(v, im uint32) uint32 { return v ^ im })
-	tf(LUI, func(_, im uint32) uint32 { return im << 16 })
+	tf(ADDUI, func(v, im uint32) uint32 { return v + (im << 16) })
 
 	for i := 0; i < 100; i++ {
 		addr := uint32(PageSize * 10)

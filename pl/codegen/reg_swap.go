@@ -117,7 +117,7 @@ func saveRef(b *Block, reg uint32, r Ref, tmpReg uint32) {
 }
 
 func loadSym(b *Block, reg uint32, pkg, sym string) {
-	high := b.inst(asm.lui(reg, 0))
+	high := b.inst(asm.addui(reg, _r0, 0))
 	high.sym = &linkSym{link.FillHigh, pkg, sym}
 	low := b.inst(asm.ori(reg, reg, 0))
 	low.sym = &linkSym{link.FillLow, pkg, sym}
@@ -126,7 +126,7 @@ func loadSym(b *Block, reg uint32, pkg, sym string) {
 func loadUint32(b *Block, reg uint32, v uint32) {
 	high := v >> 16
 	if high != 0 {
-		b.inst(asm.lui(reg, high))
+		b.inst(asm.addui(reg, _r0, high))
 		b.inst(asm.ori(reg, reg, v))
 	} else {
 		b.inst(asm.ori(reg, _r0, v))
@@ -147,7 +147,7 @@ func loadRef(b *Block, reg uint32, r Ref) {
 			if bt >= 0 {
 				b.inst(asm.ori(reg, _r0, uint32(bt)))
 			} else {
-				b.inst(asm.lui(reg, 0xffff))
+				b.inst(asm.addui(reg, _r0, 0xffff))
 				b.inst(asm.ori(reg, reg, uint32(int32(bt))&0xffff))
 			}
 		}

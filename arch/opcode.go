@@ -2,12 +2,12 @@ package arch
 
 // Immediate instructions
 const (
-	ADDI = 1
-	SLTI = 2
-	ANDI = 3
-	ORI  = 4
-	XORI = 5
-	LUI  = 6
+	ADDI  = 1
+	SLTI  = 2
+	ANDI  = 3
+	ORI   = 4
+	XORI  = 5
+	ADDUI = 6
 
 	LW  = 7
 	LB  = 8

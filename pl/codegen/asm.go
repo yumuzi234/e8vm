@@ -45,10 +45,10 @@ func (_s) addi(d, s uint32, im int32) uint32 {
 	return asm.ims(A.ADDI, d, s, im)
 }
 
-func (_s) lui(d, im uint32) uint32     { return S.Imm(A.LUI, d, 0, im) }
-func (_s) ori(d, s, im uint32) uint32  { return S.Imm(A.ORI, d, s, im) }
-func (_s) xori(d, s, im uint32) uint32 { return S.Imm(A.XORI, d, s, im) }
-func (_s) andi(d, s, im uint32) uint32 { return S.Imm(A.ANDI, d, s, im) }
+func (_s) addui(d, s, im uint32) uint32 { return S.Imm(A.ADDUI, d, 0, im) }
+func (_s) ori(d, s, im uint32) uint32   { return S.Imm(A.ORI, d, s, im) }
+func (_s) xori(d, s, im uint32) uint32  { return S.Imm(A.XORI, d, s, im) }
+func (_s) andi(d, s, im uint32) uint32  { return S.Imm(A.ANDI, d, s, im) }
 
 func (_s) reg(op, d, s1, s2 uint32) uint32 {
 	return S.Reg(op, d, s1, s2, 0, 0)

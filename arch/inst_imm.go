@@ -36,8 +36,8 @@ func (i *instImm) I(cpu *cpu, in uint32) *Excep {
 		d = s | im
 	case XORI:
 		d = s ^ im
-	case LUI:
-		d = im << 16
+	case ADDUI:
+		d = s + (im << 16)
 	case LW:
 		d, e = cpu.readU32(addr)
 	case LB:

@@ -8,8 +8,9 @@ import (
 
 var (
 	opImsMap = map[uint32]string{
-		arch.ADDI: "addi",
-		arch.SLTI: "slti",
+		arch.ADDI:  "addi",
+		arch.SLTI:  "slti",
+		arch.ADDUI: "addui",
 	}
 
 	opMemMap = map[uint32]string{
@@ -24,10 +25,6 @@ var (
 		arch.ANDI: "andi",
 		arch.ORI:  "ori",
 		arch.XORI: "xori",
-	}
-
-	opImu2Map = map[uint32]string{
-		arch.LUI: "lui",
 	}
 )
 
@@ -49,8 +46,6 @@ func instImm(addr uint32, in uint32) *Line {
 		}
 	} else if opStr, found := opImuMap[op]; found {
 		s = fmt.Sprintf("%s %s %s 0x%04x", opStr, dest, src, imu)
-	} else if opStr, found := opImu2Map[op]; found {
-		s = fmt.Sprintf("%s %s 0x%04x", opStr, dest, imu)
 	}
 
 	ret := newLine(addr, in)
