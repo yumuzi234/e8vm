@@ -25,9 +25,6 @@ func printBlockInsts(p *fmtutil.Printer, b *Block) {
 	for _, inst := range b.insts {
 		fmt.Fprintln(p, dasm.LineStr(inst.inst))
 	}
-	if b.jumpInst != nil {
-		fmt.Fprintln(p, dasm.LineStr(b.jumpInst.inst))
-	}
 	p.ShiftTab()
 }
 
