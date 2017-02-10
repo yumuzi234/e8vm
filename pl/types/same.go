@@ -64,7 +64,7 @@ func SameType(t1, t2 T) bool {
 	if t1 == t2 {
 		return true
 	}
-
+	// Q???
 	switch t1 := t1.(type) {
 	case null:
 		return false

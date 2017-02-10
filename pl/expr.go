@@ -7,8 +7,7 @@ import (
 	"shanhu.io/smlvm/pl/types"
 )
 
-// to replace buildExpr in the future
-func buildExpr2(b *builder, expr tast.Expr) *ref {
+func buildExpr(b *builder, expr tast.Expr) *ref {
 	switch expr := expr.(type) {
 	case *tast.Const:
 		return buildConst(b, expr)
@@ -20,7 +19,7 @@ func buildExpr2(b *builder, expr tast.Expr) *ref {
 		t := expr.Ref.T.(*types.Type)
 		return newRef(t, nil)
 	case *tast.Cast:
-		from := buildExpr2(b, expr.From)
+		from := buildExpr(b, expr.From)
 		return buildCast(b, from, expr.T)
 	case *tast.MemberExpr:
 		return buildMember(b, expr)
@@ -35,7 +34,7 @@ func buildExpr2(b *builder, expr tast.Expr) *ref {
 	case *tast.ExprList:
 		return buildExprList(b, expr)
 	}
-	panic(fmt.Errorf("buildExpr2 not implemented for %T", expr))
+	panic(fmt.Errorf("buildExpr not implemented for %T", expr))
 }
 
 func buildExprList(b *builder, list *tast.ExprList) *ref {

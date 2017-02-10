@@ -20,7 +20,8 @@ func buildIf(
 	condRef := c.R()
 	if !condRef.IsBool() {
 		pos := ast.ExprPos(cond)
-		b.Errorf(pos, "expect boolean expression, got %s", condRef)
+		b.CodeErrorf(pos, "pl.ifCondNotBool",
+			"expect boolean expression, got %s", condRef)
 		return nil
 	}
 

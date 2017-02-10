@@ -137,6 +137,10 @@ func TestSingleFileBad(t *testing.T) {
 		func main() { f()++ }`)
 	o("expectOp", `func f() { for ;;; {} }`)
 
+	// not single
+	o("switchExpr", ` func f() (int, int) { return 0, 0 }
+		func main() { switch f(){} }`)
+
 	// Bugs found by the fuzzer in the past
 	o("undefinedIdent", "func f() **o.o {}")
 	o("expectConstExpr", "func n()[char[:]]string{}")

@@ -31,7 +31,7 @@ type builder struct {
 	retNamed bool
 
 	// if the parsing is in left hand side.
-	// when in left hand side, referecing a variable does not count.
+	// when in left hand side, referencing a variable does not count.
 	lhs bool
 }
 

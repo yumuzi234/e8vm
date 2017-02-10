@@ -281,6 +281,7 @@ func TestBareFunc_bad(t *testing.T) {
 	o("breakStmt.notInLoop", "if true break")
 
 	o("missingIfBody", "if true _:=true")
+	o("ifCondNotBool", "if 1 return")
 	o("cannotAlloc", "a := int")
 
 	o("negArrayIndex", "var a [8]int; i:=a[-1]") // negative array index
