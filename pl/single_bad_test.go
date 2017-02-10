@@ -138,7 +138,7 @@ func TestSingleFileBad(t *testing.T) {
 	o("expectOp", `func f() { for ;;; {} }`)
 
 	// not single
-	o("switchExpr", ` func f() (int, int) { return 0, 0 }
+	o("switchExpr.notSingle", ` func f() (int, int) { return 0, 0 }
 		func main() { switch f(){} }`)
 
 	// Bugs found by the fuzzer in the past

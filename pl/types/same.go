@@ -24,7 +24,30 @@ func InRange(v int64, t T) bool {
 	return false
 }
 
-// CanAssign checks if right can be assigned to right
+// CanCompare checks if a can be compared with b == or !=
+func CanCompare(a, b T) bool {
+	if SameType(a, b) {
+		return true
+	}
+	if IsNil(a) {
+		return CanAssign(b, a)
+	} else if IsNil(b) {
+		return CanAssign(a, b)
+	}
+	if c, ok := a.(*Const); ok {
+		if _, ok := c.Type.(Number); ok {
+			return IsInteger(b)
+		}
+	}
+	if c, ok := b.(*Const); ok {
+		if _, ok := c.Type.(Number); ok {
+			return IsInteger(a)
+		}
+	}
+	return false
+}
+
+// CanAssign checks if right can be assigned to left
 func CanAssign(left, right T) bool {
 	if c, ok := right.(*Const); ok {
 		if _, ok := c.Type.(Number); ok {
@@ -64,7 +87,6 @@ func SameType(t1, t2 T) bool {
 	if t1 == t2 {
 		return true
 	}
-	// Q???
 	switch t1 := t1.(type) {
 	case null:
 		return false

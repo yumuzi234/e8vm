@@ -27,7 +27,6 @@ func parseCase(p *parser) *ast.Case {
 		}
 	} else if p.SeeKeyword("default") {
 		ret.Kw = p.Shift()
-		ret.Expr = nil
 	} else {
 		p.CodeErrorfHere("pl.missingCaseInSwitch",
 			"must start with keyword case/default in switch")
