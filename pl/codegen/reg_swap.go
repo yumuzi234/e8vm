@@ -74,6 +74,23 @@ func loadVar(b *Block, reg uint32, v *Var) {
 	}
 }
 
+func addOffsetHigh(b *Block, reg uint32, offset int32) {
+	if offset >= 0 {
+		hi := uint32(offset) >> 16
+		if hi > 0 {
+			b.inst(asm.addui(reg, reg, hi))
+		}
+		return
+	}
+
+	// addi will add a 0xffff on the high 16-bit
+	// we need to add 1 extra to cancel that out.
+	hi := ((uint32(offset) >> 16) + 1) & 0xffff
+	if hi > 0 {
+		b.inst(asm.addui(reg, reg, hi))
+	}
+}
+
 func saveRef(b *Block, reg uint32, r Ref, tmpReg uint32) {
 	if reg == tmpReg {
 		panic("cannot use the same reg")
@@ -89,8 +106,10 @@ func saveRef(b *Block, reg uint32, r Ref, tmpReg uint32) {
 
 		loadRef(b, tmpReg, r.base)
 		if r.size == 1 {
+			addOffsetHigh(b, tmpReg, r.offset)
 			b.inst(asm.sb(reg, tmpReg, r.offset))
 		} else if r.size == regSize && r.regSizeAlign {
+			addOffsetHigh(b, tmpReg, r.offset)
 			b.inst(asm.sw(reg, tmpReg, r.offset))
 		} else {
 			panic("invalid addrRef to save via register")
@@ -164,12 +183,14 @@ func loadRef(b *Block, reg uint32, r Ref) {
 
 		loadRef(b, reg, r.base)
 		if r.size == 1 {
+			addOffsetHigh(b, reg, r.offset)
 			if r.u8 {
 				b.inst(asm.lbu(reg, reg, r.offset))
 			} else {
 				b.inst(asm.lb(reg, reg, r.offset))
 			}
 		} else if r.size == regSize && r.regSizeAlign {
+			addOffsetHigh(b, reg, r.offset)
 			b.inst(asm.lw(reg, reg, r.offset))
 		} else if !r.regSizeAlign {
 			panic("not reg size aligned addrRef")
