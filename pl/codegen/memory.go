@@ -11,6 +11,7 @@ func loadAddr(b *Block, reg uint32, r Ref) {
 	case *AddrRef:
 		loadRef(b, reg, r.base)
 		if r.offset != 0 {
+			addOffsetHigh(b, reg, r.offset)
 			b.inst(asm.addi(reg, reg, r.offset))
 		}
 	case *HeapSym:
