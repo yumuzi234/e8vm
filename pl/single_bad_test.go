@@ -88,6 +88,7 @@ func TestSingleFileBad(t *testing.T) {
 	o("unusedSym", `func main() { var a int; a=3 }`)
 	o("unusedSym", `func main() { var a int; (a)=(3) }`)
 	o("unusedSym", `func main() { var a,b=3,4; _:=a }`)
+	o("unusedSym", `func main() { for i:=1;;{} }`)
 
 	// parser, import related
 	o("multiImport", `import(); import()`)
@@ -140,6 +141,8 @@ func TestSingleFileBad(t *testing.T) {
 	// not single
 	o("switchExpr.notSingle", ` func f() (int, int) { return 0, 0 }
 		func main() { switch f(){} }`)
+	o("caseExpr.notSingle", ` func f() (int, int) { return 0, 0 }
+		func main() { switch 1 {case f():} }`)
 
 	// Bugs found by the fuzzer in the past
 	o("undefinedIdent", "func f() **o.o {}")

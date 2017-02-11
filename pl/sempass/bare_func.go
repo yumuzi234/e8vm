@@ -13,7 +13,7 @@ func BuildBareFunc(scope *syms.Scope, stmts []ast.Stmt) (
 ) {
 	b := makeBuilder("_", scope)
 	b.scope.Push()
-	defer b.scope.Pop()
+	defer scopePopAndCheck(b)
 	ret := buildStmts(b, stmts)
 	errs := b.Errs()
 	if errs != nil {

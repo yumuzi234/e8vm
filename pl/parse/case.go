@@ -18,7 +18,6 @@ func parseCases(p *parser) []*ast.Case {
 
 func parseCase(p *parser) *ast.Case {
 	ret := new(ast.Case)
-	hasF := false
 	if p.SeeKeyword("case") {
 		ret.Kw = p.Shift()
 		ret.Expr = parseExpr(p)
@@ -39,7 +38,6 @@ func parseCase(p *parser) *ast.Case {
 	for !(p.SeeKeyword("case") || p.SeeKeyword("default") ||
 		p.SeeOp("}") || p.See(lexing.EOF)) {
 		if p.SeeKeyword("fallthrough") {
-			hasF = true
 			break
 		}
 		if stmt := p.parseStmt(); stmt != nil {
@@ -47,7 +45,7 @@ func parseCase(p *parser) *ast.Case {
 		}
 		p.skipErrStmt()
 	}
-	if hasF {
+	if p.SeeKeyword("fallthrough") {
 		f := new(ast.FallthroughStmt)
 		f.Kw = p.Shift()
 		f.Semi = p.ExpectSemi()

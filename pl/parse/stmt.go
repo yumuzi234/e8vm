@@ -44,8 +44,7 @@ func parseStmt(p *parser) ast.Stmt {
 			return nil
 		case "fallthrough":
 			p.CodeErrorfHere("pl.invalidFallthrough",
-				"fallthrough out of place, must be the last statement"+
-					"of a CASE and cannot be in the final CASE in a switch")
+				"fallthrough must be followed by new switch case")
 			p.skipErrStmt()
 			return nil
 		}
