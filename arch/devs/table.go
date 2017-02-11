@@ -31,6 +31,8 @@ func whatCode(what string) uint8 {
 		return 2
 	case "div":
 		return 3
+	case "box":
+		return 4
 	}
 	return 0
 }
