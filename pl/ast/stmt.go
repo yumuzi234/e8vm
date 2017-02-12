@@ -75,9 +75,9 @@ type SwitchStmt struct {
 type Case struct {
 	Kw          *lexing.Token
 	Expr        Expr
-	Fallthrough *FallthroughStmt
 	Colon       *lexing.Token
 	Stmts       []Stmt
+	Fallthrough *FallthroughStmt
 }
 
 // ForStmt is a loop statement

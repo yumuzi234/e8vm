@@ -189,5 +189,6 @@ func buildPkg(
 		addTestStart(b, testList, len(testNames))
 	}
 
-	return tops, depGraph, testNames, nil
+	errs = b.Errs()
+	return tops, depGraph, testNames, errs
 }

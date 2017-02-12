@@ -53,10 +53,11 @@ func buildCase(b *builder, m map[int64][]ast.Expr,
 	if c.Kw.Lit == "case" {
 		e = buildCaseExpr(b, m, c, t)
 	}
-	var stmts []tast.Stmt
+
 	b.scope.Push()
 	defer scopePopAndCheck(b)
 
+	var stmts []tast.Stmt
 	for _, stmt := range c.Stmts {
 		s := b.buildStmt(stmt)
 		if s != nil {

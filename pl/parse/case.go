@@ -46,15 +46,16 @@ func parseCase(p *parser) *ast.Case {
 		p.skipErrStmt()
 	}
 	if p.SeeKeyword("fallthrough") {
-		f := new(ast.FallthroughStmt)
-		f.Kw = p.Shift()
-		f.Semi = p.ExpectSemi()
+		ret.Fallthrough = &ast.FallthroughStmt{
+			Kw:   p.Shift(),
+			Semi: p.ExpectSemi(),
+		}
+
 		if p.InError() {
 			return ret
 		}
-		if p.SeeKeyword("case") || p.SeeKeyword("default") {
-			ret.Fallthrough = f
-		} else {
+
+		if !(p.SeeKeyword("case") || p.SeeKeyword("default")) {
 			p.CodeErrorfHere("pl.invalidFallthrough",
 				"fallthrough must be followed by new switch case")
 			return nil
