@@ -20,7 +20,8 @@ func buildIf(
 	condRef := c.R()
 	if !condRef.IsBool() {
 		pos := ast.ExprPos(cond)
-		b.Errorf(pos, "expect boolean expression, got %s", condRef)
+		b.CodeErrorf(pos, "pl.ifCondNotBool",
+			"expect boolean expression, got %s", condRef)
 		return nil
 	}
 
@@ -38,7 +39,9 @@ func buildIf(
 			body = buildContinueStmt(b, ifs)
 		default:
 			pos := ast.ExprPos(cond)
-			b.Errorf(pos, "if only takes block, return, break and continue")
+			b.CodeErrorf(pos, "pl.impossible",
+				"miss if body, only return, continue, breack can"+
+					" be used after if without {}")
 		}
 		if body == nil {
 			return nil

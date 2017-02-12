@@ -27,8 +27,6 @@ func parseStmt(p *parser) ast.Stmt {
 			return parseBreakStmt(p, true)
 		case "continue":
 			return parseContinueStmt(p, true)
-		case "fallthrough":
-			return parseFallthroughStmt(p)
 		case "else":
 			// a common error case where else leads a statement.
 			p.CodeErrorfHere(
@@ -42,6 +40,11 @@ func parseStmt(p *parser) ast.Stmt {
 			p.CodeErrorfHere(
 				"pl.missingSwitch",
 				"%s must be within a 'switch' block", first.Lit)
+			p.skipErrStmt()
+			return nil
+		case "fallthrough":
+			p.CodeErrorfHere("pl.invalidFallthrough",
+				"fallthrough must be followed by new switch case")
 			p.skipErrStmt()
 			return nil
 		}

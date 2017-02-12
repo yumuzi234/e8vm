@@ -24,7 +24,7 @@ func InRange(v int64, t T) bool {
 	return false
 }
 
-// CanAssign checks if right can be assigned to right
+// CanAssign checks if right can be assigned to left
 func CanAssign(left, right T) bool {
 	if c, ok := right.(*Const); ok {
 		if _, ok := c.Type.(Number); ok {
@@ -64,7 +64,6 @@ func SameType(t1, t2 T) bool {
 	if t1 == t2 {
 		return true
 	}
-
 	switch t1 := t1.(type) {
 	case null:
 		return false

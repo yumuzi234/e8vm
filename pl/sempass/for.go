@@ -7,7 +7,7 @@ import (
 
 func buildForStmt(b *builder, stmt *ast.ForStmt) tast.Stmt {
 	b.scope.Push()
-	defer b.scope.Pop()
+	defer scopePopAndCheck(b)
 
 	ret := new(tast.ForStmt)
 	if stmt.Init != nil {

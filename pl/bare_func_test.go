@@ -280,6 +280,8 @@ func TestBareFunc_bad(t *testing.T) {
 	o("breakStmt.notInLoop", "if true { break }")
 	o("breakStmt.notInLoop", "if true break")
 
+	o("missingIfBody", "if true _:=true")
+	o("ifCondNotBool", "if 1 return")
 	o("cannotAlloc", "a := int")
 
 	o("negArrayIndex", "var a [8]int; i:=a[-1]") // negative array index
@@ -305,7 +307,16 @@ func TestBareFunc_bad(t *testing.T) {
 	// switch
 	o("missingSwitch", "case")
 	o("missingSwitch", "default")
-	o("missingCaseInSwitch", `a:=1;switch a {b:=2}`)
+	o("missingCaseInSwitch", `switch 1 {b:=2}`)
+	o("invalidFallthrough", `switch 2 { case 2: fallthrough}`)
+	o("invalidFallthrough", `switch 2 { case 1:
+		fallthrough;fallthrough;case 2:}`)
+	o("invalidFallthrough", `switch 2 { case 2:
+		if true {fallthrough}}`)
+	o("swithExpr.notSupport", `switch true {}`)
+	o("caseExpr.notConst", `a:=2; switch 1 {case a:}`)
+	o("caseExpr.dulplicated", `switch 1 {case 1 :; case 1:}`)
+	o("cannotCast", `a:=int8(1); switch a {case 256 :}`)
 }
 
 func TestBareFunc_panic(t *testing.T) {

@@ -26,7 +26,6 @@ func parseCase(p *parser) *ast.Case {
 		}
 	} else if p.SeeKeyword("default") {
 		ret.Kw = p.Shift()
-		ret.Expr = nil
 	} else {
 		p.CodeErrorfHere("pl.missingCaseInSwitch",
 			"must start with keyword case/default in switch")
@@ -38,10 +37,29 @@ func parseCase(p *parser) *ast.Case {
 	}
 	for !(p.SeeKeyword("case") || p.SeeKeyword("default") ||
 		p.SeeOp("}") || p.See(lexing.EOF)) {
+		if p.SeeKeyword("fallthrough") {
+			break
+		}
 		if stmt := p.parseStmt(); stmt != nil {
 			ret.Stmts = append(ret.Stmts, stmt)
 		}
 		p.skipErrStmt()
+	}
+	if p.SeeKeyword("fallthrough") {
+		f := new(ast.FallthroughStmt)
+		f.Kw = p.Shift()
+		f.Semi = p.ExpectSemi()
+		if p.InError() {
+			return ret
+		}
+		if p.SeeKeyword("case") || p.SeeKeyword("default") {
+			ret.Fallthrough = f
+		} else {
+			p.CodeErrorfHere("pl.invalidFallthrough",
+				"fallthrough must be followed by new switch case")
+			return nil
+		}
+
 	}
 	return ret
 }
