@@ -25,5 +25,7 @@ type Config struct {
 
 	ROM string
 
+	// time functions
+	Now     func() time.Time
 	PerfNow func() time.Duration
 }

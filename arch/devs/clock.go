@@ -14,6 +14,10 @@ type Clock struct {
 
 	// PerfNow is a function pointer for monotonic clock.
 	PerfNow func() time.Duration
+
+	// StartTime will be used for program start time if
+	// not null.
+	StartTime *time.Time
 }
 
 func (c *Clock) now() time.Time {
@@ -23,9 +27,16 @@ func (c *Clock) now() time.Time {
 	return c.Now()
 }
 
+func (c *Clock) startTime() time.Time {
+	if c.StartTime != nil {
+		return *c.StartTime
+	}
+	return progStartTime
+}
+
 func (c *Clock) perfNow() time.Duration {
 	if c.PerfNow == nil {
-		return time.Since(progStartTime)
+		return time.Since(c.startTime())
 	}
 	return c.PerfNow()
 }
