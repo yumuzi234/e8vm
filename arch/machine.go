@@ -66,7 +66,13 @@ func NewMachine(c *Config) *Machine {
 
 	m.calls.register(serviceConsole, m.console)
 	m.calls.register(serviceRand, makeRand(c))
-	m.calls.register(serviceClock, &devs.Clock{PerfNow: c.PerfNow})
+	now := time.Now()
+	clk := &devs.Clock{
+		Now:       c.Now,
+		PerfNow:   c.PerfNow,
+		StartTime: &now,
+	}
+	m.calls.register(serviceClock, clk)
 
 	m.addDevice(m.ticker)
 	m.addDevice(m.console)
