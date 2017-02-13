@@ -8,6 +8,9 @@ import (
 
 func buildSwitchStmt(b *builder, stmt *ast.SwitchStmt) tast.Stmt {
 	e := buildSwitchExpr(b, stmt.Expr)
+	if e == nil {
+		return nil
+	}
 	var cases []*tast.Case
 	m := make(map[int64][]ast.Expr)
 	for _, c := range stmt.Cases {
@@ -38,9 +41,16 @@ func buildSwitchExpr(b *builder, expr ast.Expr) tast.Expr {
 			"expect single expression for switch, got %s", exprRef)
 		return nil
 	}
-	if !(types.IsInteger(exprRef.Type()) || types.IsConst(exprRef.Type())) {
+	if types.IsConst(exprRef.Type()) {
 		pos := ast.ExprPos(expr)
-		b.CodeErrorf(pos, "pl.swithExpr.notSupport",
+		b.CodeErrorf(pos, "pl.switchExpr.notYetSupported",
+			"const expression for switch is not yet supported")
+		return nil
+	}
+
+	if !types.IsInteger(exprRef.Type()) {
+		pos := ast.ExprPos(expr)
+		b.CodeErrorf(pos, "pl.swithExpr.notYetSupported",
 			"only integer is support for case now, got %s", exprRef)
 		return nil
 	}
@@ -64,7 +74,7 @@ func buildCase(b *builder, m map[int64][]ast.Expr,
 			stmts = append(stmts, s)
 		}
 	}
-	return &tast.Case{Expr: e, Stmts: stmts, Fallthrough: c.Fallthrough == nil}
+	return &tast.Case{Expr: e, Stmts: stmts, Fallthrough: c.Fallthrough != nil}
 }
 
 func buildCaseExpr(b *builder, m map[int64][]ast.Expr,

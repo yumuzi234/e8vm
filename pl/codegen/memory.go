@@ -11,8 +11,6 @@ func loadAddr(b *Block, reg uint32, r Ref) {
 	case *AddrRef:
 		loadRef(b, reg, r.base)
 		if r.offset != 0 {
-			fmt.Println("herehere!!")
-			fmt.Println(r.offset)
 			addOffsetHigh(b, reg, r.offset)
 			b.inst(asm.addi(reg, reg, r.offset))
 		}

@@ -181,6 +181,10 @@ func TestBareFunc_god(t *testing.T) {
 	o("var a []int = nil; printInt(len(a))", "0")
 	o("a := []int{}; printInt(len(a))", "0")
 	o("var a byte; if a == 0 { printInt(33) }", "33")
+	o("a:=2; switch a { case 2: printInt(33) }", "33")
+	o("a:=2; switch a { case 1: printInt(3); case 2: printInt(4)}", "4")
+	o("a:=2; switch a { default:  printInt(3); case 1: printInt(4)}", "3")
+	o("a:=2; switch a { default:  fallthrough; case 1: printInt(4)}", "4")
 }
 
 func TestBareFunc_bad(t *testing.T) {
@@ -313,9 +317,9 @@ func TestBareFunc_bad(t *testing.T) {
 		fallthrough;fallthrough;case 2:}`)
 	o("invalidFallthrough", `switch 2 { case 2:
 		if true {fallthrough}}`)
-	o("swithExpr.notSupport", `switch true {}`)
-	o("caseExpr.notConst", `a:=2; switch 1 {case a:}`)
-	o("caseExpr.dulplicated", `switch 1 {case 1 :; case 1:}`)
+	o("swithExpr.notYetSupported", `switch true {}`)
+	o("caseExpr.notConst", `a:=2; switch a {case a:}`)
+	o("caseExpr.dulplicated", `a:=3; switch a {case 1 :; case 1:}`)
 	o("cannotCast", `a:=int8(1); switch a {case 256 :}`)
 }
 
