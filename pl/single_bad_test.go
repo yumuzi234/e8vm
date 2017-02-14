@@ -140,9 +140,9 @@ func TestSingleFileBad(t *testing.T) {
 
 	// not single
 	o("switchExpr.notSingle", ` func f() (int, int) { return 0, 0 }
-		func main() { switch f(){} }`)
+		func main() { switch f(){case 1:} }`)
 	o("caseExpr.notSingle", ` func f() (int, int) { return 0, 0 }
-		func main() { switch 1 {case f():} }`)
+		func main() { a:=4; switch a {case f():} }`)
 
 	// Bugs found by the fuzzer in the past
 	o("undefinedIdent", "func f() **o.o {}")
