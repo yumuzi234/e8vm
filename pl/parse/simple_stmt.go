@@ -49,7 +49,8 @@ func parseSimpleStmtOrExpr(p *parser, needSemi bool) (ast.Stmt, ast.Expr) {
 		ret := new(ast.IncStmt)
 		op := p.Shift()
 		if exprs.Len() != 1 {
-			p.ErrorfHere("%s on expression list", op.Lit)
+			p.CodeErrorfHere("pl.incOnExprList",
+				"%s on expression list", op.Lit)
 		} else {
 			ret.Expr = exprs.Exprs[0]
 		}

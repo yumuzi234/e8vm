@@ -236,6 +236,10 @@ func TestBareFunc_bad(t *testing.T) {
 	o("cannotAssign.notAddressable", "(3)+=3") // assign to non-addressable
 	o("cannotAssign.notSingle", "var a int; var b int; a,b+=2")
 
+	o("cannotAlloc", "var r=len; _:=r")
+	o("cannotAlloc", "r:=len; _:=r")
+	o("cannotAlloc", "a := int")
+
 	// array literal
 	o("arrayLit.notInteger", "var a=[]bool {true, false}")
 	o("arrayLit.notConstant", "var a=[]int {true, false}")
@@ -265,14 +269,10 @@ func TestBareFunc_bad(t *testing.T) {
 	o("cannotDefine.countMismatch", "a := 3, 4") // count mismatch
 	o("cannotDefine.countMismatch", "a, b := 3") // count mismatch
 
-	o("expectOperand", "a, b := ()") // invalid
-
 	o("incStmt.notInt", "3++") // inc on const
 	o("incStmt.notInt", "3--") // inc on const
 	o("incStmt.nonAddressable", "var a int; (a+3)++")
 	o("incStmt.nonAddressable", "var a int; (a*3)--")
-
-	o("expectType", "var a int; var b a") // not a type
 
 	// infer type from nil
 	o("cannotAlloc.fromNil", "var a = nil")
@@ -284,9 +284,7 @@ func TestBareFunc_bad(t *testing.T) {
 	o("breakStmt.notInLoop", "if true { break }")
 	o("breakStmt.notInLoop", "if true break")
 
-	o("missingIfBody", "if true _:=true")
 	o("ifCondNotBool", "if 1 return")
-	o("cannotAlloc", "a := int")
 
 	o("negArrayIndex", "var a [8]int; i:=a[-1]") // negative array index
 	o("negArrayIndex", "var a [7]int; s:=a[:]; i:=s[-33]")
@@ -308,15 +306,9 @@ func TestBareFunc_bad(t *testing.T) {
 	o("notYetSupported", "a:=1.2")
 	o("notYetSupported", "var a=[1]int {1}")
 
-	// switch
-	o("missingSwitch", "case")
-	o("missingSwitch", "default")
-	o("missingCaseInSwitch", `switch 1 {b:=2}`)
-	o("invalidFallthrough", `switch 2 { case 2: fallthrough}`)
-	o("invalidFallthrough", `switch 2 { case 1:
-		fallthrough;fallthrough;case 2:}`)
-	o("invalidFallthrough", `switch 2 { case 2:
-		if true {fallthrough}}`)
+	o("expectType", "var a int; var b a")
+
+	//switch
 	o("swithExpr.notYetSupported", `switch true {}`)
 	o("caseExpr.notConst", `a:=2; switch a {case a:}`)
 	o("caseExpr.dulplicated", `a:=3; switch a {case 1 :; case 1:}`)

@@ -11,6 +11,8 @@ import (
 func TestStmts_good(t *testing.T) {
 	// should be expressions
 	for _, s := range []string{
+		"1 //a",
+		"1 /*abc*/",
 		"_",
 		"3",
 		"-3",
@@ -193,69 +195,87 @@ func TestStmts_bad(t *testing.T) {
 		}
 	}
 
-	// should be broken
-	for _, s := range []string{
-		"3 3",
-		"3a",
-		"3x3",
-		"'\\\"'",
-		"p(",
-		"p(;)",
-		"p())",
-		"{",
-		"}",
-		"{}}",
-		"()",
-		"if true { ",
-		"if true; { }",
-		"if { }",
-		"if true { else }",
-		"if true { }; else {}",
-		"if true else {}",
-		"if true {} else; { }",
-		"if true break else continue",
-		"if true break else {}",
-		"if true break; else {}",
-		"if true break return",
-		"fallthrough",
-		"for ; {}",
-		"for ;;; {}",
-		"for ;;;; {}",
-		"for ; ",
-		"for true ;",
-		"if true { x( } else {}",
-		"if true { x{ } else {}",
-		"if true { { } else {}",
-		"if true { x(;) } else {}",
-		"var a",
-		"var = 3",
-		"var a b c",
-		"var a b c = 3, 4",
-		"var a b = c d",
-		"var \n ()",
-		"var (a = 3, b = 4)",
-		"var (a int, b int);",
-		"var (a)",
-		"var {}",
-		"var a)",
-		"var ( a int;",
-		"a[]",
-		"a[",
-		"a]",
-		"a,b++",
-		"(i++)+3",
-		"++i",
-		"`",
-		"`x",
-		"a := []int{3, 4, 5, 6",
-		"a := []int{,}",
-		"a := []int{3\n}",
-	} {
-		buf := strings.NewReader(s)
-		stmts, es := Stmts("test.g", buf)
-		if es == nil || stmts != nil {
-			t.Log(s)
-			t.Error("should fail")
-		}
-	}
+	o("missingSemi", "3 3")
+	o("missingSemi", "3a")
+	o("missingSemi", "3x3")
+	o("missingSemi", "if true break else continue")
+	o("missingSemi", "if true break else {}")
+	o("missingSemi", "if true break return")
+	o("missingSemi", "if true { x{ } else {}")
+	o("missingSemi", "if true { { } else {}")
+	o("missingSemi", "if true { x{ } else {}")
+	o("missingSemi", "var a b c")
+	o("missingSemi", "var a b c = 3, 4")
+	o("missingSemi", "var a b = c d")
+	o("missingSemi", "a]")
+
+	o("missingSemi", "var (a int, b int);")
+
+	o("unknownESC", "'\\\"'")
+
+	o("expectOperand", "p(")
+	o("expectOperand", "{}}")
+	o("expectOperand", "p(;)")
+	o("expectOperand", "p())")
+	o("expectOperand", "}")
+	o("expectOperand", "()")
+	o("expectOperand", "if { }")
+	o("expectOperand", "if { else }")
+	o("expectOperand", "a, b := ()")
+	o("expectOperand", "for ; {}")
+	o("expectOperand", "for ; ")
+	o("expectOperand", "for true ;")
+	o("expectOperand", "if true { x( } else {}")
+	o("expectOperand", "if true { x(;) } else {}")
+	o("expectOperand", "if true { x( } else {}")
+	o("expectOperand", "if true { x( } else {}")
+	o("expectOperand", "a[]")
+	o("expectOperand", "a[")
+	o("expectOperand", "++i")
+	o("expectOperand", "a := []int{,}")
+
+	o("expectOp", "{")
+	o("expectOp", "if true { ")
+	o("expectOp", "for ;;;; {}")
+	o("expectOp", "for ;;; {}")
+	o("expectOp", "var ( a int;")
+	o("expectOp", "(i++)+3")
+	o("expectOp", "a := []int{3, 4, 5, 6")
+	o("expectOp", "a := []int{3\n}")
+
+	o("expectType", "var a")
+	o("expectType", "var (a)")
+	o("expectType", "var a)")
+
+	o("missingIfBody", "if true; { }")
+	o("missingIfBody", "if true _:=true")
+	o("missingIfBody", "if true else {}")
+	o("missingIfBody", "if true {} else; { }")
+	o("elseStart", "if true { }; else {}")
+	o("elseStart", "if true break; else {}")
+
+	// switch
+	o("missingSwitch", "case")
+	o("missingSwitch", "default")
+	o("missingCaseInSwitch", `switch 1 {b:=2}`)
+	o("invalidFallthrough", `switch 2 { case 2: fallthrough}`)
+	o("invalidFallthrough", `switch 2 { case 1:
+		fallthrough;fallthrough;case 2:}`)
+	o("invalidFallthrough", `switch 2 { case 2:
+		if true {fallthrough}}`)
+	o("invalidFallthrough", "fallthrough")
+
+	o("unexpected", "var = 3")
+	o("unexpected", "var \n ()")
+	o("unexpected", "var {}")
+
+	o("unexpectedEOF", "`")
+	o("unexpectedEOF", "`x")
+	o("unexpectedEOF", "/*")
+	o("unexpectedEOF", "\"")
+
+	o("illegalChar", "@")
+	o("invalidDotDot", "..")
+	o("incOnExprList", "a,b++")
+
 }
