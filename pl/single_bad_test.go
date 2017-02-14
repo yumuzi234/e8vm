@@ -9,6 +9,11 @@ import (
 func TestSingleFileBad(t *testing.T) {
 	o := func(code, input string) {
 		_, es, _ := CompileSingle("main.g", input, false)
+		if es == nil {
+			t.Log(input)
+			t.Error("should error:", code)
+			return
+		}
 		errNum := len(es)
 		if errNum != 1 {
 			t.Log(input)
@@ -16,11 +21,6 @@ func TestSingleFileBad(t *testing.T) {
 			for _, err := range es {
 				t.Log(err.Code)
 			}
-		}
-		if es == nil {
-			t.Log(input)
-			t.Error("should error:", code)
-			return
 		}
 		code = "pl." + code
 		if es[0].Code != code {

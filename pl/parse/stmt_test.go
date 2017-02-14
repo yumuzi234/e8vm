@@ -168,6 +168,31 @@ func TestStmts_good(t *testing.T) {
 }
 
 func TestStmts_bad(t *testing.T) {
+	o := func(code, input string) {
+		buf := strings.NewReader(input)
+		stmts, es := Stmts("test.g", buf)
+		if es == nil || stmts != nil {
+			t.Log(input)
+			t.Errorf("should error: %s", code)
+			return
+		}
+		errNum := len(es)
+		if errNum != 1 {
+			t.Log(input)
+			t.Logf("%d errors returned", errNum)
+			for _, err := range es {
+				t.Log(err.Code)
+			}
+		}
+		code = "pl." + code
+		if es[0].Code != code {
+			t.Log(input)
+			t.Log(es[0].Err)
+			t.Errorf("ErrCode expected: %q, got %q", code, es[0].Code)
+			return
+		}
+	}
+
 	// should be broken
 	for _, s := range []string{
 		"3 3",
