@@ -6,31 +6,31 @@ import (
 	"shanhu.io/smlvm/pl/types"
 )
 
-type caseInfo struct {
-	expr *codegen.Block
-	body *codegen.Block
-	c    *tast.Case
-}
-
 func buildSwitchStmt(b *builder, stmt *tast.SwitchStmt) {
-	s := buildExpr(b, stmt.Expr)
-	var cases []*caseInfo
-	for _, c := range stmt.Cases {
-		cases = append(cases, &caseInfo{c: c})
+	type caseInfo struct {
+		expr *codegen.Block
+		body *codegen.Block
+		c    *tast.Case
 	}
+
+	s := buildExpr(b, stmt.Expr)
+	cases := make([]*caseInfo, len(stmt.Cases))
+
 	start := b.b
 	def := b.f.NewBlock(start)
 	after := b.f.NewBlock(def)
 	for i := len(cases) - 1; i >= 0; i-- {
-		c := cases[i]
+		c := &caseInfo{c: stmt.Cases[i]}
 		if c.c.Expr != nil {
 			c.expr = b.f.NewBlock(start)
 		} else {
 			c.expr = def
 		}
 		c.body = b.f.NewBlock(def)
+		cases[i] = c
 	}
 	def.Jump(after)
+
 	for _, c := range cases {
 		b.b = c.expr
 		if c.c.Expr != nil {
@@ -40,6 +40,7 @@ func buildSwitchStmt(b *builder, stmt *tast.SwitchStmt) {
 		} else {
 			b.b.Jump(c.body)
 		}
+
 		b.b = c.body
 		for _, s := range c.c.Stmts {
 			b.buildStmt(s)
@@ -49,5 +50,4 @@ func buildSwitchStmt(b *builder, stmt *tast.SwitchStmt) {
 		}
 	}
 	b.b = after
-	return
 }
