@@ -109,7 +109,7 @@ func (p *Parser) ExpectLit(t int, lit string) *Token {
 		return p.Shift()
 	}
 
-	p.CodeErrorfHere("parse.unexpected", "expect %s %s, got %s",
+	p.CodeErrorfHere("lexing.unexpected", "expect %s %s, got %s",
 		p.TypeStr(t), lit, p.TypeStr(p.t.Type),
 	)
 	return nil
@@ -129,7 +129,7 @@ func (p *Parser) Expect(t int) *Token {
 		return p.Shift()
 	}
 
-	p.CodeErrorfHere("parse.unexpected", "expect %s, got %s",
+	p.CodeErrorfHere("lexing.unexpected", "expect %s, got %s",
 		p.TypeStr(t), p.TypeStr(p.t.Type))
 	return nil
 }

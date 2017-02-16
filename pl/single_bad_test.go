@@ -9,6 +9,11 @@ import (
 func TestSingleFileBad(t *testing.T) {
 	o := func(code, input string) {
 		_, es, _ := CompileSingle("main.g", input, false)
+		if es == nil {
+			t.Log(input)
+			t.Error("should error:", code)
+			return
+		}
 		errNum := len(es)
 		if errNum != 1 {
 			t.Log(input)
@@ -16,11 +21,6 @@ func TestSingleFileBad(t *testing.T) {
 			for _, err := range es {
 				t.Log(err.Code)
 			}
-		}
-		if es == nil {
-			t.Log(input)
-			t.Error("should error:", code)
-			return
 		}
 		code = "pl." + code
 		if es[0].Code != code {
@@ -110,8 +110,6 @@ func TestSingleFileBad(t *testing.T) {
 	o("cannotAlloc", `struct A {}; func main() { a:=A }`)
 	o("cannotAlloc", `struct A {}; func (a *A) f(){};
 		func main() { var a A; f:=a.f; _:=f }`)
-	o("cannotAlloc", "func n() { var r=len; _:=r}")
-	o("cannotAlloc", "func n() { r:=len; _:=r }")
 
 	o("cannotAssign.typeMismatch", `struct A {}; func (a *A) f(){};
 		func main() { var a A; var f func()=a.f; _:= f }`)
@@ -125,18 +123,11 @@ func TestSingleFileBad(t *testing.T) {
 		func p(a, b, c int) { }
 		func main() { p(r(), 5) }`)
 
-	o("elseStart", `func main() {
-		if true { }
-		else { } }`)
-
-	o("illegalChar", "@")
-	o("invalidDotDot", "..")
 	o("invalidStructDecl", "type A struct {}")
 	o("star.onNotSingle", `func main() { var a=*A() };
 	func A() (*int, *int) { return nil, nil}`)
 	o("incStmt.notSingle", ` func f() (int, int) { return 0, 0 }
 		func main() { f()++ }`)
-	o("expectOp", `func f() { for ;;; {} }`)
 
 	// not single
 	o("switchExpr.notSingle", ` func f() (int, int) { return 0, 0 }
@@ -148,7 +139,6 @@ func TestSingleFileBad(t *testing.T) {
 	o("undefinedIdent", "func f() **o.o {}")
 	o("expectConstExpr", "func n()[char[:]]string{}")
 	o("undefinedIdent", "const c, d = d, t; func main() {}")
-
 	o("cannotCast", `func main() {
 			var s string
 			for i := 0; i < len(s-2); i++ {}
