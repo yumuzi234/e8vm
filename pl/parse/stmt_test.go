@@ -186,7 +186,9 @@ func TestStmts_bad(t *testing.T) {
 				t.Log(err.Code)
 			}
 		}
-		code = "pl." + code
+		if len(code) < 7 || code[:7] != "lexing." {
+			code = "pl." + code
+		}
 		if es[0].Code != code {
 			t.Log(input)
 			t.Log(es[0].Err)
@@ -210,8 +212,6 @@ func TestStmts_bad(t *testing.T) {
 	o("missingSemi", "a]")
 
 	o("missingSemi", "var (a int, b int);")
-
-	o("unknownESC", "'\\\"'")
 
 	o("expectOperand", "p(")
 	o("expectOperand", "{}}")
@@ -265,14 +265,17 @@ func TestStmts_bad(t *testing.T) {
 		if true {fallthrough}}`)
 	o("invalidFallthrough", "fallthrough")
 
-	o("unexpected", "var = 3")
-	o("unexpected", "var \n ()")
-	o("unexpected", "var {}")
+	o("lexing.unexpected", "var = 3")
+	o("lexing.unexpected", "var \n ()")
+	o("lexing.unexpected", "var {}")
 
-	o("unexpectedEOF", "`")
-	o("unexpectedEOF", "`x")
-	o("unexpectedEOF", "/*")
-	o("unexpectedEOF", "\"")
+	o("lexing.unexpectedEOF", "`")
+	o("lexing.unexpectedEOF", "`x")
+	o("lexing.unexpectedEOF", "/*")
+	o("lexing.unexpectedEOF", "\"")
+	o("lexing.unexpectedEndl", "\"\n")
+
+	o("lexing.unknownESC", "'\\\"'")
 
 	o("illegalChar", "@")
 	o("invalidDotDot", "..")

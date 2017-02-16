@@ -55,7 +55,8 @@ func lexBlockComment(x *Lexer) *Token {
 	for {
 		x.Next()
 		if x.Ended() {
-			x.CodeErrorf("pl.unexpectedEOF", "unexpected eof in block comment")
+			x.CodeErrorf("lexing.unexpectedEOF",
+				"unexpected eof in block comment")
 			return x.MakeToken(Comment)
 		}
 

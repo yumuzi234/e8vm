@@ -40,7 +40,7 @@ func lexEscape(x *Lexer, quote rune) bool {
 		x.Next()
 		n, base, max = 8, 16, unicode.MaxRune
 	default:
-		x.CodeErrorf("pl.unknownESC", "unknown escape sequence")
+		x.CodeErrorf("lexing.unknownESC", "unknown escape sequence")
 		return false
 	}
 
@@ -82,7 +82,7 @@ func LexRawString(x *Lexer, t int) *Token {
 	x.Next()
 	for {
 		if x.Ended() {
-			x.CodeErrorf("pl.unexpectedEOF", "unexpected eof in raw string")
+			x.CodeErrorf("lexing.unexpectedEOF", "unexpected eof in raw string")
 			break
 		} else if x.See('`') {
 			x.Next()
@@ -106,10 +106,10 @@ func LexString(x *Lexer, t int, q rune) *Token {
 	x.Next()
 	for {
 		if x.Ended() {
-			x.CodeErrorf("pl.unexpectedEOF", "unexpected eof in string")
+			x.CodeErrorf("lexing.unexpectedEOF", "unexpected eof in string")
 			break
 		} else if x.See('\n') {
-			x.Errorf("unexpected endl in string")
+			x.CodeErrorf("lexing.unexpectedEndl", "unexpected endl in string")
 			break
 		} else if x.See(q) {
 			x.Next()
@@ -124,7 +124,7 @@ func LexString(x *Lexer, t int, q rune) *Token {
 	}
 
 	if q == '\'' && n != 1 {
-		x.CodeErrorf("pl.illegalCharLit", "illegal char literal")
+		x.CodeErrorf("lexing.illegalCharLit", "illegal char literal")
 	}
 	return x.MakeToken(t)
 }
