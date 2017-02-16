@@ -185,4 +185,39 @@ func TestFormatFile(t *testing.T) {
 			)
 		}
 	`)
+
+	o(`
+		func main() {
+			a:=2; switch a {case 1:
+			_:=3; default  :   falltrhough; case			 2:
+			}}`, `
+		func main() {
+			a := 2
+			switch a {
+		    case 1:
+        		_ := 3
+    		default:
+        		falltrhough
+    		case 2:
+    		}
+		}
+	`)
+
+	o(`
+		func main() {a:=2;     if true {} else {}
+		if false {{}} else {  _ := 2;}
+    		if a == 2 {}
+		}`, `
+		func main() {
+		    a := 2
+		    if true {
+		    } else {}
+		    if false {
+		        {}
+		    } else {
+		        _ := 2
+		    }
+		    if a == 2 {}
+		}
+	`)
 }
