@@ -194,12 +194,12 @@ func TestFormatFile(t *testing.T) {
 		func main() {
 			a := 2
 			switch a {
-		    case 1:
-        		_ := 3
-    		default:
-        		falltrhough
-    		case 2:
-    		}
+			case 1:
+				_ := 3
+			default:
+				falltrhough
+			case 2:
+			}
 		}
 	`)
 
@@ -209,15 +209,15 @@ func TestFormatFile(t *testing.T) {
     		if a == 2 {}
 		}`, `
 		func main() {
-		    a := 2
-		    if true {
-		    } else {}
-		    if false {
-		        {}
-		    } else {
-		        _ := 2
-		    }
-		    if a == 2 {}
+			a := 2
+			if true {
+			} else {}
+			if false {
+				{}
+			} else {
+				_ := 2
+			}
+			if a == 2 {}
 		}
 	`)
 }
