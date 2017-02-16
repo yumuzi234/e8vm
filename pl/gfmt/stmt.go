@@ -33,7 +33,15 @@ func printStmt(f *formatter, stmt ast.Stmt) {
 		printStmt(f, stmt.Block)
 	case *ast.IfStmt:
 		f.printExprs(stmt.If, " ", stmt.Expr, " ")
-		printStmt(f, stmt.Body)
+		body := stmt.Body.(*ast.Block)
+		if stmt.Else != nil && len(body.Stmts) == 0 {
+			f.printToken(body.Lbrace)
+			f.printEndl()
+			f.cueTo(body.Rbrace)
+			f.printToken(body.Rbrace)
+		} else {
+			printStmt(f, stmt.Body)
+		}
 		if stmt.Else != nil {
 			printStmt(f, stmt.Else)
 		}
@@ -67,6 +75,23 @@ func printStmt(f *formatter, stmt ast.Stmt) {
 			f.printExprs(stmt.Cond, " ")
 		}
 		printStmt(f, stmt.Body)
+	case *ast.SwitchStmt:
+		f.printExprs(stmt.Kw, " ")
+		if stmt.Expr != nil {
+			f.printExprs(stmt.Expr, " ")
+		}
+		if !sameLine(stmt.Lbrace, stmt.Rbrace) || len(stmt.Cases) > 0 {
+			f.printToken(stmt.Lbrace)
+			f.printEndl()
+			for _, c := range stmt.Cases {
+				printCase(f, c)
+			}
+			f.cueTo(stmt.Rbrace)
+			f.printToken(stmt.Rbrace)
+		} else {
+			f.printToken(stmt.Lbrace)
+			f.printToken(stmt.Rbrace)
+		}
 	case *ast.AssignStmt:
 		f.printExprs(stmt.Left, " ", stmt.Assign, " ", stmt.Right)
 	case *ast.DefineStmt:
@@ -90,13 +115,32 @@ func printStmt(f *formatter, stmt ast.Stmt) {
 		if stmt.Label != nil {
 			f.printExprs(" ", stmt.Label)
 		}
+	case *ast.FallthroughStmt:
+		f.printToken(stmt.Kw)
 	case *ast.VarDecls:
 		printVarDecls(f, stmt)
 	case *ast.ConstDecls:
 		printConstDecls(f, stmt)
-	case *ast.SwitchStmt:
-		f.errorf(stmt.Kw.Pos, "switch statement not implemented")
 	default:
 		f.errorf(nil, "invalid statement type: %T", stmt)
 	}
+}
+
+func printCase(f *formatter, c *ast.Case) {
+	f.printExprs(c.Kw)
+	if c.Expr != nil {
+		f.printExprs(" ", c.Expr)
+	}
+	f.printToken(c.Colon)
+	f.printEndl()
+	f.Tab()
+	for _, s := range c.Stmts {
+		printStmt(f, s)
+		f.printEndlPlus(true, false)
+	}
+	if c.Fallthrough != nil {
+		printStmt(f, c.Fallthrough)
+		f.printEndlPlus(true, false)
+	}
+	f.ShiftTab()
 }
