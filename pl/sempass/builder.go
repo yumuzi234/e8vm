@@ -59,12 +59,12 @@ func (b *builder) buildConstExpr(expr ast.Expr) tast.Expr {
 }
 
 func (b *builder) buildConst(expr ast.Expr) *tast.Const {
-	ret, ok := b.buildConstExpr(expr).(*tast.Const)
+	c, ok := b.buildConstExpr(expr).(*tast.Const)
 	if !ok {
 		b.Errorf(ast.ExprPos(expr), "expect a const")
 		return nil
 	}
-	return ret
+	return c
 }
 
 func (b *builder) buildType(expr ast.Expr) types.T {

@@ -44,7 +44,11 @@ func buildConstExprList(b *builder, list *ast.ExprList) tast.Expr {
 		return nil
 	}
 	if n == 1 {
-		return b.buildConst(list.Exprs[0])
+		ret := b.buildConst(list.Exprs[0])
+		if ret == nil {
+			return nil
+		}
+		return ret
 	}
 
 	ret := tast.NewExprList()

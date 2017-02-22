@@ -61,10 +61,18 @@ func buildConstExpr(b *builder, expr ast.Expr) tast.Expr {
 		return buildConstMember(b, expr)
 	case *ast.OpExpr:
 		return buildConstOpExpr(b, expr)
+	case *ast.CallExpr:
+		b.CodeErrorf(
+			ast.ExprPos(expr), "pl.notYetSupported",
+			"typed const not supported",
+		)
+		return nil
 	}
 
-	b.CodeErrorf(ast.ExprPos(expr), "pl.expectConstExpr",
-		"expect a const expression")
+	b.CodeErrorf(
+		ast.ExprPos(expr), "pl.expectConstExpr",
+		"expect a const expression",
+	)
 	return nil
 }
 

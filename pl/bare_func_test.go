@@ -305,10 +305,11 @@ func TestBareFunc_bad(t *testing.T) {
 	o("notYetSupported", "a:=10e-2")
 	o("notYetSupported", "a:=1.2")
 	o("notYetSupported", "var a=[1]int {1}")
+	o("notYetSupported", "const a = int(3)")
 
 	o("expectType", "var a int; var b a")
 
-	//switch
+	// switch
 	o("swithExpr.notYetSupported", `switch true {}`)
 	o("caseExpr.notConst", `a:=2; switch a {case a:}`)
 	o("caseExpr.dulplicated", `a:=3; switch a {case 1 :; case 1:}`)
