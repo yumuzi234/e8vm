@@ -62,9 +62,10 @@ func buildConstExpr(b *builder, expr ast.Expr) tast.Expr {
 	case *ast.OpExpr:
 		return buildConstOpExpr(b, expr)
 	case *ast.CallExpr:
+		// TODO(yumuzi234): support typed const cast.
 		b.CodeErrorf(
 			ast.ExprPos(expr), "pl.notYetSupported",
-			"typed const not supported",
+			"typed const cast not supported",
 		)
 		return nil
 	}
