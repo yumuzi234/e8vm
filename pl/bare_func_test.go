@@ -223,6 +223,11 @@ func TestBareFunc_bad(t *testing.T) {
 	o("invalidExprStmt", "_:= nil+nil")
 	o("invalidExprStmt", "true + 3") // boolean cannot add
 
+	// invalid Op
+	o("invalidOp", "a:=true; b:=-a")
+	o("invalidOp", "a:=1; b:=!a")
+	o("invalidOp", "const a=3; b:=!a")
+
 	// undefined
 	o("undefinedIdent", "a=3")
 	o("undefinedIdent", "a()")

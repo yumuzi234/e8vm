@@ -90,7 +90,14 @@ func buildIdent(b *builder, ident *lexing.Token) tast.Expr {
 	case tast.SymVar, tast.SymField:
 		ref := tast.NewAddressableRef(t)
 		return &tast.Ident{Token: ident, Ref: ref, Sym: s}
-	case tast.SymConst, tast.SymStruct, tast.SymType, tast.SymImport:
+	case tast.SymConst:
+		if types.IsConst(t) {
+			ref := tast.NewRef(t)
+			return tast.NewConst(ref)
+		}
+		ref := tast.NewRef(t)
+		return &tast.Ident{Token: ident, Ref: ref, Sym: s}
+	case tast.SymStruct, tast.SymType, tast.SymImport:
 		ref := tast.NewRef(t)
 		return &tast.Ident{Token: ident, Ref: ref, Sym: s}
 	case tast.SymFunc:
