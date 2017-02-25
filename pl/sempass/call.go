@@ -73,7 +73,7 @@ func buildCallMake(b *builder, expr *ast.CallExpr, f tast.Expr) tast.Expr {
 		startType := start.R().T
 		startPos := ast.ExprPos(expr.Args.Exprs[2])
 		if v, ok := types.NumConst(startType); ok {
-			start = constCastUint(b, startPos, v, start)
+			start = numsCastUint(b, startPos, v, start)
 			if start == nil {
 				return nil
 			}

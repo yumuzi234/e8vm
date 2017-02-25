@@ -60,7 +60,7 @@ func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {
 			if types.IsNil(t) {
 				e = tast.NewCast(e, b.retType[i])
 			} else if v, ok := types.NumConst(t); ok {
-				e = constCast(b, nil, v, e, b.retType[i])
+				e = numsCast(b, nil, v, e, b.retType[i])
 				if e == nil {
 					panic("bug")
 				}

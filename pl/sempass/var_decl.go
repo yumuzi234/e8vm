@@ -17,7 +17,7 @@ func varDeclPrepare(
 		if types.IsNil(etype) {
 			e = tast.NewCast(e, t)
 		} else if v, ok := types.NumConst(etype); ok {
-			e = constCast(b, tok.Pos, v, e, t)
+			e = numsCast(b, tok.Pos, v, e, t)
 			if e == nil {
 				return nil
 			}
