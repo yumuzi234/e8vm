@@ -92,8 +92,7 @@ func buildIdent(b *builder, ident *lexing.Token) tast.Expr {
 		return &tast.Ident{Token: ident, Ref: ref, Sym: s}
 	case tast.SymConst:
 		if types.IsConst(t) {
-			ref := tast.NewRef(t)
-			return tast.NewConst(ref)
+			return tast.NewConst(tast.NewRef(t))
 		}
 		ref := tast.NewRef(t)
 		return &tast.Ident{Token: ident, Ref: ref, Sym: s}

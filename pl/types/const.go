@@ -18,11 +18,6 @@ func NewConstInt(v int64, t T) *Const {
 	return &Const{Value: v, Type: t}
 }
 
-// NewConstString creates a new string constant.
-func NewConstString(s string) *Const {
-	return &Const{Value: s, Type: String}
-}
-
 // NewConstBool creates a new bool constant.
 func NewConstBool(v bool) *Const {
 	return &Const{Value: v, Type: Bool}
@@ -57,15 +52,6 @@ func (c *Const) String() string {
 func IsConst(t T) bool {
 	_, ok := t.(*Const)
 	return ok
-}
-
-// ConstType checks and transforms a type to const type.
-func ConstType(t T) (*Const, bool) {
-	c, ok := t.(*Const)
-	if !ok {
-		return nil, false
-	}
-	return c, true
 }
 
 // NumConst checks and transforms a type to a typeless number.

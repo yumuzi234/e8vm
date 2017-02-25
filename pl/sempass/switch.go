@@ -101,7 +101,7 @@ func buildCaseExpr(b *builder, m map[int64][]ast.Expr,
 	if !types.IsConst(t) {
 		e = constCast(b, pos, v, e, t)
 	} else {
-		// TODO const switch expr
+		// TODO: const switch expr
 		// in the case, expr for switch is also a const
 	}
 	m[v] = append(m[v], c.Expr)

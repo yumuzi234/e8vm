@@ -28,37 +28,38 @@ func unaryOpConst(b *builder, opTok *lexing.Token, B tast.Expr) tast.Expr {
 		return nil
 	}
 
-	ct, ok := types.ConstType(bref.T)
+	ct, ok := bref.T.(*types.Const)
 	if !ok {
 		b.CodeErrorf(opTok.Pos, "pl.expectConstExpr",
 			"expect const expression but got %q %s", op, B)
 		return nil
 	}
-	code, ok := ct.Type.(types.Basic)
-	if !ok {
-		b.CodeErrorf(opTok.Pos, "pl.impossible",
-			"only basic type const supported")
-		return nil
-	}
-	if code == types.Bool {
+	t := ct.Type
+	if types.IsBasic(t, types.Bool) {
 		// TODO
 		b.CodeErrorf(opTok.Pos, "pl.notYetSupported",
 			"const bool is not supported yet")
 		return nil
 	}
-	if code == types.Float32 {
+	if types.IsBasic(t, types.Float32) {
 		b.CodeErrorf(opTok.Pos, "pl.notYetSupported",
 			"float is not supported yet")
 		return nil
 	}
-	switch op {
-	case "+":
-		return B // just shortcut this
-	case "-":
-		return tast.NewConst(tast.NewRef(types.NewConstInt(-v, code)))
+	if types.IsInteger(t) {
+		switch op {
+		case "+":
+			return B // just shortcut this
+		case "-":
+			return tast.NewConst(tast.NewRef(types.NewConstInt(-v, t)))
+		}
+		b.CodeErrorf(opTok.Pos, "pl.invalidOp",
+			"invalid operation on int const: %q on %s", op, B)
+		return nil
 	}
-	b.CodeErrorf(opTok.Pos, "pl.invalidOp",
-		"invalid operation on int const: %q on %s", op, B)
+
+	b.CodeErrorf(opTok.Pos, "pl.impossible",
+		"only basic type const supported")
 	return nil
 }
 
