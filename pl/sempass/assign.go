@@ -32,7 +32,7 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 		srcType := srcRef.At(i).Type()
 		if !types.CanAssign(destType, srcType) {
 			b.CodeErrorf(op.Pos, "pl.cannotAssign.typeMismatch",
-				"cannot assign %s to %s; type mismatch",
+				"cannot assign %s to %s, type mismatch or integer overflow",
 				srcType, destType)
 			return nil
 		}

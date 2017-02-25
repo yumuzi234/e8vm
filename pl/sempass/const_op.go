@@ -35,6 +35,7 @@ func unaryOpConst(b *builder, opTok *lexing.Token, B tast.Expr) tast.Expr {
 		return nil
 	}
 	t := ct.Type
+	v = ct.Value.(int64)
 	if types.IsBasic(t, types.Bool) {
 		// TODO
 		b.CodeErrorf(opTok.Pos, "pl.notYetSupported",
@@ -51,6 +52,7 @@ func unaryOpConst(b *builder, opTok *lexing.Token, B tast.Expr) tast.Expr {
 		case "+":
 			return B // just shortcut this
 		case "-":
+			// a potential overflow here
 			return tast.NewConst(tast.NewRef(types.NewConstInt(-v, t)))
 		}
 		b.CodeErrorf(opTok.Pos, "pl.invalidOp",
@@ -86,16 +88,57 @@ func binaryOpConst(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 		return binaryOpNums(b, opTok, A, B)
 	}
 
+	var t types.T
+
 	if oka || okb {
 		if oka && types.IsInteger(cb.Type) {
-			_ = va
+			if !types.InRange(va, cb.Type) {
+				b.CodeErrorf(opTok.Pos, "pl.cannotCast",
+					"cannot cast number %d to %s, out of range", va, cb.Type)
+			}
+			vb = cb.Value.(int64)
+			t = cb.Type
 		}
 		if okb && types.IsInteger(ca.Type) {
-			_ = vb
+			if !types.InRange(vb, ca.Type) {
+				b.CodeErrorf(opTok.Pos, "pl.cannotCast",
+					"cannot cast number %d to %s, out of range", vb, ca.Type)
+			}
+			va = ca.Value.(int64)
+			t = ca.Type
+		}
+	} else {
+		ta, oka := ca.Type.(types.Basic)
+		tb, okb := cb.Type.(types.Basic)
+		if !(oka && okb) {
+			b.CodeErrorf(opTok.Pos, "pl.impossible",
+				"only basic type const supported")
+			return nil
+		}
+		// Dont want to use types.SameType
+		if tb != ta {
+			b.CodeErrorf(
+				opTok.Pos, "pl.invalidOp.typeMismatch",
+				"operation %s needs the same type on both sides %s, and %s",
+				op, ta, tb)
+			return nil
+		}
+		t = ta
+		va = ca.Value.(int64)
+		vb = cb.Value.(int64)
+		if types.IsInteger(t) {
+			b.CodeErrorf(opTok.Pos, "pl.notYetSupported",
+				"only num and int consts are implemented")
+			return nil
 		}
 	}
-	b.CodeErrorf(opTok.Pos, "pl.notYetSupported",
-		"only num and int consts are implemented")
+	// a manual overflow?
+	r := func(v int64) tast.Expr {
+		return tast.NewConst(tast.NewRef(types.NewConstInt(v, t)))
+	}
+	_ = r
+	b.CodeErrorf(opTok.Pos, "pl.invalidOp",
+		"invalidOp %q, bewteen %s adn %s", op, ca.Type, cb.Type)
 	return nil
 }
 

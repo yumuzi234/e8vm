@@ -182,11 +182,9 @@ func buildBinaryOpExpr(b *builder, expr *ast.OpExpr) tast.Expr {
 		switch op {
 		case "+", "-", "*", "&", "|", "^", "%", "/",
 			"==", "!=", ">", "<", ">=", "<=":
-			b.Errorf(
-				opPos,
-				"operation %s needs the same type on both sides",
-				op,
-			)
+			b.CodeErrorf(
+				opPos, "pl.invalidOp.typeMismatch",
+				"operation %s needs the same type on both sides", op)
 		}
 	}
 	return nil
