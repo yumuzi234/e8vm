@@ -10,12 +10,17 @@ type Const struct {
 	Value interface{}
 }
 
-// NewConst creates a new constant for a specific type.
-func NewConst(v int64, t T) *Const { return &Const{Value: v, Type: t} }
+// NewConstInt creates a new constant for a specific int type.
+func NewConstInt(v int64, t T) *Const {
+	if !IsInteger(t) {
+		panic("the type for NewConstInt must be a int or unit")
+	}
+	return &Const{Value: v, Type: t}
+}
 
-// NewConstString creates a new string constant.
-func NewConstString(s string) *Const {
-	return &Const{Value: s, Type: String}
+// NewConstBool creates a new bool constant.
+func NewConstBool(v bool) *Const {
+	return &Const{Value: v, Type: Bool}
 }
 
 // NewNumber creates a new constant number.
@@ -50,6 +55,7 @@ func IsConst(t T) bool {
 }
 
 // NumConst checks and transforms a type to a typeless number.
+// this function will be replaced by typed const
 func NumConst(t T) (int64, bool) {
 	c, ok := t.(*Const)
 	if !ok {

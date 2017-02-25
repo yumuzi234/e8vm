@@ -176,7 +176,8 @@ func buildBinaryOpExpr(b *builder, expr *ast.OpExpr) tast.Expr {
 		return binaryOpSlice(b, opTok, A, B)
 	}
 
-	b.Errorf(opPos, "invalid operation of %s %s %s", atyp, op, btyp)
+	b.CodeErrorf(opPos, "pl.invalidOp",
+		"invalid operation of %s %s %s", atyp, op, btyp)
 	if types.IsInteger(atyp) && types.IsInteger(btyp) {
 		switch op {
 		case "+", "-", "*", "&", "|", "^", "%", "/",

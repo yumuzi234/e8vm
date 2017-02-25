@@ -13,7 +13,8 @@ func unaryOpBool(b *builder, opTok *lexing.Token, B tast.Expr) tast.Expr {
 		return &tast.OpExpr{Op: opTok, B: B, Ref: tast.NewRef(t)}
 	}
 
-	b.Errorf(opTok.Pos, "invalid operation: %q on boolean", op)
+	b.CodeErrorf(opTok.Pos, "pl.invalidOp",
+		"invalid operation: %q on boolean", op)
 	return nil
 }
 
