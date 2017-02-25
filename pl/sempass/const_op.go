@@ -21,6 +21,7 @@ func unaryOpConst(b *builder, opTok *lexing.Token, B tast.Expr) tast.Expr {
 		case "+":
 			return B // just shortcut this
 		case "-":
+			// a potential overflow here
 			return tast.NewConst(tast.NewRef(types.NewNumber(-v)))
 		}
 		b.CodeErrorf(opTok.Pos, "pl.invalidOp",
@@ -52,8 +53,13 @@ func unaryOpConst(b *builder, opTok *lexing.Token, B tast.Expr) tast.Expr {
 		case "+":
 			return B // just shortcut this
 		case "-":
-			// a potential overflow here
-			return tast.NewConst(tast.NewRef(types.NewConstInt(-v, t)))
+			ref, e := types.NewConstInt(-v, t)
+			if e != nil {
+				b.CodeErrorf(opTok.Pos, "pl.constOverflow",
+					"const %d overflows %q", v, t)
+				return nil
+			}
+			return tast.NewConst(tast.NewRef(ref))
 		}
 		b.CodeErrorf(opTok.Pos, "pl.invalidOp",
 			"invalid operation on int const: %q on %s", op, B)
@@ -124,33 +130,40 @@ func binaryOpConst(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 			return nil
 		}
 		t = ta
-		va = ca.Value.(int64)
-		vb = cb.Value.(int64)
 		if types.IsInteger(t) {
 			b.CodeErrorf(opTok.Pos, "pl.notYetSupported",
 				"only num and int consts are implemented")
 			return nil
 		}
+		va = ca.Value.(int64)
+		vb = cb.Value.(int64)
 	}
-	// a manual overflow?
 	r := func(v int64) tast.Expr {
-		return tast.NewConst(tast.NewRef(types.NewConstInt(v, t)))
+		ref, e := types.NewConstInt(v, t)
+		if e != nil {
+			b.CodeErrorf(opTok.Pos, "pl.constOverflow",
+				"const %d overflows %q", v, t)
+			return nil
+		}
+		return tast.NewConst(tast.NewRef(ref))
 	}
-	_ = r
-	b.CodeErrorf(opTok.Pos, "pl.invalidOp",
-		"invalidOp %q, bewteen %s adn %s", op, ca.Type, cb.Type)
-	return nil
+	return constIntOp(b, opTok, A, B, va, vb, r)
 }
 
 // TODO: after added const bool, change input into va, ab
 func binaryOpNums(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
-	op := opTok.Lit
 	va, _ := types.NumConst(A.R().Type())
 	vb, _ := types.NumConst(B.R().Type())
 	r := func(v int64) tast.Expr {
 		return tast.NewConst(tast.NewRef(types.NewNumber(v)))
 	}
+	return constIntOp(b, opTok, A, B, va, vb, r)
+}
 
+// TODO: after added const bool, remove inputs of va, ab
+func constIntOp(b *builder, opTok *lexing.Token, A, B tast.Expr,
+	va, vb int64, r func(int64) tast.Expr) tast.Expr {
+	op := opTok.Lit
 	switch op {
 	case "+":
 		return r(va + vb)
@@ -162,6 +175,7 @@ func binaryOpNums(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 		return r(va & vb)
 	case "|":
 		return r(va | vb)
+	// remove ^ for nums?
 	case "^":
 		return r(va ^ vb)
 	case "%":
@@ -196,6 +210,6 @@ func binaryOpNums(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 		return r(va >> uint64(vb))
 	}
 
-	b.CodeErrorf(opTok.Pos, "pl.invalidOp", "%q on num consts", op)
+	b.CodeErrorf(opTok.Pos, "pl.invalidOp", "%q on int consts", op)
 	return nil
 }

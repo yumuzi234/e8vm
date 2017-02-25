@@ -12,11 +12,11 @@ type Const struct {
 }
 
 // NewConstInt creates a new constant for a specific int type.
-func NewConstInt(v int64, t T) *Const {
+func NewConstInt(v int64, t T) (*Const, error) {
 	if !(IsInteger(t) && InRange(v, t)) {
-		panic("the type for NewConstInt must be a int or unit")
+		return nil, fmt.Errorf("cannot creat %q with value %d", t, v)
 	}
-	return &Const{Value: v, Type: t}
+	return &Const{Value: v, Type: t}, nil
 }
 
 // NewConstBool creates a new bool constant.
