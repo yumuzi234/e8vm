@@ -67,18 +67,43 @@ func binaryOpConst(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 	op := opTok.Lit
 	aref := A.R()
 	bref := B.R()
-	if aref.List != nil || bref.List != nil {
-		b.Errorf(opTok.Pos, "invalid %s %q %s", aref.T, op, bref.T)
+	if !(aref.IsSingle() && bref.IsSingle()) {
+		b.CodeErrorf(opTok.Pos, "pl.notSingle",
+			"only single expr supported for const %s %q %s", aref.T, op, bref.T)
 		return nil
 	}
-
-	va, oka := types.NumConst(aref.T)
-	vb, okb := types.NumConst(bref.T)
+	ca, oka := aref.Type().(*types.Const)
+	cb, okb := bref.Type().(*types.Const)
 	if !(oka && okb) {
-		b.Errorf(opTok.Pos, "non-numeric consts ops not implemented")
+		b.CodeErrorf(opTok.Pos, "pl.expectConstExpr",
+			"expect a const expression, got %s %q %s", aref.T, op, bref.T)
 		return nil
 	}
 
+	va, oka := types.NumConst(aref.Type())
+	vb, okb := types.NumConst(bref.Type())
+	if oka && okb {
+		return binaryOpNums(b, opTok, A, B)
+	}
+
+	if oka || okb {
+		if oka && types.IsInteger(cb.Type) {
+			_ = va
+		}
+		if okb && types.IsInteger(ca.Type) {
+			_ = vb
+		}
+	}
+	b.CodeErrorf(opTok.Pos, "pl.notYetSupported",
+		"only num and int consts are implemented")
+	return nil
+}
+
+// TODO: after added const bool, change input into va, ab
+func binaryOpNums(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
+	op := opTok.Lit
+	va, _ := types.NumConst(A.R().Type())
+	vb, _ := types.NumConst(B.R().Type())
 	r := func(v int64) tast.Expr {
 		return tast.NewConst(tast.NewRef(types.NewNumber(v)))
 	}
@@ -109,6 +134,7 @@ func binaryOpConst(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 		}
 		return r(va / vb)
 	case "==", "!=", ">", "<", ">=", "<=":
+		// TODO: will change into a const bool
 		return &tast.OpExpr{
 			A: A, Op: opTok, B: B,
 			Ref: tast.NewRef(types.Bool),
@@ -127,6 +153,6 @@ func binaryOpConst(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 		return r(va >> uint64(vb))
 	}
 
-	b.Errorf(opTok.Pos, "%q on consts", op)
+	b.CodeErrorf(opTok.Pos, "pl.invalidOp", "%q on num consts", op)
 	return nil
 }
