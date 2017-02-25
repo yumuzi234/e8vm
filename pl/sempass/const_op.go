@@ -80,22 +80,22 @@ func binaryOpConst(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 			"only single expr supported for const %s %q %s", aref.T, op, bref.T)
 		return nil
 	}
-	ca, oka := aref.Type().(*types.Const)
-	cb, okb := bref.Type().(*types.Const)
+	atyp := aref.Type()
+	btyp := bref.Type()
+	ca, oka := atyp.(*types.Const)
+	cb, okb := btyp.(*types.Const)
 	if !(oka && okb) {
 		b.CodeErrorf(opTok.Pos, "pl.expectConstExpr",
-			"expect a const expression, got %s %q %s", aref.T, op, bref.T)
+			"expect a const expression, got %s %q %s", atyp, op, btyp)
 		return nil
 	}
 
-	va, oka := types.NumConst(aref.Type())
-	vb, okb := types.NumConst(bref.Type())
+	va, oka := types.NumConst(atyp)
+	vb, okb := types.NumConst(btyp)
 	if oka && okb {
-		return binaryOpNums(b, opTok, A, B)
+		return constIntOp(b, opTok, A, B, va, vb, ca.Type)
 	}
-
 	var t types.T
-
 	if oka || okb {
 		if oka && types.IsInteger(cb.Type) {
 			if !types.InRange(va, cb.Type) {
@@ -121,48 +121,42 @@ func binaryOpConst(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 				"only basic type const supported")
 			return nil
 		}
-		// Dont want to use types.SameType
-		if tb != ta {
-			b.CodeErrorf(
-				opTok.Pos, "pl.invalidOp.typeMismatch",
-				"operation %s needs the same type on both sides %s, and %s",
-				op, ta, tb)
-			return nil
-		}
-		t = ta
-		if types.IsInteger(t) {
+
+		if !(types.IsInteger(ta) && types.IsInteger(tb)) {
 			b.CodeErrorf(opTok.Pos, "pl.notYetSupported",
 				"only num and int consts are implemented")
 			return nil
 		}
-		va = ca.Value.(int64)
-		vb = cb.Value.(int64)
-	}
-	r := func(v int64) tast.Expr {
-		ref, e := types.NewConstInt(v, t)
-		if e != nil {
-			b.CodeErrorf(opTok.Pos, "pl.constOverflow",
-				"const %d overflows %q", v, t)
+
+		if tb != ta {
+			b.CodeErrorf(
+				opTok.Pos, "pl.invalidOp.typeMismatch",
+				"cannod %s type %s, and type %s, type mismatch",
+				op, ta, tb)
 			return nil
 		}
-		return tast.NewConst(tast.NewRef(ref))
+		va = ca.Value.(int64)
+		vb = cb.Value.(int64)
+		t = ta
 	}
-	return constIntOp(b, opTok, A, B, va, vb, r)
-}
-
-// TODO: after added const bool, change input into va, ab
-func binaryOpNums(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
-	va, _ := types.NumConst(A.R().Type())
-	vb, _ := types.NumConst(B.R().Type())
-	r := func(v int64) tast.Expr {
-		return tast.NewConst(tast.NewRef(types.NewNumber(v)))
-	}
-	return constIntOp(b, opTok, A, B, va, vb, r)
+	return constIntOp(b, opTok, A, B, va, vb, t)
 }
 
 // TODO: after added const bool, remove inputs of va, ab
 func constIntOp(b *builder, opTok *lexing.Token, A, B tast.Expr,
-	va, vb int64, r func(int64) tast.Expr) tast.Expr {
+	va, vb int64, t types.T) tast.Expr {
+	r := func(v int64) tast.Expr {
+		if types.IsInteger(t) {
+			ref, e := types.NewConstInt(v, t)
+			if e != nil {
+				b.CodeErrorf(opTok.Pos, "pl.constOverflow",
+					"const %d overflows %q", v, t)
+				return nil
+			}
+			return tast.NewConst(tast.NewRef(ref))
+		}
+		return tast.NewConst(tast.NewRef(types.NewNumber(v)))
+	}
 	op := opTok.Lit
 	switch op {
 	case "+":

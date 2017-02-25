@@ -32,7 +32,7 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 		srcType := srcRef.At(i).Type()
 		if !types.CanAssign(destType, srcType) {
 			b.CodeErrorf(op.Pos, "pl.cannotAssign.typeMismatch",
-				"cannot assign %s to %s, type mismatch or integer overflow",
+				"cannot assign %s to %s",
 				srcType, destType)
 			return nil
 		}
@@ -46,7 +46,7 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 			if types.IsNil(t) {
 				e = tast.NewCast(e, destRef.At(i).Type())
 			} else if v, ok := types.NumConst(t); ok {
-				e = numsCast(b, nil, v, e, destRef.At(i).Type())
+				e = numCast(b, nil, v, e, destRef.At(i).Type())
 				if e == nil {
 					panic("bug")
 				}
@@ -86,7 +86,7 @@ func opAssign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 
 	if opLit == ">>" || opLit == "<<" {
 		if v, ok := types.NumConst(srcType); ok {
-			src = numsCast(b, op.Pos, v, src, types.Uint)
+			src = numCast(b, op.Pos, v, src, types.Uint)
 			if src == nil {
 				return nil
 			}
@@ -101,7 +101,7 @@ func opAssign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 	}
 
 	if v, ok := types.NumConst(srcType); ok {
-		src = numsCast(b, op.Pos, v, src, destType)
+		src = numCast(b, op.Pos, v, src, destType)
 		if src == nil {
 			return nil
 		}

@@ -25,7 +25,7 @@ func allocPrepare(
 			return nil
 		}
 		if v, ok := types.NumConst(t); ok {
-			e = numsCastInt(b, tok.Pos, v, e)
+			e = numCastInt(b, tok.Pos, v, e)
 			if e == nil {
 				return nil
 			}
