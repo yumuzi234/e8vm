@@ -33,8 +33,8 @@ func printStmt(f *formatter, stmt ast.Stmt) {
 		printStmt(f, stmt.Block)
 	case *ast.IfStmt:
 		f.printExprs(stmt.If, " ", stmt.Expr, " ")
-		body := stmt.Body.(*ast.Block)
-		if stmt.Else != nil && len(body.Stmts) == 0 {
+		body, ok := stmt.Body.(*ast.Block)
+		if ok && stmt.Else != nil && len(body.Stmts) == 0 {
 			f.printToken(body.Lbrace)
 			f.printEndl()
 			f.cueTo(body.Rbrace)

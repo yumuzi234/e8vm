@@ -220,4 +220,11 @@ func TestFormatFile(t *testing.T) {
 			if a == 2 {}
 		}
 	`)
+	o(`
+		func main() { if true return }
+	`, `
+		func main() {
+			if true return
+		}
+	`)
 }
