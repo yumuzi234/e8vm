@@ -117,6 +117,7 @@ func buildIdent(b *builder, ident *lexing.Token) tast.Expr {
 	}
 }
 
+// It seems that buildConstIdent and Operand are good, no need to change
 func buildConstIdent(b *builder, ident *lexing.Token) tast.Expr {
 	s := b.scope.Query(ident.Lit)
 	if s == nil {
@@ -151,9 +152,12 @@ func buildConstOperand(b *builder, op *ast.Operand) tast.Expr {
 		return buildFloat(b, op.Token)
 	case parse.Ident:
 		return buildConstIdent(b, op.Token)
+	case parse.Char, parse.String:
+		b.CodeErrorf(op.Token.Pos, "pl.notYetSupported",
+			"only num and int consts are implemented")
+		return nil
 	}
-
-	b.Errorf(op.Token.Pos, "expect a constant")
+	b.CodeErrorf(op.Token.Pos, "pl.expectConstExpr", "expect a constant")
 	return nil
 }
 
