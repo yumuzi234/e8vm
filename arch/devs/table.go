@@ -2,12 +2,12 @@ package devs
 
 // Table is a virtual card table device.
 type Table struct {
-	out TableRender
+	out Sender
 	in  Sender
 }
 
 // NewTable creates a new virtual card table device.
-func NewTable(out TableRender, in Sender) *Table {
+func NewTable(out, in Sender) *Table {
 	return &Table{
 		out: out,
 		in:  in,
@@ -19,7 +19,7 @@ func (t *Table) Handle(req []byte) ([]byte, int32) {
 	if t.out == nil {
 		return nil, 0
 	}
-	t.out.Act(&TableAction{req})
+	t.out.Send(req)
 	return nil, 0
 }
 
