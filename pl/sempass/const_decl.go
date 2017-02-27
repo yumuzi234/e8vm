@@ -24,11 +24,6 @@ func declareConst(b *builder, tok *lexing.Token, t types.T) *syms.Symbol {
 }
 
 func buildConstDecl(b *builder, d *ast.ConstDecl) *tast.Define {
-	if d.Type != nil {
-		b.Errorf(ast.ExprPos(d.Type), "typed const not implemented yet")
-		return nil
-	}
-
 	right := buildConstExprList(b, d.Exprs)
 	if right == nil {
 		return nil
@@ -45,13 +40,36 @@ func buildConstDecl(b *builder, d *ast.ConstDecl) *tast.Define {
 	}
 
 	var ret []*syms.Symbol
+	var tdest types.T
+	if d.Type != nil {
+		tdest = b.buildType(d.Type)
+		if tdest == nil {
+			return nil
+		}
+		if _, ok := tdest.(*types.Basic); !ok {
+			b.CodeErrorf(ast.ExprPos(d.Type), "pl.constType",
+				"%s is not support for a const type", tdest)
+			return nil
+		}
+	}
+
 	for i, ident := range idents {
 		t := right.R().At(i).Type()
 		if !types.IsConst(t) {
-			b.Errorf(ast.ExprPos(d.Exprs.Exprs[i]), "not a const")
+			b.CodeErrorf(ast.ExprPos(d.Exprs.Exprs[i]), "pl.expectConstExpr",
+				"not a const")
 			return nil
 		}
-
+		ct, _ := t.(*types.Const)
+		if d.Type != nil {
+			if !types.DefineTypeConst(tdest, ct) {
+				b.CodeErrorf(ast.ExprPos(d.Exprs.Exprs[i]),
+					"pl.cannotAssign.typeMismatch",
+					"cannot assign const %s with %s", tdest, ct.Type)
+				return nil
+			}
+			t = tdest
+		}
 		sym := declareConst(b, ident, t)
 		if sym == nil {
 			return nil

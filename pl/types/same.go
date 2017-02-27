@@ -158,3 +158,14 @@ func BothSlice(t1, t2 T) bool {
 
 	return SameType(p1, p2)
 }
+
+// DefineTypeConst checks if a const can be used to define type t.
+func DefineTypeConst(t T, ct *Const) bool {
+	if SameType(t, ct.Type) {
+		return true
+	}
+	if _, ok := ct.Type.(Number); IsInteger(t) && ok {
+		return true
+	}
+	return false
+}

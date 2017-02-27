@@ -321,6 +321,9 @@ func TestBareFunc_bad(t *testing.T) {
 	o("caseExpr.notConst", `a:=2; switch a {case a:}`)
 	o("caseExpr.dulplicated", `a:=3; switch a {case 1 :; case 1:}`)
 	o("cannotCast", `a:=int8(1); switch a {case 256 :}`)
+
+	// const
+	o("missingConstDefine", "const a; _:=a")
 }
 
 func TestBareFunc_panic(t *testing.T) {
