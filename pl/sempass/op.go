@@ -111,7 +111,7 @@ func buildBinaryOpExpr(b *builder, expr *ast.OpExpr) tast.Expr {
 
 	if op == ">>" || op == "<<" {
 		if v, ok := types.NumConst(btyp); ok {
-			B = constCast(b, opPos, v, B, types.Uint)
+			B = numCast(b, opPos, v, B, types.Uint)
 			if B == nil {
 				return nil
 			}
@@ -119,7 +119,7 @@ func buildBinaryOpExpr(b *builder, expr *ast.OpExpr) tast.Expr {
 		}
 
 		if v, ok := types.NumConst(atyp); ok {
-			A = constCast(b, opPos, v, A, types.Int)
+			A = numCast(b, opPos, v, A, types.Int)
 			if A == nil {
 				return nil
 			}
@@ -135,7 +135,7 @@ func buildBinaryOpExpr(b *builder, expr *ast.OpExpr) tast.Expr {
 	}
 
 	if v, ok := types.NumConst(atyp); ok {
-		A = constCast(b, opPos, v, A, btyp)
+		A = numCast(b, opPos, v, A, btyp)
 		if A == nil {
 			return nil
 		}
@@ -145,7 +145,7 @@ func buildBinaryOpExpr(b *builder, expr *ast.OpExpr) tast.Expr {
 	}
 
 	if v, ok := types.NumConst(btyp); ok {
-		B = constCast(b, opPos, v, B, atyp)
+		B = numCast(b, opPos, v, B, atyp)
 		if B == nil {
 			return nil
 		}
@@ -182,11 +182,9 @@ func buildBinaryOpExpr(b *builder, expr *ast.OpExpr) tast.Expr {
 		switch op {
 		case "+", "-", "*", "&", "|", "^", "%", "/",
 			"==", "!=", ">", "<", ">=", "<=":
-			b.Errorf(
-				opPos,
-				"operation %s needs the same type on both sides",
-				op,
-			)
+			b.CodeErrorf(
+				opPos, "pl.invalidOp.typeMismatch",
+				"operation %s needs the same type on both sides", op)
 		}
 	}
 	return nil

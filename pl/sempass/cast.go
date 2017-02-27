@@ -40,7 +40,7 @@ func buildCast(b *builder, expr *ast.CallExpr, t types.T) tast.Expr {
 	srcType := ref.T
 	if c, ok := srcType.(*types.Const); ok {
 		if v, ok := types.NumConst(srcType); ok && types.IsInteger(t) {
-			return constCast(b, pos, v, args, t)
+			return numCast(b, pos, v, args, t)
 		}
 		srcType = c.Type // using the underlying type
 	}

@@ -227,6 +227,8 @@ func TestBareFunc_bad(t *testing.T) {
 	o("invalidOp", "a:=true; b:=-a")
 	o("invalidOp", "a:=1; b:=!a")
 	o("invalidOp", "const a=3; b:=!a")
+	o("invalidOp", `var a int8; var b int32
+    				a,b=1,2; _:=a+b`)
 
 	// undefined
 	o("undefinedIdent", "a=3")
@@ -248,7 +250,7 @@ func TestBareFunc_bad(t *testing.T) {
 	// array literal
 	o("arrayLit.notInteger", "var a=[]bool {true, false}")
 	o("arrayLit.notConstant", "var a=[]int {true, false}")
-	o("expectConst", "var a int; var b=[]int {a}") // error returned from operand.go
+	o("expectConstExpr", "var a int; var b=[]int {a}") // error returned from operand.go
 	o("arrayLit.outOfRange", "var a = []int8{256}")
 
 	// pointer

@@ -1,28 +1,6 @@
 package types
 
-import (
-	"fmt"
-	"math"
-)
-
-// InRange checks if a const is in range of an integer type.
-func InRange(v int64, t T) bool {
-	t, ok := t.(Basic)
-	if !ok {
-		return false
-	}
-	switch t {
-	case Int:
-		return v >= math.MinInt32 && v <= math.MaxInt32
-	case Uint:
-		return v >= 0 && v <= math.MaxUint32
-	case Int8:
-		return v >= math.MinInt8 && v <= math.MaxInt8
-	case Uint8:
-		return v >= 0 && v <= math.MaxUint8
-	}
-	return false
-}
+import "fmt"
 
 // CanAssign checks if right can be assigned to left
 func CanAssign(left, right T) bool {

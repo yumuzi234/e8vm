@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"math"
 )
 
 // Const saves a compile time constant.
@@ -11,11 +12,11 @@ type Const struct {
 }
 
 // NewConstInt creates a new constant for a specific int type.
-func NewConstInt(v int64, t T) *Const {
-	if !IsInteger(t) {
-		panic("the type for NewConstInt must be a int or unit")
+func NewConstInt(v int64, t T) (*Const, error) {
+	if !(IsInteger(t) && InRange(v, t)) {
+		return nil, fmt.Errorf("cannot creat %q with value %d", t, v)
 	}
-	return &Const{Value: v, Type: t}
+	return &Const{Value: v, Type: t}, nil
 }
 
 // NewConstBool creates a new bool constant.
@@ -65,4 +66,23 @@ func NumConst(t T) (int64, bool) {
 		return 0, false
 	}
 	return c.Value.(int64), true
+}
+
+// InRange checks if a const is in range of an integer type.
+func InRange(v int64, t T) bool {
+	t, ok := t.(Basic)
+	if !ok {
+		return false
+	}
+	switch t {
+	case Int:
+		return v >= math.MinInt32 && v <= math.MaxInt32
+	case Uint:
+		return v >= 0 && v <= math.MaxUint32
+	case Int8:
+		return v >= math.MinInt8 && v <= math.MaxInt8
+	case Uint8:
+		return v >= 0 && v <= math.MaxUint8
+	}
+	return false
 }

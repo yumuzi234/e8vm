@@ -6,7 +6,7 @@ import (
 	"shanhu.io/smlvm/pl/types"
 )
 
-func constCast(
+func numCast(
 	b *builder, pos *lexing.Pos, v int64, from tast.Expr, to types.T,
 ) tast.Expr {
 	if types.IsInteger(to) && types.InRange(v, to) {
@@ -19,14 +19,14 @@ func constCast(
 	return nil
 }
 
-func constCastInt(
+func numCastInt(
 	b *builder, pos *lexing.Pos, v int64, from tast.Expr,
 ) tast.Expr {
-	return constCast(b, pos, v, from, types.Int)
+	return numCast(b, pos, v, from, types.Int)
 }
 
-func constCastUint(
+func numCastUint(
 	b *builder, pos *lexing.Pos, v int64, from tast.Expr,
 ) tast.Expr {
-	return constCast(b, pos, v, from, types.Uint)
+	return numCast(b, pos, v, from, types.Uint)
 }
