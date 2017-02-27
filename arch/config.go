@@ -14,7 +14,7 @@ type Config struct {
 
 	Output   io.Writer
 	Screen   devs.ScreenRender
-	Table    devs.TableRender
+	Table    devs.Sender
 	RandSeed int64
 
 	InitPC       uint32
