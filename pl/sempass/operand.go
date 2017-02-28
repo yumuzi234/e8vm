@@ -25,7 +25,7 @@ func buildInt(b *builder, op *lexing.Token) tast.Expr {
 		return nil
 	}
 
-	ref := tast.NewConstRef(types.NewNumber(ret), nil)
+	ref := tast.NewRef(types.NewNumber(ret))
 	return tast.NewConst(ref)
 }
 
