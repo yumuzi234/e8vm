@@ -14,7 +14,7 @@ type Const struct {
 // NewConstInt creates a new constant for a specific int type.
 func NewConstInt(v int64, t T) (*Const, error) {
 	if !(IsInteger(t) && InRange(v, t)) {
-		return nil, fmt.Errorf("cannot creat %q with value %d", t, v)
+		return nil, fmt.Errorf("cannot create %q with value %d", t, v)
 	}
 	return &Const{Value: v, Type: t}, nil
 }
