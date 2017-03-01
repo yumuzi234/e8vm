@@ -25,7 +25,7 @@ func buildInt(b *builder, op *lexing.Token) tast.Expr {
 		return nil
 	}
 
-	ref := tast.NewConstRef(types.NewNumber(ret), ret)
+	ref := tast.NewRef(types.NewNumber(ret))
 	return tast.NewConst(ref)
 }
 
@@ -48,7 +48,7 @@ func buildFloat(b *builder, op *lexing.Token) tast.Expr {
 		return nil
 	}
 	retInt := int64(ret)
-	ref := tast.NewConstRef(types.NewNumber(retInt), retInt)
+	ref := tast.NewRef(types.NewNumber(retInt))
 	return tast.NewConst(ref)
 }
 
@@ -61,8 +61,12 @@ func buildChar(b *builder, op *lexing.Token) tast.Expr {
 		b.Errorf(op.Pos, "invalid char in quote: %q", v)
 		return nil
 	}
-	ref := tast.NewConstRef(types.Int8, int64(v[0]))
-	return tast.NewConst(ref)
+	ref, e := types.NewConstInt(int64(v[0]), types.Int8)
+	if e != nil {
+		b.Errorf(op.Pos, "cannot covert char: %q in to int8", v)
+		return nil
+	}
+	return tast.NewConst(tast.NewRef(ref))
 }
 
 func buildString(b *builder, op *lexing.Token) tast.Expr {
@@ -131,8 +135,7 @@ func buildConstIdent(b *builder, ident *lexing.Token) tast.Expr {
 	t := s.ObjType.(types.T)
 	switch s.Type {
 	case tast.SymConst:
-		ref := tast.NewRef(t)
-		return tast.NewConst(ref)
+		return tast.NewConst(tast.NewRef(t))
 	case tast.SymStruct, tast.SymType, tast.SymImport:
 		ref := tast.NewRef(t)
 		return &tast.Ident{Token: ident, Ref: ref, Sym: s}

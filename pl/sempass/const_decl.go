@@ -46,9 +46,9 @@ func buildConstDecl(b *builder, d *ast.ConstDecl) *tast.Define {
 		if tdest == nil {
 			return nil
 		}
-		if _, ok := tdest.(*types.Basic); !ok {
+		if _, ok := tdest.(types.Basic); !ok {
 			b.CodeErrorf(ast.ExprPos(d.Type), "pl.constType",
-				"%s is not support for a const type", tdest)
+				"%s is not supported for a const type", tdest)
 			return nil
 		}
 	}
@@ -62,13 +62,7 @@ func buildConstDecl(b *builder, d *ast.ConstDecl) *tast.Define {
 		}
 		ct, _ := t.(*types.Const)
 		if d.Type != nil {
-			if !types.DefineTypeConst(tdest, ct) {
-				b.CodeErrorf(ast.ExprPos(d.Exprs.Exprs[i]),
-					"pl.cannotAssign.typeMismatch",
-					"cannot assign const %s with %s", tdest, ct.Type)
-				return nil
-			}
-			t = tdest
+			t = types.CastConst(ct, tdest)
 		}
 		sym := declareConst(b, ident, t)
 		if sym == nil {
@@ -76,7 +70,6 @@ func buildConstDecl(b *builder, d *ast.ConstDecl) *tast.Define {
 		}
 		ret = append(ret, sym)
 	}
-
 	return &tast.Define{Left: ret, Right: right}
 }
 

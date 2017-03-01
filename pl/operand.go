@@ -14,9 +14,9 @@ func buildConst(b *builder, c *tast.Const) *ref {
 		return newRef(c.T, nil)
 	}
 
-	if t, ok := c.T.(types.Basic); ok {
-		v := c.ConstValue.(int64)
-		return newRef(c.T, constNumIr(v, t))
+	if ct, ok := c.T.(*types.Const); ok {
+		// typed consts
+		return newRef(ct.Type, constNumIr(ct.Value.(int64), ct.Type))
 	}
 
 	if c.T == types.String {

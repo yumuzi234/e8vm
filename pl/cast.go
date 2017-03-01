@@ -58,12 +58,12 @@ func buildCast(b *builder, from *ref, t types.T) *ref {
 	}
 
 	if c, ok := srcType.(*types.Const); ok {
-		if v, ok := types.NumConst(srcType); ok && types.IsInteger(t) {
+		if v, ok := types.NumConst(srcType); ok {
 			return newRef(t, constNumIr(v, t))
 		}
-		// TODO: we do not support typed const right?
-		// so why need this line?
-		srcType = c.Type // using the underlying type
+		// now only const int is supported
+		return newRef(t, constNumIr(c.Value.(int64), t))
+
 	}
 
 	if types.IsInteger(t) && types.IsInteger(srcType) {
