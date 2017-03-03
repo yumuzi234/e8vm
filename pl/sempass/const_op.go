@@ -76,11 +76,8 @@ func binaryOpConst(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 	aref := A.R()
 	bref := B.R()
 	if !(aref.IsSingle() && bref.IsSingle()) {
-		b.CodeErrorf(
-			opTok.Pos, "pl.notSingle",
-			"expression list not supported: %s %q %s",
-			aref.T, op, bref.T,
-		)
+		b.CodeErrorf(opTok.Pos, "pl.notSingle",
+			"expression list: %s or %s not supported for const", aref, bref)
 		return nil
 	}
 	atyp := aref.Type()
@@ -134,7 +131,7 @@ func binaryOpConst(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 		if tb != ta {
 			b.CodeErrorf(
 				opTok.Pos, "pl.invalidOp.typeMismatch",
-				"cannod %s type %s, and type %s, type mismatch",
+				"cannot %s type %s, and type %s, type mismatch",
 				op, ta, tb)
 			return nil
 		}

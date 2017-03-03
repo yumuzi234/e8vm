@@ -51,7 +51,6 @@ func buildConstExpr(b *builder, expr ast.Expr) tast.Expr {
 	if expr == nil {
 		panic("bug")
 	}
-
 	switch expr := expr.(type) {
 	case *ast.ParenExpr:
 		return buildConstExpr(b, expr.Expr)
@@ -69,7 +68,6 @@ func buildConstExpr(b *builder, expr ast.Expr) tast.Expr {
 		)
 		return nil
 	}
-
 	b.CodeErrorf(
 		ast.ExprPos(expr), "pl.expectConstExpr",
 		"expect a const expression",
