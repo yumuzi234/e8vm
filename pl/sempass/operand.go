@@ -121,7 +121,6 @@ func buildIdent(b *builder, ident *lexing.Token) tast.Expr {
 	}
 }
 
-// It seems that buildConstIdent and Operand are good, no need to change
 func buildConstIdent(b *builder, ident *lexing.Token) tast.Expr {
 	s := b.scope.Query(ident.Lit)
 	if s == nil {
