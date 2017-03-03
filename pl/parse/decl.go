@@ -62,7 +62,7 @@ func parseConstDecl(p *parser) *ast.ConstDecl {
 		return nil
 	}
 
-	if !p.See(Semi) && !p.SeeOp("=", ")", "}") {
+	if seeType(p) {
 		ret.Type = p.parseType() // it has a type
 	}
 
@@ -88,7 +88,7 @@ func parseVarDecl(p *parser) *ast.VarDecl {
 		return nil
 	}
 
-	if !p.See(Semi) && !p.SeeOp("=", ")", "}") {
+	if seeType(p) {
 		ret.Type = p.parseType() // it has a type
 	}
 

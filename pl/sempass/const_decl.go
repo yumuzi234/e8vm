@@ -61,7 +61,7 @@ func buildConstDecl(b *builder, d *ast.ConstDecl) *tast.Define {
 			return nil
 		}
 		ct, _ := t.(*types.Const)
-		if d.Type != nil {
+		if tdest != nil {
 			t = types.CastConst(ct, tdest)
 		}
 		sym := declareConst(b, ident, t)
