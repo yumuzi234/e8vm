@@ -8,7 +8,6 @@ func CanAssign(left, right T) bool {
 		if _, ok := c.Type.(Number); ok {
 			return InRange(c.Value.(int64), left)
 		}
-
 		right = c.Type
 	}
 
@@ -157,4 +156,20 @@ func BothSlice(t1, t2 T) bool {
 	}
 
 	return SameType(p1, p2)
+}
+
+// CastConst checks if a const can be used to define a const with type T.
+// and return the Const type
+func CastConst(ct *Const, t T) *Const {
+	if SameType(t, ct.Type) {
+		return &Const{Value: ct.Value, Type: t}
+	}
+	_, ok := ct.Type.(Number)
+	if IsInteger(t) && ok {
+		ret, e := NewConstInt(ct.Value.(int64), t)
+		if e == nil {
+			return ret
+		}
+	}
+	return nil
 }

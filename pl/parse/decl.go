@@ -62,18 +62,16 @@ func parseConstDecl(p *parser) *ast.ConstDecl {
 		return nil
 	}
 
-	if !p.SeeOp("=") {
-		ret.Type = p.parseType()
+	if seeType(p) {
+		ret.Type = p.parseType() // it has a type
 	}
 
-	ret.Eq = p.ExpectOp("=")
-	if p.InError() {
-		return nil
-	}
-
-	ret.Exprs = parseExprList(p)
-	if p.InError() {
-		return nil
+	if p.SeeOp("=") {
+		ret.Eq = p.Shift()
+		ret.Exprs = parseExprList(p)
+	} else if ret.Type == nil {
+		p.CodeErrorfHere("pl.missingConstDefine",
+			"missing value in const declaration")
 	}
 
 	ret.Semi = p.ExpectSemi()
@@ -90,7 +88,7 @@ func parseVarDecl(p *parser) *ast.VarDecl {
 		return nil
 	}
 
-	if !p.See(Semi) && !p.SeeOp("=", ")", "}") {
+	if seeType(p) {
 		ret.Type = p.parseType() // it has a type
 	}
 

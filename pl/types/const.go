@@ -37,11 +37,14 @@ func (c *Const) RegSizeAlign() bool { return c.Type.RegSizeAlign() }
 
 // String returns the number
 func (c *Const) String() string {
+	if v, ok := NumConst(c); ok {
+		return fmt.Sprintf("%d", v)
+	}
 	switch v := c.Value.(type) {
 	case int64:
-		return fmt.Sprintf("%d", v)
+		return fmt.Sprintf("const %s %d", c.Type.(Basic), v)
 	case bool:
-		return fmt.Sprintf("%t", v)
+		return fmt.Sprintf("const %s %t", c.Type.(Basic), v)
 	case string:
 		return fmt.Sprintf("%q", v)
 	default:
