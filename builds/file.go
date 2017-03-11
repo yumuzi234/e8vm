@@ -6,7 +6,7 @@ import (
 
 // File is a source file in a package
 type File struct {
-	Name   string
+	Name   string // for sending into the complier
 	Path   string // for printing compiler errors
 	Opener FileOpener
 }

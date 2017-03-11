@@ -66,7 +66,6 @@ func (h *MemHome) Src(p string) map[string]*File {
 		if path == "" {
 			path = "$" + p + "/" + name
 		}
-
 		ret[name] = &File{
 			Path:   path,
 			Name:   name,
@@ -84,7 +83,7 @@ func (h *MemHome) Bin(p string) io.WriteCloser {
 		panic("pkg not exists")
 	}
 	if pkg.bin == nil {
-		pkg.bin = newMemFile()
+		pkg.bin = newMemFile("")
 	} else {
 		pkg.bin.Reset()
 	}
@@ -98,7 +97,7 @@ func (h *MemHome) TestBin(p string) io.WriteCloser {
 		panic("pkg not exists")
 	}
 	if pkg.test == nil {
-		pkg.test = newMemFile()
+		pkg.test = newMemFile("")
 	} else {
 		pkg.test.Reset()
 	}
@@ -125,7 +124,7 @@ func (h *MemHome) Output(p, name string) io.WriteCloser {
 	if pkg == nil {
 		panic("pkg not exists")
 	}
-	ret := newMemFile()
+	ret := newMemFile("")
 	pkg.outs[name] = ret
 	return ret
 }

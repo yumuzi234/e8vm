@@ -1,31 +1,35 @@
 package builds
 
 import (
+	"io"
 	"os"
+	"path"
 	"path/filepath"
 )
 
-// DirInput is a input based on a directory.
-type DirInput struct {
+// DirFS is a file system based on a directory.
+type DirFS struct {
 	dir string
 }
 
-// NewDirInput creates an input based on a file system directory.
-func NewDirInput(dir string) *DirInput {
+// NewDirFS creates an input based on a file system directory.
+func NewDirFS(dir string) *DirFS {
 	if dir == "" {
 		dir = "."
 	}
 
-	return &DirInput{dir: dir}
+	return &DirFS{dir: dir}
 }
 
-func (d *DirInput) p(p string) string {
-	// TODO(h8liu): convert p to filepath)
-	return filepath.Join(d.dir, p)
+func (d *DirFS) p(p string) string {
+	if p == "" {
+		return d.dir
+	}
+	return filepath.Join(d.dir, filepath.FromSlash(p))
 }
 
 // HasDir chacks if the input has a directory.
-func (d *DirInput) HasDir(p string) (bool, error) {
+func (d *DirFS) HasDir(p string) (bool, error) {
 	info, err := os.Stat(d.p(p))
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -36,7 +40,7 @@ func (d *DirInput) HasDir(p string) (bool, error) {
 	return info.IsDir(), nil
 }
 
-func (d *DirInput) readDir(p string) ([]os.FileInfo, error) {
+func (d *DirFS) readDir(p string) ([]os.FileInfo, error) {
 	p = d.p(p)
 	f, err := os.Open(p)
 	if err != nil {
@@ -55,7 +59,7 @@ func (d *DirInput) readDir(p string) ([]os.FileInfo, error) {
 }
 
 // ListDirs lists all sub directories under a directory.
-func (d *DirInput) ListDirs(p string) ([]string, error) {
+func (d *DirFS) ListDirs(p string) ([]string, error) {
 	infos, err := d.readDir(p)
 	if err != nil {
 		return nil, err
@@ -71,7 +75,7 @@ func (d *DirInput) ListDirs(p string) ([]string, error) {
 }
 
 // ListFiles lists all files under a directory.
-func (d *DirInput) ListFiles(p string) ([]string, error) {
+func (d *DirFS) ListFiles(p string) ([]string, error) {
 	infos, err := d.readDir(p)
 	if err != nil {
 		return nil, err
@@ -83,4 +87,24 @@ func (d *DirInput) ListFiles(p string) ([]string, error) {
 		}
 	}
 	return ret, nil
+}
+
+// Open opens a file for reading.
+func (d *DirFS) Open(p string) (*File, error) {
+	name := path.Base(p)
+	realPath := d.p(p)
+	return &File{
+		Name:   name,
+		Path:   realPath,
+		Opener: PathFile(realPath),
+	}, nil
+}
+
+// Create creates a file for writing.
+func (d *DirFS) Create(p string) (io.WriteCloser, error) {
+	f, err := os.Open(d.p(p))
+	if err != nil {
+		return nil, err
+	}
+	return f, nil
 }

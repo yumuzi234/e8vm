@@ -16,7 +16,13 @@ type Input2 interface {
 	ListFiles(p string) ([]string, error)
 
 	// Open opens a file.
-	Open(file string) *File
+	Open(p string) (*File, error)
+}
+
+// Output2 provides a simple output file system for storing build results.
+type Output2 interface {
+	// Create opens a file for writing.
+	Create(path string) (io.WriteCloser, error)
 }
 
 // Input provides input source files.
