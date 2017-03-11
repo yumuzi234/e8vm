@@ -11,11 +11,11 @@ type MemPkg struct {
 }
 
 func newMemPkg(path string) *MemPkg {
-	ret := new(MemPkg)
-	ret.path = path
-	ret.outs = make(map[string]*memFile)
-	ret.files = make(map[string]*memFile)
-	return ret
+	return &MemPkg{
+		path:  path,
+		outs:  make(map[string]*memFile),
+		files: make(map[string]*memFile),
+	}
 }
 
 // Path returns the path of the package
