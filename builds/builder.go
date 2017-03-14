@@ -15,11 +15,14 @@ type Builder struct {
 }
 
 // NewBuilder creates a new builder with a particular home directory
-func NewBuilder(input Input, output Output, std string) *Builder {
+func NewBuilder(
+	input Input2, langPicker *LangPicker, std string, output Output2,
+) *Builder {
+	src := newSource(input, langPicker)
 	return &Builder{
 		context: &context{
-			input:      input,
-			output:     output,
+			src:        src,
+			res:        newResults(output),
 			stdPath:    std,
 			pkgs:       make(map[string]*pkg),
 			deps:       make(map[string][]string),
@@ -37,7 +40,11 @@ func (b *Builder) BuildPkgs(pkgs []string) []*lexing.Error {
 
 // Build builds a package.
 func (b *Builder) Build(p string) []*lexing.Error {
-	if !b.input.HasPkg(p) {
+	ok, err := b.src.hasPkg(p)
+	if err != nil {
+		return lexing.SingleErr(err)
+	}
+	if !ok {
 		err := fmt.Errorf("package %q not found", p)
 		return lexing.SingleErr(err)
 	}
@@ -47,7 +54,11 @@ func (b *Builder) Build(p string) []*lexing.Error {
 // BuildPrefix builds packages with a particular prefix.
 // in the path.
 func (b *Builder) BuildPrefix(prefix string) []*lexing.Error {
-	return b.BuildPkgs(b.input.Pkgs(prefix))
+	pkgs, err := b.src.allPkgs(prefix)
+	if err != nil {
+		return lexing.SingleErr(err)
+	}
+	return b.BuildPkgs(pkgs)
 }
 
 // BuildAll builds all packages.

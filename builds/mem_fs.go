@@ -34,7 +34,7 @@ func (fs *MemFS) MakeDir(p string) error {
 	if p == "" {
 		return nil
 	}
-	if err := checkValidPath(p); err != nil {
+	if err := CheckValidPath(p); err != nil {
 		return err
 	}
 	for p != "" {
@@ -57,11 +57,21 @@ func (fs *MemFS) HasDir(p string) (bool, error) {
 	return ok, nil
 }
 
-// Open opens a file for reading.
-func (fs *MemFS) Open(p string) (*File, error) {
-	if err := checkValidPath(p); err != nil {
-		return nil, err
+// HasFile checks if a file exists.
+func (fs *MemFS) HasFile(p string) (bool, error) {
+	if err := CheckValidPath(p); err != nil {
+		return false, err
 	}
+	dir := fs.dirs[pathDir(p)]
+	if dir == nil {
+		return false, nil
+	}
+	name := path.Base(p)
+	f := dir.open(name)
+	return f != nil, nil
+}
+
+func (fs *MemFS) openFile(p string) (*memFile, error) {
 	dir := fs.dirs[pathDir(p)]
 	if dir == nil {
 		return nil, fmt.Errorf("file %q not found", p)
@@ -71,16 +81,41 @@ func (fs *MemFS) Open(p string) (*File, error) {
 	if f == nil {
 		return nil, fmt.Errorf("file %q not found", p)
 	}
+	return f, nil
+}
+
+// Open opens a file for reading.
+func (fs *MemFS) Open(p string) (*File, error) {
+	if err := CheckValidPath(p); err != nil {
+		return nil, err
+	}
+	f, err := fs.openFile(p)
+	if err != nil {
+		return nil, err
+	}
 	return &File{
 		Path:   p,
-		Name:   name,
+		Name:   path.Base(p),
 		Opener: f.Opener(),
 	}, nil
 }
 
+// Read returns the content of a file.
+func (fs *MemFS) Read(p string) ([]byte, error) {
+	if err := CheckValidPath(p); err != nil {
+		return nil, err
+	}
+
+	f, err := fs.openFile(p)
+	if err != nil {
+		return nil, err
+	}
+	return f.Buffer.Bytes(), nil
+}
+
 // Create creates a memory file for writing.
 func (fs *MemFS) Create(p string) (io.WriteCloser, error) {
-	if err := checkValidPath(p); err != nil {
+	if err := CheckValidPath(p); err != nil {
 		return nil, err
 	}
 	dir := pathDir(p)
@@ -110,9 +145,9 @@ func (fs *MemFS) AddTextFile(p, s string) error {
 	return fs.AddFile(p, []byte(s))
 }
 
-// ListFiles lists all the files in a
+// ListFiles lists all the files in a directory.
 func (fs *MemFS) ListFiles(p string) ([]string, error) {
-	if err := checkValidPath(p); err != nil {
+	if err := checkValidDir(p); err != nil {
 		return nil, err
 	}
 	dir, ok := fs.dirs[p]
@@ -133,10 +168,23 @@ func (fs *MemFS) ListDirs(p string) ([]string, error) {
 
 	var ret []string
 	for dir := range fs.dirs {
+		if dir == "" {
+			continue
+		}
 		if p == pathDir(dir) {
-			ret = append(ret, dir)
+			ret = append(ret, path.Base(dir))
 		}
 	}
 	sort.Strings(ret)
 	return ret, nil
+}
+
+// AllDirs returns all directories in this memory file system.
+func (fs *MemFS) AllDirs() []string {
+	var ret []string
+	for dir := range fs.dirs {
+		ret = append(ret, dir)
+	}
+	sort.Strings(ret)
+	return ret
 }

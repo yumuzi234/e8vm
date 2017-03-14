@@ -1,15 +1,18 @@
 package builds
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"path"
 	"path/filepath"
+	"sort"
 )
 
 // DirFS is a file system based on a directory.
 type DirFS struct {
 	dir string
+	mem *MemFS
 }
 
 // NewDirFS creates an input based on a file system directory.
@@ -17,8 +20,15 @@ func NewDirFS(dir string) *DirFS {
 	if dir == "" {
 		dir = "."
 	}
-
 	return &DirFS{dir: dir}
+}
+
+// NewDirFSWithMem creates an file system based input with a
+// memory overlay underneath.
+func NewDirFSWithMem(dir string, mem *MemFS) *DirFS {
+	ret := NewDirFS(dir)
+	ret.mem = mem
+	return ret
 }
 
 func (d *DirFS) p(p string) string {
@@ -28,8 +38,7 @@ func (d *DirFS) p(p string) string {
 	return filepath.Join(d.dir, filepath.FromSlash(p))
 }
 
-// HasDir chacks if the input has a directory.
-func (d *DirFS) HasDir(p string) (bool, error) {
+func (d *DirFS) hasDir(p string) (bool, error) {
 	info, err := os.Stat(d.p(p))
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -38,6 +47,25 @@ func (d *DirFS) HasDir(p string) (bool, error) {
 		return false, err
 	}
 	return info.IsDir(), nil
+}
+
+// HasDir chacks if the input has a directory.
+func (d *DirFS) HasDir(p string) (bool, error) {
+	if err := checkValidDir(p); err != nil {
+		return false, err
+	}
+
+	if d.mem != nil {
+		ok, err := d.mem.HasDir(p)
+		if err != nil {
+			return false, err
+		}
+		if ok {
+			return true, nil
+		}
+	}
+
+	return d.hasDir(p)
 }
 
 func (d *DirFS) readDir(p string) ([]os.FileInfo, error) {
@@ -60,49 +88,130 @@ func (d *DirFS) readDir(p string) ([]os.FileInfo, error) {
 
 // ListDirs lists all sub directories under a directory.
 func (d *DirFS) ListDirs(p string) ([]string, error) {
-	infos, err := d.readDir(p)
-	if err != nil {
+	if err := checkValidDir(p); err != nil {
 		return nil, err
 	}
 
 	var ret []string
-	for _, info := range infos {
-		if info.IsDir() {
-			ret = append(ret, info.Name())
+	retMap := make(map[string]bool)
+
+	if d.mem != nil {
+		ok, err := d.mem.HasDir(p)
+		if err != nil {
+			return nil, err
+		}
+		if ok {
+			dirs, err := d.mem.ListDirs(p)
+			if err != nil {
+				return nil, err
+			}
+			for _, dir := range dirs {
+				retMap[dir] = true
+				ret = append(ret, dir)
+			}
 		}
 	}
+
+	ok, err := d.hasDir(p)
+	if err != nil {
+		return nil, err
+	}
+	if ok {
+		infos, err := d.readDir(p)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, info := range infos {
+			if !info.IsDir() {
+				continue
+			}
+			name := info.Name()
+			if !isValidPathName(name) {
+				continue
+			}
+			if !retMap[name] {
+				ret = append(ret, name)
+			}
+		}
+	}
+
+	sort.Strings(ret)
 	return ret, nil
 }
 
 // ListFiles lists all files under a directory.
 func (d *DirFS) ListFiles(p string) ([]string, error) {
-	infos, err := d.readDir(p)
+	if err := checkValidDir(p); err != nil {
+		return nil, err
+	}
+
+	ok, err := d.hasDir(p)
 	if err != nil {
 		return nil, err
 	}
-	var ret []string
-	for _, info := range infos {
-		if !info.IsDir() {
-			ret = append(ret, info.Name())
+	if ok {
+		infos, err := d.readDir(p)
+		if err != nil {
+			return nil, err
 		}
+		var ret []string
+		for _, info := range infos {
+			if !info.IsDir() {
+				ret = append(ret, info.Name())
+			}
+		}
+		sort.Strings(ret)
+		return ret, nil
 	}
-	return ret, nil
+
+	if d.mem != nil {
+		return d.mem.ListFiles(p)
+	}
+	return nil, fmt.Errorf("directory %q not exist", p)
 }
 
 // Open opens a file for reading.
 func (d *DirFS) Open(p string) (*File, error) {
-	name := path.Base(p)
-	realPath := d.p(p)
-	return &File{
-		Name:   name,
-		Path:   realPath,
-		Opener: PathFile(realPath),
-	}, nil
+	if err := CheckValidPath(p); err != nil {
+		return nil, err
+	}
+
+	dir := path.Dir(p)
+	ok, err := d.hasDir(dir)
+	if err != nil {
+		return nil, err
+	}
+	if ok {
+		name := path.Base(p)
+		realPath := d.p(p)
+		return &File{
+			Name:   name,
+			Path:   realPath,
+			Opener: PathFile(realPath),
+		}, nil
+	}
+	if d.mem != nil {
+		return d.mem.Open(p)
+	}
+	return nil, fmt.Errorf("file %q not exist", p)
 }
 
 // Create creates a file for writing.
 func (d *DirFS) Create(p string) (io.WriteCloser, error) {
-	f, err := os.Open(d.p(p))
+	if err := checkValidDir(p); err != nil {
+		return nil, err
+	}
+
+	p = d.p(p)
+	dir := filepath.Dir(p)
+	if dir != "" {
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			return nil, err
+		}
+	}
+
+	f, err := os.Create(p)
 	if err != nil {
 		return nil, err
 	}

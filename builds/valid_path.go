@@ -19,13 +19,13 @@ func isValidPathName(s string) bool {
 		if r >= '0' && r <= '9' {
 			continue
 		}
+		if r == '_' {
+			continue
+		}
 		if r == '.' {
 			if i == 0 {
 				return false
 			}
-			continue
-		}
-		if r == '_' {
 			continue
 		}
 		return false
@@ -46,7 +46,8 @@ func isValidPath(p string) bool {
 	return true
 }
 
-func checkValidPath(p string) error {
+// CheckValidPath checks if the given path is a valid path.
+func CheckValidPath(p string) error {
 	if !isValidPath(p) {
 		return fmt.Errorf("%q is not a valid path", p)
 	}
@@ -57,5 +58,5 @@ func checkValidDir(p string) error {
 	if p == "" {
 		return nil
 	}
-	return checkValidPath(p)
+	return CheckValidPath(p)
 }

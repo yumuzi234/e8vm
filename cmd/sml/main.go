@@ -4,9 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path"
 
 	"shanhu.io/smlvm/arch"
-	"shanhu.io/smlvm/asm"
 	"shanhu.io/smlvm/builds"
 	"shanhu.io/smlvm/lexing"
 	"shanhu.io/smlvm/pl"
@@ -35,18 +35,19 @@ func main() {
 	flag.Parse()
 
 	lang := pl.Lang(*golike)
-	home := builds.NewDirHome(*homeDir, lang)
-	home.MemHome = pl.MakeMemHome(lang)
-	home.AddLang("asm", asm.Lang())
+	memHome := pl.MakeMemFS()
+	home := builds.NewDirFSWithMem(*homeDir, memHome)
+	lp := pl.MakeLangPicker(lang)
 
-	b := builds.NewBuilder(home, home, *std)
+	out := builds.NewDirFS(path.Join(*homeDir, "_"))
+	b := builds.NewBuilder(home, lp, *std, out)
 	b.Verbose = true
 	b.InitPC = uint32(*initPC)
 	b.InitSP = uint32(*initSP)
 	b.RunTests = *runTests
 	b.StaticOnly = *staticOnly
 
-	pkgs, err := builds.SelectPkgs(home, *pkg)
+	pkgs, err := builds.SelectPkgs(home, lp, *pkg)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(-1)

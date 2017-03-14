@@ -5,13 +5,13 @@ import (
 )
 
 type pkg struct {
-	input  Input
-	output Output
-	path   string
-	src    string
+	source  *source
+	results *results
+	path    string
 
 	runTests bool
 
+	srcMap  map[string]*File
 	lang    Compiler
 	files   []string
 	imports map[string]*Import
@@ -23,31 +23,33 @@ type pkg struct {
 
 func newErrPkg(e error) *pkg { return &pkg{err: e} }
 
-func newPkg(in Input, out Output, p string) *pkg {
+func newPkg(src *source, res *results, p string) *pkg {
 	if !IsPkgPath(p) {
 		return newErrPkg(fmt.Errorf("invalid path: %q", p))
 	}
 
-	lang := in.Lang(p)
+	lang := src.lang(p)
 	if lang == nil {
 		return newErrPkg(fmt.Errorf("invalid pacakge: %q", p))
-	} else if !in.HasPkg(p) {
-		return newErrPkg(fmt.Errorf("package not found: %q", p))
+	}
+
+	srcMap, err := src.srcFileMap(p)
+	if err != nil {
+		return newErrPkg(err)
 	}
 
 	return &pkg{
 		lang:    lang,
-		input:   in,
-		output:  out,
+		source:  src,
+		results: res,
 		path:    p,
+		srcMap:  srcMap,
 		imports: make(map[string]*Import),
 	}
 }
 
-func (p *pkg) srcMap() map[string]*File { return p.input.Src(p.path) }
-
 func (p *pkg) fileSet() *FileSet {
-	m := p.srcMap()
+	m := p.srcMap
 	ret := NewFileSet()
 	for _, f := range m {
 		ret.add(f)
@@ -58,8 +60,6 @@ func (p *pkg) fileSet() *FileSet {
 func (p *pkg) srcPackage() *SrcPackage {
 	return &SrcPackage{
 		Path:  p.path,
-		Lang:  "", // TODO: specify language.
-		Hash:  "",
 		Files: p.fileSet(),
 	}
 }

@@ -1,6 +1,7 @@
 package builds
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -38,7 +39,7 @@ func (pick *LangPicker) AddLang(key string, lang *Lang) {
 // Lang picks the language for a particular path.
 func (pick *LangPicker) Lang(path string) *Lang {
 	if !IsPkgPath(path) {
-		panic("not package path")
+		panic(fmt.Errorf("%q is not a package path", path))
 	}
 
 	pkgs := strings.Split(path, "/")

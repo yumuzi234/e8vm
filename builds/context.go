@@ -8,8 +8,8 @@ import (
 )
 
 type context struct {
-	input   Input
-	output  Output
+	src     *source
+	res     *results
 	stdPath string
 	*Options
 

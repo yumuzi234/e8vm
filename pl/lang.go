@@ -120,7 +120,11 @@ func output(w io.WriteCloser, f func(w io.Writer) error) error {
 }
 
 func outputIr(pinfo *builds.PkgInfo, b *builder) error {
-	return output(pinfo.Output("ir"), func(w io.Writer) error {
+	wc, err := pinfo.Output("ir")
+	if err != nil {
+		return err
+	}
+	return output(wc, func(w io.Writer) error {
 		return codegen.PrintPkg(w, b.p)
 	})
 }
@@ -131,14 +135,23 @@ func outputDeps(pinfo *builds.PkgInfo, g *dagvis.Graph) error {
 		panic(err)
 	}
 
-	return output(pinfo.Output("deps"), func(w io.Writer) error {
+	wc, err := pinfo.Output("deps")
+	if err != nil {
+		return err
+	}
+
+	return output(wc, func(w io.Writer) error {
 		_, err := w.Write(bs)
 		return err
 	})
 }
 
 func outputDepMap(pinfo *builds.PkgInfo, deps []byte) error {
-	return output(pinfo.Output("depmap"), func(w io.Writer) error {
+	wc, err := pinfo.Output("depmap")
+	if err != nil {
+		return err
+	}
+	return output(wc, func(w io.Writer) error {
 		_, err := w.Write(deps)
 		return err
 	})

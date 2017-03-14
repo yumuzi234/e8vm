@@ -40,7 +40,7 @@ type PkgInfo struct {
 	Flags  *Flags
 
 	// Output creates an output file for the package.
-	Output func(name string) io.WriteCloser
+	Output func(name string) (io.WriteCloser, error)
 
 	// ParseOutput saves all the tokens of a file.
 	ParseOutput func(file string, tokens []*lexing.Token)

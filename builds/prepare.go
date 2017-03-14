@@ -10,7 +10,7 @@ func prepare(c *context, p string) (*pkg, []*lexing.Error) {
 		return saved, nil // already prepared
 	}
 
-	pkg := newPkg(c.input, c.output, p)
+	pkg := newPkg(c.src, c.res, p)
 	c.pkgs[p] = pkg
 	if pkg.err != nil {
 		return pkg, nil

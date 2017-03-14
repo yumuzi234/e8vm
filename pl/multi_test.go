@@ -95,7 +95,7 @@ func TestMultiFile(t *testing.T) {
 	}, "33")
 
 	o(files{
-		"asm/a/a.g": `
+		"asm/a/a.s": `
 			func F {
 				mov pc ret
 			}`,
@@ -105,7 +105,7 @@ func TestMultiFile(t *testing.T) {
 	}, "33")
 
 	o(files{
-		"asm/a/a.g": `
+		"asm/a/a.s": `
 			func F {
 				addi r1 r0 33
 				mov pc ret

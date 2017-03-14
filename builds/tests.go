@@ -106,10 +106,13 @@ func runPkgTests(c *context, p *pkg) []*lexing.Error {
 		if len(tests) > 0 {
 			bs := new(bytes.Buffer)
 			lexing.LogError(log, linkPkg(c, bs, p, testMain))
-			fout := c.output.TestBin(p.path)
+			fout, err := c.res.testBin(p.path)
+			if err != nil {
+				return lexing.SingleErr(err)
+			}
 
 			img := bs.Bytes()
-			_, err := fout.Write(img)
+			_, err = fout.Write(img)
 			lexing.LogError(log, err)
 			lexing.LogError(log, fout.Close())
 			if es := log.Errs(); es != nil {

@@ -10,9 +10,12 @@ func buildMulti(
 ) (
 	image []byte, errs []*lexing.Error, log []byte,
 ) {
-	home := MakeMemHome(lang)
-	home.AddFiles(files)
-	return buildMainPkg(home, opt)
+	fs := MakeMemFS()
+	lp := MakeLangPicker(lang)
+	for f, s := range files {
+		fs.AddTextFile(f, s)
+	}
+	return buildMainPkg(fs, lp, opt)
 }
 
 // CompileMulti compiles a set of files into a bare-metal E8 image

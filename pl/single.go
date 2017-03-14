@@ -1,29 +1,47 @@
 package pl
 
 import (
-	"errors"
+	"path"
 	"path/filepath"
+	"strings"
 
 	"shanhu.io/smlvm/asm"
 	"shanhu.io/smlvm/builds"
 	"shanhu.io/smlvm/lexing"
 )
 
-// MakeMemHome makes a memory home for compiling.
+// MakeMemFS makes a memory filesystem for compiling.
 // It contains the basic built-in packages.
-func MakeMemHome(lang *builds.Lang) *builds.MemHome {
-	home := builds.NewMemHome(lang)
-	home.AddLang("asm", asm.Lang())
-	builtin := home.NewPkg(BuiltInPkg)
-	builtin.AddFile("", "builtin.s", BuiltInSrc)
+func MakeMemFS() *builds.MemFS {
+	home := builds.NewMemFS()
+	builtInDir := strings.TrimPrefix(BuiltInPkg, "/")
+
+	if err := home.MakeDir(builtInDir); err != nil {
+		panic(err)
+	}
+
+	err := home.AddTextFile(path.Join(builtInDir, "builtin.s"), BuiltInSrc)
+	if err != nil {
+		panic(err)
+	}
 
 	return home
 }
 
-func buildMainPkg(home *builds.MemHome, opt *builds.Options) (
-	image []byte, errs []*lexing.Error, log []byte,
-) {
-	b := builds.NewBuilder(home, home, "")
+// MakeLangPicker makes the language picker using the given language as the
+// default language and assembly for "asm" keyword.
+func MakeLangPicker(lang *builds.Lang) *builds.LangPicker {
+	ret := builds.NewLangPicker(lang)
+	ret.AddLang("asm", asm.Lang())
+	return ret
+}
+
+func buildMainPkg(
+	fs *builds.MemFS, langPicker *builds.LangPicker,
+	opt *builds.Options,
+) (image []byte, errs []*lexing.Error, log []byte) {
+	out := builds.NewMemFS()
+	b := builds.NewBuilder(fs, langPicker, "", out)
 	if opt != nil {
 		b.Options = opt
 	}
@@ -31,11 +49,21 @@ func buildMainPkg(home *builds.MemHome, opt *builds.Options) (
 		return nil, errs, nil
 	}
 
-	image = home.BinBytes("/main")
-	log = home.OutputBytes("/main", "ir")
-	if image == nil {
-		err := errors.New("missing main() function, no binary created")
-		return nil, lexing.SingleCodeErr("pl.missingMainFunc", err), log
+	ok, err := out.HasFile("bin/main.e8")
+	if err != nil {
+		return nil, lexing.SingleErr(err), nil
+	}
+	if !ok {
+		return nil, lexing.SingleCodeErr("pl.missingMainFunc", err), nil
+	}
+
+	image, err = out.Read("bin/main.e8")
+	if err != nil {
+		return nil, lexing.SingleErr(err), nil
+	}
+	log, err = out.Read("out/main/ir")
+	if err != nil {
+		return nil, lexing.SingleErr(err), nil
 	}
 
 	return image, nil, log
@@ -46,13 +74,13 @@ func buildSingle(
 ) (
 	image []byte, errs []*lexing.Error, log []byte,
 ) {
-	home := MakeMemHome(lang)
-
-	pkg := home.NewPkg("/main")
-	name := filepath.Base(f)
-	pkg.AddFile(f, name, s)
-
-	return buildMainPkg(home, opt)
+	fs := MakeMemFS()
+	err := fs.AddTextFile(path.Join("main", filepath.Base(f)), s)
+	if err != nil {
+		return nil, lexing.SingleErr(err), nil
+	}
+	lp := MakeLangPicker(lang)
+	return buildMainPkg(fs, lp, opt)
 }
 
 // CompileSingle compiles a file into a bare-metal E8 image

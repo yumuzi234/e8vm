@@ -37,7 +37,10 @@ func buildMain(c *context, p *pkg) []*lexing.Error {
 
 	log := lexing.NewErrorList()
 
-	fout := c.output.Bin(p.path)
+	fout, err := c.res.bin(p.path)
+	if err != nil {
+		return lexing.SingleErr(err)
+	}
 	lexing.LogError(log, linkPkg(c, fout, p, main))
 	lexing.LogError(log, fout.Close())
 
@@ -60,8 +63,8 @@ func makePkgInfo(c *context, p *pkg) *PkgInfo {
 		Import: p.imports,
 
 		Flags: &Flags{StaticOnly: c.StaticOnly},
-		Output: func(name string) io.WriteCloser {
-			return c.output.Output(p.path, name)
+		Output: func(name string) (io.WriteCloser, error) {
+			return c.res.output(p.path, name)
 		},
 		ParseOutput: parseOutput(c, p.path),
 		AddFuncDebug: func(name string, pos *lexing.Pos, frameSize uint32) {
