@@ -4,8 +4,8 @@ import (
 	"io"
 )
 
-// Input2 provides a simple input file system for building.
-type Input2 interface {
+// Input provides a simple input file system for building.
+type Input interface {
 	// HasDir checks if a directory exist.
 	HasDir(p string) (bool, error)
 
@@ -19,8 +19,8 @@ type Input2 interface {
 	Open(p string) (*File, error)
 }
 
-// Output2 provides a simple output file system for storing build results.
-type Output2 interface {
+// Output provides a simple output file system for storing build results.
+type Output interface {
 	// Create opens a file for writing.
 	Create(p string) (io.WriteCloser, error)
 }

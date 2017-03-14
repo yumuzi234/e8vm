@@ -5,8 +5,8 @@ import (
 	"testing"
 )
 
-var _ Input2 = new(MemFS)
-var _ Output2 = new(MemFS)
+var _ Input = new(MemFS)
+var _ Output = new(MemFS)
 
 func TestMemFS(t *testing.T) {
 	ne := func(err error) {

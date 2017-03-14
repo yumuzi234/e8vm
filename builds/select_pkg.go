@@ -5,10 +5,7 @@ import (
 	"strings"
 )
 
-// SelectPkgs selects the package to build based on the selector.
-func SelectPkgs(in Input2, lp *LangPicker, s string) ([]string, error) {
-	src := newSource(in, lp)
-
+func selectPkgs(src *source, s string) ([]string, error) {
 	if s == "" || s == "*" || s == "..." {
 		return src.allPkgs("/")
 	}
@@ -26,4 +23,10 @@ func SelectPkgs(in Input2, lp *LangPicker, s string) ([]string, error) {
 		return nil, fmt.Errorf("package %q not found", s)
 	}
 	return []string{s}, nil
+}
+
+// SelectPkgs selects the package to build based on the selector.
+func SelectPkgs(in Input, lp *LangPicker, s string) ([]string, error) {
+	src := newSource(in, lp)
+	return selectPkgs(src, s)
 }

@@ -16,7 +16,7 @@ type Builder struct {
 
 // NewBuilder creates a new builder with a particular home directory
 func NewBuilder(
-	input Input2, langPicker *LangPicker, std string, output Output2,
+	input Input, langPicker *LangPicker, std string, output Output,
 ) *Builder {
 	src := newSource(input, langPicker)
 	return &Builder{
@@ -31,6 +31,11 @@ func NewBuilder(
 			Options:    new(Options),
 		},
 	}
+}
+
+// SelectPkgs selects the package to build based on the selector.
+func (b *Builder) SelectPkgs(s string) ([]string, error) {
+	return selectPkgs(b.src, s)
 }
 
 // BuildPkgs builds a list of packages

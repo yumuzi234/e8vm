@@ -6,10 +6,10 @@ import (
 )
 
 type results struct {
-	out Output2
+	out Output
 }
 
-func newResults(out Output2) *results {
+func newResults(out Output) *results {
 	return &results{
 		out: out,
 	}
