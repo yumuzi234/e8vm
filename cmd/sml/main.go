@@ -28,7 +28,7 @@ func main() {
 	plan := flag.Bool("plan", false, "plan only")
 	golike := flag.Bool("golike", false, "uses go-like syntax")
 	runTests := flag.Bool("test", true, "run tests")
-	std := flag.String("std", "/smallrepo/std", "stdlib package")
+	std := flag.String("std", "/std", "stdlib package")
 	initPC := flag.Uint("initpc", arch.InitPC, "init PC register value")
 	initSP := flag.Uint("initsp", 0, "init SP value, for testing")
 	staticOnly := flag.Bool("static", false, "do static analysis only")
