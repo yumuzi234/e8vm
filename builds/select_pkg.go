@@ -6,6 +6,7 @@ import (
 )
 
 func selectPkgs(src *source, s string) ([]string, error) {
+	fmt.Println(s)
 	if s == "" || s == "*" || s == "..." {
 		return src.allPkgs("/")
 	}

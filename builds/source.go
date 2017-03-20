@@ -39,6 +39,14 @@ func (s *source) listSrcFiles(p string) ([]string, error) {
 	return langFiles(lang, files), nil
 }
 
+func (s *source) hasSrcFiles(p string) (bool, error) {
+	files, err := s.listSrcFiles(p)
+	if err != nil {
+		return false, err
+	}
+	return len(files) > 0, nil
+}
+
 func (s *source) srcFileMap(p string) (map[string]*File, error) {
 	rel := relPath(p)
 	ok, err := s.in.HasDir(rel)
@@ -80,11 +88,7 @@ func (s *source) hasPkg(p string) (bool, error) {
 		return false, nil
 	}
 
-	files, err := s.listSrcFiles(rel)
-	if err != nil {
-		return false, err
-	}
-	return len(files) > 0, nil
+	return s.hasSrcFiles(rel)
 }
 
 func (s *source) lang(p string) *Lang {
@@ -106,11 +110,11 @@ func (s *source) listPkgs(lst []string, p string) ([]string, error) {
 	}
 
 	for _, sub := range subs {
-		files, err := s.listSrcFiles(sub)
+		ok, err := s.hasSrcFiles(sub)
 		if err != nil {
 			return nil, err
 		}
-		if len(files) > 0 {
+		if ok {
 			lst = append(lst, path.Join("/", sub))
 		}
 		lst, err = s.listPkgs(lst, sub)
@@ -133,7 +137,13 @@ func (s *source) allPkgs(p string) ([]string, error) {
 	}
 	var ret []string
 	if rel != "" {
-		ret = append(ret, rel)
+		ok, err := s.hasSrcFiles(rel)
+		if err != nil {
+			return nil, err
+		}
+		if ok {
+			ret = append(ret, p)
+		}
 	}
 	ret, err = s.listPkgs(ret, rel)
 	if err != nil {
