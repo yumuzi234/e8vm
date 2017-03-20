@@ -12,7 +12,6 @@ import (
 // DirFS is a file system based on a directory.
 type DirFS struct {
 	dir string
-	mem *MemFS
 }
 
 // NewDirFS creates an input based on a file system directory.
@@ -21,14 +20,6 @@ func NewDirFS(dir string) *DirFS {
 		dir = "."
 	}
 	return &DirFS{dir: dir}
-}
-
-// NewDirFSWithMem creates an file system based input with a
-// memory overlay underneath.
-func NewDirFSWithMem(dir string, mem *MemFS) *DirFS {
-	ret := NewDirFS(dir)
-	ret.mem = mem
-	return ret
 }
 
 func (d *DirFS) p(p string) string {
@@ -53,16 +44,6 @@ func (d *DirFS) hasDir(p string) (bool, error) {
 func (d *DirFS) HasDir(p string) (bool, error) {
 	if err := checkValidDir(p); err != nil {
 		return false, err
-	}
-
-	if d.mem != nil {
-		ok, err := d.mem.HasDir(p)
-		if err != nil {
-			return false, err
-		}
-		if ok {
-			return true, nil
-		}
 	}
 
 	return d.hasDir(p)
@@ -92,48 +73,29 @@ func (d *DirFS) ListDirs(p string) ([]string, error) {
 		return nil, err
 	}
 
-	var ret []string
-	retMap := make(map[string]bool)
-
-	if d.mem != nil {
-		ok, err := d.mem.HasDir(p)
-		if err != nil {
-			return nil, err
-		}
-		if ok {
-			dirs, err := d.mem.ListDirs(p)
-			if err != nil {
-				return nil, err
-			}
-			for _, dir := range dirs {
-				retMap[dir] = true
-				ret = append(ret, dir)
-			}
-		}
-	}
-
 	ok, err := d.hasDir(p)
 	if err != nil {
 		return nil, err
 	}
-	if ok {
-		infos, err := d.readDir(p)
-		if err != nil {
-			return nil, err
-		}
+	if !ok {
+		return nil, fmt.Errorf("directory %q not exist", p)
+	}
 
-		for _, info := range infos {
-			if !info.IsDir() {
-				continue
-			}
-			name := info.Name()
-			if !isValidPathName(name) {
-				continue
-			}
-			if !retMap[name] {
-				ret = append(ret, name)
-			}
+	infos, err := d.readDir(p)
+	if err != nil {
+		return nil, err
+	}
+
+	var ret []string
+	for _, info := range infos {
+		if !info.IsDir() {
+			continue
 		}
+		name := info.Name()
+		if !isValidPathName(name) {
+			continue
+		}
+		ret = append(ret, name)
 	}
 
 	sort.Strings(ret)
@@ -165,9 +127,6 @@ func (d *DirFS) ListFiles(p string) ([]string, error) {
 		return ret, nil
 	}
 
-	if d.mem != nil {
-		return d.mem.ListFiles(p)
-	}
 	return nil, fmt.Errorf("directory %q not exist", p)
 }
 
@@ -177,24 +136,13 @@ func (d *DirFS) Open(p string) (*File, error) {
 		return nil, err
 	}
 
-	dir := path.Dir(p)
-	ok, err := d.hasDir(dir)
-	if err != nil {
-		return nil, err
-	}
-	if ok {
-		name := path.Base(p)
-		realPath := d.p(p)
-		return &File{
-			Name:   name,
-			Path:   realPath,
-			Opener: PathFile(realPath),
-		}, nil
-	}
-	if d.mem != nil {
-		return d.mem.Open(p)
-	}
-	return nil, fmt.Errorf("file %q not exist", p)
+	name := path.Base(p)
+	realPath := d.p(p)
+	return &File{
+		Name:   name,
+		Path:   realPath,
+		Opener: PathFile(realPath),
+	}, nil
 }
 
 // Create creates a file for writing.
