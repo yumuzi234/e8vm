@@ -53,7 +53,7 @@ func (o *Overlay) ListDirs(p string) ([]string, error) {
 		}
 	}
 
-	ok, err = o.in1.HasDir(p)
+	ok, err = o.in2.HasDir(p)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,6 @@ func (o *Overlay) ListDirs(p string) ([]string, error) {
 		if err != nil {
 			return nil, err
 		}
-
 		for _, dir := range dirs {
 			if retMap[dir] {
 				continue
