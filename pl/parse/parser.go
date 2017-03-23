@@ -18,9 +18,6 @@ type parser struct {
 	stmtFunc func(p *parser) ast.Stmt
 
 	golike bool
-
-	// inlineMethod no longer supported?
-	inlineMethod bool
 }
 
 func makeTokener(f string, r io.Reader, golike bool) lexing.Tokener {

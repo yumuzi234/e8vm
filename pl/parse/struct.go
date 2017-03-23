@@ -43,8 +43,9 @@ func parseStruct(p *parser) *ast.Struct {
 	}
 
 	for !p.SeeOp("}") && !p.See(lexing.EOF) {
-		if p.SeeKeyword("func") && !p.golike {
-			break
+		if p.SeeKeyword("func") {
+			p.CodeErrorfHere("pl.unexpected",
+				"unexpected func, expecting field name or embedded type")
 		}
 
 		idents := parseIdentList(p)
@@ -66,16 +67,6 @@ func parseStruct(p *parser) *ast.Struct {
 		}
 
 		ret.Fields = append(ret.Fields, field)
-	}
-
-	// remove this?
-	if !p.golike && p.inlineMethod {
-		for p.SeeKeyword("func") {
-			f := parseFunc(p)
-			if f != nil {
-				ret.Methods = append(ret.Methods, f)
-			}
-		}
 	}
 
 	ret.Rbrace = p.ExpectOp("}")

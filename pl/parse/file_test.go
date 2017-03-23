@@ -34,7 +34,7 @@ func TestFile_good(t *testing.T) {
 		`import ( a "a"; "b" )`,
 		`interface T {
 			add() int
-			print() string
+			print() (a string, b char)
 		}`,
 		`interface T {
 			add(int, int) int
@@ -42,6 +42,8 @@ func TestFile_good(t *testing.T) {
 		}`,
 		`interface T {
 			divide(a, b int) (int, int)
+		}`,
+		`interface T {
 		}`,
 	} {
 		buf := strings.NewReader(s)
@@ -105,6 +107,9 @@ func TestFile_bad(t *testing.T) {
 	o("multiImport", "import (); import()")
 	o("expectType", `var (a "a")`)
 	o("expectType", `var (a "a";)`)
+	o("unexpected", `struct s{
+		func f() {}	
+	}`)
 }
 
 func TestFileTokens(t *testing.T) {
