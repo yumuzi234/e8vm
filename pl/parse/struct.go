@@ -68,6 +68,7 @@ func parseStruct(p *parser) *ast.Struct {
 		ret.Fields = append(ret.Fields, field)
 	}
 
+	// remove this?
 	if !p.golike && p.inlineMethod {
 		for p.SeeKeyword("func") {
 			f := parseFunc(p)
