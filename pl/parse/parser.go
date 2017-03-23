@@ -17,7 +17,9 @@ type parser struct {
 	typeFunc func(p *parser) ast.Expr
 	stmtFunc func(p *parser) ast.Stmt
 
-	golike       bool
+	golike bool
+
+	// inlineMethod no longer supported?
 	inlineMethod bool
 }
 

@@ -17,6 +17,8 @@ func parseTopDecl(p *parser) ast.Decl {
 		return parseVarDecls(p)
 	} else if p.SeeKeyword("func") {
 		return parseFunc(p)
+	} else if !p.golike && p.SeeKeyword("interface") {
+		return parseInterface(p)
 	} else if !p.golike && p.SeeKeyword("struct") {
 		return parseStruct(p)
 	} else if !p.golike && p.SeeLit(Ident, "type") {
