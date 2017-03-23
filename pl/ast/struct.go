@@ -24,15 +24,3 @@ type Struct struct {
 	Rbrace *lexing.Token
 	Semi   *lexing.Token
 }
-
-// Interface is an interface type
-// TODO:
-/*
-type Interface struct {
-	Kw     *lex8.Token
-	Name   *lex8.Token
-	Lbrace *lex8.Token
-	Funcs  []*FuncSig
-	Rbrace *lex8.Token
-}
-*/
