@@ -107,9 +107,6 @@ func TestFile_bad(t *testing.T) {
 	o("multiImport", "import (); import()")
 	o("expectType", `var (a "a")`)
 	o("expectType", `var (a "a";)`)
-	o("unexpected", `struct s{
-		func f() {}	
-	}`)
 }
 
 func TestFileTokens(t *testing.T) {

@@ -6,15 +6,15 @@ import (
 )
 
 func parseInterface(p *parser) *ast.Interface {
-	var ret *ast.Interface
+
 	if !p.SeeKeyword("interface") {
 		panic("expect keyword")
-	} else {
-		ret = &ast.Interface{
-			Kw:     p.Shift(),
-			Name:   p.Expect(Ident),
-			Lbrace: p.ExpectOp("{"),
-		}
+	}
+	var ret *ast.Interface
+	ret = &ast.Interface{
+		Kw:     p.Shift(),
+		Name:   p.Expect(Ident),
+		Lbrace: p.ExpectOp("{"),
 	}
 	for !p.SeeOp("}") && !p.See(lexing.EOF) {
 		name := p.Expect(Ident)
