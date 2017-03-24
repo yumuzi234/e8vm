@@ -27,7 +27,7 @@ func printFile(f *formatter, file *ast.File) {
 		f.printEndlPlus(len(file.Decls) > 0, true)
 	}
 
-	// empty line between each topDecl?
+	// empty line between each topDecl? wrong?
 	for i, decl := range file.Decls {
 		printTopDecl(f, decl)
 		f.printEndlPlus(i < len(file.Decls)-1, true)
