@@ -43,10 +43,6 @@ func parseStruct(p *parser) *ast.Struct {
 	}
 
 	for !p.SeeOp("}") && !p.See(lexing.EOF) {
-		if p.SeeKeyword("func") && !p.golike {
-			break
-		}
-
 		idents := parseIdentList(p)
 		if p.skipErrStmt() {
 			continue
@@ -66,15 +62,6 @@ func parseStruct(p *parser) *ast.Struct {
 		}
 
 		ret.Fields = append(ret.Fields, field)
-	}
-
-	if !p.golike && p.inlineMethod {
-		for p.SeeKeyword("func") {
-			f := parseFunc(p)
-			if f != nil {
-				ret.Methods = append(ret.Methods, f)
-			}
-		}
 	}
 
 	ret.Rbrace = p.ExpectOp("}")

@@ -1,11 +1,21 @@
 package ast
 
-// Expr is a general expression in the language
-type Expr interface{}
+import (
+	"shanhu.io/smlvm/lexing"
+)
 
-// Stmt is a general statement
-type Stmt interface{}
+// Interface declares a interface
+type Interface struct {
+	Kw     *lexing.Token
+	Name   *lexing.Token
+	Lbrace *lexing.Token
+	Funcs  []*InterfaceFunc
+	Rbrace *lexing.Token
+	Semi   *lexing.Token
+}
 
-// Decl is a general declaration,
-// could be var, function, struct or interface
-type Decl interface{}
+// InterfaceFunc is a func in interface
+type InterfaceFunc struct {
+	Name     *lexing.Token
+	FuncSigs *FuncSig
+}

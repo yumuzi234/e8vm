@@ -78,7 +78,6 @@ func parseFuncSig(p *parser) *ast.FuncSig {
 	if p.InError() {
 		return nil
 	}
-
 	if p.SeeOp("(") {
 		ret.Rets = parseParaList(p)
 		if p.InError() {

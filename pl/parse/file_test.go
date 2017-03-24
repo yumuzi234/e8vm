@@ -32,6 +32,19 @@ func TestFile_good(t *testing.T) {
 		`import ( _ "a" )`,
 		`import ( "a"; "b" )`,
 		`import ( a "a"; "b" )`,
+		`interface T {
+			add() int
+			print() (a string, b char)
+		}`,
+		`interface T {
+			add(int, int) int
+			print(string) 
+		}`,
+		`interface T {
+			divide(a, b int) (int, int)
+		}`,
+		`interface T {
+		}`,
 	} {
 		buf := strings.NewReader(s)
 		f, _, es := File("test.g", buf, false)
