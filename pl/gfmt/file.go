@@ -14,6 +14,8 @@ func printTopDecl(f *formatter, d ast.Decl) {
 		printVarDecls(f, d)
 	case *ast.ConstDecls:
 		printConstDecls(f, d)
+	case *ast.Interface:
+		printInterface(f, d)
 	default:
 		f.errorf(nil, "invalid top-level declaration type: %T", d)
 	}
@@ -25,6 +27,7 @@ func printFile(f *formatter, file *ast.File) {
 		f.printEndlPlus(len(file.Decls) > 0, true)
 	}
 
+	// empty line between each topDecl?
 	for i, decl := range file.Decls {
 		printTopDecl(f, decl)
 		f.printEndlPlus(i < len(file.Decls)-1, true)

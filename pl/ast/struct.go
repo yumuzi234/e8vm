@@ -18,8 +18,7 @@ type Struct struct {
 	KwAfter *lexing.Token
 	Lbrace  *lexing.Token
 
-	Fields  []*Field
-	Methods []*Func
+	Fields []*Field
 
 	Rbrace *lexing.Token
 	Semi   *lexing.Token

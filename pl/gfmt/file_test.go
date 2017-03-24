@@ -227,4 +227,32 @@ func TestFormatFile(t *testing.T) {
 			if true return
 		}
 	`)
+	o(`
+		func main() {}; interface T { f(int,     int) (int,
+			int); f()}
+	`, `
+		func main() {}
+
+		interface T {
+			f (int, int) (int, int)
+			f ()
+		}
+	`)
+	o(`
+		func main() {}; struct s {  
+			
+			a int
+			
+			
+			
+			c d}
+	`, `
+		func main() {}
+
+		struct s {
+			a int
+			
+			c d
+		}
+	`)
 }

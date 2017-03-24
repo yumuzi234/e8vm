@@ -92,7 +92,7 @@ func (f *formatter) cue() *lexing.Token {
 		if cur.Type == lexing.Comment {
 			f.printStr(formatComment(cur.Lit))
 			f.toks.shift()
-			f.printEndlPlus(true, false)
+			f.printEndPara()
 			continue
 		}
 
@@ -126,6 +126,16 @@ func (f *formatter) printEndlPlus(plus, paraGap bool) {
 		return
 	}
 
+	if f.toks.lineGap() >= 2 {
+		f.printEndl()
+	}
+}
+
+// printEndPara will print a endl when there is more than 1 endl originallly
+// TODO: remove printEndlPlus?
+// printEndPara = printEndlPlus(true, false)
+func (f *formatter) printEndPara() {
+	f.printEndl()
 	if f.toks.lineGap() >= 2 {
 		f.printEndl()
 	}

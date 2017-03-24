@@ -4,17 +4,17 @@ import (
 	"shanhu.io/smlvm/pl/ast"
 )
 
-func printStruct(f *formatter, d *ast.Struct) {
+func printInterface(f *formatter, d *ast.Interface) {
 	f.printExprs(d.Kw, " ", d.Name, " ", d.Lbrace)
 	f.printEndl()
 	f.Tab()
-	for i, field := range d.Fields {
+	for i, fun := range d.Funcs {
 		if i != 0 {
 			f.printEndPara()
 		}
-		printIdents(f, field.Idents)
+		f.printExprs(fun.Name, " ")
 		f.printSpace()
-		f.printExprs(field.Type)
+		printFuncSig(f, fun.FuncSigs)
 	}
 	f.printEndl()
 	f.ShiftTab()

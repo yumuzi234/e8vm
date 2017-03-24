@@ -20,7 +20,7 @@ func printStmt(f *formatter, stmt ast.Stmt) {
 			f.Tab()
 			for _, s := range stmt.Stmts {
 				printStmt(f, s)
-				f.printEndlPlus(true, false)
+				f.printEndPara()
 			}
 			f.cueTo(stmt.Rbrace)
 			f.ShiftTab()
@@ -136,11 +136,11 @@ func printCase(f *formatter, c *ast.Case) {
 	f.Tab()
 	for _, s := range c.Stmts {
 		printStmt(f, s)
-		f.printEndlPlus(true, false)
+		f.printEndPara()
 	}
 	if c.Fallthrough != nil {
 		printStmt(f, c.Fallthrough)
-		f.printEndlPlus(true, false)
+		f.printEndPara()
 	}
 	f.ShiftTab()
 }
