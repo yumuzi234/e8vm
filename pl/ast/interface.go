@@ -18,4 +18,5 @@ type Interface struct {
 type InterfaceFunc struct {
 	Name     *lexing.Token
 	FuncSigs *FuncSig
+	Semi     *lexing.Token
 }

@@ -30,9 +30,9 @@ func parseInterface(p *parser) *ast.Interface {
 		ret.Funcs = append(ret.Funcs, &ast.InterfaceFunc{
 			Name:     name,
 			FuncSigs: f,
+			Semi:     p.ExpectSemi(),
 		})
 
-		p.ExpectSemi()
 	}
 
 	ret.Rbrace = p.ExpectOp("}")
