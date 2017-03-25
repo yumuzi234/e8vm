@@ -24,13 +24,21 @@ func printTopDecl(f *formatter, d ast.Decl) {
 func printFile(f *formatter, file *ast.File) {
 	if file.Imports != nil {
 		printImportDecls(f, file.Imports)
-		f.printEndlPlus(len(file.Decls) > 0, true)
+		f.printEndl()
+		if len(file.Decls) != 0 {
+			f.printEndl()
+		}
 	}
-
-	// empty line between each topDecl? wrong?
+	if len(file.Decls) == 0 {
+		f.finish()
+		return
+	}
 	for i, decl := range file.Decls {
+		if i != 0 {
+			f.printEndl()
+		}
 		printTopDecl(f, decl)
-		f.printEndlPlus(i < len(file.Decls)-1, true)
+		f.printEndl()
 	}
 	f.finish()
 }

@@ -92,7 +92,7 @@ func (f *formatter) cue() *lexing.Token {
 		if cur.Type == lexing.Comment {
 			f.printStr(formatComment(cur.Lit))
 			f.toks.shift()
-			f.printEndPara()
+			f.printGap()
 			continue
 		}
 
@@ -112,29 +112,10 @@ func (f *formatter) expect(token *lexing.Token) {
 	f.toks.shift()
 }
 
-// printEndlPlus prints one endline plus some number of empty lines if
-// possible. This number is usually 0 or 1 depending on the line diffs between
-// last token and next, but can be overriden by minEmptyLines.
-func (f *formatter) printEndlPlus(plus, paraGap bool) {
-	f.printEndl()
-	if !plus {
-		return
-	}
-
-	if paraGap {
-		f.printEndl()
-		return
-	}
-
-	if f.toks.lineGap() >= 2 {
-		f.printEndl()
-	}
-}
-
-// printEndPara will print a endl when there is more than 1 endl originallly
-// TODO: remove printEndlPlus?
-// printEndPara = printEndlPlus(true, false)
-func (f *formatter) printEndPara() {
+// printGap will print 2 endl when there is 2 or more endl originallly
+// otherwise print 1 endl
+// printGap = printEndlPlus(true, false)
+func (f *formatter) printGap() {
 	f.printEndl()
 	if f.toks.lineGap() >= 2 {
 		f.printEndl()

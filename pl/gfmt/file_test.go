@@ -255,4 +255,12 @@ func TestFormatFile(t *testing.T) {
 			c d
 		}
 	`)
+	o(`
+		func main() {}; struct s {  
+			}
+	`, `
+		func main() {}
+
+		struct s {}
+	`)
 }
