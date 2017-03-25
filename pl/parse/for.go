@@ -22,7 +22,7 @@ func parseForStmt(p *parser) *ast.ForStmt {
 				ret.Cond = parseExpr(p)
 			}
 
-			p.ExpectSemi()
+			ret.CondSemi = p.ExpectSemi()
 			if !p.InError() {
 				if !p.SeeOp("{") {
 					ret.Iter = parseSimpleStmtNoSemi(p)

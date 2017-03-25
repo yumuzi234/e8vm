@@ -86,6 +86,7 @@ type ForStmt struct {
 	ThreeFold bool
 	Init      Stmt
 	Cond      Expr
+	CondSemi  *lexing.Token
 	Iter      Stmt
 	Body      *Block
 	Semi      *lexing.Token
