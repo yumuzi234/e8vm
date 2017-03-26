@@ -33,7 +33,7 @@ func printVarDecls(f *formatter, d *ast.VarDecls) {
 		f.printEndl()
 		f.Tab()
 		for i, decl := range d.Decls {
-			if i != 0 {
+			if i > 0 {
 				f.printGap()
 			}
 			printVarDecl(f, decl)
@@ -64,7 +64,7 @@ func printConstDecls(f *formatter, d *ast.ConstDecls) {
 		f.printEndl()
 		f.Tab()
 		for i, decl := range d.Decls {
-			if i != 0 {
+			if i > 0 {
 				f.printGap()
 			}
 			printConstDecl(f, decl)
@@ -87,9 +87,9 @@ func printImportDecls(f *formatter, d *ast.ImportDecls) {
 	f.printToken(d.Lparen)
 	f.printEndl()
 	f.Tab()
-	// TODO: sort imports in groups
+	// TODO(yumuzi234): sort imports in groups
 	for i, decl := range d.Decls {
-		if i != 0 {
+		if i > 0 {
 			f.printGap()
 		}
 		printImportDecl(f, decl)
