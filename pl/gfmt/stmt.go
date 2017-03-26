@@ -20,7 +20,7 @@ func printStmt(f *formatter, stmt ast.Stmt) {
 			f.Tab()
 			for _, s := range stmt.Stmts {
 				printStmt(f, s)
-				f.printEndlPlus(true, false)
+				f.printGap()
 			}
 			f.cueTo(stmt.Rbrace)
 			f.ShiftTab()
@@ -37,7 +37,6 @@ func printStmt(f *formatter, stmt ast.Stmt) {
 		if ok && stmt.Else != nil && len(body.Stmts) == 0 {
 			f.printToken(body.Lbrace)
 			f.printEndl()
-			f.cueTo(body.Rbrace)
 			f.printToken(body.Rbrace)
 		} else {
 			printStmt(f, stmt.Body)
@@ -86,7 +85,6 @@ func printStmt(f *formatter, stmt ast.Stmt) {
 			for _, c := range stmt.Cases {
 				printCase(f, c)
 			}
-			f.cueTo(stmt.Rbrace)
 			f.printToken(stmt.Rbrace)
 		} else {
 			f.printToken(stmt.Lbrace)
@@ -136,11 +134,11 @@ func printCase(f *formatter, c *ast.Case) {
 	f.Tab()
 	for _, s := range c.Stmts {
 		printStmt(f, s)
-		f.printEndlPlus(true, false)
+		f.printGap()
 	}
 	if c.Fallthrough != nil {
 		printStmt(f, c.Fallthrough)
-		f.printEndlPlus(true, false)
+		f.printGap()
 	}
 	f.ShiftTab()
 }

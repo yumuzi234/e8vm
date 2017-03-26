@@ -54,16 +54,6 @@ func declareMethods(
 
 	var ret []*pkgFunc
 
-	// inlined ones
-	for _, ps := range pkgStructs {
-		for _, f := range ps.ast.Methods {
-			pf := declareMethod(b, ps, f)
-			if pf != nil {
-				ret = append(ret, pf)
-			}
-		}
-	}
-
 	// go-like ones
 	for _, f := range methods {
 		recv := f.Recv.StructName

@@ -4,21 +4,21 @@ import (
 	"shanhu.io/smlvm/pl/ast"
 )
 
-func printStruct(f *formatter, d *ast.Struct) {
+func printInterface(f *formatter, d *ast.Interface) {
 	f.printExprs(d.Kw, " ", d.Name, " ", d.Lbrace)
-	if len(d.Fields) == 0 {
+	if len(d.Funcs) == 0 {
 		f.printToken(d.Rbrace)
 		return
 	}
 	f.printEndl()
 	f.Tab()
-	for i, field := range d.Fields {
+	for i, fun := range d.Funcs {
 		if i != 0 {
 			f.printGap()
 		}
-		printIdents(f, field.Idents)
+		f.printExprs(fun.Name, " ")
 		f.printSpace()
-		f.printExprs(field.Type)
+		printFuncSig(f, fun.FuncSigs)
 	}
 	f.printEndl()
 	f.ShiftTab()
