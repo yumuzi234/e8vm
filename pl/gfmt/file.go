@@ -34,7 +34,7 @@ func printFile(f *formatter, file *ast.File) {
 		return
 	}
 	for i, decl := range file.Decls {
-		if i != 0 {
+		if i > 0 {
 			f.printEndl()
 		}
 		printTopDecl(f, decl)

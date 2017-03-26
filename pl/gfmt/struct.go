@@ -13,7 +13,7 @@ func printStruct(f *formatter, d *ast.Struct) {
 	f.printEndl()
 	f.Tab()
 	for i, field := range d.Fields {
-		if i != 0 {
+		if i > 0 {
 			f.printGap()
 		}
 		printIdents(f, field.Idents)

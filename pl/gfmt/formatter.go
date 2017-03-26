@@ -112,9 +112,8 @@ func (f *formatter) expect(token *lexing.Token) {
 	f.toks.shift()
 }
 
-// printGap will print 2 endl when there is 2 or more endl originallly
-// otherwise print 1 endl
-// printGap = printEndlPlus(true, false)
+// printGap prints 2 endlines when there is 2 or more endline originallly,
+// otherwise it prints 1 endline.
 func (f *formatter) printGap() {
 	f.printEndl()
 	if f.toks.lineGap() >= 2 {

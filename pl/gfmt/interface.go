@@ -13,7 +13,7 @@ func printInterface(f *formatter, d *ast.Interface) {
 	f.printEndl()
 	f.Tab()
 	for i, fun := range d.Funcs {
-		if i != 0 {
+		if i > 0 {
 			f.printGap()
 		}
 		f.printExprs(fun.Name, " ")
