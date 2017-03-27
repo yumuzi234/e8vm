@@ -146,12 +146,12 @@ func (p *Pkg) Build(scope *syms.Scope) (
 		return nil, nil, errs
 	}
 
-	buildStructs(b, pkgStructs)
+	pkgInterfaces := declareInterfaces(b, syms.interfaces)
 	if errs := b.Errs(); errs != nil {
 		return nil, nil, errs
 	}
 
-	pkgInterfaces := declareInterfaces(b, syms.interfaces)
+	buildStructs(b, pkgStructs)
 	if errs := b.Errs(); errs != nil {
 		return nil, nil, errs
 	}
@@ -199,7 +199,7 @@ func (p *Pkg) Build(scope *syms.Scope) (
 		Imports:     imports,
 		Consts:      consts,
 		Structs:     structs,
-		Interface:   interfaces,
+		Interfaces:  interfaces,
 		Vars:        vars,
 		Funcs:       funcs,
 		Methods:     methods,
