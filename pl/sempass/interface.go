@@ -13,9 +13,6 @@ type pkgInterface struct {
 	ast  *ast.Interface   // the AST node
 	sym  *syms.Symbol     // the symbol
 	t    *types.Interface // type
-
-	// this not needed for interface, right?
-	// pt   *types.Pointer   // pointer type
 }
 
 func newPkgInterface(s *ast.Interface) *pkgInterface {
@@ -57,7 +54,7 @@ func declareInterfaces(b *builder, is []*ast.Interface) []*pkgInterface {
 	return ret
 }
 
-func buildf(b *builder, pi *pkgInterface) {
+func buildInterface(b *builder, pi *pkgInterface) {
 	t := pi.t
 	for _, f := range pi.ast.Funcs {
 		ft := buildFuncType(b, nil, f.FuncSig)
@@ -80,6 +77,6 @@ func buildf(b *builder, pi *pkgInterface) {
 
 func buildInterfaces(b *builder, pkgInterfaces []*pkgInterface) {
 	for _, ps := range pkgInterfaces {
-		buildf(b, ps)
+		buildInterface(b, ps)
 	}
 }
