@@ -14,6 +14,7 @@ const (
 	SymConst
 	SymImport
 	SymField
+	SymInterface
 )
 
 // SymStr returns the string representation of a symbol
@@ -33,6 +34,8 @@ func SymStr(s int) string {
 		return "struct field"
 	case SymType:
 		return "builtin type"
+	case SymInterface:
+		return "interface"
 	default:
 		panic(fmt.Errorf("unknown symbol: %d", s))
 	}

@@ -16,7 +16,7 @@ type Interface struct {
 
 // InterfaceFunc is a func in interface
 type InterfaceFunc struct {
-	Name     *lexing.Token
-	FuncSigs *FuncSig
-	Semi     *lexing.Token
+	Name    *lexing.Token
+	FuncSig *FuncSig
+	Semi    *lexing.Token
 }

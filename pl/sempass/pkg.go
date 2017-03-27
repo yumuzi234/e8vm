@@ -29,11 +29,12 @@ type Pkg struct {
 }
 
 type symbols struct {
-	consts  []*ast.ConstDecls
-	funcs   []*ast.Func
-	methods []*ast.Func
-	structs []*ast.Struct
-	vars    []*ast.VarDecls
+	consts     []*ast.ConstDecls
+	funcs      []*ast.Func
+	methods    []*ast.Func
+	structs    []*ast.Struct
+	interfaces []*ast.Interface
+	vars       []*ast.VarDecls
 }
 
 func (p *Pkg) symbols() *symbols {
@@ -52,6 +53,8 @@ func (p *Pkg) symbols() *symbols {
 				ret.vars = append(ret.vars, d)
 			case *ast.Struct:
 				ret.structs = append(ret.structs, d)
+			case *ast.Interface:
+				ret.interfaces = append(ret.interfaces, d)
 			case *ast.ConstDecls:
 				ret.consts = append(ret.consts, d)
 			default:
@@ -66,6 +69,14 @@ func (p *Pkg) symbols() *symbols {
 func structSyms(pkgStructs []*pkgStruct) []*syms.Symbol {
 	ret := make([]*syms.Symbol, 0, len(pkgStructs))
 	for _, ps := range pkgStructs {
+		ret = append(ret, ps.sym)
+	}
+	return ret
+}
+
+func interfaceSyms(pkgInterfaces []*pkgInterface) []*syms.Symbol {
+	ret := make([]*syms.Symbol, 0, len(pkgInterfaces))
+	for _, ps := range pkgInterfaces {
 		ret = append(ret, ps.sym)
 	}
 	return ret
@@ -130,7 +141,22 @@ func (p *Pkg) Build(scope *syms.Scope) (
 		return nil, nil, errs
 	}
 
-	pkgStructs := buildStructs(b, syms.structs)
+	pkgStructs := declareStructs(b, syms.structs)
+	if errs := b.Errs(); errs != nil {
+		return nil, nil, errs
+	}
+
+	pkgInterfaces := declareInterfaces(b, syms.interfaces)
+	if errs := b.Errs(); errs != nil {
+		return nil, nil, errs
+	}
+
+	buildStructs(b, pkgStructs)
+	if errs := b.Errs(); errs != nil {
+		return nil, nil, errs
+	}
+
+	buildInterfaces(b, pkgInterfaces)
 	if errs := b.Errs(); errs != nil {
 		return nil, nil, errs
 	}
@@ -167,11 +193,13 @@ func (p *Pkg) Build(scope *syms.Scope) (
 
 	depGraph := b.depGraph()
 	structs := structSyms(pkgStructs)
+	interfaces := interfaceSyms(pkgInterfaces)
 
 	return &tast.Pkg{
 		Imports:     imports,
 		Consts:      consts,
 		Structs:     structs,
+		Interfaces:  interfaces,
 		Vars:        vars,
 		Funcs:       funcs,
 		Methods:     methods,

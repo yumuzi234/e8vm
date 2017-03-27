@@ -92,7 +92,7 @@ func buildFields(b *builder, ps *pkgStruct) {
 	}
 }
 
-func buildStructs(b *builder, structs []*ast.Struct) []*pkgStruct {
+func declareStructs(b *builder, structs []*ast.Struct) []*pkgStruct {
 	m := make(map[string]*pkgStruct)
 	for _, s := range structs {
 		ps := declareStruct(b, s)
@@ -100,10 +100,12 @@ func buildStructs(b *builder, structs []*ast.Struct) []*pkgStruct {
 			m[ps.name.Lit] = ps
 		}
 	}
-
 	ret := sortStructs(b, m)
-	for _, ps := range ret {
+	return ret
+}
+
+func buildStructs(b *builder, pkgstructs []*pkgStruct) {
+	for _, ps := range pkgstructs {
 		buildFields(b, ps)
 	}
-	return ret
 }

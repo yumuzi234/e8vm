@@ -18,7 +18,7 @@ func printInterface(f *formatter, d *ast.Interface) {
 		}
 		f.printExprs(fun.Name, " ")
 		f.printSpace()
-		printFuncSig(f, fun.FuncSigs)
+		printFuncSig(f, fun.FuncSig)
 	}
 	f.printEndl()
 	f.ShiftTab()

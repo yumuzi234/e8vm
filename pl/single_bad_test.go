@@ -78,6 +78,8 @@ func TestSingleFileBad(t *testing.T) {
 	c("declConflict.field", `struct A { b int; b int }`)
 	c("declConflict.const", `const a=1; const a=2`)
 	c("declConflict.struct", "struct A{}; struct A{}")
+	c("declConflict.interface", "interface A{}; interface A{}")
+	c("declConflict.interfaceFunc", "interface A{ a(); a()}")
 	c("declConflict.var", "var a int; func a() {}")
 	c("declConflict.func", "func main() {}; func main() {};")
 

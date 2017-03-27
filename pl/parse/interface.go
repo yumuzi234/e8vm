@@ -28,9 +28,9 @@ func parseInterface(p *parser) *ast.Interface {
 		}
 
 		ret.Funcs = append(ret.Funcs, &ast.InterfaceFunc{
-			Name:     name,
-			FuncSigs: f,
-			Semi:     p.ExpectSemi(),
+			Name:    name,
+			FuncSig: f,
+			Semi:    p.ExpectSemi(),
 		})
 
 	}
