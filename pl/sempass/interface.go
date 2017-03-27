@@ -66,10 +66,9 @@ func buildInterface(b *builder, pi *pkgInterface) {
 		conflict := t.Syms.Declare(sym)
 		if conflict != nil {
 			b.CodeErrorf(f.Name.Pos, "pl.declConflict.interfaceFunc",
-				"func %s already defined in interface", f.Name.Lit)
+				"%s already defined in interface", f.Name.Lit)
 			b.CodeErrorf(conflict.Pos,
-				"pl.declConflict.previousPos",
-				"previously defined here")
+				"pl.declConflict.previousPos", "previously defined here")
 			continue
 		}
 	}
