@@ -56,3 +56,30 @@ func declareInterfaces(b *builder, is []*ast.Interface) []*pkgInterface {
 	}
 	return ret
 }
+
+func buildf(b *builder, pi *pkgInterface) {
+	t := pi.t
+	for _, f := range pi.ast.Funcs {
+		ft := buildFuncType(b, nil, f.FuncSig)
+		if ft == nil {
+			return
+		}
+		name := f.Name.Lit
+		sym := syms.Make(b.path, name, tast.SymFunc, nil, ft, f.Name.Pos)
+		conflict := t.Syms.Declare(sym)
+		if conflict != nil {
+			b.CodeErrorf(f.Name.Pos, "pl.declConflict.interfaceFunc",
+				"func %s already defined in interface", f.Name.Lit)
+			b.CodeErrorf(conflict.Pos,
+				"pl.declConflict.previousPos",
+				"previously defined here")
+			continue
+		}
+	}
+}
+
+func buildInterfaces(b *builder, pkgInterfaces []*pkgInterface) {
+	for _, ps := range pkgInterfaces {
+		buildf(b, ps)
+	}
+}

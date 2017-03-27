@@ -156,10 +156,10 @@ func (p *Pkg) Build(scope *syms.Scope) (
 		return nil, nil, errs
 	}
 
-	// buildInterfaces(b, pkgInterfaces)
-	// if errs := b.Errs(); errs != nil {
-	// 	return nil, nil, errs
-	// }
+	buildInterfaces(b, pkgInterfaces)
+	if errs := b.Errs(); errs != nil {
+		return nil, nil, errs
+	}
 
 	pkgFuncs, aliases := declareFuncs(b, syms.funcs)
 	if errs := b.Errs(); errs != nil {

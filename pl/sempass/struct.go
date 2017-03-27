@@ -104,8 +104,8 @@ func declareStructs(b *builder, structs []*ast.Struct) []*pkgStruct {
 	return ret
 }
 
-func buildStructs(b *builder, pkystructs []*pkgStruct) {
-	for _, ps := range pkystructs {
+func buildStructs(b *builder, pkgstructs []*pkgStruct) {
+	for _, ps := range pkgstructs {
 		buildFields(b, ps)
 	}
 }
