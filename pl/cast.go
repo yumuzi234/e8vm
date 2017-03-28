@@ -49,8 +49,11 @@ func buildCast(b *builder, from *ref, t types.T) *ref {
 		if size == arch.RegSize {
 			return newRef(t, codegen.Num(0))
 		}
+		if _, ok := t.(*types.Interface); ok {
+			panic("Interface is not supported yet")
+		}
 		if _, ok := t.(*types.Slice); !ok {
-			panic("bug")
+			panic("unknow type")
 		}
 		ret := b.newTemp(t)
 		b.b.Zero(ret.IR())

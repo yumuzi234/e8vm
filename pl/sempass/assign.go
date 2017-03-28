@@ -1,6 +1,8 @@
 package sempass
 
 import (
+	"fmt"
+
 	"shanhu.io/smlvm/lexing"
 	"shanhu.io/smlvm/pl/ast"
 	"shanhu.io/smlvm/pl/tast"
@@ -30,6 +32,19 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 
 		destType := r.Type()
 		srcType := srcRef.At(i).Type()
+
+		if i, ok := destType.(*types.Interface); ok {
+			if _, ok = srcType.(*types.Interface); ok {
+				b.CodeErrorf(op.Pos, "pl.notYetSupported",
+					"assign interface by interface is not supported yet")
+				return nil
+			}
+			if !assignInterface(b, op.Pos, i, srcType) {
+				return nil
+			}
+			continue
+		}
+
 		if !types.CanAssign(destType, srcType) {
 			b.CodeErrorf(op.Pos, "pl.cannotAssign.typeMismatch",
 				"cannot assign %s to %s",
@@ -138,4 +153,70 @@ func buildAssignStmt(b *builder, stmt *ast.AssignStmt) tast.Stmt {
 	}
 
 	return opAssign(b, left, right, stmt.Assign)
+}
+
+func assignInterface(b *builder, p *lexing.Pos,
+	i *types.Interface, right types.T) bool {
+	flag := true
+	s, ok := types.PointerOf(right).(*types.Struct)
+	if !ok {
+		b.CodeErrorf(p, "pl.cannotAssign.interface",
+			"cannot assign interface %s by %s, not a struct", i, right)
+		return false
+	}
+	e := func(fname, m string) {
+		b.CodeErrorf(p, "pl.cannotAssign.interface",
+			"cannot assign interface %s by %s, "+m, i, right, fname)
+	}
+
+	funcs := i.Syms.List()
+	for _, f := range funcs {
+		sym := s.Syms.Query(f.Name())
+		if sym == nil {
+			e(f.Name(), "func %s not implemented")
+			flag = false
+			continue
+		}
+		t2, ok := sym.ObjType.(*types.Func)
+		if !ok {
+			e(f.Name(), "%s is a struct member but not a method")
+			flag = false
+			continue
+		}
+		t2 = t2.MethodFunc
+		t1 := f.ObjType.(*types.Func)
+		if len(t1.Args) != len(t2.Args) {
+			e(f.Name(), "args number mismatch for %s")
+			flag = false
+			continue
+		}
+		if len(t1.Rets) != len(t2.Rets) {
+			e(f.Name(), "returns number mismatch for %s")
+			flag = false
+			continue
+		}
+		fmt.Println("same length")
+		for i, t := range t1.Args {
+			if !types.SameType(t.T, t2.Args[i].T) {
+				b.CodeErrorf(p, "pl.cannotAssign.interface",
+					"cannot assign interface %s by %s, "+
+						"type not match, %v, %v in func %s",
+					i, right, t.T, t2.Args[i].T, f.Name())
+				flag = false
+				continue
+			}
+		}
+
+		for i, t := range t1.Rets {
+			if !types.SameType(t.T, t2.Rets[i].T) {
+				b.CodeErrorf(p, "pl.cannotAssign.interface",
+					"cannot assign interface %s by %s, "+
+						"type not match, %v, %v in func %s",
+					i, right, t.T, t2.Args[i].T, f.Name())
+				flag = false
+				continue
+			}
+		}
+	}
+	return flag
 }

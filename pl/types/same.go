@@ -29,10 +29,11 @@ func CanAssign(left, right T) bool {
 				return false
 			}
 			return true
+		case *Interface:
+			return true
 		}
 		return false
 	}
-
 	return SameType(left, right)
 }
 
@@ -87,7 +88,7 @@ func SameType(t1, t2 T) bool {
 			}
 		}
 
-		for i, t := range t2.Rets {
+		for i, t := range t1.Rets {
 			if !SameType(t.T, t2.Rets[i].T) {
 				return false
 			}
@@ -96,6 +97,11 @@ func SameType(t1, t2 T) bool {
 		return true
 	case *Struct:
 		if t2, ok := t2.(*Struct); ok {
+			return t1 == t2
+		}
+		return false
+	case *Interface:
+		if t2, ok := t2.(*Interface); ok {
 			return t1 == t2
 		}
 		return false

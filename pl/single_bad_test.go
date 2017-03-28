@@ -120,6 +120,21 @@ func TestSingleFileBad(t *testing.T) {
 	o("cannotAssign.typeMismatch", `func main() { var a [2]int; var b [3]int;
 		a=b}`)
 
+	o("cannotAssign.interface",
+		`interface I { t() int; }
+		 struct S { t int }
+		 func main() {var i I; var s S; i=s; _:=i}`)
+	o("cannotAssign.interface",
+		`interface I { t() int; }
+		 struct S { i int }
+		 func (s *S) t() {}
+		 func main() {var i I; var s S; i=s; _:=i}`)
+	o("cannotAssign.interface",
+		`interface I { t() int; }
+		 struct S { i int }
+		 func (s *S) a() int {}
+		 func main() {var i I; var s S; i=s; _:=i}`)
+
 	// others
 	o("multiRefInExprList", ` func r() (int, int) { return 3, 4 }
 		func p(a, b, c int) { }
