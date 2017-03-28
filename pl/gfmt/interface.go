@@ -16,8 +16,7 @@ func printInterface(f *formatter, d *ast.Interface) {
 		if i > 0 {
 			f.printGap()
 		}
-		f.printExprs(fun.Name, " ")
-		f.printSpace()
+		f.printExprs(fun.Name)
 		printFuncSig(f, fun.FuncSig)
 	}
 	f.printEndl()

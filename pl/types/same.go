@@ -34,6 +34,7 @@ func CanAssign(left, right T) bool {
 		}
 		return false
 	}
+
 	return SameType(left, right)
 }
 

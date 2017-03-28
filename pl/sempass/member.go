@@ -102,7 +102,8 @@ func buildMember(b *builder, m *ast.MemberExpr) tast.Expr {
 
 	ref := obj.R()
 	if !ref.IsSingle() {
-		b.Errorf(m.Dot.Pos, "%s does not have any member", ref)
+		b.CodeErrorf(m.Dot.Pos, "pl.buildMember.notFound",
+			"%s does not have any member", ref)
 		return nil
 	}
 
@@ -116,31 +117,38 @@ func buildMember(b *builder, m *ast.MemberExpr) tast.Expr {
 		return &tast.MemberExpr{Expr: obj, Sub: m.Sub, Ref: r, Sym: sym}
 	}
 
-	pt := types.PointerOf(t)
-	var tstruct *types.Struct
-	var ok bool
-	if pt != nil {
-		if tstruct, ok = pt.(*types.Struct); !ok {
-			b.Errorf(m.Dot.Pos, "*%s is not a pointer of struct", t)
-			return nil
-		}
+	var symTable *syms.Table
+	// TODO: Interface
+	if i, ok := t.(*types.Interface); ok {
+		symTable = i.Syms
 	} else {
-		if tstruct, ok = t.(*types.Struct); !ok {
-			b.Errorf(m.Dot.Pos, "%s is not a struct", t)
-			return nil
+		pt := types.PointerOf(t)
+		var tstruct *types.Struct
+		var ok bool
+		if pt != nil {
+			if tstruct, ok = pt.(*types.Struct); !ok {
+				b.CodeErrorf(m.Dot.Pos, "pl.buildMember.illegal",
+					"*%s is not a pointer of struct", t)
+				return nil
+			}
+		} else {
+			if tstruct, ok = t.(*types.Struct); !ok {
+				b.CodeErrorf(m.Dot.Pos, "pl.buildMember.illegal",
+					"%s is not a struct", t)
+				return nil
+			}
 		}
+		symTable = tstruct.Syms
 	}
-
-	symTable := tstruct.Syms
 	name := m.Sub.Lit
 	sym := symTable.Query(name)
 	if sym == nil {
-		b.Errorf(m.Sub.Pos, "struct %s has no member named %s",
-			tstruct, name,
-		)
+		b.CodeErrorf(m.Dot.Pos, "pl.buildMember.notFound",
+			"%s has no member named %s", t, name)
 		return nil
 	} else if !syms.IsPublic(name) && sym.Pkg() != b.path {
-		b.Errorf(m.Sub.Pos, "symbol %s is not public", name)
+		b.CodeErrorf(m.Dot.Pos, "pl.buildMember.notPublic",
+			"symbol %s is not public", name)
 		return nil
 	}
 

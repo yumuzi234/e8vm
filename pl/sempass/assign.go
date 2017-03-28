@@ -1,8 +1,6 @@
 package sempass
 
 import (
-	"fmt"
-
 	"shanhu.io/smlvm/lexing"
 	"shanhu.io/smlvm/pl/ast"
 	"shanhu.io/smlvm/pl/tast"
@@ -33,7 +31,9 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 		destType := r.Type()
 		srcType := srcRef.At(i).Type()
 
+		// assign for interface
 		if i, ok := destType.(*types.Interface); ok {
+			// TODO
 			if _, ok = srcType.(*types.Interface); ok {
 				b.CodeErrorf(op.Pos, "pl.notYetSupported",
 					"assign interface by interface is not supported yet")
@@ -161,7 +161,7 @@ func assignInterface(b *builder, p *lexing.Pos,
 	s, ok := types.PointerOf(right).(*types.Struct)
 	if !ok {
 		b.CodeErrorf(p, "pl.cannotAssign.interface",
-			"cannot assign interface %s by %s, not a struct", i, right)
+			"cannot assign interface %s by %s, not a struct pointer", i, right)
 		return false
 	}
 	e := func(fname, m string) {
@@ -195,7 +195,6 @@ func assignInterface(b *builder, p *lexing.Pos,
 			flag = false
 			continue
 		}
-		fmt.Println("same length")
 		for i, t := range t1.Args {
 			if !types.SameType(t.T, t2.Args[i].T) {
 				b.CodeErrorf(p, "pl.cannotAssign.interface",
