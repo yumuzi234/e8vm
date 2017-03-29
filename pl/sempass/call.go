@@ -111,10 +111,14 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 
 	pos := ast.ExprPos(expr.Func)
 	fref := f.R()
+
 	if !fref.IsSingle() {
-		b.Errorf(pos, "%s is not callable", fref)
+		b.CodeErrorf(pos, "pl.call.notSingle", "%s is not callable", fref)
 		return nil
 	}
+
+	// expr.Func is a Type
+
 	if t, ok := fref.T.(*types.Type); ok {
 		return buildCast(b, expr, t.T)
 	}
@@ -144,25 +148,30 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 
 	argsRef := args.R()
 	nargs := argsRef.Len()
+	p := ast.ExprPos(expr)
 	if nargs != len(funcType.Args) {
-		b.CodeErrorf(ast.ExprPos(expr), "pl.argsMismatch.count",
+		b.CodeErrorf(p, "pl.argsMismatch.count",
 			"argument count mismatch, expects (%s), got (%s)",
 			fmtutil.Join(funcType.Args, ","), args,
 		)
 		return nil
 	}
-
+	isError := false
 	// type check on each argument
 	for i := 0; i < nargs; i++ {
 		argType := argsRef.At(i).Type()
 		expect := funcType.Args[i].T
-		if !types.CanAssign(expect, argType) {
+		if !canAssign(b, p, expect, argType) {
 			b.CodeErrorf(ast.ExprPos(expr), "pl.argsMismatch.type",
 				"argument type expects (%s), got (%s)",
 				fmtutil.Join(funcType.Args, ","), args,
 			)
-			return nil
+			isError = true
 		}
+	}
+
+	if isError {
+		return nil
 	}
 
 	// insert casting when it is a literal expression list.

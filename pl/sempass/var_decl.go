@@ -58,12 +58,14 @@ func buildVarDecl(b *builder, d *ast.VarDecl) *tast.Define {
 
 		// assignable check
 		ts := right.R().TypeList()
+		isError := false
 		for _, t := range ts {
-			if !types.CanAssign(tdest, t) {
-				b.CodeErrorf(d.Eq.Pos, "pl.cannotAssign.typeMismatch",
-					"cannot assign type %s to type %s", t, tdest)
-				return nil
+			if !canAssign(b, d.Eq.Pos, tdest, t) {
+				isError = true
 			}
+		}
+		if isError {
+			return nil
 		}
 
 		// cast literal expression lists

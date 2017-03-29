@@ -24,6 +24,7 @@ func regSizeCastable(to, from types.T) bool {
 }
 
 func buildCast(b *builder, expr *ast.CallExpr, t types.T) tast.Expr {
+
 	pos := expr.Lparen.Pos
 
 	args := buildExprList(b, expr.Args)
@@ -44,6 +45,8 @@ func buildCast(b *builder, expr *ast.CallExpr, t types.T) tast.Expr {
 		}
 		srcType = c.Type // using the underlying type
 	}
+
+	// TODO: test for typed const
 
 	if types.IsInteger(t) && types.IsInteger(srcType) {
 		return tast.NewCast(args, t)

@@ -10,7 +10,7 @@ import (
 func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 	destRef := dest.R()
 	srcRef := src.R()
-
+	isError := false
 	ndest := destRef.Len()
 	nsrc := srcRef.Len()
 	if ndest != nsrc {
@@ -32,25 +32,13 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 		srcType := srcRef.At(i).Type()
 
 		// assign for interface
-		if i, ok := destType.(*types.Interface); ok {
-			// TODO
-			if _, ok = srcType.(*types.Interface); ok {
-				b.CodeErrorf(op.Pos, "pl.notYetSupported",
-					"assign interface by interface is not supported yet")
-				return nil
-			}
-			if !assignInterface(b, op.Pos, i, srcType) {
-				return nil
-			}
-			continue
-		}
 
-		if !types.CanAssign(destType, srcType) {
-			b.CodeErrorf(op.Pos, "pl.cannotAssign.typeMismatch",
-				"cannot assign %s to %s",
-				srcType, destType)
-			return nil
+		if !canAssign(b, op.Pos, destType, srcType) {
+			isError = true
 		}
+	}
+	if isError {
+		return nil
 	}
 
 	// insert casting if needed
@@ -153,6 +141,28 @@ func buildAssignStmt(b *builder, stmt *ast.AssignStmt) tast.Stmt {
 	}
 
 	return opAssign(b, left, right, stmt.Assign)
+}
+
+func canAssign(b *builder, p *lexing.Pos,
+	left types.T, right types.T) bool {
+	if i, ok := left.(*types.Interface); ok {
+		// TODO
+		if _, ok = right.(*types.Interface); ok {
+			b.CodeErrorf(p, "pl.notYetSupported",
+				"assign interface by interface is not supported yet")
+			return false
+		}
+		if !assignInterface(b, p, i, right) {
+			return false
+		}
+		return true
+	}
+	if !types.CanAssign(left, right) {
+		b.CodeErrorf(p, "pl.cannotAssign.typeMismatch",
+			"cannot assign %s to %s", left, right)
+		return false
+	}
+	return true
 }
 
 func assignInterface(b *builder, p *lexing.Pos,

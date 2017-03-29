@@ -68,8 +68,8 @@ func TestSingleFileBad(t *testing.T) {
 	o("missingReturn", `func f() int { if true { return 0 } }`)
 	o("missingReturn", `func f() int { if true return 0 }`)
 
-	o("return.typeMismatch", `func f() int {return 'a'}`)
-	o("return.typeMismatch", `func f() (int, int) {return 1, 'a'}`)
+	o("cannotAssign.typeMismatch", `func f() int {return 'a'}`)
+	o("cannotAssign.typeMismatch", `func f() (int, int) {return 1, 'a'}`)
 	o("return.expectNoReturn", `func f() {return 1}`)
 	o("return.noReturnValue", `func f() int {return}`)
 
