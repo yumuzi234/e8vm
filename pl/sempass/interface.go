@@ -44,7 +44,7 @@ func declareInterface(b *builder, i *ast.Interface) *pkgInterface {
 }
 
 func declareInterfaces(b *builder, is []*ast.Interface) []*pkgInterface {
-	ret := make([]*pkgInterface, 0)
+	var ret []*pkgInterface
 	for _, i := range is {
 		pi := declareInterface(b, i)
 		if pi != nil {
