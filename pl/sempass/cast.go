@@ -1,6 +1,7 @@
 package sempass
 
 import (
+	"shanhu.io/smlvm/lexing"
 	"shanhu.io/smlvm/pl/ast"
 	"shanhu.io/smlvm/pl/tast"
 	"shanhu.io/smlvm/pl/types"
@@ -46,8 +47,6 @@ func buildCast(b *builder, expr *ast.CallExpr, t types.T) tast.Expr {
 		srcType = c.Type // using the underlying type
 	}
 
-	// TODO: test for typed const
-
 	if types.IsInteger(t) && types.IsInteger(srcType) {
 		return tast.NewCast(args, t)
 	}
@@ -56,5 +55,10 @@ func buildCast(b *builder, expr *ast.CallExpr, t types.T) tast.Expr {
 	}
 
 	b.Errorf(pos, "cannot convert from %s to %s", srcType, t)
+	return nil
+}
+
+func interfaceCast(b *builder, pos *lexing.Pos, from tast.Expr,
+	to *types.Interface) *tast.Cast {
 	return nil
 }
