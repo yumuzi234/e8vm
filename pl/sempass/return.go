@@ -39,7 +39,7 @@ func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {
 		)
 		return nil
 	}
-	isError := false
+	seenError := false
 	for i := 0; i < nret; i++ {
 		t := b.retType[i]
 		srcType := srcRef.At(i).Type()
@@ -48,10 +48,10 @@ func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {
 				"expect (%s), returning (%s)",
 				fmtutil.Join(b.retType, ","), srcRef,
 			)
-			isError = true
+			seenError = true
 		}
 	}
-	if isError {
+	if seenError {
 		return nil
 	}
 

@@ -58,13 +58,13 @@ func buildVarDecl(b *builder, d *ast.VarDecl) *tast.Define {
 
 		// assignable check
 		ts := right.R().TypeList()
-		isError := false
+		seenError := false
 		for _, t := range ts {
 			if !canAssign(b, d.Eq.Pos, tdest, t) {
-				isError = true
+				seenError = true
 			}
 		}
-		if isError {
+		if seenError {
 			return nil
 		}
 

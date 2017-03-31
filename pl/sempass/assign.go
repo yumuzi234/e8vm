@@ -1,6 +1,8 @@
 package sempass
 
 import (
+	"fmt"
+
 	"shanhu.io/smlvm/lexing"
 	"shanhu.io/smlvm/pl/ast"
 	"shanhu.io/smlvm/pl/tast"
@@ -10,7 +12,7 @@ import (
 func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 	destRef := dest.R()
 	srcRef := src.R()
-	isError := false
+	seenError := false
 	ndest := destRef.Len()
 	nsrc := srcRef.Len()
 	if ndest != nsrc {
@@ -25,7 +27,8 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 		if !r.Addressable {
 			b.CodeErrorf(op.Pos, "pl.cannotAssign.notAddressable",
 				"assigning to non-addressable")
-			return nil
+			seenError = true
+			continue
 		}
 
 		destType := r.Type()
@@ -34,10 +37,10 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 		// assign for interface
 
 		if !canAssign(b, op.Pos, destType, srcType) {
-			isError = true
+			seenError = true
 		}
 	}
-	if isError {
+	if seenError {
 		return nil
 	}
 
@@ -143,10 +146,9 @@ func buildAssignStmt(b *builder, stmt *ast.AssignStmt) tast.Stmt {
 	return opAssign(b, left, right, stmt.Assign)
 }
 
-func canAssign(b *builder, p *lexing.Pos,
-	left types.T, right types.T) bool {
+func canAssign(b *builder, p *lexing.Pos, left, right types.T) bool {
 	if i, ok := left.(*types.Interface); ok {
-		// TODO
+		// TODO(yumuzi234): assing interface from interface
 		if _, ok = right.(*types.Interface); ok {
 			b.CodeErrorf(p, "pl.notYetSupported",
 				"assign interface by interface is not supported yet")
@@ -174,34 +176,35 @@ func assignInterface(b *builder, p *lexing.Pos,
 			"cannot assign interface %s by %s, not a struct pointer", i, right)
 		return false
 	}
-	e := func(fname, m string) {
+	errorf := func(format string, arg ...interface{}) {
+		m := fmt.Sprintf(format, arg...)
 		b.CodeErrorf(p, "pl.cannotAssign.interface",
-			"cannot assign interface %s by %s, "+m, i, right, fname)
+			"cannot assign interface %s by %s, %s", i, right, m)
 	}
 
 	funcs := i.Syms.List()
 	for _, f := range funcs {
 		sym := s.Syms.Query(f.Name())
 		if sym == nil {
-			e(f.Name(), "func %s not implemented")
+			errorf("func %s not implemented", f.Name())
 			flag = false
 			continue
 		}
 		t2, ok := sym.ObjType.(*types.Func)
 		if !ok {
-			e(f.Name(), "%s is a struct member but not a method")
+			errorf("%s is a struct member but not a method", f.Name())
 			flag = false
 			continue
 		}
 		t2 = t2.MethodFunc
 		t1 := f.ObjType.(*types.Func)
 		if len(t1.Args) != len(t2.Args) {
-			e(f.Name(), "args number mismatch for %s")
+			errorf("args number mismatch for %s", f.Name())
 			flag = false
 			continue
 		}
 		if len(t1.Rets) != len(t2.Rets) {
-			e(f.Name(), "returns number mismatch for %s")
+			errorf("returns number mismatch for %s", f.Name())
 			flag = false
 			continue
 		}

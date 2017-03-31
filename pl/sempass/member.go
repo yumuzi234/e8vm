@@ -118,7 +118,7 @@ func buildMember(b *builder, m *ast.MemberExpr) tast.Expr {
 	}
 
 	var symTable *syms.Table
-	// TODO: Interface
+
 	if i, ok := t.(*types.Interface); ok {
 		symTable = i.Syms
 	} else {
@@ -152,6 +152,7 @@ func buildMember(b *builder, m *ast.MemberExpr) tast.Expr {
 		return nil
 	}
 
+	// ?? How will it for a interface without implementation
 	b.refSym(sym, m.Sub.Pos)
 
 	if sym.Type == tast.SymField {
