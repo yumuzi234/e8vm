@@ -56,14 +56,6 @@ func (i *instSys) I(cpu *cpu, in uint32) *Excep {
 		return cpu.Iret()
 	case SYSINFO:
 		v1, v2 = sysInfo(cpu, v1)
-	case SLEEP:
-		// TODO(h8liu): remove this sleep.
-		if !cpu.sleeping {
-			cpu.sleeping = true
-			return errSleep
-		}
-		cpu.sleeping = false
-		return nil
 	default:
 		return errInvalidInst
 	}
