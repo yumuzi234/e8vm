@@ -87,10 +87,6 @@ func (c *calls) system(ctrl uint8, in []byte, respSize int) (
 		c.queue.Remove(front)
 		c.p.writeU32(callsService, m.service) // overwrite the service
 		return m.p, 0, nil
-
-	// TODO(h8liu): add other stuff
-	case 2: // list services
-	case 3: // enable/disable service message
 	}
 
 	return nil, devs.ErrInvalidArg, nil

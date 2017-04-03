@@ -14,9 +14,8 @@ type console struct {
 	intBus intBus
 	p      *pageOffset
 
-	Core   byte // Core to throw exception
-	IntIn  byte
-	IntOut byte
+	Core      byte // Core to throw exception
+	Interrupt byte
 
 	Output io.Writer
 }
@@ -28,8 +27,7 @@ func newConsole(p *page, i intBus) *console {
 	ret.p = &pageOffset{p, consoleBase}
 
 	ret.Core = 0
-	ret.IntIn = 8
-	ret.IntOut = 9
+	ret.Interrupt = 9
 
 	ret.Output = os.Stdout
 	return ret
@@ -67,15 +65,15 @@ func (c *console) Handle(req []byte) ([]byte, int32) {
 // Tick flushes the buffered byte to the console.
 func (c *console) Tick() {
 	outValid := c.p.readU8(consoleOutValid)
-	if outValid != 0 {
-		out := c.p.readU8(consoleOut)
-		_, e := c.Output.Write([]byte{out})
-		if e != nil {
-			log.Print(e)
-		}
-		c.p.writeU8(consoleOutValid, 0)
-		c.interrupt(c.IntOut) // out available
+	if outValid == 0 {
+		return
 	}
 
-	// TODO(h8liu): input part
+	out := c.p.readU8(consoleOut)
+	_, e := c.Output.Write([]byte{out})
+	if e != nil {
+		log.Print(e)
+	}
+	c.p.writeU8(consoleOutValid, 0)
+	c.interrupt(c.Interrupt) // out available
 }
