@@ -119,6 +119,8 @@ func build(c *context, pkgs []string) []*lexing.Error {
 	}
 
 	// TODO(h8liu): this Layout should be not nessasary.
+	// we need sorted nodes and tracking for all dependencies
+	// but no need for the visualization layout.
 	m, err := dagvis.Layout(g)
 	if err != nil {
 		return lexing.SingleErr(err)
