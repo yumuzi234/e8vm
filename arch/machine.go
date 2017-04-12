@@ -22,6 +22,7 @@ type Machine struct {
 	clicks   *devs.ScreenClicks
 	screen   *devs.Screen
 	table    *devs.Table
+	dialog   *devs.Dialog
 	keyboard *devs.Keyboard
 	rand     *devs.Rand
 	ticker   *ticker
@@ -89,6 +90,12 @@ func NewMachine(c *Config) *Machine {
 		t := devs.NewTable(c.Table, m.calls.sender(serviceTable))
 		m.table = t
 		m.calls.register(serviceTable, t) // hook vpc all
+	}
+
+	if c.Dialog != nil {
+		d := devs.NewDialog(c.Dialog)
+		m.dialog = d
+		m.calls.register(serviceDialog, d)
 	}
 
 	m.keyboard = devs.NewKeyboard(m.calls.sender(serviceKeyboard))

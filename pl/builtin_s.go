@@ -112,12 +112,6 @@ func Panic {
 	mov pc ret
 }
 
-// Sleep suspends the machine
-func Sleep {
-	sleep
-	mov pc ret
-}
-
 // IOCall performs an IO call
 func IOCall {
 	iocall

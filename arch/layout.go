@@ -27,4 +27,5 @@ const (
 	serviceClock
 	serviceTable
 	serviceKeyboard
+	serviceDialog
 )
