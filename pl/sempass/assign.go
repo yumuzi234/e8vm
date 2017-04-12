@@ -48,22 +48,8 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 	if ok {
 		newList := tast.NewExprList()
 		for i, e := range srcList.Exprs {
-			from := e.Type()
 			to := destRef.At(i).Type()
-			if types.IsNil(from) {
-				// check cast
-				e = tast.NewCast(e, to)
-			} else if v, ok := types.NumConst(from); ok {
-				e = numCast(b, nil, v, e, to)
-				if e == nil {
-					panic("bug")
-				}
-			} else if _, ok := to.(*types.Interface); ok {
-				e = tast.NewCast(e, to)
-				if e == nil {
-					panic("cannot cast interface")
-				}
-			}
+			e = implicitTypeCast(b, nil, e, to)
 			newList.Append(e)
 		}
 		src = newList

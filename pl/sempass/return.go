@@ -4,7 +4,6 @@ import (
 	"shanhu.io/smlvm/fmtutil"
 	"shanhu.io/smlvm/pl/ast"
 	"shanhu.io/smlvm/pl/tast"
-	"shanhu.io/smlvm/pl/types"
 )
 
 func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {
@@ -54,24 +53,16 @@ func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {
 	if seenError {
 		return nil
 	}
-
+	srcList, ok := tast.MakeExprList(src)
 	// insert implicit type casts
-	if srcList, ok := tast.MakeExprList(src); ok {
-		newList := tast.NewExprList()
-		for i, e := range srcList.Exprs {
-			t := e.Type()
-			if types.IsNil(t) {
-				e = tast.NewCast(e, b.retType[i])
-			} else if v, ok := types.NumConst(t); ok {
-				e = numCast(b, nil, v, e, b.retType[i])
-				if e == nil {
-					panic("bug")
-				}
-			}
-			newList.Append(e)
-		}
-		src = newList
+	if !ok {
+		panic("cannnot make exprlist")
 	}
-
+	newList := tast.NewExprList()
+	for i, e := range srcList.Exprs {
+		e = implicitTypeCast(b, nil, e, b.retType[i])
+		newList.Append(e)
+	}
+	src = newList
 	return &tast.ReturnStmt{Exprs: src}
 }

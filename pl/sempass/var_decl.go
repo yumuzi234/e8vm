@@ -1,36 +1,10 @@
 package sempass
 
 import (
-	"shanhu.io/smlvm/lexing"
 	"shanhu.io/smlvm/pl/ast"
 	"shanhu.io/smlvm/pl/tast"
 	"shanhu.io/smlvm/pl/types"
 )
-
-func varDeclPrepare(
-	b *builder, toks []*lexing.Token, lst *tast.ExprList, t types.T,
-) *tast.ExprList {
-	ret := tast.NewExprList()
-	for i, tok := range toks {
-		e := lst.Exprs[i]
-		etype := e.Type()
-		if types.IsNil(etype) {
-			e = tast.NewCast(e, t)
-		} else if v, ok := types.NumConst(etype); ok {
-			e = numCast(b, tok.Pos, v, e, t)
-			if e == nil {
-				return nil
-			}
-		} else if _, ok := t.(*types.Interface); ok {
-			e = tast.NewCast(e, t)
-			if e == nil {
-				panic("cannot cast interface")
-			}
-		}
-		ret.Append(e)
-	}
-	return ret
-}
 
 func buildVarDecl(b *builder, d *ast.VarDecl) *tast.Define {
 	ids := d.Idents.Idents
@@ -75,13 +49,20 @@ func buildVarDecl(b *builder, d *ast.VarDecl) *tast.Define {
 
 		// cast literal expression lists
 		// after the casting, all types should be matching to tdest
-		if exprList, ok := tast.MakeExprList(right); ok {
-			exprList = varDeclPrepare(b, ids, exprList, tdest)
-			if exprList == nil {
-				return nil
-			}
-			right = exprList
+		exprList, ok := tast.MakeExprList(right)
+		if !ok {
+			panic("cannnot make exprlist")
 		}
+		newList := tast.NewExprList()
+		for i, tok := range ids {
+			e := implicitTypeCast(b, tok.Pos, exprList.Exprs[i], tdest)
+			newList.Append(e)
+		}
+		exprList = newList
+		if exprList == nil {
+			return nil
+		}
+		right = exprList
 
 		syms := declareVars(b, ids, tdest, false)
 		if syms == nil {
