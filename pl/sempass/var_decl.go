@@ -21,6 +21,11 @@ func varDeclPrepare(
 			if e == nil {
 				return nil
 			}
+		} else if _, ok := t.(*types.Interface); ok {
+			e = tast.NewCast(e, t)
+			if e == nil {
+				panic("cannot cast interface")
+			}
 		}
 		ret.Append(e)
 	}
