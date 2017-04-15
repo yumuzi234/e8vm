@@ -17,6 +17,16 @@ func CanAssign(left, right T) bool {
 	if _, ok := left.(*Pkg); ok {
 		return false
 	}
+	if f, ok := left.(*Func); ok {
+		if f.IsBond {
+			return false
+		}
+	}
+	if f, ok := right.(*Func); ok {
+		if f.IsBond {
+			return false
+		}
+	}
 
 	if IsNil(right) {
 		switch left := left.(type) {
@@ -71,7 +81,7 @@ func SameType(t1, t2 T) bool {
 		if !ok {
 			return false
 		}
-		if t2.IsBond {
+		if t1.IsBond != t2.IsBond {
 			return false
 		}
 		if len(t1.Args) != len(t2.Args) {
