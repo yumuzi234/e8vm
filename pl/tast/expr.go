@@ -32,6 +32,16 @@ func NewCast(from Expr, to types.T) *Cast {
 	return &Cast{from, NewRef(to)}
 }
 
+// NewMultiCast creates a new casting operation
+func NewMultiCast(from Expr, to *Ref) *Cast {
+	if to.IsSingle() {
+		for i := 0; i < to.R().Len(); i++ {
+			AppendRef(to, to)
+		}
+	}
+	return &Cast{from, to}
+}
+
 // Ident is an identifier.
 type Ident struct {
 	Token *lexing.Token

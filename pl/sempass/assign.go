@@ -21,7 +21,7 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 			nsrc, ndest)
 		return nil
 	}
-
+	cast := false
 	for i := 0; i < ndest; i++ {
 		r := destRef.At(i)
 		if !r.Addressable {
@@ -35,26 +35,18 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 		srcType := srcRef.At(i).Type()
 
 		// assign for interface
-
-		if !canAssign(b, op.Pos, destType, srcType) {
-			seenError = true
-		}
+		ok1, ok2 := canAssign(b, op.Pos, destType, srcType)
+		seenError = seenError || !ok1
+		cast = cast || ok2
 	}
 	if seenError {
 		return nil
 	}
-	srcList, ok := tast.MakeExprList(src)
-	// insert casting if needed
-	if ok {
-		newList := tast.NewExprList()
-		for i, e := range srcList.Exprs {
-			to := destRef.At(i).Type()
-			e = implicitTypeCast(b, nil, e, to)
-			newList.Append(e)
-		}
-		src = newList
-	}
 
+	// insert casting if needed
+	if cast {
+		src = tast.NewMultiCast(src, destRef)
+	}
 	return &tast.AssignStmt{Left: dest, Op: op, Right: src}
 }
 
@@ -139,25 +131,26 @@ func buildAssignStmt(b *builder, stmt *ast.AssignStmt) tast.Stmt {
 	return opAssign(b, left, right, stmt.Assign)
 }
 
-func canAssign(b *builder, p *lexing.Pos, left, right types.T) bool {
+func canAssign(b *builder, p *lexing.Pos, left, right types.T) (bool, bool) {
 	if i, ok := left.(*types.Interface); ok {
 		// TODO(yumuzi234): assing interface from interface
 		if _, ok = right.(*types.Interface); ok {
 			b.CodeErrorf(p, "pl.notYetSupported",
 				"assign interface by interface is not supported yet")
-			return false
+			return false, true
 		}
 		if !assignInterface(b, p, i, right) {
-			return false
+			return false, true
 		}
-		return true
+		return true, true
 	}
-	if !types.CanAssign(left, right) {
+	ok1, ok2 := types.CanAssign(left, right)
+	if !ok1 {
 		b.CodeErrorf(p, "pl.cannotAssign.typeMismatch",
 			"cannot assign %s to %s", left, right)
-		return false
+		return false, ok2
 	}
-	return true
+	return ok1, ok2
 }
 
 func assignInterface(b *builder, p *lexing.Pos,

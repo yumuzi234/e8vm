@@ -3,6 +3,7 @@ package pl
 import (
 	"shanhu.io/smlvm/arch"
 	"shanhu.io/smlvm/pl/codegen"
+	"shanhu.io/smlvm/pl/tast"
 	"shanhu.io/smlvm/pl/types"
 )
 
@@ -78,4 +79,8 @@ func buildCast(b *builder, from *ref, t types.T) *ref {
 		return ret
 	}
 	panic("bug")
+}
+
+func buildCasts(b *builder, from tast.Expr, to *tast.Ref) *ref {
+	return buildCast(b, buildExpr(b, from), to.T)
 }

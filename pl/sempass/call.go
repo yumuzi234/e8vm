@@ -157,17 +157,20 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 		return nil
 	}
 	seenError := false
+	cast := false
 	// type check on each argument
 	for i := 0; i < nargs; i++ {
 		argType := argsRef.At(i).Type()
 		expect := funcType.Args[i].T
-		if !canAssign(b, pos, expect, argType) {
+		ok1, ok2 := canAssign(b, pos, expect, argType)
+		if !ok1 {
 			b.CodeErrorf(ast.ExprPos(expr), "pl.argsMismatch.type",
 				"argument type expects (%s), got (%s)",
 				fmtutil.Join(funcType.Args, ","), args,
 			)
 			seenError = true
 		}
+		cast = cast || ok2
 	}
 
 	if seenError {

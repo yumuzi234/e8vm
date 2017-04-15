@@ -3,39 +3,40 @@ package types
 import "fmt"
 
 // CanAssign checks if right can be assigned to left
-func CanAssign(left, right T) bool {
+// and whether cast is needed
+func CanAssign(left, right T) (bool, bool) {
 	if c, ok := right.(*Const); ok {
 		if _, ok := c.Type.(Number); ok {
-			return InRange(c.Value.(int64), left)
+			return InRange(c.Value.(int64), left), true
 		}
 		right = c.Type
 	}
 
 	if _, ok := left.(*Type); ok {
-		return false
+		return false, false
 	}
 	if _, ok := left.(*Pkg); ok {
-		return false
+		return false, false
 	}
 
 	if IsNil(right) {
 		switch left := left.(type) {
 		case *Pointer:
-			return true
+			return true, true
 		case *Slice:
-			return true
+			return true, true
 		case *Func:
 			if left.IsBond {
-				return false
+				return false, true
 			}
-			return true
+			return true, true
 		case *Interface:
-			return true
+			return true, true
 		}
-		return false
+		return false, true
 	}
 
-	return SameType(left, right)
+	return SameType(left, right), false
 }
 
 // SameType checks if two types are of the same type

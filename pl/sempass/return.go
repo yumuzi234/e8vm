@@ -39,20 +39,24 @@ func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {
 		return nil
 	}
 	seenError := false
+	cast := false
 	for i := 0; i < nret; i++ {
 		t := b.retType[i]
 		srcType := srcRef.At(i).Type()
-		if !canAssign(b, pos, t, srcType) {
+		ok1, ok2 := canAssign(b, pos, t, srcType)
+		if !ok1 {
 			b.CodeErrorf(pos, "pl.return.typeMismatch",
 				"expect (%s), returning (%s)",
 				fmtutil.Join(b.retType, ","), srcRef,
 			)
 			seenError = true
 		}
+		cast = cast || ok2
 	}
 	if seenError {
 		return nil
 	}
+
 	srcList, ok := tast.MakeExprList(src)
 	// insert implicit type casts
 	if !ok {
