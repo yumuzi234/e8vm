@@ -261,7 +261,10 @@ func (m *Machine) KeyDown(code uint8) { m.keyboard.KeyDown(code) }
 
 // Choose sends in a user input choice.
 func (m *Machine) Choose(index uint8) {
-
+	if m.dialog == nil {
+		return
+	}
+	m.dialog.Choose(index)
 }
 
 // ClickTable sends a click on the table at the particular location.
