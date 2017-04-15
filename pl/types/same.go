@@ -81,9 +81,6 @@ func SameType(t1, t2 T) bool {
 		if !ok {
 			return false
 		}
-		if t1.IsBond != t2.IsBond {
-			return false
-		}
 		if len(t1.Args) != len(t2.Args) {
 			return false
 		}
