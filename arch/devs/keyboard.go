@@ -11,7 +11,6 @@ func NewKeyboard(s Sender) *Keyboard {
 }
 
 // KeyDown sends in a key down event.
-func (k *Keyboard) KeyDown(code uint8) error {
+func (k *Keyboard) KeyDown(code uint8) {
 	k.sender.Send([]byte{0, code})
-	return nil
 }

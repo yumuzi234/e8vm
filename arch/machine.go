@@ -93,7 +93,7 @@ func NewMachine(c *Config) *Machine {
 	}
 
 	if c.Dialog != nil {
-		d := devs.NewDialog(c.Dialog)
+		d := devs.NewDialog(c.Dialog, m.calls.sender(serviceDialog))
 		m.dialog = d
 		m.calls.register(serviceDialog, d)
 	}
@@ -257,8 +257,14 @@ func (m *Machine) Click(line, col uint8) {
 }
 
 // KeyDown sends in a key down event.
-func (m *Machine) KeyDown(code uint8) {
-	m.keyboard.KeyDown(code)
+func (m *Machine) KeyDown(code uint8) { m.keyboard.KeyDown(code) }
+
+// Choose sends in a user input choice.
+func (m *Machine) Choose(index uint8) {
+	if m.dialog == nil {
+		return
+	}
+	m.dialog.Choose(index)
 }
 
 // ClickTable sends a click on the table at the particular location.

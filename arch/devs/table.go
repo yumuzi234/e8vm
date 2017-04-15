@@ -38,7 +38,6 @@ func whatCode(what string) uint8 {
 }
 
 // Click sends in a click on the table.
-func (t *Table) Click(what string, pos uint8) error {
+func (t *Table) Click(what string, pos uint8) {
 	t.in.Send([]byte{whatCode(what), pos})
-	return nil
 }
