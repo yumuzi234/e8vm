@@ -51,7 +51,7 @@ func buildCast(b *builder, from *ref, t types.T) *ref {
 			return newRef(t, codegen.Num(0))
 		}
 		if _, ok := t.(*types.Interface); ok {
-			b.CodeErrorf(nil, "pl.notYetSupported", "interface not supported yet")
+			b.CodeErrorf(nil, "pl.notYetSupported", "interface not supported")
 			return from
 		}
 		if _, ok := t.(*types.Slice); !ok {
