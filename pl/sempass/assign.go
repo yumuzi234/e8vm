@@ -22,6 +22,7 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 		return nil
 	}
 	cast := false
+	needCast := make([]bool, ndest)
 	for i := 0; i < ndest; i++ {
 		r := destRef.At(i)
 		if !r.Addressable {
@@ -38,6 +39,7 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 		ok1, ok2 := canAssign(b, op.Pos, destType, srcType)
 		seenError = seenError || !ok1
 		cast = cast || ok2
+		needCast[i] = true
 	}
 	if seenError {
 		return nil
@@ -45,7 +47,7 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 
 	// insert casting if needed
 	if cast {
-		src = tast.NewMultiCast(src, destRef)
+		src = tast.NewMultiCast(src, destRef, needCast)
 	}
 	return &tast.AssignStmt{Left: dest, Op: op, Right: src}
 }
@@ -162,8 +164,8 @@ func assignInterface(b *builder, p *lexing.Pos,
 			"cannot assign interface %s by %s, not a struct pointer", i, right)
 		return false
 	}
-	errorf := func(format string, arg ...interface{}) {
-		m := fmt.Sprintf(format, arg...)
+	errorf := func(f string, a ...interface{}) {
+		m := fmt.Sprintf(f, a...)
 		b.CodeErrorf(p, "pl.cannotAssign.interface",
 			"cannot assign interface %s by %s, %s", i, right, m)
 	}

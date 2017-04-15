@@ -51,16 +51,21 @@ func buildCast(b *builder, from *ref, t types.T) *ref {
 			return newRef(t, codegen.Num(0))
 		}
 		if _, ok := t.(*types.Interface); ok {
-			panic("Interface is not supported yet")
+			b.CodeErrorf(nil, "pl.notYetSupported", "interface not supported yet")
+			return from
 		}
 		if _, ok := t.(*types.Slice); !ok {
-			panic("unknow type")
+			panic("unknown type")
 		}
 		ret := b.newTemp(t)
 		b.b.Zero(ret.IR())
 		return ret
 	}
 
+	if _, ok := t.(*types.Interface); ok {
+		b.CodeErrorf(nil, "pl.notYetSupported", "interface not supported yet")
+		return from
+	}
 	if c, ok := srcType.(*types.Const); ok {
 		if v, ok := types.NumConst(srcType); ok {
 			return newRef(t, constNumIr(v, t))
@@ -78,9 +83,18 @@ func buildCast(b *builder, from *ref, t types.T) *ref {
 		b.b.Arith(ret.IR(), nil, "", from.IR())
 		return ret
 	}
-	panic("bug")
+	panic("cast bug")
 }
 
-func buildCasts(b *builder, from tast.Expr, to *tast.Ref) *ref {
-	return buildCast(b, buildExpr(b, from), to.T)
+func buildCasts(b *builder, from *ref, to *tast.Ref, s []bool) *ref {
+	ret := buildCast(b, from.At(0), to.At(0).T)
+	for i := 1; i < from.Len(); i++ {
+		expr := from.At(i)
+		if s[i] {
+			t := to.At(i)
+			expr = buildCast(b, expr, t.T)
+		}
+		ret = appendRef(ret, expr)
+	}
+	return ret
 }

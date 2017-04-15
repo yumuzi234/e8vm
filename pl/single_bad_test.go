@@ -160,6 +160,15 @@ func TestSingleFileBad(t *testing.T) {
 			var s string
 			for i := 0; i < len(s-2); i++ {}
 		}`)
+
+	o("notYetSupported", `interface I { t() int }
+		func main() { var b *B; var i I; i=b; _:=i;}
+		struct B {
+    		v int
+		}
+		func (b *B) t() int {
+			return b.v
+		}`)
 }
 
 func TestSingleFilePanic(t *testing.T) {

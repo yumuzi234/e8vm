@@ -39,10 +39,12 @@ func buildVarDecl(b *builder, d *ast.VarDecl) *tast.Define {
 		ts := right.R().TypeList()
 		seenError := false
 		cast := false
-		for _, t := range ts {
+		needCast := make([]bool, len(ts))
+		for i, t := range ts {
 			ok1, ok2 := canAssign(b, d.Eq.Pos, tdest, t)
 			seenError = seenError || !ok1
 			cast = cast || ok2
+			needCast[i] = ok2
 		}
 		if seenError {
 			return nil
@@ -50,18 +52,9 @@ func buildVarDecl(b *builder, d *ast.VarDecl) *tast.Define {
 
 		// cast literal expression lists
 		// after the casting, all types should be matching to tdest
-
-		if exprList, ok := tast.MakeExprList(right); ok {
-			newList := tast.NewExprList()
-			for i, tok := range ids {
-				e := implicitTypeCast(b, tok.Pos, exprList.Exprs[i], tdest)
-				newList.Append(e)
-			}
-			exprList = newList
-			if exprList == nil {
-				return nil
-			}
-			right = exprList
+		// insert casting if needed
+		if cast {
+			right = tast.NewMultiCast(right, tast.NewRef(tdest), needCast)
 		}
 
 		syms := declareVars(b, ids, tdest, false)

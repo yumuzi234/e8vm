@@ -40,6 +40,8 @@ func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {
 	}
 	seenError := false
 	cast := false
+	expectRef := tast.Void
+	needCast := make([]bool, nret)
 	for i := 0; i < nret; i++ {
 		t := b.retType[i]
 		srcType := srcRef.At(i).Type()
@@ -51,22 +53,18 @@ func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {
 			)
 			seenError = true
 		}
+		expectRef = tast.AppendRef(expectRef, tast.NewRef(t))
 		cast = cast || ok2
+		needCast[i] = ok2
 	}
 	if seenError {
 		return nil
 	}
 
-	srcList, ok := tast.MakeExprList(src)
 	// insert implicit type casts
-	if !ok {
-		panic("cannnot make exprlist")
+	if cast {
+		src = tast.NewMultiCast(src, expectRef, needCast)
 	}
-	newList := tast.NewExprList()
-	for i, e := range srcList.Exprs {
-		e = implicitTypeCast(b, nil, e, b.retType[i])
-		newList.Append(e)
-	}
-	src = newList
+
 	return &tast.ReturnStmt{Exprs: src}
 }

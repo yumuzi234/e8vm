@@ -158,11 +158,13 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 	}
 	seenError := false
 	cast := false
+	expectRef := tast.Void
+	needCast := make([]bool, nargs)
 	// type check on each argument
 	for i := 0; i < nargs; i++ {
 		argType := argsRef.At(i).Type()
-		expect := funcType.Args[i].T
-		ok1, ok2 := canAssign(b, pos, expect, argType)
+		t := funcType.Args[i].T
+		ok1, ok2 := canAssign(b, pos, t, argType)
 		if !ok1 {
 			b.CodeErrorf(ast.ExprPos(expr), "pl.argsMismatch.type",
 				"argument type expects (%s), got (%s)",
@@ -170,6 +172,8 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 			)
 			seenError = true
 		}
+		expectRef = tast.AppendRef(expectRef, tast.NewRef(t))
+		needCast[i] = ok2
 		cast = cast || ok2
 	}
 
@@ -178,24 +182,8 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 	}
 
 	// insert casting when it is a literal expression list.
-	callArgs, ok := tast.MakeExprList(args)
-	if ok {
-		castedArgs := tast.NewExprList()
-		for i := 0; i < nargs; i++ {
-			argExpr := callArgs.Exprs[i]
-			argType := argExpr.Type()
-			expect := funcType.Args[i].T
-
-			// insert auto casts for consts
-			if types.IsNil(argType) {
-				castedArgs.Append(tast.NewCast(argExpr, expect))
-			} else if _, ok := types.NumConst(argType); ok {
-				castedArgs.Append(tast.NewCast(argExpr, expect))
-			} else {
-				castedArgs.Append(argExpr)
-			}
-		}
-		args = castedArgs
+	if cast {
+		args = tast.NewMultiCast(args, expectRef, needCast)
 	}
 
 	retRef := tast.Void

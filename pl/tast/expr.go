@@ -25,21 +25,23 @@ func NewType(t types.T) *Type { return &Type{NewTypeRef(t)} }
 type Cast struct {
 	From Expr
 	*Ref
+	NeedCast []bool
 }
 
 // NewCast creates a new casting operation
 func NewCast(from Expr, to types.T) *Cast {
-	return &Cast{from, NewRef(to)}
+	return &Cast{from, NewRef(to), nil}
 }
 
 // NewMultiCast creates a new casting operation
-func NewMultiCast(from Expr, to *Ref) *Cast {
+func NewMultiCast(from Expr, to *Ref, s []bool) *Cast {
 	if to.IsSingle() {
-		for i := 0; i < to.R().Len(); i++ {
-			AppendRef(to, to)
+		t := to.T
+		for i := 1; i < from.R().Len(); i++ {
+			to = AppendRef(to, NewRef(t))
 		}
 	}
-	return &Cast{from, to}
+	return &Cast{from, to, s}
 }
 
 // Ident is an identifier.
