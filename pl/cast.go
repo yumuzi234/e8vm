@@ -86,11 +86,11 @@ func buildCast(b *builder, from *ref, t types.T) *ref {
 	panic("cast bug")
 }
 
-func buildCasts(b *builder, from *ref, to *tast.Ref, bools []bool) *ref {
+func buildCasts(b *builder, from *ref, to *tast.Ref, mask []bool) *ref {
 	var ret *ref
 	for i := 0; i < from.Len(); i++ {
 		expr := from.At(i)
-		if bools[i] {
+		if mask[i] {
 			t := to.At(i)
 			expr = buildCast(b, expr, t.T)
 		}

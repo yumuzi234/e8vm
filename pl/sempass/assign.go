@@ -12,7 +12,6 @@ import (
 func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 	destRef := dest.R()
 	srcRef := src.R()
-	seenError := false
 	ndest := destRef.Len()
 	nsrc := srcRef.Len()
 	if ndest != nsrc {
@@ -21,17 +20,25 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 			nsrc, ndest)
 		return nil
 	}
-	cast := false
-	bools := make([]bool, ndest)
+
+	// check if all addressable
 	for i := 0; i < ndest; i++ {
 		r := destRef.At(i)
 		if !r.Addressable {
-			b.CodeErrorf(op.Pos, "pl.cannotAssign.notAddressable",
-				"assigning to non-addressable")
-			seenError = true
-			continue
+			b.CodeErrorf(
+				op.Pos, "pl.cannotAssign.notAddressable",
+				"assigning to non-addressable",
+			)
+			return nil
 		}
+	}
 
+	seenError := false
+	cast := false
+	mask := make([]bool, ndest)
+
+	for i := 0; i < ndest; i++ {
+		r := destRef.At(i)
 		destType := r.Type()
 		srcType := srcRef.At(i).Type()
 
@@ -39,7 +46,7 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 		ok, needCast := canAssign(b, op.Pos, destType, srcType)
 		seenError = seenError || !ok
 		cast = cast || needCast
-		bools[i] = needCast
+		mask[i] = needCast
 	}
 	if seenError {
 		return nil
@@ -47,7 +54,7 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 
 	// insert casting if needed
 	if cast {
-		src = tast.NewMultiCast(src, destRef, bools)
+		src = tast.NewMultiCast(src, destRef, mask)
 	}
 	return &tast.AssignStmt{Left: dest, Op: op, Right: src}
 }
@@ -133,27 +140,28 @@ func buildAssignStmt(b *builder, stmt *ast.AssignStmt) tast.Stmt {
 	return opAssign(b, left, right, stmt.Assign)
 }
 
-func canAssign(b *builder, p *lexing.Pos, left,
-	right types.T) (ok bool, needcast bool) {
+func canAssign(
+	b *builder, p *lexing.Pos, left, right types.T,
+) (ok bool, needCast bool) {
 	if i, ok := left.(*types.Interface); ok {
 		// TODO(yumuzi234): assing interface from interface
 		if _, ok = right.(*types.Interface); ok {
 			b.CodeErrorf(p, "pl.notYetSupported",
 				"assign interface by interface is not supported yet")
-			return false, true
+			return false, false
 		}
 		if !assignInterface(b, p, i, right) {
-			return false, true
+			return false, false
 		}
 		return true, true
 	}
-	ok1, ok2 := types.CanAssign(left, right)
-	if !ok1 {
+	ok, needCast = types.CanAssign(left, right)
+	if !ok {
 		b.CodeErrorf(p, "pl.cannotAssign.typeMismatch",
-			"cannot assign %s to %s", left, right)
-		return false, ok2
+			"cannot use %s as %s", left, right)
+		return false, false
 	}
-	return ok1, ok2
+	return ok, needCast
 }
 
 func assignInterface(b *builder, p *lexing.Pos,
@@ -162,13 +170,13 @@ func assignInterface(b *builder, p *lexing.Pos,
 	s, ok := types.PointerOf(right).(*types.Struct)
 	if !ok {
 		b.CodeErrorf(p, "pl.cannotAssign.interface",
-			"cannot assign %s to interface %s, not a struct pointer", right, i)
+			"cannot use %s as interface %s, not a struct pointer", right, i)
 		return false
 	}
 	errorf := func(f string, a ...interface{}) {
 		m := fmt.Sprintf(f, a...)
 		b.CodeErrorf(p, "pl.cannotAssign.interface",
-			"cannot assign interface %s by %s, %s", i, right, m)
+			"cannot use %s as interface %s, %s", right, i, m)
 		flag = false
 	}
 
@@ -176,8 +184,7 @@ func assignInterface(b *builder, p *lexing.Pos,
 	for _, f := range funcs {
 		sym := s.Syms.Query(f.Name())
 		if sym == nil {
-			errorf("func %s not implemented", f.Name())
-
+			errorf("function %s not implemented", f.Name())
 			continue
 		}
 		t2, ok := sym.ObjType.(*types.Func)

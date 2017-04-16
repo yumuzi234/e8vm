@@ -25,25 +25,34 @@ func NewType(t types.T) *Type { return &Type{NewTypeRef(t)} }
 type Cast struct {
 	From Expr
 	*Ref
-	NeedCast []bool
+	Mask []bool
 }
 
 // NewCast creates a new casting operation
 func NewCast(from Expr, to types.T) *Cast {
-	bools := make([]bool, 1)
-	bools[0] = true
-	return &Cast{from, NewRef(to), bools}
+	return &Cast{from, NewRef(to), []bool{true}}
 }
 
-// NewMultiCast creates a new casting operation
-func NewMultiCast(from Expr, to *Ref, bools []bool) *Cast {
-	if to.IsSingle() {
-		t := to.T
-		for i := 1; i < from.R().Len(); i++ {
-			to = AppendRef(to, NewRef(t))
-		}
+// NewMultiCast creates a new casting operation for a list of refs.
+func NewMultiCast(from Expr, to *Ref, mask []bool) *Cast {
+	if from.R().Len() != len(mask) {
+		panic("from length mismatch")
 	}
-	return &Cast{from, to, bools}
+	if to.Len() != len(mask) {
+		panic("to length mismatch")
+	}
+
+	return &Cast{from, to, mask}
+}
+
+// NewMultiTypeCast creates a new casting operation from a expression
+// to a list of refs with the same length.
+func NewMultiTypeCast(from Expr, t types.T, mask []bool) *Cast {
+	to := Void
+	for i := 0; i < len(mask); i++ {
+		to = AppendRef(to, NewRef(t))
+	}
+	return &Cast{from, to, mask}
 }
 
 // Ident is an identifier.

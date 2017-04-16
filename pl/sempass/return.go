@@ -33,15 +33,17 @@ func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {
 	nsrc := srcRef.Len()
 	if nret != nsrc {
 		b.CodeErrorf(pos, "pl.return.typeMismatch",
-			"expect (%s), returning (%s), type mismatch",
+			"expect (%s), returning (%s)",
 			fmtutil.Join(b.retType, ","), srcRef,
 		)
 		return nil
 	}
+
 	seenError := false
 	cast := false
+	mask := make([]bool, nret)
 	expectRef := tast.Void
-	bools := make([]bool, nret)
+
 	for i := 0; i < nret; i++ {
 		t := b.retType[i]
 		srcType := srcRef.At(i).Type()
@@ -51,11 +53,11 @@ func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {
 				"expect (%s), returning (%s)",
 				fmtutil.Join(b.retType, ","), srcRef,
 			)
-			seenError = true
 		}
+		seenError = seenError || !ok
 		expectRef = tast.AppendRef(expectRef, tast.NewRef(t))
 		cast = cast || needCast
-		bools[i] = needCast
+		mask[i] = needCast
 	}
 	if seenError {
 		return nil
@@ -63,7 +65,7 @@ func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {
 
 	// insert implicit type casts
 	if cast {
-		src = tast.NewMultiCast(src, expectRef, bools)
+		src = tast.NewMultiCast(src, expectRef, mask)
 	}
 
 	return &tast.ReturnStmt{Exprs: src}

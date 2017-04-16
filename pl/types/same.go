@@ -3,11 +3,12 @@ package types
 import "fmt"
 
 // CanAssign checks if right can be assigned to left
-// and whether cast is needed
+// and whether cast is needed.
 func CanAssign(left, right T) (canAssign bool, needCast bool) {
 	if c, ok := right.(*Const); ok {
 		if _, ok := c.Type.(Number); ok {
-			return InRange(c.Value.(int64), left), true
+			ret := InRange(c.Value.(int64), left)
+			return ret, ret
 		}
 		right = c.Type
 	}
@@ -37,13 +38,13 @@ func CanAssign(left, right T) (canAssign bool, needCast bool) {
 			return true, true
 		case *Func:
 			if left.IsBond {
-				return false, true
+				return false, false
 			}
 			return true, true
 		case *Interface:
 			return true, true
 		}
-		return false, true
+		return false, false
 	}
 
 	return SameType(left, right), false

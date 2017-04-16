@@ -26,6 +26,6 @@ func binaryOpBool(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 		return &tast.OpExpr{A: A, Op: opTok, B: B, Ref: r}
 	}
 
-	b.Errorf(opTok.Pos, "%q on bools", op)
+	b.Errorf(opTok.Pos, "%q on booleans", op)
 	return nil
 }

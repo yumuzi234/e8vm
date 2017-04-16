@@ -156,10 +156,11 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 		)
 		return nil
 	}
+
 	seenError := false
 	cast := false
+	mask := make([]bool, nargs)
 	expectRef := tast.Void
-	bools := make([]bool, nargs)
 
 	// type check on each argument
 	for i := 0; i < nargs; i++ {
@@ -173,8 +174,9 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 			)
 			seenError = true
 		}
+		seenError = seenError || !ok
 		expectRef = tast.AppendRef(expectRef, tast.NewRef(t))
-		bools[i] = needCast
+		mask[i] = needCast
 		cast = cast || needCast
 	}
 
@@ -184,7 +186,7 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 
 	// insert casting when it is a literal expression list.
 	if cast {
-		args = tast.NewMultiCast(args, expectRef, bools)
+		args = tast.NewMultiCast(args, expectRef, mask)
 	}
 
 	retRef := tast.Void
