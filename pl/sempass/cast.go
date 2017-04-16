@@ -24,7 +24,6 @@ func regSizeCastable(to, from types.T) bool {
 }
 
 func buildCast(b *builder, expr *ast.CallExpr, t types.T) tast.Expr {
-
 	pos := expr.Lparen.Pos
 
 	args := buildExprList(b, expr.Args)

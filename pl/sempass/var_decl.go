@@ -43,6 +43,7 @@ func buildVarDecl(b *builder, d *ast.VarDecl) *tast.Define {
 
 		for i, t := range ts {
 			ok, needCast := canAssign(b, d.Eq.Pos, tdest, t)
+
 			seenError = seenError || !ok
 			cast = cast || needCast
 			mask[i] = needCast

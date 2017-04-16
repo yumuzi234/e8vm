@@ -44,6 +44,7 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 
 		// assign for interface
 		ok, needCast := canAssign(b, op.Pos, destType, srcType)
+
 		seenError = seenError || !ok
 		cast = cast || needCast
 		mask[i] = needCast

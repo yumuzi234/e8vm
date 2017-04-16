@@ -166,18 +166,20 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 	for i := 0; i < nargs; i++ {
 		argType := argsRef.At(i).Type()
 		t := funcType.Args[i].T
+
 		ok, needCast := canAssign(b, pos, t, argType)
 		if !ok {
 			b.CodeErrorf(ast.ExprPos(expr), "pl.argsMismatch.type",
 				"argument type expects (%s), got (%s)",
 				fmtutil.Join(funcType.Args, ","), args,
 			)
-			seenError = true
 		}
+
 		seenError = seenError || !ok
-		expectRef = tast.AppendRef(expectRef, tast.NewRef(t))
-		mask[i] = needCast
 		cast = cast || needCast
+		mask[i] = needCast
+
+		expectRef = tast.AppendRef(expectRef, tast.NewRef(t))
 	}
 
 	if seenError {
