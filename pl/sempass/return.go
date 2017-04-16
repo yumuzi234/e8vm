@@ -45,8 +45,7 @@ func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {
 		return nil
 	}
 	if res.needCast {
-		refs := tast.NewListRef(b.retType)
-		src = tast.NewMultiCast(src, refs, res.castMask)
+		src = tast.NewMultiCastTypes(src, b.retType, res.castMask)
 	}
 
 	return &tast.ReturnStmt{Exprs: src}
