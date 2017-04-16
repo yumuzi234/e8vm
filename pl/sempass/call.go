@@ -5,8 +5,6 @@ import (
 	"shanhu.io/smlvm/pl/ast"
 	"shanhu.io/smlvm/pl/tast"
 	"shanhu.io/smlvm/pl/types"
-
-	"fmt"
 )
 
 func buildCallLen(b *builder, expr *ast.CallExpr, f tast.Expr) tast.Expr {
@@ -159,7 +157,6 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 		return nil
 	}
 
-	fmt.Printf("%s", funcType)
 	srcTypes := argsRef.TypeList()
 	destTypes := funcType.ArgTypes
 	ok, needCast, castMask := canAssigns(b, pos, destTypes, srcTypes)

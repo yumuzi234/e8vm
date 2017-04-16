@@ -3,8 +3,6 @@ package sempass
 import (
 	"fmt"
 
-	"shanhu.io/smlvm/fmtutil"
-
 	"shanhu.io/smlvm/lexing"
 	"shanhu.io/smlvm/pl/types"
 )
@@ -13,10 +11,7 @@ func canAssigns(
 	b *builder, pos *lexing.Pos, left, right []types.T,
 ) (ok, needCast bool, mask []bool) {
 	if len(left) != len(right) {
-		panic(fmt.Sprintf(
-			"length mismatch, %s != %s",
-			fmtutil.Join(left, ","), fmtutil.Join(right, ","),
-		))
+		panic("length mismatch")
 	}
 
 	ok = true
