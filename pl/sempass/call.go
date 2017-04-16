@@ -159,13 +159,14 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 	seenError := false
 	cast := false
 	expectRef := tast.Void
-	needCast := make([]bool, nargs)
+	bools := make([]bool, nargs)
+
 	// type check on each argument
 	for i := 0; i < nargs; i++ {
 		argType := argsRef.At(i).Type()
 		t := funcType.Args[i].T
-		ok1, ok2 := canAssign(b, pos, t, argType)
-		if !ok1 {
+		ok, needCast := canAssign(b, pos, t, argType)
+		if !ok {
 			b.CodeErrorf(ast.ExprPos(expr), "pl.argsMismatch.type",
 				"argument type expects (%s), got (%s)",
 				fmtutil.Join(funcType.Args, ","), args,
@@ -173,8 +174,8 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 			seenError = true
 		}
 		expectRef = tast.AppendRef(expectRef, tast.NewRef(t))
-		needCast[i] = ok2
-		cast = cast || ok2
+		bools[i] = needCast
+		cast = cast || needCast
 	}
 
 	if seenError {
@@ -183,7 +184,7 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 
 	// insert casting when it is a literal expression list.
 	if cast {
-		args = tast.NewMultiCast(args, expectRef, needCast)
+		args = tast.NewMultiCast(args, expectRef, bools)
 	}
 
 	retRef := tast.Void

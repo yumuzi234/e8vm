@@ -22,7 +22,7 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 		return nil
 	}
 	cast := false
-	needCast := make([]bool, ndest)
+	bools := make([]bool, ndest)
 	for i := 0; i < ndest; i++ {
 		r := destRef.At(i)
 		if !r.Addressable {
@@ -36,10 +36,10 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 		srcType := srcRef.At(i).Type()
 
 		// assign for interface
-		ok1, ok2 := canAssign(b, op.Pos, destType, srcType)
-		seenError = seenError || !ok1
-		cast = cast || ok2
-		needCast[i] = true
+		ok, needCast := canAssign(b, op.Pos, destType, srcType)
+		seenError = seenError || !ok
+		cast = cast || needCast
+		bools[i] = needCast
 	}
 	if seenError {
 		return nil
@@ -47,7 +47,7 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 
 	// insert casting if needed
 	if cast {
-		src = tast.NewMultiCast(src, destRef, needCast)
+		src = tast.NewMultiCast(src, destRef, bools)
 	}
 	return &tast.AssignStmt{Left: dest, Op: op, Right: src}
 }
@@ -161,13 +161,14 @@ func assignInterface(b *builder, p *lexing.Pos,
 	s, ok := types.PointerOf(right).(*types.Struct)
 	if !ok {
 		b.CodeErrorf(p, "pl.cannotAssign.interface",
-			"cannot assign interface %s by %s, not a struct pointer", i, right)
+			"cannot assign %s to interface %s, not a struct pointer", right, i)
 		return false
 	}
 	errorf := func(f string, a ...interface{}) {
 		m := fmt.Sprintf(f, a...)
 		b.CodeErrorf(p, "pl.cannotAssign.interface",
 			"cannot assign interface %s by %s, %s", i, right, m)
+		flag = false
 	}
 
 	funcs := i.Syms.List()
@@ -175,47 +176,20 @@ func assignInterface(b *builder, p *lexing.Pos,
 		sym := s.Syms.Query(f.Name())
 		if sym == nil {
 			errorf("func %s not implemented", f.Name())
-			flag = false
+
 			continue
 		}
 		t2, ok := sym.ObjType.(*types.Func)
 		if !ok {
 			errorf("%s is a struct member but not a method", f.Name())
-			flag = false
 			continue
 		}
-		t2 = t2.MethodFunc
+		// t2 = t2.MethodFunc
+		fmt.Println(t2.IsBond)
 		t1 := f.ObjType.(*types.Func)
-		if len(t1.Args) != len(t2.Args) {
-			errorf("args number mismatch for %s", f.Name())
-			flag = false
-			continue
-		}
-		if len(t1.Rets) != len(t2.Rets) {
-			errorf("returns number mismatch for %s", f.Name())
-			flag = false
-			continue
-		}
-		for i, t := range t1.Args {
-			if !types.SameType(t.T, t2.Args[i].T) {
-				b.CodeErrorf(p, "pl.cannotAssign.interface",
-					"cannot assign interface %s by %s, "+
-						"type not match, %v, %v in func %s",
-					i, right, t.T, t2.Args[i].T, f.Name())
-				flag = false
-				continue
-			}
-		}
-
-		for i, t := range t1.Rets {
-			if !types.SameType(t.T, t2.Rets[i].T) {
-				b.CodeErrorf(p, "pl.cannotAssign.interface",
-					"cannot assign interface %s by %s, "+
-						"type not match, %v, %v in func %s",
-					i, right, t.T, t2.Args[i].T, f.Name())
-				flag = false
-				continue
-			}
+		// TODO: yumuzi234 isBond issue for interface
+		if !types.SameType(t1, t2) {
+			errorf("func signature mismatch %q, %q", t1, t2)
 		}
 	}
 	return flag

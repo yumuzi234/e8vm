@@ -30,18 +30,20 @@ type Cast struct {
 
 // NewCast creates a new casting operation
 func NewCast(from Expr, to types.T) *Cast {
-	return &Cast{from, NewRef(to), nil}
+	bools := make([]bool, 1)
+	bools[0] = true
+	return &Cast{from, NewRef(to), bools}
 }
 
 // NewMultiCast creates a new casting operation
-func NewMultiCast(from Expr, to *Ref, s []bool) *Cast {
+func NewMultiCast(from Expr, to *Ref, bools []bool) *Cast {
 	if to.IsSingle() {
 		t := to.T
 		for i := 1; i < from.R().Len(); i++ {
 			to = AppendRef(to, NewRef(t))
 		}
 	}
-	return &Cast{from, to, s}
+	return &Cast{from, to, bools}
 }
 
 // Ident is an identifier.
