@@ -34,6 +34,15 @@ func NewRef(t types.T) *Ref { return &Ref{T: t} }
 // NewTypeRef creates a new reference node for a type expression.
 func NewTypeRef(t types.T) *Ref { return NewRef(&types.Type{T: t}) }
 
+// NewListRef creates a new reference with a list of types.
+func NewListRef(ts []types.T) *Ref {
+	ret := Void
+	for _, t := range ts {
+		ret = AppendRef(ret, NewRef(t))
+	}
+	return ret
+}
+
 // NewConstRef creates a new reference node with a constant value.
 func NewConstRef(t types.T, v interface{}) *Ref {
 	return &Ref{T: t, ConstValue: v}

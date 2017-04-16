@@ -56,7 +56,7 @@ func buildVarDecl(b *builder, d *ast.VarDecl) *tast.Define {
 		// after the casting, all types should be matching to tdest
 		// insert casting if needed
 		if cast {
-			right = tast.NewMultiTypeCast(right, tdest, mask)
+			right = tast.NewMultiCastType(right, tdest, mask)
 		}
 
 		syms := declareVars(b, ids, tdest, false)

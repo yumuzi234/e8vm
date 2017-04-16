@@ -5,6 +5,8 @@ import (
 	"shanhu.io/smlvm/pl/ast"
 	"shanhu.io/smlvm/pl/tast"
 	"shanhu.io/smlvm/pl/types"
+
+	"fmt"
 )
 
 func buildCallLen(b *builder, expr *ast.CallExpr, f tast.Expr) tast.Expr {
@@ -157,44 +159,17 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 		return nil
 	}
 
-	seenError := false
-	cast := false
-	mask := make([]bool, nargs)
-	expectRef := tast.Void
-
-	// type check on each argument
-	for i := 0; i < nargs; i++ {
-		argType := argsRef.At(i).Type()
-		t := funcType.Args[i].T
-
-		ok, needCast := canAssign(b, pos, t, argType)
-		if !ok {
-			b.CodeErrorf(ast.ExprPos(expr), "pl.argsMismatch.type",
-				"argument type expects (%s), got (%s)",
-				fmtutil.Join(funcType.Args, ","), args,
-			)
-		}
-
-		seenError = seenError || !ok
-		cast = cast || needCast
-		mask[i] = needCast
-
-		expectRef = tast.AppendRef(expectRef, tast.NewRef(t))
-	}
-
-	if seenError {
+	fmt.Printf("%s", funcType)
+	srcTypes := argsRef.TypeList()
+	destTypes := funcType.ArgTypes
+	ok, needCast, castMask := canAssigns(b, pos, destTypes, srcTypes)
+	if !ok {
 		return nil
 	}
-
-	// insert casting when it is a literal expression list.
-	if cast {
-		args = tast.NewMultiCast(args, expectRef, mask)
+	if needCast {
+		args = tast.NewMultiCastTypes(args, destTypes, castMask)
 	}
 
-	retRef := tast.Void
-	for _, t := range funcType.RetTypes {
-		retRef = tast.AppendRef(retRef, tast.NewRef(t))
-	}
-
+	retRef := tast.NewListRef(funcType.RetTypes)
 	return &tast.CallExpr{Func: f, Args: args, Ref: retRef}
 }

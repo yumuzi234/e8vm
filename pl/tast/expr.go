@@ -45,11 +45,17 @@ func NewMultiCast(from Expr, to *Ref, mask []bool) *Cast {
 	return &Cast{from, to, mask}
 }
 
-// NewMultiTypeCast creates a new casting operation from a expression
-// to a list of refs with the same length.
-func NewMultiTypeCast(from Expr, t types.T, mask []bool) *Cast {
+// NewMultiCastTypes creates a new casting operation from an expression to
+// a list of refs with the given type list
+func NewMultiCastTypes(from Expr, ts []types.T, mask []bool) *Cast {
+	return NewMultiCast(from, NewListRef(ts), mask)
+}
+
+// NewMultiCastType creates a new casting operation from an expression to a
+// list of refs with the same length of a type.
+func NewMultiCastType(from Expr, t types.T, mask []bool) *Cast {
 	to := Void
-	for i := 0; i < len(mask); i++ {
+	for range mask {
 		to = AppendRef(to, NewRef(t))
 	}
 	return &Cast{from, to, mask}

@@ -28,6 +28,7 @@ func (a *Arg) String() string {
 type Func struct {
 	Args     []*Arg
 	Rets     []*Arg
+	ArgTypes []T
 	RetTypes []T
 
 	// The method function signature.
@@ -46,7 +47,8 @@ func NewFunc(this *Arg, args []*Arg, rets []*Arg) *Func {
 	}
 	ret.Args = append(ret.Args, args...)
 	ret.Rets = rets
-	ret.RetTypes = argTypes(ret.Rets)
+	ret.ArgTypes = ArgTypes(ret.Args)
+	ret.RetTypes = ArgTypes(ret.Rets)
 
 	if this != nil {
 		ret.MethodFunc = NewFunc(nil, args, rets)
@@ -55,11 +57,9 @@ func NewFunc(this *Arg, args []*Arg, rets []*Arg) *Func {
 	return ret
 }
 
-func argTypes(args []*Arg) []T {
-	if len(args) == 0 {
-		return nil
-	}
-	ret := make([]T, 0, len(args))
+// ArgTypes returns the types of the args.
+func ArgTypes(args []*Arg) []T {
+	var ret []T
 	for _, arg := range args {
 		ret = append(ret, arg.T)
 	}
@@ -77,6 +77,7 @@ func NewFuncUnamed(args []T, rets []T) *Func {
 		f.Rets = append(f.Rets, &Arg{T: ret})
 	}
 
+	f.ArgTypes = args
 	f.RetTypes = rets
 	return f
 }
