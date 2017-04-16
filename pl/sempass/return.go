@@ -40,7 +40,7 @@ func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {
 	}
 
 	srcTypes := srcRef.TypeList()
-	res := canAssigns(b, pos, b.retType, srcTypes)
+	res := canAssigns(b, pos, b.retType, srcTypes, "in return argument")
 	if res.err {
 		return nil
 	}

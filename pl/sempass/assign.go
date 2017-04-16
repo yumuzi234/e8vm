@@ -33,7 +33,7 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 
 	srcTypes := srcRef.TypeList()
 	destTypes := destRef.TypeList()
-	res := canAssigns(b, op.Pos, destTypes, srcTypes)
+	res := canAssigns(b, op.Pos, destTypes, srcTypes, "assginment")
 	if res.err {
 		return nil
 	}

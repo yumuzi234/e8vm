@@ -159,7 +159,7 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 
 	srcTypes := argsRef.TypeList()
 	destTypes := funcType.ArgTypes
-	res := canAssigns(b, pos, destTypes, srcTypes)
+	res := canAssigns(b, pos, destTypes, srcTypes, "function call")
 	if res.err {
 		return nil
 	}

@@ -37,7 +37,9 @@ func buildVarDecl(b *builder, d *ast.VarDecl) *tast.Define {
 
 		// assignable check
 		ts := right.R().TypeList()
-		res := canAssignType(b, d.Eq.Pos, tdest, ts)
+		res := canAssignType(
+			b, d.Eq.Pos, tdest, ts, "variable declaration",
+		)
 		if res.err {
 			return nil
 		}
