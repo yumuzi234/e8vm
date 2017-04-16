@@ -271,11 +271,11 @@ func TestBareFunc_bad(t *testing.T) {
 	o("declConflict.var", "a:=3; a:=4")
 
 	// argsMismatch
-	o("argsMismatch.type", "printInt(true)")
-	o("argsMismatch.type", "const a = -1; printUint(a)")
+	o("cannotAssign.typeMismatch", "printInt(true)")
+	o("cannotAssign.typeMismatch", "const a = -1; printUint(a)")
 	o("argsMismatch.count", "printInt(3, 4)")
 	o("argsMismatch.count", "printInt()")
-	o("argsMismatch.type", "const a = -1; printUint(a)")
+	o("cannotAssign.typeMismatch", "const a = -1; printUint(a)")
 
 	o("cannotDefine.countMismatch", "a := 3, 4") // count mismatch
 	o("cannotDefine.countMismatch", "a, b := 3") // count mismatch
@@ -328,7 +328,7 @@ func TestBareFunc_bad(t *testing.T) {
 
 	// const
 	o("missingConstDefine", "const a; _:=a")
-	o("argsMismatch.type", "const a uint = 33; b:=a;printInt(b)")
+	o("cannotAssign.typeMismatch", "const a uint = 33; b:=a;printInt(b)")
 	o("invalidOp", "const a uint = 33; b:=2;printInt(a+b)")
 
 }

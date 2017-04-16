@@ -4,7 +4,6 @@ import (
 	"shanhu.io/smlvm/fmtutil"
 	"shanhu.io/smlvm/pl/ast"
 	"shanhu.io/smlvm/pl/tast"
-	"shanhu.io/smlvm/pl/types"
 )
 
 func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {
@@ -39,35 +38,32 @@ func buildReturnStmt(b *builder, stmt *ast.ReturnStmt) tast.Stmt {
 		)
 		return nil
 	}
-
+	seenError := false
+	cast := false
+	expectRef := tast.Void
+	bools := make([]bool, nret)
 	for i := 0; i < nret; i++ {
 		t := b.retType[i]
 		srcType := srcRef.At(i).Type()
-		if !types.CanAssign(t, srcType) {
+		ok, needCast := canAssign(b, pos, t, srcType)
+		if !ok {
 			b.CodeErrorf(pos, "pl.return.typeMismatch",
 				"expect (%s), returning (%s)",
 				fmtutil.Join(b.retType, ","), srcRef,
 			)
-			return nil
+			seenError = true
 		}
+		expectRef = tast.AppendRef(expectRef, tast.NewRef(t))
+		cast = cast || needCast
+		bools[i] = needCast
+	}
+	if seenError {
+		return nil
 	}
 
 	// insert implicit type casts
-	if srcList, ok := tast.MakeExprList(src); ok {
-		newList := tast.NewExprList()
-		for i, e := range srcList.Exprs {
-			t := e.Type()
-			if types.IsNil(t) {
-				e = tast.NewCast(e, b.retType[i])
-			} else if v, ok := types.NumConst(t); ok {
-				e = numCast(b, nil, v, e, b.retType[i])
-				if e == nil {
-					panic("bug")
-				}
-			}
-			newList.Append(e)
-		}
-		src = newList
+	if cast {
+		src = tast.NewMultiCast(src, expectRef, bools)
 	}
 
 	return &tast.ReturnStmt{Exprs: src}

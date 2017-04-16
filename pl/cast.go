@@ -3,6 +3,7 @@ package pl
 import (
 	"shanhu.io/smlvm/arch"
 	"shanhu.io/smlvm/pl/codegen"
+	"shanhu.io/smlvm/pl/tast"
 	"shanhu.io/smlvm/pl/types"
 )
 
@@ -49,14 +50,22 @@ func buildCast(b *builder, from *ref, t types.T) *ref {
 		if size == arch.RegSize {
 			return newRef(t, codegen.Num(0))
 		}
+		if _, ok := t.(*types.Interface); ok {
+			b.CodeErrorf(nil, "pl.notYetSupported", "interface not supported")
+			return from
+		}
 		if _, ok := t.(*types.Slice); !ok {
-			panic("bug")
+			panic("unknown type")
 		}
 		ret := b.newTemp(t)
 		b.b.Zero(ret.IR())
 		return ret
 	}
 
+	if _, ok := t.(*types.Interface); ok {
+		b.CodeErrorf(nil, "pl.notYetSupported", "interface not supported yet")
+		return from
+	}
 	if c, ok := srcType.(*types.Const); ok {
 		if v, ok := types.NumConst(srcType); ok {
 			return newRef(t, constNumIr(v, t))
@@ -74,5 +83,18 @@ func buildCast(b *builder, from *ref, t types.T) *ref {
 		b.b.Arith(ret.IR(), nil, "", from.IR())
 		return ret
 	}
-	panic("bug")
+	panic("cast bug")
+}
+
+func buildCasts(b *builder, from *ref, to *tast.Ref, bools []bool) *ref {
+	var ret *ref
+	for i := 0; i < from.Len(); i++ {
+		expr := from.At(i)
+		if bools[i] {
+			t := to.At(i)
+			expr = buildCast(b, expr, t.T)
+		}
+		ret = appendRef(ret, expr)
+	}
+	return ret
 }

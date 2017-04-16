@@ -34,7 +34,9 @@ func appendRef(r1, r2 *ref) *ref {
 	if !r2.IsSingle() {
 		panic("must merge single")
 	}
-
+	if r1 == nil {
+		return r2
+	}
 	switch r1.Len() {
 	case 0:
 		return r2

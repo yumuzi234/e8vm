@@ -20,7 +20,7 @@ func buildExpr(b *builder, expr tast.Expr) *ref {
 		return newRef(t, nil)
 	case *tast.Cast:
 		from := buildExpr(b, expr.From)
-		return buildCast(b, from, expr.T)
+		return buildCasts(b, from, expr.R(), expr.NeedCast)
 	case *tast.MemberExpr:
 		return buildMember(b, expr)
 	case *tast.OpExpr:

@@ -58,6 +58,7 @@ func buildInterface(b *builder, pi *pkgInterface) {
 	t := pi.t
 	for _, f := range pi.ast.Funcs {
 		ft := buildFuncType(b, nil, f.FuncSig)
+		ft.IsBond = true
 		if ft == nil {
 			return
 		}

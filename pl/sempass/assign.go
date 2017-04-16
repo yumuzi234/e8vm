@@ -1,6 +1,8 @@
 package sempass
 
 import (
+	"fmt"
+
 	"shanhu.io/smlvm/lexing"
 	"shanhu.io/smlvm/pl/ast"
 	"shanhu.io/smlvm/pl/tast"
@@ -10,7 +12,7 @@ import (
 func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 	destRef := dest.R()
 	srcRef := src.R()
-
+	seenError := false
 	ndest := destRef.Len()
 	nsrc := srcRef.Len()
 	if ndest != nsrc {
@@ -19,43 +21,34 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 			nsrc, ndest)
 		return nil
 	}
-
+	cast := false
+	bools := make([]bool, ndest)
 	for i := 0; i < ndest; i++ {
 		r := destRef.At(i)
 		if !r.Addressable {
 			b.CodeErrorf(op.Pos, "pl.cannotAssign.notAddressable",
 				"assigning to non-addressable")
-			return nil
+			seenError = true
+			continue
 		}
 
 		destType := r.Type()
 		srcType := srcRef.At(i).Type()
-		if !types.CanAssign(destType, srcType) {
-			b.CodeErrorf(op.Pos, "pl.cannotAssign.typeMismatch",
-				"cannot assign %s to %s",
-				srcType, destType)
-			return nil
-		}
+
+		// assign for interface
+		ok, needCast := canAssign(b, op.Pos, destType, srcType)
+		seenError = seenError || !ok
+		cast = cast || needCast
+		bools[i] = needCast
+	}
+	if seenError {
+		return nil
 	}
 
 	// insert casting if needed
-	if srcList, ok := tast.MakeExprList(src); ok {
-		newList := tast.NewExprList()
-		for i, e := range srcList.Exprs {
-			t := e.Type()
-			if types.IsNil(t) {
-				e = tast.NewCast(e, destRef.At(i).Type())
-			} else if v, ok := types.NumConst(t); ok {
-				e = numCast(b, nil, v, e, destRef.At(i).Type())
-				if e == nil {
-					panic("bug")
-				}
-			}
-			newList.Append(e)
-		}
-		src = newList
+	if cast {
+		src = tast.NewMultiCast(src, destRef, bools)
 	}
-
 	return &tast.AssignStmt{Left: dest, Op: op, Right: src}
 }
 
@@ -138,4 +131,65 @@ func buildAssignStmt(b *builder, stmt *ast.AssignStmt) tast.Stmt {
 	}
 
 	return opAssign(b, left, right, stmt.Assign)
+}
+
+func canAssign(b *builder, p *lexing.Pos, left,
+	right types.T) (ok bool, needcast bool) {
+	if i, ok := left.(*types.Interface); ok {
+		// TODO(yumuzi234): assing interface from interface
+		if _, ok = right.(*types.Interface); ok {
+			b.CodeErrorf(p, "pl.notYetSupported",
+				"assign interface by interface is not supported yet")
+			return false, true
+		}
+		if !assignInterface(b, p, i, right) {
+			return false, true
+		}
+		return true, true
+	}
+	ok1, ok2 := types.CanAssign(left, right)
+	if !ok1 {
+		b.CodeErrorf(p, "pl.cannotAssign.typeMismatch",
+			"cannot assign %s to %s", left, right)
+		return false, ok2
+	}
+	return ok1, ok2
+}
+
+func assignInterface(b *builder, p *lexing.Pos,
+	i *types.Interface, right types.T) bool {
+	flag := true
+	s, ok := types.PointerOf(right).(*types.Struct)
+	if !ok {
+		b.CodeErrorf(p, "pl.cannotAssign.interface",
+			"cannot assign %s to interface %s, not a struct pointer", right, i)
+		return false
+	}
+	errorf := func(f string, a ...interface{}) {
+		m := fmt.Sprintf(f, a...)
+		b.CodeErrorf(p, "pl.cannotAssign.interface",
+			"cannot assign interface %s by %s, %s", i, right, m)
+		flag = false
+	}
+
+	funcs := i.Syms.List()
+	for _, f := range funcs {
+		sym := s.Syms.Query(f.Name())
+		if sym == nil {
+			errorf("func %s not implemented", f.Name())
+
+			continue
+		}
+		t2, ok := sym.ObjType.(*types.Func)
+		if !ok {
+			errorf("%s is a struct member but not a method", f.Name())
+			continue
+		}
+		t2 = t2.MethodFunc
+		t1 := f.ObjType.(*types.Func)
+		if !types.SameType(t1, t2) {
+			errorf("func signature mismatch %q, %q", t1, t2)
+		}
+	}
+	return flag
 }

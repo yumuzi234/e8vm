@@ -111,10 +111,14 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 
 	pos := ast.ExprPos(expr.Func)
 	fref := f.R()
+
 	if !fref.IsSingle() {
-		b.Errorf(pos, "%s is not callable", fref)
+		b.CodeErrorf(pos, "pl.call.notSingle", "%s is not callable", fref)
 		return nil
 	}
+
+	// expr.Func is a Type
+
 	if t, ok := fref.T.(*types.Type); ok {
 		return buildCast(b, expr, t.T)
 	}
@@ -144,46 +148,43 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 
 	argsRef := args.R()
 	nargs := argsRef.Len()
+	pos = ast.ExprPos(expr)
 	if nargs != len(funcType.Args) {
-		b.CodeErrorf(ast.ExprPos(expr), "pl.argsMismatch.count",
+		b.CodeErrorf(pos, "pl.argsMismatch.count",
 			"argument count mismatch, expects (%s), got (%s)",
 			fmtutil.Join(funcType.Args, ","), args,
 		)
 		return nil
 	}
+	seenError := false
+	cast := false
+	expectRef := tast.Void
+	bools := make([]bool, nargs)
 
 	// type check on each argument
 	for i := 0; i < nargs; i++ {
 		argType := argsRef.At(i).Type()
-		expect := funcType.Args[i].T
-		if !types.CanAssign(expect, argType) {
+		t := funcType.Args[i].T
+		ok, needCast := canAssign(b, pos, t, argType)
+		if !ok {
 			b.CodeErrorf(ast.ExprPos(expr), "pl.argsMismatch.type",
 				"argument type expects (%s), got (%s)",
 				fmtutil.Join(funcType.Args, ","), args,
 			)
-			return nil
+			seenError = true
 		}
+		expectRef = tast.AppendRef(expectRef, tast.NewRef(t))
+		bools[i] = needCast
+		cast = cast || needCast
+	}
+
+	if seenError {
+		return nil
 	}
 
 	// insert casting when it is a literal expression list.
-	callArgs, ok := tast.MakeExprList(args)
-	if ok {
-		castedArgs := tast.NewExprList()
-		for i := 0; i < nargs; i++ {
-			argExpr := callArgs.Exprs[i]
-			argType := argExpr.Type()
-			expect := funcType.Args[i].T
-
-			// insert auto casts for consts
-			if types.IsNil(argType) {
-				castedArgs.Append(tast.NewCast(argExpr, expect))
-			} else if _, ok := types.NumConst(argType); ok {
-				castedArgs.Append(tast.NewCast(argExpr, expect))
-			} else {
-				castedArgs.Append(argExpr)
-			}
-		}
-		args = castedArgs
+	if cast {
+		args = tast.NewMultiCast(args, expectRef, bools)
 	}
 
 	retRef := tast.Void

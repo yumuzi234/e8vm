@@ -234,8 +234,8 @@ func TestFormatFile(t *testing.T) {
 		func main() {}
 
 		interface T {
-			f (int, int) (int, int)
-			f ()
+			f(int, int) (int, int)
+			f()
 		}
 	`)
 	o(`

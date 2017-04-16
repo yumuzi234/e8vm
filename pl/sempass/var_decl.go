@@ -1,31 +1,10 @@
 package sempass
 
 import (
-	"shanhu.io/smlvm/lexing"
 	"shanhu.io/smlvm/pl/ast"
 	"shanhu.io/smlvm/pl/tast"
 	"shanhu.io/smlvm/pl/types"
 )
-
-func varDeclPrepare(
-	b *builder, toks []*lexing.Token, lst *tast.ExprList, t types.T,
-) *tast.ExprList {
-	ret := tast.NewExprList()
-	for i, tok := range toks {
-		e := lst.Exprs[i]
-		etype := e.Type()
-		if types.IsNil(etype) {
-			e = tast.NewCast(e, t)
-		} else if v, ok := types.NumConst(etype); ok {
-			e = numCast(b, tok.Pos, v, e, t)
-			if e == nil {
-				return nil
-			}
-		}
-		ret.Append(e)
-	}
-	return ret
-}
 
 func buildVarDecl(b *builder, d *ast.VarDecl) *tast.Define {
 	ids := d.Idents.Idents
@@ -58,22 +37,24 @@ func buildVarDecl(b *builder, d *ast.VarDecl) *tast.Define {
 
 		// assignable check
 		ts := right.R().TypeList()
-		for _, t := range ts {
-			if !types.CanAssign(tdest, t) {
-				b.CodeErrorf(d.Eq.Pos, "pl.cannotAssign.typeMismatch",
-					"cannot assign type %s to type %s", t, tdest)
-				return nil
-			}
+		seenError := false
+		cast := false
+		bools := make([]bool, len(ts))
+		for i, t := range ts {
+			ok, needCast := canAssign(b, d.Eq.Pos, tdest, t)
+			seenError = seenError || !ok
+			cast = cast || needCast
+			bools[i] = needCast
+		}
+		if seenError {
+			return nil
 		}
 
 		// cast literal expression lists
 		// after the casting, all types should be matching to tdest
-		if exprList, ok := tast.MakeExprList(right); ok {
-			exprList = varDeclPrepare(b, ids, exprList, tdest)
-			if exprList == nil {
-				return nil
-			}
-			right = exprList
+		// insert casting if needed
+		if cast {
+			right = tast.NewMultiCast(right, tast.NewRef(tdest), bools)
 		}
 
 		syms := declareVars(b, ids, tdest, false)

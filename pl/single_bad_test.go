@@ -68,8 +68,8 @@ func TestSingleFileBad(t *testing.T) {
 	o("missingReturn", `func f() int { if true { return 0 } }`)
 	o("missingReturn", `func f() int { if true return 0 }`)
 
-	o("return.typeMismatch", `func f() int {return 'a'}`)
-	o("return.typeMismatch", `func f() (int, int) {return 1, 'a'}`)
+	o("cannotAssign.typeMismatch", `func f() int {return 'a'}`)
+	o("cannotAssign.typeMismatch", `func f() (int, int) {return 1, 'a'}`)
 	o("return.expectNoReturn", `func f() {return 1}`)
 	o("return.noReturnValue", `func f() int {return}`)
 
@@ -120,6 +120,21 @@ func TestSingleFileBad(t *testing.T) {
 	o("cannotAssign.typeMismatch", `func main() { var a [2]int; var b [3]int;
 		a=b}`)
 
+	o("cannotAssign.interface",
+		`interface I { t() int; }
+		 struct S { t int }
+		 func main() {var i I; var s S; i=s; _:=i}`)
+	o("cannotAssign.interface",
+		`interface I { t() int; }
+		 struct S { i int }
+		 func (s *S) t() {}
+		 func main() {var i I; var s S; i=s; _:=i}`)
+	o("cannotAssign.interface",
+		`interface I { t() int; }
+		 struct S { i int }
+		 func (s *S) a() int {}
+		 func main() {var i I; var s S; i=s; _:=i}`)
+
 	// others
 	o("multiRefInExprList", ` func r() (int, int) { return 3, 4 }
 		func p(a, b, c int) { }
@@ -144,6 +159,15 @@ func TestSingleFileBad(t *testing.T) {
 	o("cannotCast", `func main() {
 			var s string
 			for i := 0; i < len(s-2); i++ {}
+		}`)
+
+	o("notYetSupported", `interface I { t() int }
+		func main() { var b *B; var i I; i=b; _:=i;}
+		struct B {
+    		v int
+		}
+		func (b *B) t() int {
+			return b.v
 		}`)
 }
 
