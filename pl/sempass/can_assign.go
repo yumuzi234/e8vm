@@ -7,23 +7,40 @@ import (
 	"shanhu.io/smlvm/pl/types"
 )
 
+type canAssignResult struct {
+	err      bool
+	needCast bool
+	castMask []bool
+}
+
+func (r *canAssignResult) add(ok, needCast bool) {
+	r.err = r.err || !ok
+	r.needCast = r.needCast || needCast
+	r.castMask = append(r.castMask, needCast)
+}
+
+func canAssignType(
+	b *builder, pos *lexing.Pos, t types.T, right []types.T,
+) *canAssignResult {
+	var ts []types.T
+	for range right {
+		ts = append(ts, t)
+	}
+	return canAssigns(b, pos, ts, right)
+}
+
 func canAssigns(
 	b *builder, pos *lexing.Pos, left, right []types.T,
-) (ok, needCast bool, mask []bool) {
+) *canAssignResult {
 	if len(left) != len(right) {
 		panic("length mismatch")
 	}
 
-	ok = true
-	mask = make([]bool, len(right))
+	res := new(canAssignResult)
 	for i, t := range right {
-		thisOK, thisNeedCast := canAssign(b, pos, left[i], t)
-		ok = ok && thisOK
-		needCast = needCast || thisNeedCast
-		mask[i] = thisNeedCast
+		res.add(canAssign(b, pos, left[i], t))
 	}
-
-	return ok, ok && needCast, mask
+	return res
 }
 
 func canAssign(

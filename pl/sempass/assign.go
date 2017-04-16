@@ -31,28 +31,14 @@ func assign(b *builder, dest, src tast.Expr, op *lexing.Token) tast.Stmt {
 		}
 	}
 
-	seenError := false
-	cast := false
-	mask := make([]bool, ndest)
-
-	for i := 0; i < ndest; i++ {
-		destType := destRef.At(i).Type()
-		srcType := srcRef.At(i).Type()
-
-		// assign for interface
-		ok, needCast := canAssign(b, op.Pos, destType, srcType)
-
-		seenError = seenError || !ok
-		cast = cast || needCast
-		mask[i] = needCast
-	}
-	if seenError {
+	srcTypes := srcRef.TypeList()
+	destTypes := destRef.TypeList()
+	res := canAssigns(b, op.Pos, destTypes, srcTypes)
+	if res.err {
 		return nil
 	}
-
-	// insert casting if needed
-	if cast {
-		src = tast.NewMultiCast(src, destRef, mask)
+	if res.needCast {
+		src = tast.NewMultiCast(src, destRef, res.castMask)
 	}
 	return &tast.AssignStmt{Left: dest, Op: op, Right: src}
 }

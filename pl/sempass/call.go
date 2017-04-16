@@ -159,12 +159,12 @@ func buildCallExpr(b *builder, expr *ast.CallExpr) tast.Expr {
 
 	srcTypes := argsRef.TypeList()
 	destTypes := funcType.ArgTypes
-	ok, needCast, castMask := canAssigns(b, pos, destTypes, srcTypes)
-	if !ok {
+	res := canAssigns(b, pos, destTypes, srcTypes)
+	if res.err {
 		return nil
 	}
-	if needCast {
-		args = tast.NewMultiCastTypes(args, destTypes, castMask)
+	if res.needCast {
+		args = tast.NewMultiCastTypes(args, destTypes, res.castMask)
 	}
 
 	retRef := tast.NewListRef(funcType.RetTypes)
