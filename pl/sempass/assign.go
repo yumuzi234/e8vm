@@ -133,7 +133,8 @@ func buildAssignStmt(b *builder, stmt *ast.AssignStmt) tast.Stmt {
 	return opAssign(b, left, right, stmt.Assign)
 }
 
-func canAssign(b *builder, p *lexing.Pos, left, right types.T) (bool, bool) {
+func canAssign(b *builder, p *lexing.Pos, left,
+	right types.T) (ok bool, needcast bool) {
 	if i, ok := left.(*types.Interface); ok {
 		// TODO(yumuzi234): assing interface from interface
 		if _, ok = right.(*types.Interface); ok {
@@ -184,10 +185,8 @@ func assignInterface(b *builder, p *lexing.Pos,
 			errorf("%s is a struct member but not a method", f.Name())
 			continue
 		}
-		// t2 = t2.MethodFunc
-		fmt.Println(t2.IsBond)
+		t2 = t2.MethodFunc
 		t1 := f.ObjType.(*types.Func)
-		// TODO: yumuzi234 isBond issue for interface
 		if !types.SameType(t1, t2) {
 			errorf("func signature mismatch %q, %q", t1, t2)
 		}

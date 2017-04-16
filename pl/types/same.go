@@ -20,12 +20,12 @@ func CanAssign(left, right T) (bool, bool) {
 	}
 	if f, ok := left.(*Func); ok {
 		if f.IsBond {
-			return false
+			return false, false
 		}
 	}
 	if f, ok := right.(*Func); ok {
 		if f.IsBond {
-			return false
+			return false, false
 		}
 	}
 
