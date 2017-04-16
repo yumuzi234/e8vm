@@ -4,7 +4,7 @@ import "fmt"
 
 // CanAssign checks if right can be assigned to left
 // and whether cast is needed
-func CanAssign(left, right T) (bool, bool) {
+func CanAssign(left, right T) (canAssign bool, needCast bool) {
 	if c, ok := right.(*Const); ok {
 		if _, ok := c.Type.(Number); ok {
 			return InRange(c.Value.(int64), left), true
