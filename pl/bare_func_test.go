@@ -300,7 +300,7 @@ func TestBareFunc_bad(t *testing.T) {
 
 	o("negArrayIndex", "var a [8]int; i:=a[-1]") // negative array index
 	o("negArrayIndex", "var a [7]int; s:=a[:]; i:=s[-33]")
-	o("nonConstArrayIndex", "var a [0==0]int")
+	o("illegalArrayIndex", "var a [0==0]int")
 
 	// divide by zero
 	o("divideByZero", "a:=3/0")

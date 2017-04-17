@@ -60,22 +60,26 @@ func buildArrayType(b *builder, expr *ast.ArrayTypeExpr) types.T {
 	var v int64
 	if !ok {
 		// might be true, false, or other builtin consts
-		b.CodeErrorf(ast.ExprPos(expr), "pl.nonConstArrayIndex",
+		b.CodeErrorf(ast.ExprPos(expr), "pl.illegalArrayIndex",
 			"array index is not a constant")
 		return nil
 	}
 
 	if num, ok := types.NumConst(ntype); ok {
 		v = num
-	} else {
+	} else if types.IsInteger(ct.Type) {
 		v = ct.Value.(int64)
+	} else {
+		b.CodeErrorf(ast.ExprPos(expr), "pl.illegalArrayIndex",
+			"array index is not a integer")
+		return nil
 	}
 	if v < 0 {
-		b.CodeErrorf(ast.ExprPos(expr), "pl.negArrayIndex",
+		b.CodeErrorf(ast.ExprPos(expr), "pl.illegalArrayIndex",
 			"array index is negative: %d", v)
 		return nil
 	} else if !types.InRange(v, types.Int) {
-		b.CodeErrorf(ast.ExprPos(expr), "pl.arrayIndexOutofRange",
+		b.CodeErrorf(ast.ExprPos(expr), "pl.illegalArrayIndex",
 			"index out of range of int32")
 		return nil
 	}
