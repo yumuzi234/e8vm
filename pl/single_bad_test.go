@@ -169,6 +169,10 @@ func TestSingleFileBad(t *testing.T) {
 		func (b *B) t() int {
 			return b.v
 		}`)
+	o("notYetSupported", `interface I { t() int }
+		func main() { var b I2; var i I; i=b; _:=i;}
+		interface I2 {t() int}`)
+
 }
 
 func TestSingleFilePanic(t *testing.T) {
