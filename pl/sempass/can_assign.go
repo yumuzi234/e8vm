@@ -5,6 +5,7 @@ import (
 
 	"shanhu.io/smlvm/lexing"
 	"shanhu.io/smlvm/pl/types"
+	"shanhu.io/smlvm/syms"
 )
 
 type canAssignResult struct {
@@ -48,12 +49,6 @@ func canAssign(
 	b *builder, p *lexing.Pos, left, right types.T, in string,
 ) (ok bool, needCast bool) {
 	if i, ok := left.(*types.Interface); ok {
-		// TODO(yumuzi234): assing interface from interface
-		if _, ok = right.(*types.Interface); ok {
-			b.CodeErrorf(p, "pl.notYetSupported",
-				"assign interface by interface is not supported yet")
-			return false, false
-		}
 		if !assignInterface(b, p, i, right, in) {
 			return false, false
 		}
@@ -73,13 +68,18 @@ func assignInterface(
 	in string,
 ) bool {
 	flag := true
-	s, ok := types.PointerOf(right).(*types.Struct)
-	if !ok {
+	var syms *syms.Table
+	if t, ok := types.PointerOf(right).(*types.Struct); ok {
+		syms = t.Syms
+	} else if t, ok := right.(*types.Interface); ok {
+		syms = t.Syms
+	} else {
 		b.CodeErrorf(p, "pl.cannotAssign.interface",
 			"cannot use %s as interface %s in %s, not a struct pointer",
 			right, i, in)
 		return false
 	}
+
 	errorf := func(f string, a ...interface{}) {
 		m := fmt.Sprintf(f, a...)
 		b.CodeErrorf(p, "pl.cannotAssign.interface",
@@ -89,17 +89,19 @@ func assignInterface(
 
 	funcs := i.Syms.List()
 	for _, f := range funcs {
-		sym := s.Syms.Query(f.Name())
+		sym := syms.Query(f.Name())
 		if sym == nil {
 			errorf("function %s not implemented", f.Name())
 			continue
 		}
 		t2, ok := sym.ObjType.(*types.Func)
 		if !ok {
-			errorf("%s is a struct member but not a method", f.Name())
+			errorf("%s is not a function in %s", sym.Name(), right)
 			continue
 		}
-		t2 = t2.MethodFunc
+		if !t2.IsBond {
+			t2 = t2.MethodFunc
+		}
 		t1 := f.ObjType.(*types.Func)
 		if !types.SameType(t1, t2) {
 			errorf("func signature mismatch %q, %q", t1, t2)
