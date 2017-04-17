@@ -9,7 +9,6 @@ func isLetter(r rune) bool {
 }
 
 func lexNumber(x *lexing.Lexer) *lexing.Token {
-	// TODO: lex floating point as well
 	isFloat := false
 	start := x.Rune()
 	if !lexing.IsDigit(start) {

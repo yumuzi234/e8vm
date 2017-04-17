@@ -38,44 +38,34 @@ func buildConstDecl(b *builder, d *ast.ConstDecl) *tast.Define {
 			return nil
 		}
 	}
-	var right tast.Expr
+	right := buildConstExprList(b, d.Exprs)
 	idents := d.Idents.Idents
+	if right == nil {
+		return nil
+	}
 
-	if d.Eq != nil {
-		right = buildConstExprList(b, d.Exprs)
-		if right == nil {
-			return nil
-		}
-
-		nright := right.R().Len()
-		nleft := len(idents)
-		if nleft != nright {
-			b.CodeErrorf(d.Eq.Pos, "pl.cannotAssign.lengthMismatch",
-				"cannot assign(len) %s to %s; length mismatch",
-				nright, nleft)
-			return nil
-		}
+	nright := right.R().Len()
+	nleft := len(idents)
+	if nleft != nright {
+		b.CodeErrorf(d.Eq.Pos, "pl.cannotAssign.lengthMismatch",
+			"cannot assign(len) %s to %s; length mismatch",
+			nright, nleft)
+		return nil
 	}
 
 	for i, ident := range idents {
-		var sym *syms.Symbol
-		var t types.T
-		if right == nil {
-			t, _ = types.NewConstInt(0, tdest)
-		} else {
-			t = right.R().At(i).Type()
-			if !types.IsConst(t) {
-				b.CodeErrorf(ast.ExprPos(d.Exprs.Exprs[i]),
-					"pl.expectConstExpr", "not a const")
-				return nil
-			}
-			ct, _ := t.(*types.Const)
-			if tdest != nil {
-				t = types.CastConst(ct, tdest)
-			}
+		t := right.R().At(i).Type()
+		if !types.IsConst(t) {
+			b.CodeErrorf(ast.ExprPos(d.Exprs.Exprs[i]),
+				"pl.expectConstExpr", "not a const")
+			return nil
+		}
+		ct, _ := t.(*types.Const)
+		if tdest != nil {
+			t = types.CastConst(ct, tdest)
 		}
 
-		sym = declareConst(b, ident, t)
+		sym := declareConst(b, ident, t)
 		if sym == nil {
 			return nil
 		}

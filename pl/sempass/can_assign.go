@@ -75,7 +75,8 @@ func assignInterface(
 		syms = t.Syms
 	} else {
 		b.CodeErrorf(p, "pl.cannotAssign.interface",
-			"cannot use %s as interface %s in %s, not a struct pointer",
+			"cannot use %s as interface %s in %s, "+
+				"not a struct pointer or interface",
 			right, i, in)
 		return false
 	}
@@ -91,7 +92,7 @@ func assignInterface(
 	for _, f := range funcs {
 		sym := syms.Query(f.Name())
 		if sym == nil {
-			errorf("function %s not implemented", f.Name())
+			errorf("function %s not implemented in %s", f.Name(), right)
 			continue
 		}
 		t2, ok := sym.ObjType.(*types.Func)
@@ -104,7 +105,7 @@ func assignInterface(
 		}
 		t1 := f.ObjType.(*types.Func)
 		if !types.SameType(t1, t2) {
-			errorf("func signature mismatch %q, %q", t1, t2)
+			errorf("func signature mismatch\nwant %q,\nhave %q", t1, t2)
 		}
 	}
 	return flag

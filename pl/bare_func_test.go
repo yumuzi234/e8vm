@@ -175,13 +175,13 @@ func TestBareFunc_god(t *testing.T) {
 
 	o("const a = 33; printInt(a)", "33")
 	o("const a = 33; printUint(a)", "33")
-	o("const a int; printInt(a)", "0")
 	o("const a uint = 33; printUint(a)", "33")
 	o("const a int = 33; b:=2; printInt(a+b)", "35")
 	o("const a uint = 33; printUint(a+2)", "35")
-	o("const a uint; printUint(a+2)", "2")
 	o("const ( a,b=3,4; c=a+b ); printInt(a+b+c)", "14")
 	o("const a,b=3,4; var v [a+b]int; printInt(len(v))", "7")
+	o("const n = 33; var a [n]int; printInt(a[0])", "0")
+	o("const n int= 33; var a [n]int; printInt(a[0])", "0")
 
 	o("var a []int = nil; printInt(len(a))", "0")
 	o("a := []int{}; printInt(len(a))", "0")
@@ -329,6 +329,8 @@ func TestBareFunc_bad(t *testing.T) {
 
 	// const
 	o("missingConstDefine", "const a; _:=a")
+	o("missingConstDefine", "const a uint; _:=a")
+	o("missingConstDefine", "const a int; _:=a")
 	o("cannotAssign.typeMismatch", "const a uint = 33; b:=a;printInt(b)")
 	o("invalidOp", "const a uint = 33; b:=2;printInt(a+b)")
 
