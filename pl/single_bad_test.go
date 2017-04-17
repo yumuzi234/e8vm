@@ -121,7 +121,7 @@ func TestSingleFileBad(t *testing.T) {
 		a=b}`)
 
 	o("cannotAssign.interface",
-		`interface I { t() int; }
+		`interface I { t() int }
 		 struct S { t int }
 		 func main() {var i I; var s S; i=s; _:=i}`)
 	o("cannotAssign.interface",
@@ -130,9 +130,21 @@ func TestSingleFileBad(t *testing.T) {
 		 func (s *S) t() {}
 		 func main() {var i I; var s S; i=s; _:=i}`)
 	o("cannotAssign.interface",
-		`interface I { t() int; }
+		`interface I { t() int }
 		 struct S { i int }
 		 func (s *S) a() int {}
+		 func main() {var i I; var s S; i=s; _:=i}`)
+	o("cannotAssign.interface",
+		`interface I { t() int }
+		 interface S { s() int }
+		 func main() {var i I; var s S; i=s; _:=i}`)
+	o("cannotAssign.interface",
+		`interface I { t() (int,int) }
+		 interface S { t() int }
+		 func main() {var i I; var s S; i=s; _:=i}`)
+	o("cannotAssign.interface",
+		`interface I { t(a int) }
+		 interface S { t(a,b int ) }
 		 func main() {var i I; var s S; i=s; _:=i}`)
 
 	// others
