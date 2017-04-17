@@ -24,20 +24,6 @@ func declareConst(b *builder, tok *lexing.Token, t types.T) *syms.Symbol {
 }
 
 func buildConstDecl(b *builder, d *ast.ConstDecl) *tast.Define {
-	right := buildConstExprList(b, d.Exprs)
-	if right == nil {
-		return nil
-	}
-
-	nright := right.R().Len()
-	idents := d.Idents.Idents
-	nleft := len(idents)
-	if nleft != nright {
-		b.Errorf(d.Eq.Pos, "%d values for %d identifiers",
-			nright, nleft,
-		)
-		return nil
-	}
 
 	var ret []*syms.Symbol
 	var tdest types.T
@@ -52,22 +38,48 @@ func buildConstDecl(b *builder, d *ast.ConstDecl) *tast.Define {
 			return nil
 		}
 	}
+	var right tast.Expr
+	idents := d.Idents.Idents
 
-	for i, ident := range idents {
-		t := right.R().At(i).Type()
-		if !types.IsConst(t) {
-			b.CodeErrorf(ast.ExprPos(d.Exprs.Exprs[i]), "pl.expectConstExpr",
-				"not a const")
+	if d.Eq != nil {
+		right = buildConstExprList(b, d.Exprs)
+		if right == nil {
 			return nil
 		}
-		ct, _ := t.(*types.Const)
-		if tdest != nil {
-			t = types.CastConst(ct, tdest)
+
+		nright := right.R().Len()
+		nleft := len(idents)
+		if nleft != nright {
+			b.CodeErrorf(d.Eq.Pos, "pl.cannotAssign.lengthMismatch",
+				"cannot assign(len) %s to %s; length mismatch",
+				nright, nleft)
+			return nil
 		}
-		sym := declareConst(b, ident, t)
+	}
+
+	for i, ident := range idents {
+		var sym *syms.Symbol
+		var t types.T
+		if right == nil {
+			t, _ = types.NewConstInt(0, tdest)
+		} else {
+			t = right.R().At(i).Type()
+			if !types.IsConst(t) {
+				b.CodeErrorf(ast.ExprPos(d.Exprs.Exprs[i]),
+					"pl.expectConstExpr", "not a const")
+				return nil
+			}
+			ct, _ := t.(*types.Const)
+			if tdest != nil {
+				t = types.CastConst(ct, tdest)
+			}
+		}
+
+		sym = declareConst(b, ident, t)
 		if sym == nil {
 			return nil
 		}
+
 		ret = append(ret, sym)
 	}
 	return &tast.Define{Left: ret, Right: right}

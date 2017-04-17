@@ -75,7 +75,7 @@ func buildArrayType(b *builder, expr *ast.ArrayTypeExpr) types.T {
 		return &types.Array{T: t, N: int32(v)}
 	}
 
-	// TODO: support typed const
+	// TODO(yumuzi): support typed const
 	b.Errorf(ast.ExprPos(expr), "typed const not implemented yet")
 	return nil
 }

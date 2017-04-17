@@ -38,7 +38,7 @@ func unaryOpConst(b *builder, opTok *lexing.Token, B tast.Expr) tast.Expr {
 	t := ct.Type
 	v = ct.Value.(int64)
 	if types.IsBasic(t, types.Bool) {
-		// TODO
+		// TODO(yumuzi): add const boolean
 		b.CodeErrorf(opTok.Pos, "pl.notYetSupported",
 			"const bool is not supported yet")
 		return nil
@@ -142,7 +142,7 @@ func binaryOpConst(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 	return constIntOp(b, opTok, A, B, va, vb, t)
 }
 
-// TODO: after added const bool, remove inputs of va, ab
+// TODO(yumuzi): after added const bool, remove inputs of va, ab
 func constIntOp(b *builder, opTok *lexing.Token, A, B tast.Expr,
 	va, vb int64, t types.T) tast.Expr {
 	r := func(v int64) tast.Expr {
@@ -185,7 +185,7 @@ func constIntOp(b *builder, opTok *lexing.Token, A, B tast.Expr,
 		}
 		return r(va / vb)
 	case "==", "!=", ">", "<", ">=", "<=":
-		// TODO: will change into a const bool
+		// TODO(yumuzi): will change into a const bool
 		return &tast.OpExpr{
 			A: A, Op: opTok, B: B,
 			Ref: tast.NewRef(types.Bool),

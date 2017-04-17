@@ -118,10 +118,8 @@ func buildIdent(b *builder, ident *lexing.Token) tast.Expr {
 	case tast.SymInterface:
 		ref := tast.NewRef(t)
 		return &tast.Ident{Token: ident, Ref: ref, Sym: s}
-	default:
-		b.Errorf(ident.Pos, "todo: token type: %s", tast.SymStr(s.Type))
-		return nil
 	}
+	panic("unknow token type")
 }
 
 func buildConstIdent(b *builder, ident *lexing.Token) tast.Expr {
