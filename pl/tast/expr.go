@@ -12,11 +12,16 @@ type This struct{ *Ref }
 // Const is a constant.
 type Const struct{ *Ref }
 
-// NewConst creates a new constant node.
-func NewConst(ref *Ref) *Const { return &Const{Ref: ref} }
-
-// NewConst creates a new constant node.
-func NewTypeConst(t types.T) *Const { return &Const{Ref: NewRef(t)} }
+// NewConst creates a new constant node from a const type t.
+func NewConst(t types.T) *Const {
+	if _, ok := t.(*types.Const); !ok {
+		// TODO(yumuzi234): remove this after make const bool
+		if code, ok := t.(types.Basic); !ok || code != types.Bool {
+			panic("type not a const")
+		}
+	}
+	return &Const{Ref: NewRef(t)}
+}
 
 // Type is a type expression
 type Type struct{ *Ref }

@@ -22,7 +22,7 @@ func unaryOpConst(b *builder, opTok *lexing.Token, B tast.Expr) tast.Expr {
 			return B // just shortcut this
 		case "-":
 			// a potential overflow here
-			return tast.NewConst(tast.NewRef(types.NewNumber(-v)))
+			return tast.NewConst(types.NewNumber(-v))
 		}
 		b.CodeErrorf(opTok.Pos, "pl.invalidOp",
 			"invalid operation on num const: %q on %s", op, B)
@@ -59,7 +59,7 @@ func unaryOpConst(b *builder, opTok *lexing.Token, B tast.Expr) tast.Expr {
 					"const %d overflows %q", v, t)
 				return nil
 			}
-			return tast.NewConst(tast.NewRef(ref))
+			return tast.NewConst(ref)
 		}
 		b.CodeErrorf(opTok.Pos, "pl.invalidOp",
 			"invalid operation on int const: %q on %s", op, B)
@@ -153,9 +153,9 @@ func constIntOp(b *builder, opTok *lexing.Token, A, B tast.Expr,
 					"const %d overflows %q", v, t)
 				return nil
 			}
-			return tast.NewConst(tast.NewRef(ref))
+			return tast.NewConst(ref)
 		}
-		return tast.NewConst(tast.NewRef(types.NewNumber(v)))
+		return tast.NewConst(types.NewNumber(v))
 	}
 	op := opTok.Lit
 	switch op {

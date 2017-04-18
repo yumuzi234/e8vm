@@ -57,7 +57,7 @@ func buildConstDecl(b *builder, d *ast.ConstDecl) *tast.Define {
 		pos := ast.ExprPos(d.Exprs.Exprs[i])
 		if !types.IsConst(t) {
 			b.CodeErrorf(pos, "pl.expectConstExpr",
-				"const value can only define a const, %s is not a const",
+				"const var can only define by a const, %s is not a const",
 				right.R().At(i))
 			return nil
 		}

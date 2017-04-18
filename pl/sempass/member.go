@@ -49,7 +49,7 @@ func buildConstMember(b *builder, m *ast.MemberExpr) tast.Expr {
 			b.Errorf(m.Sub.Pos, "%s.%s is not a const", pkg, m.Sub.Lit)
 			return nil
 		}
-		return tast.NewConst(tast.NewRef(s.ObjType.(types.T)))
+		return tast.NewConst((s.ObjType.(types.T)))
 	}
 
 	b.Errorf(m.Dot.Pos, "expect const expression")

@@ -79,5 +79,5 @@ func buildConstCast(b *builder, expr *ast.CallExpr, t types.T) tast.Expr {
 		b.CodeErrorf(pos, "pl.cannotCast", "cannot convert %s to %s", ref, t)
 		return nil
 	}
-	return tast.NewTypeConst(ret)
+	return tast.NewConst(ret)
 }
