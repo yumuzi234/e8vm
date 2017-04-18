@@ -117,7 +117,7 @@ func buildIdent(b *builder, ident *lexing.Token) tast.Expr {
 		ref := tast.NewRef(t)
 		return &tast.Ident{Token: ident, Ref: ref, Sym: s}
 	}
-	panic("unknow token type")
+	panic("unknown token type")
 }
 
 func buildConstIdent(b *builder, ident *lexing.Token) tast.Expr {
