@@ -24,7 +24,6 @@ func declareConst(b *builder, tok *lexing.Token, t types.T) *syms.Symbol {
 }
 
 func buildConstDecl(b *builder, d *ast.ConstDecl) *tast.Define {
-
 	var ret []*syms.Symbol
 	var tdest types.T
 	if d.Type != nil {
@@ -55,14 +54,21 @@ func buildConstDecl(b *builder, d *ast.ConstDecl) *tast.Define {
 
 	for i, ident := range idents {
 		t := right.R().At(i).Type()
+		pos := ast.ExprPos(d.Exprs.Exprs[i])
 		if !types.IsConst(t) {
-			b.CodeErrorf(ast.ExprPos(d.Exprs.Exprs[i]),
-				"pl.expectConstExpr", "not a const")
+			b.CodeErrorf(pos, "pl.expectConstExpr",
+				"const value can only define a const, %s is not a const",
+				right.R().At(i))
 			return nil
 		}
 		ct, _ := t.(*types.Const)
 		if tdest != nil {
 			t = types.CastConst(ct, tdest)
+			if t == nil {
+				b.CodeErrorf(pos, "pl.cannotCast",
+					"cannot convert %s to %s", ct, tdest)
+				return nil
+			}
 		}
 
 		sym := declareConst(b, ident, t)

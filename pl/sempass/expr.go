@@ -1,8 +1,11 @@
 package sempass
 
 import (
+	"fmt"
+
 	"shanhu.io/smlvm/pl/ast"
 	"shanhu.io/smlvm/pl/tast"
+	"shanhu.io/smlvm/pl/types"
 )
 
 func buildExpr(b *builder, expr ast.Expr) tast.Expr {
@@ -62,7 +65,18 @@ func buildConstExpr(b *builder, expr ast.Expr) tast.Expr {
 	case *ast.OpExpr:
 		return buildConstOpExpr(b, expr)
 	case *ast.CallExpr:
-		// TODO(yumuzi): support typed const cast.
+		// TODO(yumuzi234): support typed const cast.
+		fmt.Println("run~~~~")
+		f := b.buildExpr(expr.Func)
+		if f == nil {
+			return nil
+		}
+		fref := f.R()
+
+		// expr.Func must a Type
+		if t, ok := fref.T.(*types.Type); ok {
+			return buildConstCast(b, expr, t.T)
+		}
 		b.CodeErrorf(
 			ast.ExprPos(expr), "pl.notYetSupported",
 			"typed const cast not supported",

@@ -87,7 +87,7 @@ func printImportDecls(f *formatter, d *ast.ImportDecls) {
 	f.printToken(d.Lparen)
 	f.printEndl()
 	f.Tab()
-	// TODO(yumuzi): sort imports in groups
+	// TODO(yumuzi234): sort imports in groups
 	for i, decl := range d.Decls {
 		if i > 0 {
 			f.printGap()

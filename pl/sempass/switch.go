@@ -100,7 +100,7 @@ func buildCaseExpr(b *builder, m map[int64][]ast.Expr,
 	}
 	if !types.IsConst(t) {
 		e = numCast(b, pos, v, e, t)
-		// TODO(yumuzi): if both switch and case expr is a const type
+		// TODO(yumuzi234): if both switch and case expr is a const type
 	}
 	m[v] = append(m[v], c.Expr)
 

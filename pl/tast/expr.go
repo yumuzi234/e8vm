@@ -15,6 +15,9 @@ type Const struct{ *Ref }
 // NewConst creates a new constant node.
 func NewConst(ref *Ref) *Const { return &Const{Ref: ref} }
 
+// NewConst creates a new constant node.
+func NewTypeConst(t types.T) *Const { return &Const{Ref: NewRef(t)} }
+
 // Type is a type expression
 type Type struct{ *Ref }
 
