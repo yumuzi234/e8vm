@@ -24,21 +24,6 @@ func declareConst(b *builder, tok *lexing.Token, t types.T) *syms.Symbol {
 }
 
 func buildConstDecl(b *builder, d *ast.ConstDecl) *tast.Define {
-	right := buildConstExprList(b, d.Exprs)
-	if right == nil {
-		return nil
-	}
-
-	nright := right.R().Len()
-	idents := d.Idents.Idents
-	nleft := len(idents)
-	if nleft != nright {
-		b.Errorf(d.Eq.Pos, "%d values for %d identifiers",
-			nright, nleft,
-		)
-		return nil
-	}
-
 	var ret []*syms.Symbol
 	var tdest types.T
 	if d.Type != nil {
@@ -52,22 +37,45 @@ func buildConstDecl(b *builder, d *ast.ConstDecl) *tast.Define {
 			return nil
 		}
 	}
+	right := buildConstExprList(b, d.Exprs)
+	idents := d.Idents.Idents
+	if right == nil {
+		return nil
+	}
+
+	nright := right.R().Len()
+	nleft := len(idents)
+	if nleft != nright {
+		b.CodeErrorf(d.Eq.Pos, "pl.cannotAssign.lengthMismatch",
+			"cannot assign(len) %s to %s; length mismatch",
+			nright, nleft)
+		return nil
+	}
 
 	for i, ident := range idents {
 		t := right.R().At(i).Type()
+		pos := ast.ExprPos(d.Exprs.Exprs[i])
 		if !types.IsConst(t) {
-			b.CodeErrorf(ast.ExprPos(d.Exprs.Exprs[i]), "pl.expectConstExpr",
-				"not a const")
+			b.CodeErrorf(pos, "pl.expectConstExpr",
+				"const var can only define by a const, %s is not a const",
+				right.R().At(i))
 			return nil
 		}
 		ct, _ := t.(*types.Const)
 		if tdest != nil {
 			t = types.CastConst(ct, tdest)
+			if t == nil {
+				b.CodeErrorf(pos, "pl.cannotCast",
+					"cannot convert %s to %s", ct, tdest)
+				return nil
+			}
 		}
+
 		sym := declareConst(b, ident, t)
 		if sym == nil {
 			return nil
 		}
+
 		ret = append(ret, sym)
 	}
 	return &tast.Define{Left: ret, Right: right}

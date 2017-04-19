@@ -56,28 +56,34 @@ func buildArrayType(b *builder, expr *ast.ArrayTypeExpr) types.T {
 	}
 
 	ntype := n.R().T
-	if _, ok := ntype.(*types.Const); !ok {
+	ct, ok := ntype.(*types.Const)
+	var v int64
+	if !ok {
 		// might be true, false, or other builtin consts
-		b.CodeErrorf(ast.ExprPos(expr), "pl.nonConstArrayIndex",
+		b.CodeErrorf(ast.ExprPos(expr), "pl.illegalArrayIndex",
 			"array index is not a constant")
 		return nil
 	}
 
-	if v, ok := types.NumConst(ntype); ok {
-		if v < 0 {
-			b.CodeErrorf(ast.ExprPos(expr), "pl.negArrayIndex",
-				"array index is negative: %d", v)
-			return nil
-		} else if !types.InRange(v, types.Int) {
-			b.Errorf(ast.ExprPos(expr), "index out of range of int32")
-			return nil
-		}
-		return &types.Array{T: t, N: int32(v)}
+	if num, ok := types.NumConst(ntype); ok {
+		v = num
+	} else if types.IsInteger(ct.Type) {
+		v = ct.Value.(int64)
+	} else {
+		b.CodeErrorf(ast.ExprPos(expr), "pl.illegalArrayIndex",
+			"array index is not a integer")
+		return nil
 	}
-
-	// TODO: support typed const
-	b.Errorf(ast.ExprPos(expr), "typed const not implemented yet")
-	return nil
+	if v < 0 {
+		b.CodeErrorf(ast.ExprPos(expr), "pl.illegalArrayIndex",
+			"array index is negative: %d", v)
+		return nil
+	} else if !types.InRange(v, types.Int) {
+		b.CodeErrorf(ast.ExprPos(expr), "pl.illegalArrayIndex",
+			"index out of range of int32")
+		return nil
+	}
+	return &types.Array{T: t, N: int32(v)}
 }
 
 func buildPkgRef(b *builder, ident *lexing.Token) *types.Pkg {

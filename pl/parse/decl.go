@@ -69,7 +69,7 @@ func parseConstDecl(p *parser) *ast.ConstDecl {
 	if p.SeeOp("=") {
 		ret.Eq = p.Shift()
 		ret.Exprs = parseExprList(p)
-	} else if ret.Type == nil {
+	} else {
 		p.CodeErrorfHere("pl.missingConstDefine",
 			"missing value in const declaration")
 	}

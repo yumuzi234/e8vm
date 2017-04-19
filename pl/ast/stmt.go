@@ -124,16 +124,3 @@ type FallthroughStmt struct{ Kw, Semi *lexing.Token }
 type EmptyStmt struct {
 	Semi *lexing.Token
 }
-
-// SwitchStmt is a case switching statement
-// switch expr {
-//    case ..:
-//    case ..:
-// }
-// TODO:
-/*
-type SwitchStmt struct {
-	Kw   *lex8.Token
-	Semi *lex8.Token
-}
-*/

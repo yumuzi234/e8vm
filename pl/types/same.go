@@ -176,7 +176,7 @@ func BothSlice(t1, t2 T) bool {
 
 // CastConst checks if a const can be used to define a const with type T.
 // and return the Const type
-func CastConst(ct *Const, t T) *Const {
+func CastConst(ct *Const, t T) T {
 	if SameType(t, ct.Type) {
 		return &Const{Value: ct.Value, Type: t}
 	}

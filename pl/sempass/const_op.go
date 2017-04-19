@@ -22,7 +22,7 @@ func unaryOpConst(b *builder, opTok *lexing.Token, B tast.Expr) tast.Expr {
 			return B // just shortcut this
 		case "-":
 			// a potential overflow here
-			return tast.NewConst(tast.NewRef(types.NewNumber(-v)))
+			return tast.NewConst(types.NewNumber(-v))
 		}
 		b.CodeErrorf(opTok.Pos, "pl.invalidOp",
 			"invalid operation on num const: %q on %s", op, B)
@@ -38,7 +38,7 @@ func unaryOpConst(b *builder, opTok *lexing.Token, B tast.Expr) tast.Expr {
 	t := ct.Type
 	v = ct.Value.(int64)
 	if types.IsBasic(t, types.Bool) {
-		// TODO
+		// TODO(yumuzi234): add const boolean
 		b.CodeErrorf(opTok.Pos, "pl.notYetSupported",
 			"const bool is not supported yet")
 		return nil
@@ -59,7 +59,7 @@ func unaryOpConst(b *builder, opTok *lexing.Token, B tast.Expr) tast.Expr {
 					"const %d overflows %q", v, t)
 				return nil
 			}
-			return tast.NewConst(tast.NewRef(ref))
+			return tast.NewConst(ref)
 		}
 		b.CodeErrorf(opTok.Pos, "pl.invalidOp",
 			"invalid operation on int const: %q on %s", op, B)
@@ -142,7 +142,7 @@ func binaryOpConst(b *builder, opTok *lexing.Token, A, B tast.Expr) tast.Expr {
 	return constIntOp(b, opTok, A, B, va, vb, t)
 }
 
-// TODO: after added const bool, remove inputs of va, ab
+// TODO(yumuzi234): after added const bool, remove inputs of va, ab
 func constIntOp(b *builder, opTok *lexing.Token, A, B tast.Expr,
 	va, vb int64, t types.T) tast.Expr {
 	r := func(v int64) tast.Expr {
@@ -153,9 +153,9 @@ func constIntOp(b *builder, opTok *lexing.Token, A, B tast.Expr,
 					"const %d overflows %q", v, t)
 				return nil
 			}
-			return tast.NewConst(tast.NewRef(ref))
+			return tast.NewConst(ref)
 		}
-		return tast.NewConst(tast.NewRef(types.NewNumber(v)))
+		return tast.NewConst(types.NewNumber(v))
 	}
 	op := opTok.Lit
 	switch op {
@@ -185,7 +185,7 @@ func constIntOp(b *builder, opTok *lexing.Token, A, B tast.Expr,
 		}
 		return r(va / vb)
 	case "==", "!=", ">", "<", ">=", "<=":
-		// TODO: will change into a const bool
+		// TODO(yumuzi234): will change into a const bool
 		return &tast.OpExpr{
 			A: A, Op: opTok, B: B,
 			Ref: tast.NewRef(types.Bool),

@@ -33,7 +33,7 @@ func buildCast(b *builder, expr *ast.CallExpr, t types.T) tast.Expr {
 
 	ref := args.R()
 	if !ref.IsSingle() {
-		b.Errorf(pos, "cannot convert %s to %s", ref, t)
+		b.CodeErrorf(pos, "pl.cannotCast", "cannot convert %s to %s", ref, t)
 		return nil
 	}
 
@@ -57,4 +57,27 @@ func buildCast(b *builder, expr *ast.CallExpr, t types.T) tast.Expr {
 
 	b.Errorf(pos, "cannot convert from %s to %s", srcType, t)
 	return nil
+}
+
+func buildConstCast(b *builder, expr *ast.CallExpr, t types.T) tast.Expr {
+	pos := expr.Lparen.Pos
+
+	args := buildConstExprList(b, expr.Args)
+	if args == nil {
+		return nil
+	}
+
+	ref := args.R()
+	if !ref.IsSingle() {
+		b.CodeErrorf(pos, "pl.cannotCast", "cannot convert %s to %s", ref, t)
+		return nil
+	}
+
+	srcType := args.Type().(*types.Const)
+	ret := types.CastConst(srcType, t)
+	if ret == nil {
+		b.CodeErrorf(pos, "pl.cannotCast", "cannot convert %s to %s", ref, t)
+		return nil
+	}
+	return tast.NewConst(ret)
 }
