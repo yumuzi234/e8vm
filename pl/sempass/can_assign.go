@@ -105,7 +105,7 @@ func assignInterface(
 		}
 		t1 := f.ObjType.(*types.Func)
 		if !types.SameType(t1, t2) {
-			errorf("func signature mismatch\nwant %q,\nhave %q", t1, t2)
+			errorf("function mismatch, want %q, have %q", t1, t2)
 		}
 	}
 	return flag

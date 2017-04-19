@@ -181,7 +181,7 @@ func TestBareFunc_god(t *testing.T) {
 	o("const ( a,b=3,4; c=a+b ); printInt(a+b+c)", "14")
 	o("const a,b=3,4; var v [a+b]int; printInt(len(v))", "7")
 	o("const n = 33; var a [n]int; printInt(a[0])", "0")
-	o("const n int= 33; var a [n]int; printInt(a[0])", "0")
+	o("const n int = 33; var a [n]int; printInt(a[0])", "0")
 	o("const a = int(3); printInt(a)", "3")
 
 	o("var a []int = nil; printInt(len(a))", "0")
