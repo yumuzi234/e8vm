@@ -49,6 +49,33 @@ func (g *Graph) Remove(node string) *Graph {
 	return &Graph{Nodes: ret}
 }
 
+// SubGraph returns a sub graph of the current graph, which
+// only contains nodes that passes the filter.
+func (g *Graph) SubGraph(f func(string) bool) *Graph {
+	hits := make(map[string]bool)
+	for k := range g.Nodes {
+		if f(k) {
+			hits[k] = true
+		}
+	}
+
+	ret := make(map[string][]string)
+	for k, vs := range g.Nodes {
+		if !hits[k] {
+			continue
+		}
+		var outs []string
+		for _, v := range vs {
+			if !hits[v] {
+				continue
+			}
+			outs = append(outs, v)
+		}
+		ret[k] = outs
+	}
+	return &Graph{Nodes: ret}
+}
+
 // Rename renames the name of each node in the graph
 func (g *Graph) Rename(f func(string) (string, error)) (*Graph, error) {
 	if f == nil {
