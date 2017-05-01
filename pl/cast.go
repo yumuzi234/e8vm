@@ -5,6 +5,7 @@ import (
 	"shanhu.io/smlvm/pl/codegen"
 	"shanhu.io/smlvm/pl/tast"
 	"shanhu.io/smlvm/pl/types"
+	"shanhu.io/smlvm/syms"
 )
 
 func isPointerType(t types.T) bool {
@@ -62,7 +63,17 @@ func buildCast(b *builder, from *ref, t types.T) *ref {
 		return ret
 	}
 
-	if _, ok := t.(*types.Interface); ok {
+	if i, ok := t.(*types.Interface); ok {
+		if p, ok := from.Type().(*types.Pointer); ok {
+			s := p.T.(*types.Struct)
+			if b.vTable[s] == nil {
+				funcMap := make(map[*syms.Symbol]*ref)
+				b.vTable[s] = funcMap
+			}
+			for _, sym := range i.Syms.List() {
+				b.vTable[s][sym] = from
+			}
+		}
 		b.CodeErrorf(nil, "pl.notYetSupported", "interface not supported yet")
 		return from
 	}

@@ -174,7 +174,6 @@ func buildPkg(
 	if errs != nil {
 		return nil, nil, nil, errs
 	}
-
 	fillConsts(res.Consts)
 	fillVars(b, res.Vars)
 	fillFuncAlias(res.FuncAliases)
@@ -190,5 +189,14 @@ func buildPkg(
 	}
 
 	errs = b.Errs()
+	if len(b.vTable) != 0 {
+		fmt.Printf("pkg path = %s\n", pinfo.Path)
+		for s, m := range b.vTable {
+			fmt.Printf("struct %s, funcs insluding:\n", s.String())
+			for sym := range m {
+				fmt.Println(sym.Name())
+			}
+		}
+	}
 	return tops, depGraph, testNames, errs
 }

@@ -31,6 +31,8 @@ type builder struct {
 	stmtFunc func(b *builder, stmt tast.Stmt)
 
 	anonyCount int // count for "_"
+
+	vTable map[*types.Struct]map[*syms.Symbol]*ref
 }
 
 func newBuilder(path string) *builder {
@@ -43,6 +45,8 @@ func newBuilder(path string) *builder {
 
 		continues: newBlockStack(),
 		breaks:    newBlockStack(),
+
+		vTable: make(map[*types.Struct]map[*syms.Symbol]*ref),
 	}
 }
 
