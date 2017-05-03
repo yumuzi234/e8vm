@@ -223,7 +223,7 @@ func (m *Machine) LoadSections(secs []*image.Section) error {
 	return nil
 }
 
-// LoadImage loads an e8 image into the machine.
+// LoadImage loads an smlvm image into the machine.
 func (m *Machine) LoadImage(r io.ReadSeeker) error {
 	secs, err := image.Read(r)
 	if err != nil {
@@ -232,7 +232,7 @@ func (m *Machine) LoadImage(r io.ReadSeeker) error {
 	return m.LoadSections(secs)
 }
 
-// LoadImageBytes loads an e8 image in bytes into the machine.
+// LoadImageBytes loads an smlvm image in bytes into the machine.
 func (m *Machine) LoadImageBytes(bs []byte) error {
 	return m.LoadImage(bytes.NewReader(bs))
 }
