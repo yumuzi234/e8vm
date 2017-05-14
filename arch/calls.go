@@ -84,6 +84,7 @@ func (c *calls) system(ctrl uint8, in []byte, respSize int) (
 			return c.sleep(in)
 		}
 
+		// service event queue
 		if c.queue.Len() > 0 {
 			front := c.queue.Front()
 			m := front.Value.(*callsMessage)
@@ -96,6 +97,7 @@ func (c *calls) system(ctrl uint8, in []byte, respSize int) (
 			return m.p, 0, nil
 		}
 
+		// incoming packet queue
 		front := c.pqueue.Front()
 		p := front.Value.([]byte)
 		if len(p) > respSize {
