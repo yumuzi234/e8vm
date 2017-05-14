@@ -3,8 +3,13 @@ package net
 import (
 	"encoding/binary"
 	"errors"
-	"fmt"
 )
+
+// Header structure
+type Header struct {
+	Dest IPPort
+	Src  IPPort
+}
 
 const (
 	headerLen      = 16
@@ -13,6 +18,8 @@ const (
 	srcIPOffset    = 8
 	destPortOffset = 12
 	srcPortOffset  = 14
+
+	mtu = 1500
 )
 
 var coding = binary.BigEndian
@@ -20,6 +27,13 @@ var coding = binary.BigEndian
 func checkHeaderLen(p []byte) error {
 	if len(p) < headerLen {
 		return errors.New("incomplete header")
+	}
+	return nil
+}
+
+func checkLen(p []byte) error {
+	if len(p) > mtu {
+		return errors.New("packet too large")
 	}
 	return nil
 }
@@ -34,11 +48,28 @@ func DestIP(p []byte) (uint32, error) {
 	return dest, nil
 }
 
-// AddrStr returns the IPv4 representation of the given IP address.
-func AddrStr(addr uint32) string {
-	b0 := addr & 0xff
-	b1 := (addr >> 8) & 0xff
-	b2 := (addr >> 16) & 0xff
-	b3 := (addr >> 24) & 0xff
-	return fmt.Sprintf("%d.%d.%d.%d", b3, b2, b1, b0)
+// FillHeader fills the packet with the given header.
+func FillHeader(p []byte, h *Header) error {
+	if err := checkHeaderLen(p); err != nil {
+		return err
+	}
+
+	if err := checkLen(p); err != nil {
+		return err
+	}
+
+	u16 := func(offset int, v uint16) {
+		coding.PutUint16(p[offset:offset+2], v)
+	}
+	u32 := func(offset int, v uint32) {
+		coding.PutUint32(p[offset:offset+4], v)
+	}
+
+	n := uint16(len(p))
+	u16(lenOffset, n)
+	u32(destIPOffset, h.Dest.IP)
+	u32(srcIPOffset, h.Src.IP)
+	u16(destPortOffset, h.Dest.Port)
+	u16(srcPortOffset, h.Src.Port)
+	return nil
 }
