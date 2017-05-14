@@ -26,8 +26,8 @@ func (r *Router) SetRoute(dest uint32, h Handler) {
 	r.hs[dest] = h
 }
 
-// Handle routes the packet out based on the destination address.
-func (r *Router) Handle(p []byte) error {
+// HandlePacket routes the packet out based on the destination address.
+func (r *Router) HandlePacket(p []byte) error {
 	dest, err := DestIP(p)
 	if err != nil {
 		return err
@@ -37,5 +37,5 @@ func (r *Router) Handle(p []byte) error {
 	if !found {
 		return fmt.Errorf("destination %s not found", AddrStr(dest))
 	}
-	return h.Handle(p)
+	return h.HandlePacket(p)
 }

@@ -217,6 +217,11 @@ func (m *Machine) LoadImageBytes(bs []byte) error {
 	return m.LoadImage(bytes.NewReader(bs))
 }
 
+// HandlePacket handles an incoming packet.
+func (m *Machine) HandlePacket(p []byte) error {
+	return m.calls.HandlePacket(p)
+}
+
 // PrintCoreStatus prints the cpu statuses.
 func (m *Machine) PrintCoreStatus() { m.cores.PrintStatus() }
 
