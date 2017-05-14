@@ -87,7 +87,7 @@ func debugSection(secs []*image.Section) *image.Section {
 // FprintStack prints the stack trace of a machine from its exception
 // and registers.
 func FprintStack(w io.Writer, m *Machine, excep *CoreExcep) error {
-	sec := debugSection(m.Sections)
+	sec := debugSection(m.sections)
 	if sec == nil {
 		return errors.New("debug section not found")
 	}

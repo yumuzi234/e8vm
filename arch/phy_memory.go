@@ -1,6 +1,7 @@
 package arch
 
 import (
+	"io"
 	"math"
 )
 
@@ -106,5 +107,29 @@ func (pm *phyMemory) WriteU32(addr uint32, v uint32) *Excep {
 		return e
 	}
 	p.WriteU32(addr, v)
+	return nil
+}
+
+func (pm *phyMemory) writeBytes(r io.Reader, offset uint32) error {
+	start := offset % PageSize
+	pageBuf := make([]byte, PageSize)
+	pn := offset / PageSize
+	for {
+		p := pm.Page(pn)
+		if p == nil {
+			return newOutOfRange(offset)
+		}
+
+		buf := pageBuf[:PageSize-start]
+		n, err := r.Read(buf)
+		if err == io.EOF {
+			break
+		}
+
+		p.WriteAt(buf[:n], start)
+		start = 0
+		pn++
+	}
+
 	return nil
 }
