@@ -21,7 +21,11 @@ func newMultiCore(n int, mem *phyMemory, c *calls, i inst) *multiCore {
 	ret.phyMem = mem
 
 	for ind := range ret.cores {
-		ret.cores[ind] = newCPU(mem, c, i, byte(ind))
+		var thisCalls *calls
+		if ind == 0 {
+			thisCalls = c
+		}
+		ret.cores[ind] = newCPU(mem, thisCalls, i, byte(ind))
 	}
 
 	return ret
