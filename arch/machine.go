@@ -267,6 +267,4 @@ func (m *Machine) SleepTime() (time.Duration, bool) {
 
 // HasPending checks if the machine has pending messages that are not
 // delivered.
-func (m *Machine) HasPending() bool {
-	return m.calls.queueLen() > 0
-}
+func (m *Machine) HasPending() bool { return m.calls.hasPending() }

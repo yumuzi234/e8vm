@@ -218,7 +218,9 @@ func (c *calls) sleepTime() (time.Duration, bool) {
 	return c.sleepDur, c.timedSleep
 }
 
-func (c *calls) queueLen() int { return c.queue.Len() }
+func (c *calls) hasPending() bool {
+	return c.queue.Len() > 0 || c.pqueue.Len() > 0
+}
 
 func (c *calls) HandlePacket(p []byte) error {
 	c.pqueue.PushBack(p)
