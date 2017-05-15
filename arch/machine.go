@@ -22,7 +22,6 @@ type Machine struct {
 	clicks   *devs.ScreenClicks
 	screen   *devs.Screen
 	table    *devs.Table
-	dialog   *devs.Dialog
 	keyboard *devs.Keyboard
 	rand     *devs.Rand
 	ticker   *ticker
@@ -90,12 +89,6 @@ func NewMachine(c *Config) *Machine {
 		t := devs.NewTable(c.Table, m.calls.sender(serviceTable))
 		m.table = t
 		m.calls.register(serviceTable, t) // hook vpc all
-	}
-
-	if c.Dialog != nil {
-		d := devs.NewDialog(c.Dialog, m.calls.sender(serviceDialog))
-		m.dialog = d
-		m.calls.register(serviceDialog, d)
 	}
 
 	m.keyboard = devs.NewKeyboard(m.calls.sender(serviceKeyboard))
@@ -243,14 +236,6 @@ func (m *Machine) Click(line, col uint8) {
 
 // KeyDown sends in a key down event.
 func (m *Machine) KeyDown(code uint8) { m.keyboard.KeyDown(code) }
-
-// Choose sends in a user input choice.
-func (m *Machine) Choose(index uint8) {
-	if m.dialog == nil {
-		return
-	}
-	m.dialog.Choose(index)
-}
 
 // ClickTable sends a click on the table at the particular location.
 func (m *Machine) ClickTable(what string, pos uint8) {
