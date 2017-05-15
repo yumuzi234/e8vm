@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"shanhu.io/smlvm/arch/devs"
+	"shanhu.io/smlvm/net"
 )
 
 // Config contains config for constructing a machine
@@ -13,6 +14,7 @@ type Config struct {
 	Ncore   int
 
 	Output   io.Writer
+	Net      net.Handler
 	Screen   devs.ScreenRender
 	Table    devs.Sender
 	Dialog   devs.Sender

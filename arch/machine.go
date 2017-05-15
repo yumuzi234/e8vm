@@ -56,7 +56,7 @@ func NewMachine(c *Config) *Machine {
 	m := new(Machine)
 	m.phyMem = newPhyMemory(c.MemSize)
 	m.inst = new(instArch8)
-	m.calls = newCalls(m.phyMem.Page(pageRPC), m.phyMem)
+	m.calls = newCalls(m.phyMem.Page(pageRPC), m.phyMem, c.Net)
 	m.cores = newMultiCore(c.Ncore, m.phyMem, m.calls, m.inst)
 
 	// hook-up devices

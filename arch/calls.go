@@ -2,9 +2,11 @@ package arch
 
 import (
 	"container/list"
+	"log"
 	"time"
 
 	"shanhu.io/smlvm/arch/devs"
+	"shanhu.io/smlvm/net"
 )
 
 const (
@@ -28,18 +30,20 @@ type calls struct {
 	enabled  map[uint32]bool
 	queue    *list.List
 	pqueue   *list.List
+	net      net.Handler
 
 	timedSleep bool
 	sleepDur   time.Duration
 }
 
-func newCalls(p *page, mem *phyMemory) *calls {
+func newCalls(p *page, mem *phyMemory, h net.Handler) *calls {
 	return &calls{
 		p:        &pageOffset{p, 0},
 		mem:      mem,
 		services: make(map[uint32]devs.Service),
 		queue:    list.New(),
 		pqueue:   list.New(),
+		net:      h,
 	}
 }
 
@@ -103,9 +107,21 @@ func (c *calls) system(ctrl uint8, in []byte, respSize int) (
 		if len(p) > respSize {
 			return nil, devs.ErrSmallBuf, nil
 		}
-		c.queue.Remove(front)
+		c.pqueue.Remove(front)
 		c.p.writeU32(callsService, 0) // a network packet
 		return p, 0, nil
+	case 2: // send packet out
+		if c.net == nil {
+			return nil, devs.ErrInvalidArg, nil
+		}
+
+		err := c.net.HandlePacket(in)
+		if err != nil {
+			log.Println(err)
+			return nil, devs.ErrInternal, nil
+		}
+
+		return nil, 0, nil
 	}
 
 	return nil, devs.ErrInvalidArg, nil
@@ -139,8 +155,8 @@ func (c *calls) respSize() int {
 }
 
 func (c *calls) invoke() *Excep {
-	control := c.p.readU8(callsControl)
-	if control == 0 {
+	ctrl := c.p.readU8(callsControl)
+	if ctrl == 0 {
 		return nil
 	}
 
@@ -162,7 +178,7 @@ func (c *calls) invoke() *Excep {
 	}
 
 	respSize := c.respSize()
-	resp, code, exp := c.call(control, service, req, respSize)
+	resp, code, exp := c.call(ctrl, service, req, respSize)
 	if exp != nil {
 		return exp
 	}
