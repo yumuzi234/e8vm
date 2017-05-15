@@ -2,25 +2,14 @@ package devs
 
 // Table is a virtual card table device.
 type Table struct {
-	out Sender
-	in  Sender
+	in Sender
 }
 
 // NewTable creates a new virtual card table device.
-func NewTable(out, in Sender) *Table {
+func NewTable(in Sender) *Table {
 	return &Table{
-		out: out,
-		in:  in,
+		in: in,
 	}
-}
-
-// Handle handles an incoming VPC.
-func (t *Table) Handle(req []byte) ([]byte, int32) {
-	if t.out == nil {
-		return nil, 0
-	}
-	t.out.Send(req)
-	return nil, 0
 }
 
 func whatCode(what string) uint8 {

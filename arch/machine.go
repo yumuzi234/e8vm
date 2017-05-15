@@ -85,12 +85,7 @@ func NewMachine(c *Config) *Machine {
 		m.calls.register(serviceScreen, s)
 	}
 
-	if c.Table != nil {
-		t := devs.NewTable(c.Table, m.calls.sender(serviceTable))
-		m.table = t
-		m.calls.register(serviceTable, t) // hook vpc all
-	}
-
+	m.table = devs.NewTable(m.calls.sender(serviceTable))
 	m.keyboard = devs.NewKeyboard(m.calls.sender(serviceKeyboard))
 
 	sys := m.phyMem.Page(pageSysInfo)
