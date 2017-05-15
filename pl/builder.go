@@ -32,7 +32,48 @@ type builder struct {
 
 	anonyCount int // count for "_"
 
-	vTable map[*types.Struct]map[*syms.Symbol]*ref
+	InterfaceRouter map[*types.Interface]*Table
+}
+
+// Table is the virtual table to implement the interface
+type Table struct {
+	// size is the number of funcs
+	size  int
+	funcs []string
+	// will change it to *ref
+	implementMap map[*types.Struct][]*syms.Symbol
+}
+
+// TODO (yumuzi234):
+// table generated for the same interface from different packages may differ?
+func newTable(i *types.Interface) *Table {
+	n := len(i.Syms.List())
+	m := make([]string, n)
+	for n, sym := range i.Syms.List() {
+		m[n] = sym.Name()
+	}
+	return &Table{
+		size:         n,
+		funcs:        m,
+		implementMap: make(map[*types.Struct][]*syms.Symbol),
+	}
+}
+
+func (b *builder) newImplement(i *types.Interface, s *ref) {
+	t := b.InterfaceRouter[i]
+	if t == nil {
+		t = newTable(i)
+		b.InterfaceRouter[i] = t
+	}
+	sType := types.PointerOf(s.Type()).(*types.Struct)
+	if t.implementMap[sType] == nil {
+		slice := make([]*syms.Symbol, t.size)
+		for i, funcName := range t.funcs {
+			// check how to change []*Symbol to []*ref
+			slice[i] = sType.Syms.Query(funcName)
+		}
+		t.implementMap[sType] = slice
+	}
 }
 
 func newBuilder(path string) *builder {
@@ -46,7 +87,7 @@ func newBuilder(path string) *builder {
 		continues: newBlockStack(),
 		breaks:    newBlockStack(),
 
-		vTable: make(map[*types.Struct]map[*syms.Symbol]*ref),
+		InterfaceRouter: make(map[*types.Interface]*Table),
 	}
 }
 

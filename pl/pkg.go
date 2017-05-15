@@ -189,14 +189,23 @@ func buildPkg(
 	}
 
 	errs = b.Errs()
-	if len(b.vTable) != 0 {
+	router := b.InterfaceRouter
+	if len(router) != 0 {
 		fmt.Printf("pkg path = %s\n", pinfo.Path)
-		for s, m := range b.vTable {
-			fmt.Printf("struct %s, funcs insluding:\n", s.String())
-			for sym := range m {
-				fmt.Println(sym.Name())
+		for i, table := range router {
+			fmt.Printf("interface %s, funcs insluding:\n", i.String())
+			for _, name := range table.funcs {
+				fmt.Printf("\t%s\n", name)
+			}
+			fmt.Println("implemented by:")
+			for r, refs := range table.implementMap {
+				fmt.Printf("\t%s\n", r.String())
+				for _, method := range refs {
+					fmt.Printf("\t\t%s\n\n", method.Name())
+				}
 			}
 		}
+		fmt.Println("vTable done!!")
 	}
 	return tops, depGraph, testNames, errs
 }
