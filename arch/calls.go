@@ -2,9 +2,11 @@ package arch
 
 import (
 	"container/list"
+	"log"
 	"time"
 
 	"shanhu.io/smlvm/arch/devs"
+	"shanhu.io/smlvm/net"
 )
 
 const (
@@ -27,17 +29,21 @@ type calls struct {
 	services map[uint32]devs.Service
 	enabled  map[uint32]bool
 	queue    *list.List
+	pqueue   *list.List
+	net      net.Handler
 
 	timedSleep bool
-	sleep      time.Duration
+	sleepDur   time.Duration
 }
 
-func newCalls(p *page, mem *phyMemory) *calls {
+func newCalls(p *page, mem *phyMemory, h net.Handler) *calls {
 	return &calls{
 		p:        &pageOffset{p, 0},
 		mem:      mem,
 		services: make(map[uint32]devs.Service),
 		queue:    list.New(),
+		pqueue:   list.New(),
+		net:      h,
 	}
 }
 
@@ -52,41 +58,70 @@ func (c *calls) register(id uint32, s devs.Service) {
 	c.services[id] = s
 }
 
+func (c *calls) sleep(in []byte) ([]byte, int32, *Excep) {
+	if len(in) == 0 {
+		c.timedSleep = false
+		return nil, devs.ErrInternal, errSleep // we will execute again
+	}
+	if len(in) != 8 {
+		return nil, devs.ErrInvalidArg, nil
+	}
+
+	// first time executing sleep.
+	if !c.timedSleep {
+		c.timedSleep = true
+		c.sleepDur = time.Duration(Endian.Uint64(in[:8]))
+		return nil, devs.ErrInternal, errSleep
+	}
+
+	// second time, timeout, waking up.
+	c.timedSleep = false
+	return nil, devs.ErrTimeout, nil
+}
+
 func (c *calls) system(ctrl uint8, in []byte, respSize int) (
 	[]byte, int32, *Excep,
 ) {
 	switch ctrl {
 	case 1: // poll message
-		if c.queue.Len() == 0 {
-			if len(in) == 0 {
-				c.timedSleep = false
-				return nil, devs.ErrInternal, errSleep // we will execute again
-			}
-			if len(in) != 8 {
-				return nil, devs.ErrInvalidArg, nil
-			}
-
-			// first time executing sleep.
-			if !c.timedSleep {
-				c.timedSleep = true
-				c.sleep = time.Duration(Endian.Uint64(in[:8]))
-				return nil, devs.ErrInternal, errSleep
-			}
-
-			// second time, timeout, waking up.
-			c.timedSleep = false
-			return nil, devs.ErrTimeout, nil
+		if c.queue.Len() == 0 && c.pqueue.Len() == 0 {
+			return c.sleep(in)
 		}
 
-		front := c.queue.Front()
-		m := front.Value.(*callsMessage)
-		if len(m.p) > respSize {
+		// service event queue
+		if c.queue.Len() > 0 {
+			front := c.queue.Front()
+			m := front.Value.(*callsMessage)
+			if len(m.p) > respSize {
+				return nil, devs.ErrSmallBuf, nil
+			}
+
+			c.queue.Remove(front)
+			c.p.writeU32(callsService, m.service) // overwrite the service
+			return m.p, 0, nil
+		}
+
+		// incoming packet queue
+		front := c.pqueue.Front()
+		p := front.Value.([]byte)
+		if len(p) > respSize {
 			return nil, devs.ErrSmallBuf, nil
 		}
+		c.pqueue.Remove(front)
+		c.p.writeU32(callsService, 0) // a network packet
+		return p, 0, nil
+	case 2: // send packet out
+		if c.net == nil {
+			return nil, devs.ErrInvalidArg, nil
+		}
 
-		c.queue.Remove(front)
-		c.p.writeU32(callsService, m.service) // overwrite the service
-		return m.p, 0, nil
+		err := c.net.HandlePacket(in)
+		if err != nil {
+			log.Println(err)
+			return nil, devs.ErrInternal, nil
+		}
+
+		return nil, 0, nil
 	}
 
 	return nil, devs.ErrInvalidArg, nil
@@ -120,8 +155,8 @@ func (c *calls) respSize() int {
 }
 
 func (c *calls) invoke() *Excep {
-	control := c.p.readU8(callsControl)
-	if control == 0 {
+	ctrl := c.p.readU8(callsControl)
+	if ctrl == 0 {
 		return nil
 	}
 
@@ -143,7 +178,7 @@ func (c *calls) invoke() *Excep {
 	}
 
 	respSize := c.respSize()
-	resp, code, exp := c.call(control, service, req, respSize)
+	resp, code, exp := c.call(ctrl, service, req, respSize)
 	if exp != nil {
 		return exp
 	}
@@ -180,7 +215,12 @@ func (c *calls) invoke() *Excep {
 }
 
 func (c *calls) sleepTime() (time.Duration, bool) {
-	return c.sleep, c.timedSleep
+	return c.sleepDur, c.timedSleep
 }
 
 func (c *calls) queueLen() int { return c.queue.Len() }
+
+func (c *calls) HandlePacket(p []byte) error {
+	c.pqueue.PushBack(p)
+	return nil
+}

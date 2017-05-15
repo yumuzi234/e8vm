@@ -32,7 +32,7 @@ func fmtFile(fname string) (bool, error) {
 		return false, nil
 	}
 
-	tempfile, e := ioutil.TempFile(tempDir, "e8fmt")
+	tempfile, e := ioutil.TempFile(tempDir, "gfmt")
 	if e != nil {
 		return false, e
 	}

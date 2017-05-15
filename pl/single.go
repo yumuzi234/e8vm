@@ -49,7 +49,7 @@ func buildMainPkg(
 		return nil, errs, nil
 	}
 
-	ok, err := out.HasFile("bin/main.e8")
+	ok, err := out.HasFile("bin/main.bin")
 	if err != nil {
 		return nil, lexing.SingleErr(err), nil
 	}
@@ -57,7 +57,7 @@ func buildMainPkg(
 		return nil, lexing.SingleCodeErr("pl.missingMainFunc", err), nil
 	}
 
-	image, err = out.Read("bin/main.e8")
+	image, err = out.Read("bin/main.bin")
 	if err != nil {
 		return nil, lexing.SingleErr(err), nil
 	}

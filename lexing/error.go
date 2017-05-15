@@ -23,6 +23,27 @@ func (e *Error) Error() string {
 	)
 }
 
+// JSON returns a JSON marshable object of the error.
+func (e *Error) JSON() interface{} {
+	var ret struct {
+		File string `json:"file"`
+		Line int    `json:"line"`
+		Col  int    `json:"col"`
+		Code string `json:"code"`
+		Err  string `json:"err"`
+	}
+
+	pos := e.Pos
+	if pos != nil {
+		ret.File = pos.File
+		ret.Line = pos.Line
+		ret.Col = pos.Col
+	}
+	ret.Code = e.Code
+	ret.Err = e.Err.Error()
+	return ret
+}
+
 // CodeErrorf creates a lex8.Error with ErrCode
 func CodeErrorf(c string, f string, args ...interface{}) *Error {
 	e := fmt.Errorf(f, args...)

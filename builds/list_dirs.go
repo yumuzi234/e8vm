@@ -28,5 +28,15 @@ func listDirs(in Input, p string, lst []string) ([]string, error) {
 // ListDirs lists all directories and sub directories under a path, including
 // this path.
 func ListDirs(in Input, p string) ([]string, error) {
-	return listDirs(in, p, nil)
+	has, err := in.HasDir(p)
+	if err != nil {
+		return nil, err
+	}
+	if !has {
+		return nil, nil
+	}
+
+	var ret []string
+	ret = append(ret, p)
+	return listDirs(in, p, ret)
 }

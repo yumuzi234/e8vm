@@ -8,12 +8,12 @@ go:
 
 install:
     - go get ./...
-    - go get shanhu.io/tools/cmd/e8chk
+    - go get shanhu.io/tools/cmd/smlchk
     - go get github.com/golang/lint/golint
 
 script:
     - test -z `gofmt -s -l .`
     - go test ./...
-    - e8chk -path="shanhu.io/smlvm"
+    - smlchk -path="shanhu.io/smlvm"
     - golint ./...
     - go vet ./...

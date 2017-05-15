@@ -31,7 +31,7 @@ type Machine struct {
 	cores *multiCore
 
 	// Sections that are loaded into the machine
-	Sections []*image.Section
+	sections []*image.Section
 }
 
 // Default SP settings.
@@ -56,7 +56,7 @@ func NewMachine(c *Config) *Machine {
 	m := new(Machine)
 	m.phyMem = newPhyMemory(c.MemSize)
 	m.inst = new(instArch8)
-	m.calls = newCalls(m.phyMem.Page(pageRPC), m.phyMem)
+	m.calls = newCalls(m.phyMem.Page(pageRPC), m.phyMem, c.Net)
 	m.cores = newMultiCore(c.Ncore, m.phyMem, m.calls, m.inst)
 
 	// hook-up devices
@@ -168,27 +168,7 @@ func (m *Machine) Run(nticks int) (int, *CoreExcep) {
 
 // WriteBytes write a byte buffer to the memory at a particular offset.
 func (m *Machine) WriteBytes(r io.Reader, offset uint32) error {
-	start := offset % PageSize
-	pageBuf := make([]byte, PageSize)
-	pn := offset / PageSize
-	for {
-		p := m.phyMem.Page(pn)
-		if p == nil {
-			return newOutOfRange(offset)
-		}
-
-		buf := pageBuf[:PageSize-start]
-		n, err := r.Read(buf)
-		if err == io.EOF {
-			break
-		}
-
-		p.WriteAt(buf[:n], start)
-		start = 0
-		pn++
-	}
-
-	return nil
+	return m.phyMem.writeBytes(r, offset)
 }
 
 func (m *Machine) randSeed(s int64) {
@@ -218,12 +198,12 @@ func (m *Machine) LoadSections(secs []*image.Section) error {
 	if pc, found := image.CodeStart(secs); found {
 		m.cores.setPC(pc)
 	}
-	m.Sections = secs
+	m.sections = secs
 
 	return nil
 }
 
-// LoadImage loads an e8 image into the machine.
+// LoadImage loads an smlvm image into the machine.
 func (m *Machine) LoadImage(r io.ReadSeeker) error {
 	secs, err := image.Read(r)
 	if err != nil {
@@ -232,9 +212,14 @@ func (m *Machine) LoadImage(r io.ReadSeeker) error {
 	return m.LoadSections(secs)
 }
 
-// LoadImageBytes loads an e8 image in bytes into the machine.
+// LoadImageBytes loads an smlvm image in bytes into the machine.
 func (m *Machine) LoadImageBytes(bs []byte) error {
 	return m.LoadImage(bytes.NewReader(bs))
+}
+
+// HandlePacket handles an incoming packet.
+func (m *Machine) HandlePacket(p []byte) error {
+	return m.calls.HandlePacket(p)
 }
 
 // PrintCoreStatus prints the cpu statuses.
