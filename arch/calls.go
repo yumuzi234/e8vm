@@ -29,7 +29,6 @@ type calls struct {
 	services map[uint32]devs.Service
 	enabled  map[uint32]bool
 	queue    *list.List
-	pqueue   *list.List
 	net      net.Handler
 
 	timedSleep bool
@@ -42,13 +41,8 @@ func newCalls(p *page, mem *phyMemory, h net.Handler) *calls {
 		mem:      mem,
 		services: make(map[uint32]devs.Service),
 		queue:    list.New(),
-		pqueue:   list.New(),
 		net:      h,
 	}
-}
-
-func (c *calls) sender(id uint32) devs.Sender {
-	return &callsSender{service: id, queue: c.queue}
 }
 
 func (c *calls) register(id uint32, s devs.Service) {
@@ -84,30 +78,17 @@ func (c *calls) system(ctrl uint8, in []byte, respSize int) (
 ) {
 	switch ctrl {
 	case 1: // poll message
-		if c.queue.Len() == 0 && c.pqueue.Len() == 0 {
+		if c.queue.Len() == 0 {
 			return c.sleep(in)
 		}
 
-		// service event queue
-		if c.queue.Len() > 0 {
-			front := c.queue.Front()
-			m := front.Value.(*callsMessage)
-			if len(m.p) > respSize {
-				return nil, devs.ErrSmallBuf, nil
-			}
-
-			c.queue.Remove(front)
-			c.p.writeU32(callsService, m.service) // overwrite the service
-			return m.p, 0, nil
-		}
-
 		// incoming packet queue
-		front := c.pqueue.Front()
+		front := c.queue.Front()
 		p := front.Value.([]byte)
 		if len(p) > respSize {
 			return nil, devs.ErrSmallBuf, nil
 		}
-		c.pqueue.Remove(front)
+		c.queue.Remove(front)
 		c.p.writeU32(callsService, 0) // a network packet
 		return p, 0, nil
 	case 2: // send packet out
@@ -218,9 +199,11 @@ func (c *calls) sleepTime() (time.Duration, bool) {
 	return c.sleepDur, c.timedSleep
 }
 
-func (c *calls) queueLen() int { return c.queue.Len() }
+func (c *calls) hasPending() bool {
+	return c.queue.Len() > 0
+}
 
 func (c *calls) HandlePacket(p []byte) error {
-	c.pqueue.PushBack(p)
+	c.queue.PushBack(p)
 	return nil
 }

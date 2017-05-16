@@ -17,16 +17,12 @@ type Machine struct {
 	inst   inst
 	calls  *calls
 
-	devices  []device
-	console  *console
-	clicks   *devs.ScreenClicks
-	screen   *devs.Screen
-	table    *devs.Table
-	dialog   *devs.Dialog
-	keyboard *devs.Keyboard
-	rand     *devs.Rand
-	ticker   *ticker
-	rom      *rom
+	devices []device
+	console *console
+	screen  *devs.Screen
+	rand    *devs.Rand
+	ticker  *ticker
+	rom     *rom
 
 	cores *multiCore
 
@@ -79,26 +75,11 @@ func NewMachine(c *Config) *Machine {
 	m.addDevice(m.console)
 
 	if c.Screen != nil {
-		m.clicks = devs.NewScreenClicks(m.calls.sender(serviceScreen))
 		s := devs.NewScreen(c.Screen)
 		m.screen = s
 		m.addDevice(s)
 		m.calls.register(serviceScreen, s)
 	}
-
-	if c.Table != nil {
-		t := devs.NewTable(c.Table, m.calls.sender(serviceTable))
-		m.table = t
-		m.calls.register(serviceTable, t) // hook vpc all
-	}
-
-	if c.Dialog != nil {
-		d := devs.NewDialog(c.Dialog, m.calls.sender(serviceDialog))
-		m.dialog = d
-		m.calls.register(serviceDialog, d)
-	}
-
-	m.keyboard = devs.NewKeyboard(m.calls.sender(serviceKeyboard))
 
 	sys := m.phyMem.Page(pageSysInfo)
 	sys.WriteU32(0, m.phyMem.npage)
@@ -233,33 +214,6 @@ func (m *Machine) FlushScreen() {
 	}
 }
 
-// Click sends in a mouse click at the particular location.
-func (m *Machine) Click(line, col uint8) {
-	if m.clicks == nil {
-		return
-	}
-	m.clicks.Click(line, col)
-}
-
-// KeyDown sends in a key down event.
-func (m *Machine) KeyDown(code uint8) { m.keyboard.KeyDown(code) }
-
-// Choose sends in a user input choice.
-func (m *Machine) Choose(index uint8) {
-	if m.dialog == nil {
-		return
-	}
-	m.dialog.Choose(index)
-}
-
-// ClickTable sends a click on the table at the particular location.
-func (m *Machine) ClickTable(what string, pos uint8) {
-	if m.table == nil {
-		return
-	}
-	m.table.Click(what, pos)
-}
-
 // SleepTime returns the sleeping time required before next execution.
 func (m *Machine) SleepTime() (time.Duration, bool) {
 	return m.calls.sleepTime()
@@ -267,6 +221,4 @@ func (m *Machine) SleepTime() (time.Duration, bool) {
 
 // HasPending checks if the machine has pending messages that are not
 // delivered.
-func (m *Machine) HasPending() bool {
-	return m.calls.queueLen() > 0
-}
+func (m *Machine) HasPending() bool { return m.calls.hasPending() }
