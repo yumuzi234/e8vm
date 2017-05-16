@@ -189,10 +189,10 @@ func buildPkg(
 	}
 
 	errs = b.Errs()
-	router := b.InterfaceRouter
-	if len(router) != 0 {
+	vMap := b.vTableMap
+	if len(vMap) != 0 {
 		fmt.Printf("pkg path = %s\n", pinfo.Path)
-		for i, table := range router {
+		for i, table := range vMap {
 			fmt.Printf("interface %s, funcs insluding:\n", i.String())
 			for _, name := range table.funcs {
 				fmt.Printf("\t%s\n", name)

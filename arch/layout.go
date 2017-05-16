@@ -25,7 +25,4 @@ const (
 	serviceScreen
 	serviceRand
 	serviceClock
-	serviceTable
-	serviceKeyboard
-	serviceDialog
 )

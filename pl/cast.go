@@ -63,8 +63,9 @@ func buildCast(b *builder, from *ref, t types.T) *ref {
 	}
 
 	if i, ok := t.(*types.Interface); ok {
-		if _, ok := from.Type().(*types.Pointer); ok {
-			b.newImplement(i, from)
+		if p, ok := from.Type().(*types.Pointer); ok {
+			s := types.PointerOf(p).(*types.Struct)
+			b.newImplement(i, from, s)
 		}
 		b.CodeErrorf(nil, "pl.notYetSupported", "interface not supported yet")
 		return from
