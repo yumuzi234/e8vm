@@ -19,7 +19,6 @@ type Machine struct {
 
 	devices []device
 	console *console
-	clicks  *devs.ScreenClicks
 	screen  *devs.Screen
 	rand    *devs.Rand
 	ticker  *ticker
@@ -76,7 +75,6 @@ func NewMachine(c *Config) *Machine {
 	m.addDevice(m.console)
 
 	if c.Screen != nil {
-		m.clicks = devs.NewScreenClicks(m.calls.sender(serviceScreen))
 		s := devs.NewScreen(c.Screen)
 		m.screen = s
 		m.addDevice(s)
@@ -214,14 +212,6 @@ func (m *Machine) FlushScreen() {
 	if m.screen != nil {
 		m.screen.Flush()
 	}
-}
-
-// Click sends in a mouse click at the particular location.
-func (m *Machine) Click(line, col uint8) {
-	if m.clicks == nil {
-		return
-	}
-	m.clicks.Click(line, col)
 }
 
 // SleepTime returns the sleeping time required before next execution.
