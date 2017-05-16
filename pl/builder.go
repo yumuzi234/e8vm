@@ -35,20 +35,19 @@ type builder struct {
 	vTableMap map[*types.Interface]*vTable
 }
 
-func (b *builder) newImplement(i *types.Interface, s *ref) {
+func (b *builder) newImplement(i *types.Interface, r *ref, s *types.Struct) {
 	t := b.vTableMap[i]
 	if t == nil {
 		t = newTable(i)
 		b.vTableMap[i] = t
 	}
-	sType := types.PointerOf(s.Type()).(*types.Struct)
-	if t.implementMap[sType] == nil {
+	if t.implementMap[s] == nil {
 		slice := make([]*syms.Symbol, len(t.funcs))
 		for i, funcName := range t.funcs {
 			// check how to change []*Symbol to []*ref
-			slice[i] = sType.Syms.Query(funcName)
+			slice[i] = s.Syms.Query(funcName)
 		}
-		t.implementMap[sType] = slice
+		t.implementMap[s] = slice
 	}
 }
 
