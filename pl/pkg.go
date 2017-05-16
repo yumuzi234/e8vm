@@ -189,23 +189,5 @@ func buildPkg(
 	}
 
 	errs = b.Errs()
-	vMap := b.vTableMap
-	if len(vMap) != 0 {
-		fmt.Printf("pkg path = %s\n", pinfo.Path)
-		for i, table := range vMap {
-			fmt.Printf("interface %s, funcs insluding:\n", i.String())
-			for _, name := range table.funcs {
-				fmt.Printf("\t%s\n", name)
-			}
-			fmt.Println("implemented by:")
-			for r, refs := range table.implementMap {
-				fmt.Printf("\t%s\n", r.String())
-				for _, method := range refs {
-					fmt.Printf("\t\t%s\n\n", method.Name())
-				}
-			}
-		}
-		fmt.Println("vTable done!!")
-	}
 	return tops, depGraph, testNames, errs
 }
