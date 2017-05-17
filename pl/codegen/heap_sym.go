@@ -8,7 +8,7 @@ type HeapSym struct {
 	regSizeAlign bool
 }
 
-// NewHeapSym creates a new heap var symbol.
+// NewHeapSym creates a new heap var symbol (global var).
 func NewHeapSym(
 	pkg, name string, size int32, u8, regSizeAlign bool,
 ) *HeapSym {

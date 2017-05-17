@@ -71,7 +71,7 @@ func buildArrayType(b *builder, expr *ast.ArrayTypeExpr) types.T {
 		v = ct.Value.(int64)
 	} else {
 		b.CodeErrorf(ast.ExprPos(expr), "pl.illegalArrayIndex",
-			"array index is not a integer")
+			"array index is not a integer: %s", ntype)
 		return nil
 	}
 	if v < 0 {

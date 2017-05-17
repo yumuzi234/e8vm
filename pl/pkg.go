@@ -174,7 +174,6 @@ func buildPkg(
 	if errs != nil {
 		return nil, nil, nil, errs
 	}
-
 	fillConsts(res.Consts)
 	fillVars(b, res.Vars)
 	fillFuncAlias(res.FuncAliases)
