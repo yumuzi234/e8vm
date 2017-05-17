@@ -2,8 +2,9 @@
 
 # Small VM
 
-Small Virtual Machine (`smlvm`) is a simple programming language
-that compiles to a simulated, simple virtual machine.
+Small Virtual Machine (`smlvm`) provides a simple programming language
+that compiles to a simulated, simple virtual machine. It is
+essentially a subset of Go programming language.
 
 [Try in playground](https://smallrepo.com/play)
 
