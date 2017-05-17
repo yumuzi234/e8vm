@@ -24,9 +24,11 @@ const (
 
 var coding = binary.BigEndian
 
+var errHeaderMissing = errors.New("header missing")
+
 func checkHeaderLen(p []byte) error {
 	if len(p) < headerLen {
-		return errors.New("incomplete header")
+		return errHeaderMissing
 	}
 	return nil
 }
