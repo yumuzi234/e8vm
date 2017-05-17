@@ -128,13 +128,13 @@ func buildMember(b *builder, m *ast.MemberExpr) tast.Expr {
 		if pt != nil {
 			if tstruct, ok = pt.(*types.Struct); !ok {
 				b.CodeErrorf(m.Dot.Pos, "pl.buildMember.illegal",
-					"*%s is not a pointer of struct", t)
+					"*%s is not a pointer of struct or interface", t)
 				return nil
 			}
 		} else {
 			if tstruct, ok = t.(*types.Struct); !ok {
 				b.CodeErrorf(m.Dot.Pos, "pl.buildMember.illegal",
-					"%s is not a struct", t)
+					"%s is not a struct or interface", t)
 				return nil
 			}
 		}
@@ -152,7 +152,6 @@ func buildMember(b *builder, m *ast.MemberExpr) tast.Expr {
 		return nil
 	}
 
-	// ?? How will it for a interface without implementation
 	b.refSym(sym, m.Sub.Pos)
 
 	if sym.Type == tast.SymField {
@@ -166,6 +165,8 @@ func buildMember(b *builder, m *ast.MemberExpr) tast.Expr {
 		return &tast.MemberExpr{Expr: obj, Sub: m.Sub, Ref: r, Sym: sym}
 	}
 
-	b.Errorf(m.Sub.Pos, "invalid sym type: %s", tast.SymStr(sym.Type))
+	// impossible to reach
+	b.CodeErrorf(m.Sub.Pos, "impossible", "invalid sym type: %s",
+		tast.SymStr(sym.Type))
 	return nil
 }

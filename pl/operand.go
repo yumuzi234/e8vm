@@ -26,6 +26,7 @@ func buildConst(b *builder, c *tast.Const) *ref {
 		return ret
 	}
 
+	// build slice literal
 	if t, ok := c.T.(*types.Slice); ok {
 		if bt, ok := t.T.(types.Basic); ok {
 			switch bt {
