@@ -1,6 +1,8 @@
 package syms
 
-import "sort"
+import (
+	"sort"
+)
 
 // Table save the symbol
 type Table struct {
@@ -44,15 +46,15 @@ func (tab *Table) Declare(s *Symbol) *Symbol {
 
 // List returns a map of the symbols.
 func (tab *Table) List() []*Symbol {
-	n := len(tab.m)
-	names := make([]string, 0, n)
+	var names []string
 	for _, v := range tab.m {
 		names = append(names, v.Name())
 	}
 	sort.Strings(names)
-	ret := make([]*Symbol, 0, n)
-	for _, v := range names {
-		ret = append(ret, tab.m[v])
+
+	var ret []*Symbol
+	for _, name := range names {
+		ret = append(ret, tab.m[name])
 	}
 	return ret
 }
