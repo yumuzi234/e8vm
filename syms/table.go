@@ -62,10 +62,15 @@ func (b ByName) Less(i, j int) bool {
 
 // List returns a map of the symbols.
 func (tab *Table) List() []*Symbol {
-	ret := make([]*Symbol, 0, len(tab.m))
+	n := len(tab.m)
+	names := make([]string, 0, n)
 	for _, v := range tab.m {
-		ret = append(ret, v)
+		names = append(names, v.Name())
 	}
-	sort.Sort(ByName(ret))
+	sort.Strings(names)
+	ret := make([]*Symbol, 0, n)
+	for _, v := range names {
+		ret = append(ret, tab.m[v])
+	}
 	return ret
 }
