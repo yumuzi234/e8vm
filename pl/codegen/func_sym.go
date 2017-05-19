@@ -6,7 +6,7 @@ import (
 
 // NewFuncSym creates a function symbol reference to a linkable function.
 // It is used to perform function call operations to functions
-// from other packages (functinos not declared in the current package,
+// from other packages (functions not declared in the current package,
 // and hence only has a symbol and function signature).
 func NewFuncSym(pkg, sym string, sig *FuncSig) Ref {
 	return &FuncSym{pkg, sym, sig}
