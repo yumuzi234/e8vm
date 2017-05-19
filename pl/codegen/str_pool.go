@@ -34,8 +34,9 @@ func (s *strConst) Size() int32 {
 }
 
 type strPool struct {
-	pkg    string
-	strs   []*strConst
+	pkg  string
+	strs []*strConst
+	// strMap is used to find duplicated strings
 	strMap map[string]*strConst
 }
 
