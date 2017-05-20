@@ -107,6 +107,11 @@ func (p *Pkg) NewHeapDat(bs []byte, unit int32, regSizeAlign bool) Ref {
 }
 
 // NewVtable adds a new vtable to the vatable pool.
-func (p *Pkg) NewVtable(i, s string, funcs []*FuncSym) Ref {
-	return p.vtablePool.addTable(i, s, funcs)
+func (p *Pkg) NewVtable(i, s string) Ref {
+	return p.vtablePool.addTable(i, s)
+}
+
+// FillVtable fills a new vtable with entries.
+func (p *Pkg) FillVtable(i int, funcs []*FuncSym) {
+	p.vtablePool.vtables[i].fill(funcs)
 }
