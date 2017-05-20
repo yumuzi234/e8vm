@@ -66,7 +66,7 @@ func buildCast(b *builder, from *ref, t types.T) *ref {
 		if p, ok := from.Type().(*types.Pointer); ok {
 			s := types.PointerOf(p).(*types.Struct)
 			b.newImplement(i, from, s)
-			b.CodeErrorf(nil, "pl.notYetSupported", "compiler under construction")
+			b.CodeErrorf(nil, "pl.notYetSupported", "under construction")
 			return from
 		}
 		b.CodeErrorf(nil, "pl.notYetSupported",

@@ -2,7 +2,6 @@ package syms
 
 import (
 	"sort"
-	"strings"
 )
 
 // Table save the symbol
@@ -45,32 +44,16 @@ func (tab *Table) Declare(s *Symbol) *Symbol {
 	return nil
 }
 
-// ByName is used to sort the symbols in the table with their names
-type ByName []*Symbol
-
-func (b ByName) Swap(i, j int) {
-	b[i], b[j] = b[j], b[i]
-}
-
-func (b ByName) Len() int {
-	return len(b)
-}
-
-func (b ByName) Less(i, j int) bool {
-	return strings.Compare(b[i].Name(), b[j].Name()) == -1
-}
-
 // List returns a map of the symbols.
 func (tab *Table) List() []*Symbol {
-	n := len(tab.m)
-	names := make([]string, 0, n)
+	var names []string
 	for _, v := range tab.m {
 		names = append(names, v.Name())
 	}
 	sort.Strings(names)
-	ret := make([]*Symbol, 0, n)
-	for _, v := range names {
-		ret = append(ret, tab.m[v])
+	var ret []*Symbol
+	for _, name := range names {
+		ret = append(ret, tab.m[name])
 	}
 	return ret
 }
