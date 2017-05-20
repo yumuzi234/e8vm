@@ -31,9 +31,7 @@ func (t *vtable) Size() int32 {
 }
 
 func (t *vtable) fill(fs []*FuncSym) {
-	for _, f := range fs {
-		t.entries = append(t.entries, f)
-	}
+	t.entries = append(t.entries, fs...)
 }
 
 type vtablePool struct {
@@ -48,9 +46,8 @@ func newVtablePool(pkg string) *vtablePool {
 	}
 }
 
-func (p *vtablePool) addTable(i, s string, funcs []*FuncSym) Ref {
+func (p *vtablePool) addTable(i, s string) Ref {
 	t := newVtable(i, s)
-	t.fill(funcs)
 	p.vtables = append(p.vtables, t)
 	return t
 }
