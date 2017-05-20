@@ -18,7 +18,7 @@ type Pkg struct {
 	tests      *testList
 	strPool    *strPool
 	datPool    *datPool
-	vTablePool *vTablePool
+	vtablePool *vtablePool
 	// helper functions required for generating
 	g *gener
 }
@@ -30,7 +30,7 @@ func NewPkg(path string) *Pkg {
 		lib:        link.NewPkg(path),
 		strPool:    newStrPool(path),
 		datPool:    newDatPool(path),
-		vTablePool: newVTablePool(path),
+		vtablePool: newVtablePool(path),
 		g:          newGener(),
 	}
 }
@@ -106,7 +106,7 @@ func (p *Pkg) NewHeapDat(bs []byte, unit int32, regSizeAlign bool) Ref {
 	return p.datPool.addDat(bs, unit, regSizeAlign)
 }
 
-// NewVTable adds a new vtable to the vatable pool.
-func (p *Pkg) NewVTable(i, s string, funcs []*FuncSym) Ref {
-	return p.vTablePool.addTable(i, s, funcs)
+// NewVtable adds a new vtable to the vatable pool.
+func (p *Pkg) NewVtable(i, s string, funcs []*FuncSym) Ref {
+	return p.vtablePool.addTable(i, s, funcs)
 }

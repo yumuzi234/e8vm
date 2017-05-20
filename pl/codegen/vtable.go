@@ -2,59 +2,55 @@ package codegen
 
 import "fmt"
 
-type vTable struct {
-	pkg string
-
+type vtable struct {
 	// interface name: pkg.interface
-	iName string
+	i string
 	// struct name:pkg.structName
 	// sName can used for reflection
-	sName string
-	// implements will be sorted by func names
-	implements []*FuncSym
+	s string
+	// entries will be sorted by func names
+	entries []*FuncSym
 }
 
-func newVtable(i, s string) *vTable {
-	return &vTable{
-		iName:      i,
-		sName:      s,
-		implements: make([]*FuncSym, 0),
+func newVtable(i, s string) *vtable {
+	return &vtable{
+		i:       i,
+		s:       s,
+		entries: make([]*FuncSym, 0),
 	}
 }
 
-func (t *vTable) String() string {
-	return fmt.Sprintf("<vTable %s %s>", t.iName, t.sName)
+func (t *vtable) String() string {
+	return fmt.Sprintf("<vTable %s %s>", t.i, t.s)
 }
 
-func (t *vTable) RegSizeAlign() bool { return true }
+func (t *vtable) RegSizeAlign() bool { return true }
 
-func (t *vTable) Size() int32 {
+func (t *vtable) Size() int32 {
 	return regSize * 2
 }
 
-func (t *vTable) fill(fs []*FuncSym) {
+func (t *vtable) fill(fs []*FuncSym) {
 	for _, f := range fs {
-		t.implements = append(t.implements, f)
+		t.entries = append(t.entries, f)
 	}
 }
 
-type vTablePool struct {
+type vtablePool struct {
 	pkg     string
-	vTables []*vTable
+	vtables []*vtable
 }
 
-func newVTablePool(pkg string) *vTablePool {
-	return &vTablePool{
+func newVtablePool(pkg string) *vtablePool {
+	return &vtablePool{
 		pkg:     pkg,
-		vTables: make([]*vTable, 0),
+		vtables: make([]*vtable, 0),
 	}
 }
 
-func (p *vTablePool) addTable(i, s string, funcs []*FuncSym) Ref {
+func (p *vtablePool) addTable(i, s string, funcs []*FuncSym) Ref {
 	t := newVtable(i, s)
 	t.fill(funcs)
-	p.vTables = append(p.vTables, t)
+	p.vtables = append(p.vtables, t)
 	return t
 }
-
-// declare is not needed here
