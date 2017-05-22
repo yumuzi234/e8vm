@@ -8,7 +8,12 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path"
+	"path/filepath"
+	"strings"
 
+	"shanhu.io/smlvm/builds"
+	"shanhu.io/smlvm/pl"
 	"shanhu.io/smlvm/pl/gfmt"
 )
 
@@ -32,15 +37,15 @@ func fmtFile(fname string) (bool, error) {
 		return false, nil
 	}
 
-	tempfile, e := ioutil.TempFile(tempDir, "gfmt")
-	if e != nil {
-		return false, e
+	tempfile, err := ioutil.TempFile(tempDir, "gfmt")
+	if err != nil {
+		return false, err
 	}
-	if _, e := tempfile.Write(out); e != nil {
-		return false, e
+	if _, err := tempfile.Write(out); err != nil {
+		return false, err
 	}
-	if e := tempfile.Close(); e != nil {
-		return false, e
+	if err := tempfile.Close(); err != nil {
+		return false, err
 	}
 	return true, os.Rename(tempfile.Name(), fname)
 }
@@ -49,11 +54,40 @@ func main() {
 	flag.Parse()
 
 	args := flag.Args()
-	for _, fname := range args {
-		if changed, e := fmtFile(fname); e != nil {
-			log.Print(e)
-		} else if changed {
-			fmt.Println(fname)
+	if len(args) == 0 {
+		in := builds.NewDirFS(".")
+		langSet := pl.MakeLangSet(false)
+		pkgs, err := builds.SelectPkgs(in, langSet, "")
+		if err != nil {
+			log.Print(err)
+			return
+		}
+
+		for _, pkg := range pkgs {
+			p := strings.TrimPrefix(pkg, "/")
+			files, err := builds.ListSrcFiles(in, langSet, p)
+			if err != nil {
+				log.Print(err)
+				continue
+			}
+
+			for _, file := range files {
+				name := filepath.FromSlash(path.Join(p, file))
+				changed, err := fmtFile(name)
+				if err != nil {
+					log.Print(err)
+				} else if changed {
+					fmt.Println(name)
+				}
+			}
+		}
+	} else {
+		for _, fname := range args {
+			if changed, err := fmtFile(fname); err != nil {
+				log.Print(err)
+			} else if changed {
+				fmt.Println(fname)
+			}
 		}
 	}
 }
