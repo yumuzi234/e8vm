@@ -12,9 +12,7 @@ and does not use LLVM.
 
 [Try in playground](https://smallrepo.com/play)
 
-Shanhuio provides both [cloud IDE](https://smallrepo.com/);
-
-and local environment together with [Small Home](https://github.com/shanhuio/smlhome) for developement
+Shanhuio provides both a [cloud IDE](https://smallrepo.com/), and local environment together with [Small Home](https://github.com/shanhuio/smlhome) for developement
 
 [Introduction of G languge](https://github.com/shanhuio/smlvm/blob/master/g_introduction.md)
 
