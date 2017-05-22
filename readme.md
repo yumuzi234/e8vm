@@ -15,32 +15,6 @@ and local environment together with [Small Home](https://github.com/shanhuio/sml
 
 [Introduction of G languge](fakelink)
 
-## Why Small VM
-
-### Approachable and Evolving Compiler
-
-This project is written in Go. Each source file in this project has no
-more than 300 lines (80 max per line). Also there are no circular
-dependencies among files. As a result, the project architecture can be
-[visualized](https://shanhu.io/smlvm).
-
-[Package Docs](https://godoc.org/shanhu.io/smlvm).
-
-We hope that our design will make it easier for people to understand and add new features to the compiler
-and make it better.
-
-### The Language Targets Comprehension
-
-Similar to Small VM, In [G langue](fakelink), we set up rules to make code clean: no circular dependency among files, no more then 300 lines each file, no more than 80 characters each.
-The architect of the std G language can be found [here](https://smallrepo.com/r/std)
-Together with the simple syntax system, we want create a language that targets code comprehension.
-We believe that readable code is changeable code, and can continuously evolve.
-We are also creating an [online IDE](https://smallrepo.com/) for G language users to share and read each others code.:
-Once code can be easily understood, online IDE's can form a community with network effects,
-and developers can easily customize a code -- their own or not -- to handle their special needs.
-
-### *New System Languge/Cross Platform*
-
 ## To Use
 
 ### Install
@@ -60,6 +34,37 @@ go get -u shanhu.io/smlvm/...
 go get -u github.com/golang/lint/golint
 go get -u github.com/jstemmer/gotags
 ```
+
+## What is Small VM
+
+### Approachable and Evolving Compiler
+
+This project is written in Go. Each source file in this project has no
+more than 300 lines (80 max per line). Also there are no circular
+dependencies among files. As a result, the project architecture can be
+[visualized](https://shanhu.io/smlvm).
+
+[Package Docs](https://godoc.org/shanhu.io/smlvm).
+
+We hope that our design will make it easier for people to understand and add new features to the compiler
+and make it better.
+
+### The Language Targets Comprehension
+
+Similar to Small VM, In [G langue](fakelink), we set up rules to make code clean: no circular dependency among files, 
+no more then 300 lines each file, no more than 80 characters each.
+For example, the architect of the std G language can be found [here](https://smallrepo.com/r/std)
+Together with the simple syntax system, we want create a language that targets code comprehension.
+We believe that readable code is changeable code, and can continuously evolve.
+We are also creating an [online IDE](https://smallrepo.com/) for G language users to share and read each others code.
+Once code can be easily understood, online IDE's can form a community with network effects,
+and developers can easily customize a code -- their own or not -- to handle their special needs.
+
+### *New System Languge/Cross Platform/Build App from browser*
+
+## Community
+
+https://smallrepo.com/
 
 ## Copyright and License
 
