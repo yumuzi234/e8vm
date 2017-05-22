@@ -29,7 +29,7 @@ func MakeMemFS() *builds.MemFS {
 }
 
 func makeLangSet(lang *builds.Lang) *builds.LangSet {
-	ret := builds.NewLangPicker(lang)
+	ret := builds.NewLangSet(lang)
 	ret.AddLang("asm", asm.Lang())
 	return ret
 }

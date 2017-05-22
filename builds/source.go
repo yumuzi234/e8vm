@@ -152,3 +152,9 @@ func (s *source) allPkgs(p string) ([]string, error) {
 	sort.Strings(ret)
 	return ret, nil
 }
+
+// ListSrcFiles lists all the source files from an input.
+func ListSrcFiles(in Input, langSet *LangSet, p string) ([]string, error) {
+	src := newSource(in, langSet)
+	return src.listSrcFiles(p)
+}

@@ -37,17 +37,17 @@ func main() {
 	memHome := pl.MakeMemFS()
 	dirHome := builds.NewDirFS(*homeDir)
 	in := builds.NewOverlay(dirHome, memHome)
-	lp := pl.MakeLangSet(*golike)
+	langSet := pl.MakeLangSet(*golike)
 
 	out := builds.NewDirFS(path.Join(*homeDir, "_"))
-	b := builds.NewBuilder(in, lp, *std, out)
+	b := builds.NewBuilder(in, langSet, *std, out)
 	b.Verbose = true
 	b.InitPC = uint32(*initPC)
 	b.InitSP = uint32(*initSP)
 	b.RunTests = *runTests
 	b.StaticOnly = *staticOnly
 
-	pkgs, err := builds.SelectPkgs(in, lp, *pkg)
+	pkgs, err := builds.SelectPkgs(in, langSet, *pkg)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(-1)

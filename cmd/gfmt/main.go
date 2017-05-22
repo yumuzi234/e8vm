@@ -8,6 +8,9 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path"
+	"path/filepath"
+	"strings"
 
 	"shanhu.io/smlvm/builds"
 	"shanhu.io/smlvm/pl"
@@ -52,14 +55,30 @@ func main() {
 
 	args := flag.Args()
 	if len(args) == 0 {
-		fs := builds.NewDirFS(".")
-		lp := pl.MakeLangSet(false)
-		pkgs, err := builds.SelectPkgs(fs, lp, "")
+		in := builds.NewDirFS(".")
+		langSet := pl.MakeLangSet(false)
+		pkgs, err := builds.SelectPkgs(in, langSet, "")
 		if err != nil {
 			log.Print(err)
-		} else {
-			for _, pkg := range pkgs {
-				fmt.Println(pkg)
+			return
+		}
+
+		for _, pkg := range pkgs {
+			p := strings.TrimPrefix(pkg, "/")
+			files, err := builds.ListSrcFiles(in, langSet, p)
+			if err != nil {
+				log.Print(err)
+				continue
+			}
+
+			for _, file := range files {
+				name := filepath.FromSlash(path.Join(p, file))
+				changed, err := fmtFile(name)
+				if err != nil {
+					log.Print(err)
+				} else if changed {
+					fmt.Println(name)
+				}
 			}
 		}
 	} else {
