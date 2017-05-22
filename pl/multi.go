@@ -5,13 +5,11 @@ import (
 	"shanhu.io/smlvm/lexing"
 )
 
-func buildMulti(
-	lang *builds.Lang, files map[string]string, opt *builds.Options,
-) (
+func buildMulti(golike bool, files map[string]string, opt *builds.Options) (
 	image []byte, errs []*lexing.Error, log []byte,
 ) {
 	fs := MakeMemFS()
-	lp := MakeLangPicker(lang)
+	lp := MakeLangSet(golike)
 	for f, s := range files {
 		fs.AddTextFile(f, s)
 	}
@@ -24,7 +22,6 @@ func CompileMulti(
 ) (
 	[]byte, []*lexing.Error,
 ) {
-	lang := Lang(golike)
-	image, errs, _ := buildMulti(lang, files, opt)
+	image, errs, _ := buildMulti(golike, files, opt)
 	return image, errs
 }
