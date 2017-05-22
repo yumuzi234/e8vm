@@ -34,11 +34,10 @@ func main() {
 	staticOnly := flag.Bool("static", false, "do static analysis only")
 	flag.Parse()
 
-	lang := pl.Lang(*golike)
 	memHome := pl.MakeMemFS()
 	dirHome := builds.NewDirFS(*homeDir)
 	in := builds.NewOverlay(dirHome, memHome)
-	lp := pl.MakeLangPicker(lang)
+	lp := pl.MakeLangSet(*golike)
 
 	out := builds.NewDirFS(path.Join(*homeDir, "_"))
 	b := builds.NewBuilder(in, lp, *std, out)

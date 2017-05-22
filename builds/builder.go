@@ -16,7 +16,7 @@ type Builder struct {
 
 // NewBuilder creates a new builder with a particular home directory
 func NewBuilder(
-	input Input, langPicker *LangPicker, std string, output Output,
+	input Input, langPicker *LangSet, std string, output Output,
 ) *Builder {
 	src := newSource(input, langPicker)
 	return &Builder{

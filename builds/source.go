@@ -9,10 +9,10 @@ import (
 
 type source struct {
 	in         Input
-	langPicker *LangPicker
+	langPicker *LangSet
 }
 
-func newSource(in Input, langPicker *LangPicker) *source {
+func newSource(in Input, langPicker *LangSet) *source {
 	return &source{
 		in:         in,
 		langPicker: langPicker,
