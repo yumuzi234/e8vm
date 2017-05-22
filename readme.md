@@ -10,7 +10,10 @@ This repository does not use any third party libraries; it depends on
 only Go standard library. The compiler is all written from scratch,
 and does not use LLVM.
 
-Shanhuio provides both cloud IDE [Try in playground](https://smallrepo.com/play)
+[Try in playground](https://smallrepo.com/play)
+
+Shanhuio provides both [cloud IDE](https://smallrepo.com/);
+
 and local environment together with [Small Home](https://github.com/shanhuio/smlhome) for developement
 
 [Introduction of G languge](https://github.com/shanhuio/smlvm/blob/master/g_introduction.md)

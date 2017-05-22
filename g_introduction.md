@@ -9,6 +9,7 @@ G is very similar to Go, almost a almost a strict subset. Thus G is not a new la
 
 Difference between G and Go:
 * Delaration of struct and interface
+
 In G, interface and struct is declared as, struct + *name*, but not type *name* struct. e.g.:
     ```
     struct circle {
@@ -25,7 +26,8 @@ In G, interface and struct is declared as, struct + *name*, but not type *name* 
     }
     ```
 
-* if/else block
+* if/else Block
+
 In G, if there is only one *break*, *continue*, or *return* statement after *if* or *else*
 the the brackets for the block can be omitted. e.g. in G, your can write:
     ```
