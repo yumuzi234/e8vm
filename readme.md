@@ -15,7 +15,7 @@ and does not use LLVM.
 Shanhuio provides both a [cloud IDE](https://smallrepo.com/), 
 and local environment together with [Small Home](https://github.com/shanhuio/smlhome) for developement
 
-[Introduction of G languge](https://github.com/shanhuio/smlvm/wiki/G-introduction)
+[G languge introduction](https://github.com/shanhuio/smlvm/wiki/G-Language-Introduction)
 
 ## To Use
 
