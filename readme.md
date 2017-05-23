@@ -2,7 +2,7 @@
 
 # Small VM
 
-Small Virtual Machine (`smlvm`) provides [a simple programming language](https://github.com/shanhuio/smlvm/blob/master/g_introduction.md)
+Small Virtual Machine (`smlvm`) provides [a simple programming language](https://github.com/shanhuio/smlvm/wiki/G-introduction)
 that compiles to a simulated, simple virtual machine. It is
 essentially a subset of Go programming language.
 
@@ -16,7 +16,7 @@ Shanhuio provides both [cloud IDE](https://smallrepo.com/);
 
 and local environment together with [Small Home](https://github.com/shanhuio/smlhome) for developement
 
-[Introduction of G languge](https://github.com/shanhuio/smlvm/blob/master/g_introduction.md)
+[Introduction of G languge](https://github.com/shanhuio/smlvm/wiki/G-introduction)
 
 ## To Use
 
@@ -59,11 +59,9 @@ no more then 300 lines each file, no more than 80 characters each.
 For example, the architect of the std G language can be found [here](https://smallrepo.com/r/std)
 Together with the simple syntax system, we want create a language that targets code comprehension.
 We believe that readable code is changeable code, and can continuously evolve.
-We are also creating an [online IDE](https://smallrepo.com/) for G language users to share and read each others code.
+We are also creating a [cloud IDE](https://smallrepo.com/) for G language users to share and read each others code.
 Once code can be easily understood, online IDE's can form a community with network effects,
 and developers can easily customize a code -- their own or not -- to handle their special needs.
-
-### *New System Languge/Cross Platform/Build App from browser*
 
 ## Community
 
