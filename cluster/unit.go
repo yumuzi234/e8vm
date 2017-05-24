@@ -12,6 +12,10 @@ type unit struct {
 	gateOut *net.AddrMapper
 }
 
+func newUnit(c *arch.Config) {
+
+}
+
 func (u *unit) HandlePacket(p []byte) error {
 	// this normally sends the packet to the machine.
 	return nil
