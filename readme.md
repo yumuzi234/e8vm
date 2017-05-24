@@ -2,7 +2,7 @@
 
 # Small VM
 
-Small Virtual Machine (`smlvm`) provides [a simple programming language](fakelink)
+Small Virtual Machine (`smlvm`) provides [a simple programming language](https://github.com/shanhuio/smlvm/wiki/G-introduction)
 that compiles to a simulated, simple virtual machine. It is
 essentially a subset of Go programming language.
 
@@ -10,12 +10,34 @@ This repository does not use any third party libraries; it depends on
 only Go standard library. The compiler is all written from scratch,
 and does not use LLVM.
 
-Shanhuio provides both cloud IDE [Try in playground](https://smallrepo.com/play)
+[Try in playground](https://smallrepo.com/play)
+
+Shanhuio provides both a [cloud IDE](https://smallrepo.com/), 
 and local environment together with [Small Home](https://github.com/shanhuio/smlhome) for developement
 
-[Introduction of G languge](fakelink)
+[G languge introduction](https://github.com/shanhuio/smlvm/wiki/G-Language-Introduction)
 
-## Why Small VM
+## To Use
+
+### Install
+
+```
+go get -u shanhu.io/smlvm/...
+```
+
+### make
+
+The project comes with a `makefile`, which formats the code files,
+check lints, check circular dependencies and build tags. Running the
+`makefile` requires installing some tools.
+
+```
+go get -u shanhu.io/smlvm/...
+go get -u github.com/golang/lint/golint
+go get -u github.com/jstemmer/gotags
+```
+
+## What is Small VM
 
 ### Approachable and Evolving Compiler
 
@@ -31,35 +53,18 @@ and make it better.
 
 ### The Language Targets Comprehension
 
-Similar to Small VM, In [G langue](fakelink), we set up rules to make code clean: no circular dependency among files, no more then 300 lines each file, no more than 80 characters each.
-The architect of the std G language can be found [here](https://smallrepo.com/r/std)
+Similar to Small VM, In G langue, we set up rules to make code clean: no circular dependency among files, 
+no more then 300 lines each file, no more than 80 characters each.
+For example, the architect of the std G language can be found [here](https://smallrepo.com/r/std)
 Together with the simple syntax system, we want create a language that targets code comprehension.
 We believe that readable code is changeable code, and can continuously evolve.
-We are also creating an [online IDE](https://smallrepo.com/) for G language users to share and read each others code.:
+We are also creating a [cloud IDE](https://smallrepo.com/) for G language users to share and read each others code.
 Once code can be easily understood, online IDE's can form a community with network effects,
 and developers can easily customize a code -- their own or not -- to handle their special needs.
 
-### *New System Languge/Cross Platform*
+## Community
 
-## To Use
-
-### Install
-
-```
-go get -u shanhu.io/smlvm/...
-```
-
-### `make`
-
-The project comes with a `makefile`, which formats the code files,
-check lints, check circular dependencies and build tags. Running the
-`makefile` requires installing some tools.
-
-```
-go get -u shanhu.io/smlvm/...
-go get -u github.com/golang/lint/golint
-go get -u github.com/jstemmer/gotags
-```
+https://smallrepo.com/
 
 ## Copyright and License
 
