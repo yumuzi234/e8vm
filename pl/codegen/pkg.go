@@ -102,5 +102,5 @@ func (p *Pkg) NewString(s string) Ref {
 
 // NewHeapDat adds a byte array of heap static data.
 func (p *Pkg) NewHeapDat(bs []byte, unit int32, regSizeAlign bool) Ref {
-	return p.datPool.addDat(bs, unit, regSizeAlign)
+	return p.datPool.addBytes(bs, unit, regSizeAlign)
 }

@@ -8,19 +8,19 @@ import (
 
 type heapDat struct {
 	pkg, name    string
-	bs           []byte
+	dat          interface{}
 	regSizeAlign bool
 	unitSize     int32
 	n            int32
 }
 
 func (s *heapDat) String() string {
-	return fmt.Sprintf("<dat %dB>", len(s.bs))
+	return fmt.Sprintf("<dat %s>", s.name)
 }
 
 func (s *heapDat) RegSizeAlign() bool { return s.regSizeAlign }
 
-func (s *heapDat) Size() int32 { return int32(len(s.bs)) }
+func (s *heapDat) Size() int32 { return s.n * s.unitSize }
 
 type datPool struct {
 	pkg string
@@ -33,17 +33,29 @@ func newDatPool(pkg string) *datPool {
 	}
 }
 
-func (p *datPool) addDat(bs []byte, unit int32, regSizeAlign bool) *heapDat {
+func (p *datPool) addBytes(bs []byte, unit int32, regSizeAlign bool) *heapDat {
 	if int32(len(bs))%unit != 0 {
 		panic("dat not aligned to unit")
 	}
 
 	d := &heapDat{
 		pkg:          p.pkg,
-		bs:           bs,
+		dat:          bs,
 		unitSize:     unit,
 		n:            int32(len(bs)) / unit,
 		regSizeAlign: regSizeAlign,
+	}
+	p.dat = append(p.dat, d)
+	return d
+}
+
+func (p *datPool) addVtable(funcs []FuncSym) *heapDat {
+	d := &heapDat{
+		dat:          funcs,
+		pkg:          p.pkg,
+		unitSize:     1,
+		n:            int32(len(funcs)),
+		regSizeAlign: true,
 	}
 	p.dat = append(p.dat, d)
 	return d
@@ -60,14 +72,25 @@ func (p *datPool) declare(lib *link.Pkg) {
 
 	ndigit := countDigit(len(p.dat))
 	nfmt := fmt.Sprintf(":dat_%%0%dd", ndigit)
+	var v *link.Var
 	for i, d := range p.dat {
-		d.name = fmt.Sprintf(nfmt, i)
-		align := uint32(0)
-		if d.regSizeAlign {
-			align = regSize
+		switch d.dat.(type) {
+		case []byte:
+			d.name = fmt.Sprintf(nfmt, i)
+			align := uint32(0)
+			if d.regSizeAlign {
+				align = regSize
+			}
+			v = link.NewVar(align)
+			v.Write(d.dat.([]byte))
+		case []FuncSym:
+			d.name = "_vtable"
+			v = link.NewVar(regSize)
+			fs := d.dat.([]FuncSym)
+			for _, f := range fs {
+				v.WriteLink(p.pkg, f.name)
+			}
 		}
-		v := link.NewVar(align)
-		v.Write(d.bs)
 
 		lib.DeclareVar(d.name)
 		lib.DefineVar(d.name, v)
