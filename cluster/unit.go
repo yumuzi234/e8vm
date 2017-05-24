@@ -12,8 +12,8 @@ type unit struct {
 	gateOut *net.AddrMapper
 }
 
-func newUnit(c *arch.Config) {
-
+func newUnit(c *arch.Config) *unit {
+	return nil
 }
 
 func (u *unit) HandlePacket(p []byte) error {
