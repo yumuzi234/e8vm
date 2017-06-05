@@ -51,7 +51,7 @@ func (p *datPool) addBytes(bs []byte, unit int32, regSizeAlign bool) *heapDat {
 	return d
 }
 
-func (p *datPool) addVtable(funcs []FuncSym) *heapDat {
+func (p *datPool) addVtable(funcs []*FuncSym) *heapDat {
 	n := int32(len(funcs))
 	d := &heapDat{
 		dat:          funcs,
@@ -77,20 +77,17 @@ func (p *datPool) declare(lib *link.Pkg) {
 	nfmt := fmt.Sprintf(":dat_%%0%dd", ndigit)
 	var v *link.Var
 	for i, d := range p.dat {
-		switch d.dat.(type) {
+		d.name = fmt.Sprintf(nfmt, i)
+		align := uint32(0)
+		if d.regSizeAlign {
+			align = regSize
+		}
+		v = link.NewVar(align)
+		switch dat := d.dat.(type) {
 		case []byte:
-			d.name = fmt.Sprintf(nfmt, i)
-			align := uint32(0)
-			if d.regSizeAlign {
-				align = regSize
-			}
-			v = link.NewVar(align)
-			v.Write(d.dat.([]byte))
-		case []FuncSym:
-			d.name = "_vtable"
-			v = link.NewVar(regSize)
-			fs := d.dat.([]FuncSym)
-			for _, f := range fs {
+			v.Write(dat)
+		case []*FuncSym:
+			for _, f := range dat {
 				v.WriteLink(p.pkg, f.name)
 			}
 		}
