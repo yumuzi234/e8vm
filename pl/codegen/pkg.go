@@ -105,7 +105,7 @@ func (p *Pkg) NewHeapDat(bs []byte, unit int32, regSizeAlign bool) Ref {
 	return p.datPool.addBytes(bs, unit, regSizeAlign)
 }
 
-// AddVtable adds the vtable of the package.
-func (p *Pkg) AddVtable(funcs []FuncSym) Ref {
+// NewVtable adds the vtable of the package.
+func (p *Pkg) NewVtable(funcs []FuncSym) Ref {
 	return p.datPool.addVtable(funcs)
 }

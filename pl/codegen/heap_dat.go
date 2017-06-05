@@ -10,7 +10,7 @@ type heapDat struct {
 	pkg, name    string
 	dat          interface{}
 	regSizeAlign bool
-	unitSize     int32
+	size         int32
 	n            int32
 }
 
@@ -20,7 +20,7 @@ func (s *heapDat) String() string {
 
 func (s *heapDat) RegSizeAlign() bool { return s.regSizeAlign }
 
-func (s *heapDat) Size() int32 { return s.n * s.unitSize }
+func (s *heapDat) Size() int32 { return s.size }
 
 type datPool struct {
 	pkg string
@@ -34,15 +34,17 @@ func newDatPool(pkg string) *datPool {
 }
 
 func (p *datPool) addBytes(bs []byte, unit int32, regSizeAlign bool) *heapDat {
-	if int32(len(bs))%unit != 0 {
+	//	what if n overflow?
+	s := int32(len(bs))
+	if s%unit != 0 {
 		panic("dat not aligned to unit")
 	}
 
 	d := &heapDat{
 		pkg:          p.pkg,
 		dat:          bs,
-		unitSize:     unit,
-		n:            int32(len(bs)) / unit,
+		size:         s,
+		n:            s / unit,
 		regSizeAlign: regSizeAlign,
 	}
 	p.dat = append(p.dat, d)
@@ -50,11 +52,12 @@ func (p *datPool) addBytes(bs []byte, unit int32, regSizeAlign bool) *heapDat {
 }
 
 func (p *datPool) addVtable(funcs []FuncSym) *heapDat {
+	n := int32(len(funcs))
 	d := &heapDat{
 		dat:          funcs,
 		pkg:          p.pkg,
-		unitSize:     1,
-		n:            int32(len(funcs)),
+		size:         n * regSize,
+		n:            n,
 		regSizeAlign: true,
 	}
 	p.dat = append(p.dat, d)
