@@ -15,7 +15,7 @@ type heapDat struct {
 }
 
 func (s *heapDat) String() string {
-	return fmt.Sprintf("<dat %s>", s.name)
+	return fmt.Sprintf("<dat %dB>", s.n)
 }
 
 func (s *heapDat) RegSizeAlign() bool { return s.regSizeAlign }
