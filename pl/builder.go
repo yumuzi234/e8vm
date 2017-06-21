@@ -32,14 +32,15 @@ type builder struct {
 
 	anonyCount int // count for "_"
 
-	vTableMap map[*types.Interface]*vTable
+	vTableSymMap map[*types.Interface]*vTableSym
+	vTableIR     []codegen.FuncPtr
 }
 
 func (b *builder) newImplement(i *types.Interface, r *ref, s *types.Struct) {
-	t := b.vTableMap[i]
+	t := b.vTableSymMap[i]
 	if t == nil {
 		t = newTable(i)
-		b.vTableMap[i] = t
+		b.vTableSymMap[i] = t
 	}
 	if t.implementMap[s] == nil {
 		slice := make([]*syms.Symbol, len(t.funcs))
@@ -62,7 +63,7 @@ func newBuilder(path string) *builder {
 		continues: newBlockStack(),
 		breaks:    newBlockStack(),
 
-		vTableMap: make(map[*types.Interface]*vTable),
+		vTableSymMap: make(map[*types.Interface]*vTableSym),
 	}
 }
 
