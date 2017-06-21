@@ -13,12 +13,11 @@ type Pkg struct {
 
 	path string
 
-	funcs      []*Func
-	vars       []*HeapSym
-	tests      *testList
-	strPool    *strPool
-	datPool    *datPool
-	vtablePool *vtablePool
+	funcs   []*Func
+	vars    []*HeapSym
+	tests   *testList
+	strPool *strPool
+	datPool *datPool
 	// helper functions required for generating
 	g *gener
 }
@@ -26,12 +25,11 @@ type Pkg struct {
 // NewPkg creates a package with a particular path name.
 func NewPkg(path string) *Pkg {
 	return &Pkg{
-		path:       path,
-		lib:        link.NewPkg(path),
-		strPool:    newStrPool(path),
-		datPool:    newDatPool(path),
-		vtablePool: newVtablePool(path),
-		g:          newGener(),
+		path:    path,
+		lib:     link.NewPkg(path),
+		strPool: newStrPool(path),
+		datPool: newDatPool(path),
+		g:       newGener(),
 	}
 }
 
