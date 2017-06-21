@@ -34,7 +34,7 @@ func newDatPool(pkg string) *datPool {
 }
 
 func (p *datPool) addBytes(bs []byte, unit int32, regSizeAlign bool) *heapDat {
-	//	what if n overflow?
+	//	assume length of bs will not overflow int32
 	s := int32(len(bs))
 	if s%unit != 0 {
 		panic("dat not aligned to unit")
