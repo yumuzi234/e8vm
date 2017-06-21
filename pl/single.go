@@ -28,16 +28,20 @@ func MakeMemFS() *builds.MemFS {
 	return home
 }
 
-// MakeLangPicker makes the language picker using the given language as the
-// default language and assembly for "asm" keyword.
-func MakeLangPicker(lang *builds.Lang) *builds.LangPicker {
-	ret := builds.NewLangPicker(lang)
+func makeLangSet(lang *builds.Lang) *builds.LangSet {
+	ret := builds.NewLangSet(lang)
 	ret.AddLang("asm", asm.Lang())
 	return ret
 }
 
+// MakeLangSet makes the language picker using the given language as the
+// default language and assembly for "asm" keyword.
+func MakeLangSet(golike bool) *builds.LangSet {
+	return makeLangSet(Lang(golike))
+}
+
 func buildMainPkg(
-	fs *builds.MemFS, langPicker *builds.LangPicker,
+	fs *builds.MemFS, langPicker *builds.LangSet,
 	opt *builds.Options,
 ) (image []byte, errs []*lexing.Error, log []byte) {
 	out := builds.NewMemFS()
@@ -79,7 +83,7 @@ func buildSingle(
 	if err != nil {
 		return nil, lexing.SingleErr(err), nil
 	}
-	lp := MakeLangPicker(lang)
+	lp := makeLangSet(lang)
 	return buildMainPkg(fs, lp, opt)
 }
 

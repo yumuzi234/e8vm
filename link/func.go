@@ -34,6 +34,19 @@ func (f *Func) Size() uint32 {
 	return uint32(len(f.insts) * 4)
 }
 
+// For func links, offset needs to be aligned with RegSize (32 bit=4 bytes)
+// uint32 offset is used to record both link position and fill method
+// offest/4 is the position of the symbol to be linked in insts[]
+// offset%4 is used to record the fill methods
+
+// Constant fill-later methods.
+const (
+	FillNone = iota // no fill
+	FillLink        // fill as linking offset for jump instructions
+	FillLow         // fill with the lower 16 bits
+	FillHigh        // fill with the higher 16 bits
+)
+
 // AddLink links the last instruction in inst to the symbol pkg.sym, where pkg
 // and sym are using the indexing of the object file.  fill field must be less
 // than 4 so that it fits in the lowest 2 bits in the offset field. The other
@@ -56,11 +69,3 @@ func (f *Func) AddLink(fill int, ps *PkgSym) {
 	link := &link{offset: offset, PkgSym: ps}
 	f.links = append(f.links, link)
 }
-
-// Constant fill-later methods.
-const (
-	FillNone = iota // no fill
-	FillLink        // fill as linking offset for jump instructions
-	FillLow         // fill with the lower 16 bits
-	FillHigh        // fill with the higher 16 bits
-)

@@ -9,10 +9,10 @@ import (
 
 type source struct {
 	in         Input
-	langPicker *LangPicker
+	langPicker *LangSet
 }
 
-func newSource(in Input, langPicker *LangPicker) *source {
+func newSource(in Input, langPicker *LangSet) *source {
 	return &source{
 		in:         in,
 		langPicker: langPicker,
@@ -151,4 +151,10 @@ func (s *source) allPkgs(p string) ([]string, error) {
 	}
 	sort.Strings(ret)
 	return ret, nil
+}
+
+// ListSrcFiles lists all the source files from an input.
+func ListSrcFiles(in Input, langSet *LangSet, p string) ([]string, error) {
+	src := newSource(in, langSet)
+	return src.listSrcFiles(p)
 }

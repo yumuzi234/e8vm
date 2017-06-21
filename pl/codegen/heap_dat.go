@@ -8,19 +8,19 @@ import (
 
 type heapDat struct {
 	pkg, name    string
-	bs           []byte
+	dat          interface{}
 	regSizeAlign bool
-	unitSize     int32
+	size         int32
 	n            int32
 }
 
 func (s *heapDat) String() string {
-	return fmt.Sprintf("<dat %dB>", len(s.bs))
+	return fmt.Sprintf("<dat %dB>", s.n)
 }
 
 func (s *heapDat) RegSizeAlign() bool { return s.regSizeAlign }
 
-func (s *heapDat) Size() int32 { return int32(len(s.bs)) }
+func (s *heapDat) Size() int32 { return s.size }
 
 type datPool struct {
 	pkg string
@@ -33,17 +33,32 @@ func newDatPool(pkg string) *datPool {
 	}
 }
 
-func (p *datPool) addDat(bs []byte, unit int32, regSizeAlign bool) *heapDat {
-	if int32(len(bs))%unit != 0 {
+func (p *datPool) addBytes(bs []byte, unit int32, regSizeAlign bool) *heapDat {
+	//	what if n overflow?
+	s := int32(len(bs))
+	if s%unit != 0 {
 		panic("dat not aligned to unit")
 	}
 
 	d := &heapDat{
 		pkg:          p.pkg,
-		bs:           bs,
-		unitSize:     unit,
-		n:            int32(len(bs)) / unit,
+		dat:          bs,
+		size:         s,
+		n:            s / unit,
 		regSizeAlign: regSizeAlign,
+	}
+	p.dat = append(p.dat, d)
+	return d
+}
+
+func (p *datPool) addVtable(funcs []*FuncSym) *heapDat {
+	n := int32(len(funcs))
+	d := &heapDat{
+		dat:          funcs,
+		pkg:          p.pkg,
+		size:         n * regSize,
+		n:            n,
+		regSizeAlign: true,
 	}
 	p.dat = append(p.dat, d)
 	return d
@@ -60,14 +75,22 @@ func (p *datPool) declare(lib *link.Pkg) {
 
 	ndigit := countDigit(len(p.dat))
 	nfmt := fmt.Sprintf(":dat_%%0%dd", ndigit)
+	var v *link.Var
 	for i, d := range p.dat {
 		d.name = fmt.Sprintf(nfmt, i)
 		align := uint32(0)
 		if d.regSizeAlign {
 			align = regSize
 		}
-		v := link.NewVar(align)
-		v.Write(d.bs)
+		v = link.NewVar(align)
+		switch dat := d.dat.(type) {
+		case []byte:
+			v.Write(dat)
+		case []*FuncSym:
+			for _, f := range dat {
+				v.WriteLink(p.pkg, f.name)
+			}
+		}
 
 		lib.DeclareVar(d.name)
 		lib.DefineVar(d.name, v)

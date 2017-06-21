@@ -103,7 +103,12 @@ func (p *Pkg) NewString(s string) Ref {
 
 // NewHeapDat adds a byte array of heap static data.
 func (p *Pkg) NewHeapDat(bs []byte, unit int32, regSizeAlign bool) Ref {
-	return p.datPool.addDat(bs, unit, regSizeAlign)
+	return p.datPool.addBytes(bs, unit, regSizeAlign)
+}
+
+// NewVtable adds the vtable of the package.
+func (p *Pkg) NewVtable(funcs []*FuncSym) Ref {
+	return p.datPool.addVtable(funcs)
 }
 
 // NewVtable adds a new vtable to the vatable pool.

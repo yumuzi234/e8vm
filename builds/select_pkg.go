@@ -26,7 +26,7 @@ func selectPkgs(src *source, s string) ([]string, error) {
 }
 
 // SelectPkgs selects the package to build based on the selector.
-func SelectPkgs(in Input, lp *LangPicker, s string) ([]string, error) {
+func SelectPkgs(in Input, lp *LangSet, s string) ([]string, error) {
 	src := newSource(in, lp)
 	return selectPkgs(src, s)
 }

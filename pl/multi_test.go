@@ -10,7 +10,7 @@ import (
 func multiTestRun(t *testing.T, fs map[string]string, N int) (
 	string, error,
 ) {
-	bs, es, _ := buildMulti(Lang(false), fs, nil)
+	bs, es, _ := buildMulti(false, fs, nil)
 	if es != nil {
 		t.Log(fs)
 		for _, err := range es {
@@ -135,7 +135,7 @@ func TestMultiFile(t *testing.T) {
 
 func TestMultiFileBad(t *testing.T) {
 	o := func(files map[string]string) {
-		_, es, _ := buildMulti(Lang(false), files, nil)
+		_, es, _ := buildMulti(false, files, nil)
 		if es == nil {
 			t.Error("should error")
 			return
