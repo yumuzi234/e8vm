@@ -72,7 +72,6 @@ func buildCast(b *builder, from *ref, t types.T) *ref {
 		b.CodeErrorf(nil, "pl.notYetSupported",
 			"define interface by another interface is not supported yet")
 		return from
-
 	}
 	if c, ok := srcType.(*types.Const); ok {
 		if v, ok := types.NumConst(srcType); ok {

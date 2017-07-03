@@ -33,7 +33,6 @@ type builder struct {
 	anonyCount int // count for "_"
 
 	vTableSymMap map[*types.Interface]*vTableSym
-	vTableIR     []codegen.FuncPtr
 }
 
 func (b *builder) newImplement(i *types.Interface, r *ref, s *types.Struct) {
